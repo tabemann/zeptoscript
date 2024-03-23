@@ -1,0 +1,11 @@
+*~
+*.o
+*.map
+*.list
+*.lst
+*.bin
+*.uf2
+*.elf
+*.ihex
+utils/zeptoforth_venv
+src/common/kernel_info.s
