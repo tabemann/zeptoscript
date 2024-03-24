@@ -44,7 +44,9 @@ begin-module zscript
   begin-module zscript-internal
     
     \ The per-task zeptoscript structure
-    user zscript-state
+    \ This will ultimately be a user variable, but for testing purposes it will
+    \ be a plain variable.
+    variable zscript-state
 
     \ The zeptoscript structure
     begin-structure zscript-size
@@ -103,7 +105,13 @@ begin-module zscript
     3 constant word-type
     4 constant 2word-type
     5 constant const-bytes-type
+    6 constant xt-type
+    7 constant tagged-type
     10 constant cells-type
+    11 constant closure-type
+
+    \ Tags
+    1 constant word-tag
 
     \ Bit in the type indicating whether a value contains cells to GC
     \ Note that this is after subtracting two from the type
@@ -151,6 +159,30 @@ begin-module zscript
           >type word-type =
         then
       then
+    ;
+
+    \ Get whether a value is an xt or closure
+    : xt? ( value -- xt? )
+      >type dup xt-type = swap closure-type = or
+    ;
+
+    \ Get an xt
+    : xt> ( value -- xt )
+      dup >type case
+        xt-type of
+          cell+ @
+        endof
+        closure-type of
+          cell+ @ case-from-int
+        then
+        ['] x-incorrect-type ?raise
+      endcase
+    ;
+
+    \ Get an unbound xt
+    : unbound-xt> ( value -- xt )
+      dup >type xt-type = averts x-incorrect-type
+      cell+ @
     ;
 
     \ Validate whether a value is an integer
@@ -216,18 +248,18 @@ begin-module zscript
       first-space-bottom!
     ;
 
-    \ Protect the stack
-    : protect-stack ( -- )
-      rp@ dup rstack-base @ <= swap rstack-end @ >= and if
-        dp@ dup stack-base @ > swap stack-end @ < or if
-          dp@ stack-end @ >= averts stack-overflow
-          dp@ stack-base @ <= averts stack-underflow
-        then
-      else
-        rp@ rstack-end @ >= averts rstack-overflow
-        rp@ rstack-base @ <= averts rstack-underflow
-      then
-    ;
+    \ \ Protect the stack
+    \ : protect-stack ( -- )
+    \   rp@ dup rstack-base @ <= swap rstack-end @ >= and if
+    \     dp@ dup stack-base @ > swap stack-end @ < or if
+    \       dp@ stack-end @ >= averts stack-overflow
+    \       dp@ stack-base @ <= averts stack-underflow
+    \     then
+    \   else
+    \     rp@ rstack-end @ >= averts rstack-overflow
+    \     rp@ rstack-base @ <= averts rstack-underflow
+    \   then
+    \ ;
 
     \ Carry out a GC cycle
     : gc ( -- )
@@ -251,8 +283,8 @@ begin-module zscript
     ;
     
     \ Allocate memory as cells
-    : allocate-cells ( count -- addr )
-      1+ cells { bytes }
+    : allocate-cells { count type -- addr }
+      count 1+ cells { bytes }
       second-space-current@ { current }
       bytes current + second-space-top@ > if
         gc
@@ -262,7 +294,7 @@ begin-module zscript
       bytes current + second-space-current!
       current
       dup cell+ bytes cell - 0 fill
-      [ cells-type 2 - type-shift lshift ] literal bytes 1 lshift or over !
+      type 2 - type-shift lshift bytes 1 lshift or over !
     ;
 
     \ Allocate memory as bytes
@@ -280,8 +312,8 @@ begin-module zscript
       [ bytes-type 2 - type-shift lshift ] literal count 1 lshift or over !
     ;
     
-    \ Allocate a word
-    : allocate-word { -- addr }
+    \ Allocate a cell
+    : allocate-cell { type -- addr }
       second-space-current@ { current }
       current [ 2 cells ] literal + second-space-top@ > if
         gc
@@ -292,12 +324,12 @@ begin-module zscript
       current [ 2 cells ] literal + second-space-current!
       current
       dup cell+ 0 !
-      [ word-type 2 - type-shift lshift ] literal
+      type 2 - type-shift lshift
       [ 2 cells 1 lshift ] literal or over !
     ;
 
     \ Allocate a double-word
-    : allocate-2word { -- addr }
+    : allocate-2cell { type -- addr }
       second-space-current@ { current }
       current [ 3 cells ] literal + second-space-top@ > if
         gc
@@ -309,25 +341,24 @@ begin-module zscript
       current
       0 over cell+ !
       0 over [ 2 cells ] literal + !
-      [ 2word-type 2 - type-shift lshift ] literal
+      type 2 - type-shift lshift
       [ 3 cells 1 lshift ] literal or over !
     ;
 
-    \ Allocate a constant bytes object
-    : allocate-const-bytes { -- addr }
+    \ Allocate a tagged value
+    : allocate-tagged { count tag -- addr }
+      count [ 2 cells ] literal + cell align { bytes }
       second-space-current@ { current }
-      current [ 3 cells ] literal + second-space-top@ > if
+      bytes current + second-space-top@ > if
         gc
         second-space-current@ to current
-        current [ 3 cells ] literal + second-space-top@
-        <= averts x-out-of-memory
+        bytes current + second-space-top@ <= averts x-out-of-meory
       then
-      current [ 3 cells ] literal + second-space-current!
+      bytes current + second-space-current!
       current
-      0 over cell+ !
-      0 over [ 2 cells ] literal + !
-      [ const-bytes-type 2 - type-shift lshift ] literal
-      [ 3 cells 1 lshift ] literal or over !
+      tag dup cell+ !
+      dup [ 2 cells ] literal + bytes [ 2 cells ] literal - 0 fill
+      [ tagged-type 2 - type-shift lshift ] literal count 1 lshift or over !
     ;
 
     \ Cast nulls, integers, and words to cells, validating them
@@ -348,9 +379,16 @@ begin-module zscript
         dup $3FFFFFFF u<= over $BFFFFFFF > and if
           1 lshift 1 or
         else
-          allocate-word tuck cell+ !
+          word-type allocate-cell tuck cell+ !
         then
       then
+    ;
+
+    \ Cast cells to xts
+    : cast-to-xt ( x -- xt )
+      xt-type allocate-cell { xt-value }
+      xt-value cell+ !
+      xt-value
     ;
 
     \ Normalize a value
@@ -367,41 +405,74 @@ begin-module zscript
       then
     ;
     
+    \ Get the tag of a tagged value
+    : >tag ( value -- tag )
+      dup >type tagged-type = averts x-incorrect-type
+      cell+ @
+    ;
+    
+    \ Get a value in a tagged data structure
+    : t@+ ( index object -- value )
+      dup >type tagged-type = averts x-incorrect-type
+      swap cast-from-int 1+ cells
+      over >size over u< averts x-offset-out-of-range
+      + @
+    ;
+
+    \ Set a value in a tagged data structure
+    : t!+ ( value index object -- )
+      dup >type tagged-type = averts x-incorrect-type
+      swap cast-from-int 1+ cells
+      over >size over u< averts x-offset-out-of-range
+      + !
+    ;
+    
   end-module> import
   
-  \ Define words with stack protection
-  : : ( "name" -- )
-    :
-    postpone protect-stack
+  \ Initialize zeptoscript
+  : init-zscript { size -- }
+    size [ 2 cells ] literal align to size
+    cell align, here zscript-size allot zscript-state !
+    here size allot { heap }
+    heap first-space-bottom!
+    heap size 1 lshift +
+    dup first-space-top! dup second-space-current! second-space-bottom!
+    heap size + second-space-top!
   ;
 
-  \ Define anonymous words with stack protection
-  : :noname ( -- )
-    :noname
-    postpone protect-stack
-  ;
+  \ \ Define words with stack protection
+  \ : : ( "name" -- )
+  \   :
+  \   postpone protect-stack
+  \ ;
 
-  \ Define lambdas with stack protection
-  : [: ( -- )
-    [immediate]
-    postpone [:
-    postpone protect-stack
-  ;
+  \ \ Define anonymous words with stack protection
+  \ : :noname ( -- )
+  \   :noname
+  \   postpone protect-stack
+  \ ;
 
-  \ End words with stack protection
-  : ; ( -- )
-    [immediate]
-    postpone protect-stack
-    postpone ;
-  ;
+  \ \ Define lambdas with stack protection
+  \ : [: ( -- )
+  \   [immediate]
+  \   postpone [:
+  \   postpone protect-stack
+  \ ;
 
-  \ End lambdas with stack protection
-  : ;] ( -- )
-    [immediate]
-    [compile-only]
-    postpone protect-stack
-    postpone ;]
-  ;
+  \ \ End words with stack protection
+  \ : ; ( -- )
+  \   [immediate]
+  \   postpone protect-stack
+  \   postpone ;
+  \ ;
+
+  \ \ End lambdas with stack protection
+  \ : ;] ( -- )
+  \   [immediate]
+  \   [compile-only]
+  \   postpone protect-stack
+  \   postpone ;]
+  \ ;
 
   \ Get the length of cells in entries or bytes in bytes
   : >len ( cells | bytes -- len )
@@ -422,7 +493,7 @@ begin-module zscript
 
   \ Convert an address/length pair into constant bytes
   : >const-bytes ( c-addr u -- const-bytes )
-    allocate-const-bytes { const-bytes }
+    const-bytes-type allocate-2cell { const-bytes }
     const-bytes [ 2 cells ] literal + !
     const-bytes cell+ !
     const-bytes
@@ -437,7 +508,7 @@ begin-module zscript
 
   \ Convert two values into a pair
   : >pair ( x0 x1 -- pair )
-    2 allocate-cells { pair }
+    2 cells-type allocate-cells { pair }
     pair [ 2 cells ] literal + !
     pair cell+ !
     pair
@@ -453,7 +524,7 @@ begin-module zscript
 
   \ Convert three values into a triple
   : >triple ( x0 x1 x2 -- triple )
-    3 allocate-cells { triple }
+    3 cells-type allocate-cells { triple }
     triple [ 3 cells ] literal + !
     triple [ 2 cells ] literal + !
     triple cell+ !
@@ -468,7 +539,7 @@ begin-module zscript
     swap [ 2 cells ] literal + @
     swap [ 3 cells ] literal + @
   ;
-
+  
   \ Convert a sequence into a sequence triple
   : seq>triple ( seq -- triple )
     0 over >len >triple
@@ -488,7 +559,7 @@ begin-module zscript
       seq>triple
     then
   ;
-
+  
   \ Get a value in a cells data structure
   : v@+ ( index object -- value )
     dup >type cells-type = averts x-incorrect-type
@@ -967,7 +1038,71 @@ begin-module zscript
   : token ( runtime: "name" -- seq | 0 )
     token cast-to-int dup 0<> if >bytes else 2drop 0 then
   ;
-    
+
+  \ Get a word from a token
+  : token-word ( runtime: "name" -- word )
+    token-word { word }
+    word-tag forth::cell allocate-tagged { tagged-word }
+    word 0 tagged-word t!+
+    tagged-word
+  ;
+
+  \ Get an execution token from a word
+  : word>xt ( word -- xt )
+    dup >type tagged-type = averts x-incorrect-type
+    dup >tag word-tag = averts x-incorrect-type
+    xt-type allocate-cell { xt-value }
+    0 swap t@+ xt-value forth::cell+ !
+    xt-value
+  ;
+  
+  \ End a lambda
+  : ;]
+    [immediate]
+    [compile-only]
+    postpone ;]
+    xt-type allocate-cell
+    tuck
+    forth::cell+ !
+  ;
+  
+  \ Execute a closure
+  : execute ( xt -- )
+    dup >type case
+      xt-type of forth::cell+ @ execute endof
+      closure-type of
+        dup >size over forth::+ swap forth::cell+ { xt-addr }
+        begin forth::cell forth::- dup @ swap dup xt-addr forth::= until drop
+        cast-from-int execute
+      endof
+      ['] x-incorrect-type ?raise
+    endcase
+  ;
+
+  \ Execute a non-null closure
+  : ?execute ( xt -- )
+    dup integral? not if
+      execute
+    else
+      cast-from-int forth::0= averts x-incorrect-type
+    then
+  ;
+  
+  \ Bind a scope to a lambda
+  : bind ( xn ... x0 count xt -- closure )
+    dup >type xt-type = averts x-incorrect-type
+    forth::cell+ @ { arg-count xt-cell }
+    arg-count 1+ cells closure-type allocate-cells { closure }
+    closure forth::cell+
+    xt-cell over ! forth::cell+
+    begin arg-count 0> while
+      tuck ! forth::cell+
+      -1 +to arg-count
+    then
+    drop
+    closure
+  ;
+  
   begin-module unsafe
     
     \ Get the address and size of a bytes or constant bytes value
@@ -1007,7 +1142,7 @@ begin-module zscript
       cast-from-int
       dup averts x-null-dereference
       dup 3 forth::and triggers x-unaligned-deference
-      @
+      @ cast-to-int
     ;
   
     \ Redefine !
@@ -1023,7 +1158,7 @@ begin-module zscript
       cast-from-int
       dup averts x-null-dereference
       dup 1 forth::and triggers x-unaligned-deference
-      h@
+      h@ cast-to-int
     ;
   
     \ Redefine H!
@@ -1035,14 +1170,14 @@ begin-module zscript
     ;
   
     \ Redefine C@
-    : c@ ( addr -- h )
+    : c@ ( addr -- c )
       cast-from-int
       dup averts x-null-dereference
-      c@
+      c@ cast-to-int
     ;
   
     \ Redefine C!
-    : c! ( h addr -- )
+    : c! ( c addr -- )
       cast-from-int
       dup averts x-null-dereference
       swap cast-from-int swap c!
@@ -1065,7 +1200,71 @@ begin-module zscript
     ;
     
   end-module
+  
+  \ Get an xt at interpretation-time
+  : ' ( "name" -- xt )
+    token-word word>xt
+  ;
 
+  \ Get an xt at compile-time
+  : ['] ( 'name" -- xt )
+    [immediate]
+    [compile-time]
+    token-word word>xt
+    forth::cell+ @ lit,
+    postpone cast-to-xt
+  ;
+  
+  \ Raise an exception
+  : ?raise ( xt -- )
+    dup 0<> if
+      dup >type xt-type = averts x-incorrect-type
+      forth::cell+ @ ?raise
+    else
+      drop
+    then
+  ;
+  
+  \ Assert that a value is true, otherwise raise a specified exception
+  : averts ( f "name" -- )
+    [immediate]
+    token-word
+    word>xt
+    state unsafe::@ if
+      postpone 0=
+      postpone if
+      rot lit,
+      postpone ?raise
+      postpone then
+    else
+      swap 0= if
+        ?raise
+      else
+        drop
+      then
+    then
+  ;
+
+  \ Assert that a value is false, otherwise raise a specified exception
+  : triggers ( f "name" -- )
+    [immediate]
+    token-word
+    word>xt
+    state unsafe::@ if
+      postpone 0<>
+      postpone if
+      rot lit,
+      postpone ?raise
+      postpone then
+    else
+      swap 0<> if
+        ?raise
+      else
+        drop
+      then
+    then
+  ;
+  
   \ Start compiling a word with a name
   : start-compile ( seq -- )
     unsafe::bytes> cast-from-int swap cast-from-int swap internal::start-compile
@@ -1074,10 +1273,10 @@ begin-module zscript
   \ Make a foreign word usable
   : foreign ( in-count out-count xt "name" -- )
     { in-count out-count xt }
-    token dup 0<> cast-from-int averts x-token-expected
+    token dup 0<> averts x-token-expected
     start-compile visible
     in-count 0 ?do postpone cast-from-int loop
-    xt cast-from-int lit, postpone execute
+    xt unbound-xt> lit, postpone forth::execute
     out-count 0 ?do postpone cast-to-int loop
     internal::end-compile,
   ;
