@@ -129,9 +129,6 @@ begin-module zscript
     \ Get whether a value is an address
     : addr? ( value -- addr? ) [inlined] 1 and 0= ;
 
-    \ Value to integer
-    : >int ( value -- n ) [inlined] 1 arshift ;
-
     \ Value to address
     : >addr ( value -- addr ) [inlined] 1 bic ;
     
@@ -173,7 +170,7 @@ begin-module zscript
           cell+ @
         endof
         closure-type of
-          cell+ @ case-from-int
+          cell+ @ integral>
         then
         ['] x-incorrect-type ?raise
       endcase
@@ -247,19 +244,6 @@ begin-module zscript
       first-space-top!
       first-space-bottom!
     ;
-
-    \ \ Protect the stack
-    \ : protect-stack ( -- )
-    \   rp@ dup rstack-base @ <= swap rstack-end @ >= and if
-    \     dp@ dup stack-base @ > swap stack-end @ < or if
-    \       dp@ stack-end @ >= averts stack-overflow
-    \       dp@ stack-base @ <= averts stack-underflow
-    \     then
-    \   else
-    \     rp@ rstack-end @ >= averts rstack-overflow
-    \     rp@ rstack-base @ <= averts rstack-underflow
-    \   then
-    \ ;
 
     \ Carry out a GC cycle
     : gc ( -- )
@@ -362,7 +346,7 @@ begin-module zscript
     ;
 
     \ Cast nulls, integers, and words to cells, validating them
-    : cast-from-int ( 0 | int | addr -- x' )
+    : integral> ( 0 | int | addr -- x' )
       dup if
         dup int? if
           1 arshift
@@ -374,7 +358,7 @@ begin-module zscript
     ;
 
     \ Cast cells to nulls, integers, and words
-    : cast-to-int ( x -- 0 | int | addr )
+    : >integral ( x -- 0 | int | addr )
       dup if
         dup $3FFFFFFF u<= over $BFFFFFFF > and if
           1 lshift 1 or
@@ -401,7 +385,7 @@ begin-module zscript
             cell+ @
           then
         then
-        cast-to-int
+        >integral
       then
     ;
     
@@ -414,7 +398,7 @@ begin-module zscript
     \ Get a value in a tagged data structure
     : t@+ ( index object -- value )
       dup >type tagged-type = averts x-incorrect-type
-      swap cast-from-int 1+ cells
+      swap integral> 1+ cells
       over >size over u< averts x-offset-out-of-range
       + @
     ;
@@ -422,11 +406,25 @@ begin-module zscript
     \ Set a value in a tagged data structure
     : t!+ ( value index object -- )
       dup >type tagged-type = averts x-incorrect-type
-      swap cast-from-int 1+ cells
+      swap integral> 1+ cells
       over >size over u< averts x-offset-out-of-range
       + !
     ;
-    
+
+    \ Handle a number
+    : do-handle-number { addr bytes -- [value] -1 | 0 }
+      parse-integer if
+        state @ if
+          lit, postpone >integral
+        else
+          >integral
+        then
+        true
+      else
+        drop false
+      then
+    ;
+
   end-module> import
   
   \ Initialize zeptoscript
@@ -438,41 +436,8 @@ begin-module zscript
     heap size 1 lshift +
     dup first-space-top! dup second-space-current! second-space-bottom!
     heap size + second-space-top!
+    ['] do-handle-number handle-number-hook !
   ;
-
-  \ \ Define words with stack protection
-  \ : : ( "name" -- )
-  \   :
-  \   postpone protect-stack
-  \ ;
-
-  \ \ Define anonymous words with stack protection
-  \ : :noname ( -- )
-  \   :noname
-  \   postpone protect-stack
-  \ ;
-
-  \ \ Define lambdas with stack protection
-  \ : [: ( -- )
-  \   [immediate]
-  \   postpone [:
-  \   postpone protect-stack
-  \ ;
-
-  \ \ End words with stack protection
-  \ : ; ( -- )
-  \   [immediate]
-  \   postpone protect-stack
-  \   postpone ;
-  \ ;
-
-  \ \ End lambdas with stack protection
-  \ : ;] ( -- )
-  \   [immediate]
-  \   [compile-only]
-  \   postpone protect-stack
-  \   postpone ;]
-  \ ;
 
   \ Get the length of cells in entries or bytes in bytes
   : >len ( cells | bytes -- len )
@@ -488,7 +453,7 @@ begin-module zscript
       endof
       ['] x-incorrect-type ?raise
     endcase
-    cast-to-int
+    >integral
   ;
 
   \ Convert an address/length pair into constant bytes
@@ -501,7 +466,7 @@ begin-module zscript
 
   \ Convert an address/length pair into bytes
   : >bytes ( c-addr u -- bytes )
-    cast-from-int dup allocate-bytes { bytes }
+    integral> dup allocate-bytes { bytes }
     bytes cell+ swap move
     bytes
   ;
@@ -549,12 +514,12 @@ begin-module zscript
   : s" ( "string" -- triple )
     state @ if
       postpone s"
-      postpone cast-to-int
+      postpone >integral
       postpone >const-bytes
       postpone seq>triple
     else
       [char] " parse-to-char
-      cast-to-int
+      >integral
       >bytes
       seq>triple
     then
@@ -563,7 +528,7 @@ begin-module zscript
   \ Get a value in a cells data structure
   : v@+ ( index object -- value )
     dup >type cells-type = averts x-incorrect-type
-    swap cast-from-int 1+ cells
+    swap integral> 1+ cells
     over >size over u< averts x-offset-out-of-range
     + @
   ;
@@ -571,7 +536,7 @@ begin-module zscript
   \ Set a value in a cells data structure
   : v!+ ( value index object -- )
     dup >type cells-type = averts x-incorrect-type
-    swap cast-from-int 1+ cells
+    swap integral> 1+ cells
     over >size over u< averts x-offset-out-of-range
     + !
   ;
@@ -580,16 +545,16 @@ begin-module zscript
   : @+ ( index object -- byte )
     dup >type case
       bytes-type of
-        swap cast-from-int cell+
+        swap integral> cell+
         over >size over u< averts x-offset-out-of-range
         dup 3 and triggers x-unaligned-dereference
-        + @ cast-to-int
+        + @ >integral
       endof
       const-bytes-type of
         dup [ 2 cells ] literal + @ { len }
         over len u< averts x-offset-out-of-range
         over 3 and triggers x-unaligned-dereference
-        cell+ @ + @ cast-to-int
+        cell+ @ + @ >integral
       endof
       ['] x-incorrect-type ?raise
     endcase
@@ -598,17 +563,17 @@ begin-module zscript
   \ Set a word in a bytes data structure
   : !+ ( byte index object -- )
     dup >type bytes-type = averts x-incorrect-type
-    swap cast-from-int cell+
+    swap integral> cell+
     over >size over u< averts x-offset-out-of-range
     dup 3 and triggers x-unaligned-dereference
-    + swap cast-from-int swap !
+    + swap integral> swap !
   ;
 
   \ Get a halfword in a bytes data structure
   : h@+ ( index object -- byte )
     dup >type case
       bytes-type of
-        swap cast-from-int cell+
+        swap integral> cell+
         over >size over u< averts x-offset-out-of-range
         dup 1 and triggers x-unaligned-dereference
         + h@ 1 lshift 1 or
@@ -626,17 +591,17 @@ begin-module zscript
   \ Set a halfword in a bytes data structure
   : h!+ ( byte index object -- )
     dup >type bytes-type = averts x-incorrect-type
-    swap cast-from-int cell+
+    swap integral> cell+
     over >size over u< averts x-offset-out-of-range
     dup 1 and triggers x-unaligned-dereference
-    + swap cast-from-int swap h!
+    + swap integral> swap h!
   ;
 
   \ Get a byte in a bytes data structure
   : c@+ ( index object -- byte )
     dup >type case
       bytes-type of
-        swap cast-from-int cell+
+        swap integral> cell+
         over >size over u< averts x-offset-out-of-range
         + c@ 1 lshift 1 or
       endof
@@ -652,149 +617,149 @@ begin-module zscript
   \ Set a byte in a bytes data structure
   : c!+ ( byte index object -- )
     dup >type bytes-type = averts x-incorrect-type
-    swap cast-from-int cell+
+    swap integral> cell+
     over >size over u< averts x-offset-out-of-range
-    + swap cast-from-int swap c!
+    + swap integral> swap c!
   ;
   
   \ Add two integers
   : + ( x0 x1 -- x2 )
-    cast-from-int
-    swap cast-from-int + cast-to-int
+    integral>
+    swap integral> + >integral
   ;
 
   \ Add one to an integer
   : 1+ ( x0 -- x1 )
-    cast-from-int 1+ cast-to-int
+    integral> 1+ >integral
   ;
 
   \ Add a cell to an integer
   : cell+ ( x0 -- x1 )
-    cast-from-int cell+ cast-to-int
+    integral> cell+ >integral
   ;
 
   \ Subtract two integers
   : - ( x0 x1 -- x2 )
-    swap cast-from-int
-    swap cast-from-int - cast-to-int
+    swap integral>
+    swap integral> - >integral
   ;
 
   \ Subtract one from an integer
   : 1- ( x0 -- x1 )
-    cast-from-int 1- cast-to-int
+    integral> 1- >integral
   ;
 
   \ Multiply two integers
   : * ( x0 x1 -- x2 )
-    cast-from-int
-    swap cast-from-int * cast-to-int
+    integral>
+    swap integral> * >integral
   ;
 
   \ Multiply an integer by two
   : 2* ( x0 -- x1 )
-    cast-from-int 1 lshift cast-to-int
+    integral> 1 lshift >integral
   ;
 
   \ Multiple an integer by four
   : 4* ( x0 -- x1 )
-    cast-from-int 2 lshift cast-to-int
+    integral> 2 lshift >integral
   ;
 
   \ Multiple an integer by a cell
   : cells ( x0 -- x1 )
-    cast-from-int 2 lshift cast-to-int
+    integral> 2 lshift >integral
   ;
 
   \ Divide two signed integers
   : / ( n0 n1 -- n2 )
-    swap cast-from-int
-    swap cast-from-int / cast-to-int
+    swap integral>
+    swap integral> / >integral
   ;
 
   \ Divide a signed integer by two
   : 2/ ( n0 -- n1 )
-    cast-from-int 1 arshift cast-to-int
+    integral> 1 arshift >integral
   ;
 
   \ Divide a signed integer by four
   : 4/ ( n0 -- n1 )
-    cast-from-int 2 arshift cast-to-int
+    integral> 2 arshift >integral
   ;
   
   \ Divide two unsigned integers
   : u/ ( u0 u1 -- u2 )
-    swap cast-from-int
-    swap cast-from-int u/ cast-to-int
+    swap integral>
+    swap integral> u/ >integral
   ;
 
   \ Get the modulus of two signed integers
   : mod ( n0 n1 -- n2 )
-    swap cast-from-int
-    swap cast-from-int mod cast-to-int
+    swap integral>
+    swap integral> mod >integral
   ;
 
   \ Get the modulus of two unsigned integers
   : umod ( u0 u1 -- u2 )
-    swap cast-from-int
-    swap cast-from-int umod cast-to-int
+    swap integral>
+    swap integral> umod >integral
   ;
 
   \ Or two integers
   : or ( x0 x1 -- x2 )
-    cast-from-int
-    swap cast-from-int or cast-to-int
+    integral>
+    swap integral> or >integral
   ;
 
   \ And two integers
   : and ( x0 x1 -- x2 )
-    cast-from-int
-    swap cast-from-int and cast-to-int
+    integral>
+    swap integral> and >integral
   ;
 
   \ Exclusive-or two integers
   : xor ( x0 x1 -- x2 )
-    cast-from-int
-    swap cast-from-int xor cast-to-int
+    integral>
+    swap integral> xor >integral
   ;
 
   \ Clear bits in an integer
   : bic ( x0 x1 -- x2 )
-    cast-from-int
-    swap cast-from-int bic cast-to-int
+    integral>
+    swap integral> bic >integral
   ;    
 
   \ Not an integer
   : not ( x0 -- x1 )
-    cast-from-int not cast-to-int
+    integral> not >integral
   ;
 
   \ Invert an integer
   : invert ( x0 -- x1 )
-    cast-from-int forth::not cast-to-int
+    integral> forth::not >integral
   ;
 
   \ Left shift an integer
   : lshift ( x0 x1 -- x2 )
-    swap cast-from-int
-    swap cast-from-int lshift cast-to-int
+    swap integral>
+    swap integral> lshift >integral
   ;
 
   \ Logical right shift an integer
   : rshift ( x0 x1 -- x2 )
-    swap cast-from-int
-    swap cast-from-int rshift cast-to-int
+    swap integral>
+    swap integral> rshift >integral
   ;
 
   \ Arithmetic right shift an integer
   : arshift ( x0 x1 -- x2 )
-    swap cast-from-int
-    swap cast-from-int arshift cast-to-int
+    swap integral>
+    swap integral> arshift >integral
   ;
 
   \ Get whether two values are equal
   : = { x0 x1 -- flag }
     x0 integral? x1 integral? forth::and if
-      x0 cast-from-int x1 cast-from-int =
+      x0 integral> x1 integral> =
     else
       x0 x1 =
     then
@@ -803,7 +768,7 @@ begin-module zscript
   \ Get whether two values are unequal
   : <> { x0 x1 -- flag }
     x0 integral? x1 integral? forth::and if
-      x0 cast-from-int x1 cast-from-int <>
+      x0 integral> x1 integral> <>
     else
       x0 x1 <>
     then
@@ -811,82 +776,82 @@ begin-module zscript
 
   \ Signed less than
   : < ( x0 x1 -- flag )
-    cast-from-int swap cast-from-int >
+    integral> swap integral> >
   ;
 
   \ Signed greater than
   : > ( x0 x1 -- flag )
-    cast-from-int swap cast-from-int forth::<
+    integral> swap integral> forth::<
   ;
 
   \ Signed less than or equal
   : <= ( x0 x1 -- flag )
-    cast-from-int swap cast-from-int >=
+    integral> swap integral> >=
   ;
 
   \ Signed greater than or equal
   : >= ( x0 x1 -- flag )
-    cast-from-int swap cast-from-int forth::<=
+    integral> swap integral> forth::<=
   ;
 
   \ Unsigned less than
   : u< ( x0 x1 -- flag )
-    cast-from-int swap cast-from-int u>
+    integral> swap integral> u>
   ;
 
   \ Unsigned greater than
   : u> ( x0 x1 -- flag )
-    cast-from-int swap cast-from-int forth::u<
+    integral> swap integral> forth::u<
   ;
 
   \ Unsigned less than or equal
   : u<= ( x0 x1 -- flag )
-    cast-from-int swap cast-from-int u>=
+    integral> swap integral> u>=
   ;
 
   \ Unsigned greater than or equal
   : u>= ( x0 x1 -- flag )
-    cast-from-int swap cast-from-int forth::u<=
+    integral> swap integral> forth::u<=
   ;
 
   \ Equal to zero
   : 0= ( n -- flag )
-    dup integral? if cast-from-int 0= else drop false then
+    dup integral? if integral> 0= else drop false then
   ;
 
   \ Not equal to zero
   : 0<> ( n -- flag )
-    dup integral? if cast-from-int 0<> else drop true then
+    dup integral? if integral> 0<> else drop true then
   ;
 
   \ Less than zero
   : 0< ( n -- flag )
-    cast-from-int 0<
+    integral> 0<
   ;
 
   \ Greater than zero
   : 0> ( n -- flag )
-    cast-from-int 0>
+    integral> 0>
   ;
 
   \ Less than or equal to zero
   : 0<= ( n -- flag )
-    cast-from-int 0<=
+    integral> 0<=
   ;
 
   \ Greater than or equal to zero
   : 0>= ( n -- flag )
-    cast-from-int 0>=
+    integral> 0>=
   ;
 
   \ Get the minimum of two numbers
   : min ( n0 n1 -- n2 )
-    cast-from-int swap cast-from-int min cast-to-int
+    integral> swap integral> min >integral
   ;
 
   \ Get the maximum of two numbers
   : max ( n0 n1 -- n2 )
-    cast-from-int swap cast-from-int max cast-to-int
+    integral> swap integral> max >integral
   ;
   
   \ False constant
@@ -896,9 +861,9 @@ begin-module zscript
   : if ( flag -- )
     [immediate]
     state @ if
-      postpone cast-from-int
+      postpone integral>
     else
-      cast-from-int
+      integral>
     then
     postpone if
   ;
@@ -907,7 +872,7 @@ begin-module zscript
   : while ( flag -- )
     [immediate]
     [compile-only]
-    postpone cast-from-int
+    postpone integral>
     postpone while
   ;
 
@@ -915,7 +880,7 @@ begin-module zscript
   : until ( flag -- )
     [immediate]
     [compile-only]
-    postpone cast-from-int
+    postpone integral>
     postpone while
   ;
 
@@ -923,9 +888,9 @@ begin-module zscript
   : do ( end start -- )
     [immediate]
     state @ forth::if
-      postpone cast-from-int postpone swap postpone cast-from-int postpone swap
+      postpone integral> postpone swap postpone integral> postpone swap
     else
-      cast-from-int swap cast-from-int swap
+      integral> swap integral> swap
     then
     postpone do
   ;
@@ -934,9 +899,9 @@ begin-module zscript
   : ?do ( end start -- )
     [immediate]
     state @ forth::if
-      postpone cast-from-int postpone swap postpone cast-from-int postpone swap
+      postpone integral> postpone swap postpone integral> postpone swap
     else
-      cast-from-int swap cast-from-int swap
+      integral> swap integral> swap
     then
     postpone ?do
   ;
@@ -945,7 +910,7 @@ begin-module zscript
   : +loop ( change -- )
     [immediate]
     [compile-only]
-    postpone cast-from-int
+    postpone integral>
     postpone +loop
   ;
 
@@ -970,22 +935,22 @@ begin-module zscript
 
   \ Redefine .
   : . ( n -- )
-    cast-from-int .
+    integral> .
   ;
 
   \ Redefine U.
   : u. ( u -- )
-    cast-from-int u.
+    integral> u.
   ;
 
   \ Redefine (.)
   : (.) ( n -- )
-    cast-from-int (.)
+    integral> (.)
   ;
 
   \ Redefine (U.)
   : (u.) ( n -- )
-    cast-from-int (u.)
+    integral> (u.)
   ;
 
   \ Truncate the start of a sequence triple
@@ -1012,31 +977,31 @@ begin-module zscript
 
   \ Get the type of a value
   : >type ( value -- type )
-    >type cast-to-int
+    >type >integral
   ;
   
   \ The types, this time as values
-  0 cast-to-int constant null-type
-  1 cast-to-int constant int-type
-  2 cast-to-int constant bytes-type
-  3 cast-to-int constant word-type
-  4 cast-to-int constant 2word-type
-  5 cast-to-int constant const-bytes-type
-  10 cast-to-int constant cells-type
+  0 >integral constant null-type
+  1 >integral constant int-type
+  2 >integral constant bytes-type
+  3 >integral constant word-type
+  4 >integral constant 2word-type
+  5 >integral constant const-bytes-type
+  10 >integral constant cells-type
 
   \ Get whether a value is an int
   : int? ( value -- int? )
-    int? cast-to-int
+    int? >integral
   ;
   
   \ Get whether a value is integral
   : integral? ( value -- integral? )
-    integral? cast-to-int
+    integral? >integral
   ;
 
   \ Get a token
   : token ( runtime: "name" -- seq | 0 )
-    token cast-to-int dup 0<> if >bytes else 2drop 0 then
+    token >integral dup 0<> if >bytes else 2drop 0 then
   ;
 
   \ Get a word from a token
@@ -1073,7 +1038,7 @@ begin-module zscript
       closure-type of
         dup >size over forth::+ swap forth::cell+ { xt-addr }
         begin forth::cell forth::- dup @ swap dup xt-addr forth::= until drop
-        cast-from-int execute
+        integral> execute
       endof
       ['] x-incorrect-type ?raise
     endcase
@@ -1084,7 +1049,7 @@ begin-module zscript
     dup integral? not if
       execute
     else
-      cast-from-int forth::0= averts x-incorrect-type
+      integral> forth::0= averts x-incorrect-type
     then
   ;
   
@@ -1113,18 +1078,18 @@ begin-module zscript
           swap >len
         endof
         const-bytes-type of
-          dup forth::cell+ @ cast-to-int
-          swap [ 2 cells ] literal + @ cast-to-int
+          dup forth::cell+ @ >integral
+          swap [ 2 cells ] literal + @ >integral
         endof
         cells-type of
           triple> { bytes offset len }
           bytes >type case
             bytes-type of
-              bytes forth::cell+ cast-to-int offset +
+              bytes forth::cell+ >integral offset +
               bytes >len offset - len min 0 max
             endof
             const-bytes-type of
-              bytes forth::cell+ @ cast-to-int offset +
+              bytes forth::cell+ @ >integral offset +
               bytes >len offset - len min 0 max
             endof
             ['] x-incorrect-type ?raise
@@ -1135,67 +1100,67 @@ begin-module zscript
     ;
     
     \ Cast a value from an integer
-    : cast-from-int ( value -- x ) cast-from-int ;
+    : integral> ( value -- x ) integral> ;
 
     \ Redefine @
     : @ ( addr -- x )
-      cast-from-int
+      integral>
       dup averts x-null-dereference
       dup 3 forth::and triggers x-unaligned-deference
-      @ cast-to-int
+      @ >integral
     ;
   
     \ Redefine !
     : ! ( x addr -- )
-      cast-from-int
+      integral>
       dup averts x-null-dereference
       dup 3 forth::and triggers x-unaligned-deference
-      swap cast-from-int swap !
+      swap integral> swap !
     ;
   
     \ Redefine H@
     : h@ ( addr -- h )
-      cast-from-int
+      integral>
       dup averts x-null-dereference
       dup 1 forth::and triggers x-unaligned-deference
-      h@ cast-to-int
+      h@ >integral
     ;
   
     \ Redefine H!
     : h! ( h addr -- )
-      cast-from-int
+      integral>
       dup averts x-null-dereference
       dup 1 forth::and triggers x-unaligned-deference
-      swap cast-from-int swap h!
+      swap integral> swap h!
     ;
   
     \ Redefine C@
     : c@ ( addr -- c )
-      cast-from-int
+      integral>
       dup averts x-null-dereference
-      c@ cast-to-int
+      c@ >integral
     ;
   
     \ Redefine C!
     : c! ( c addr -- )
-      cast-from-int
+      integral>
       dup averts x-null-dereference
-      swap cast-from-int swap c!
+      swap integral> swap c!
     ;
 
     \ Redefine MOVE
     : move { src dest bytes -- }
-      src cast-from-int to src
-      dest cast-from-int to dest
-      bytes cast-from-int to bytes
+      src integral> to src
+      dest integral> to dest
+      bytes integral> to bytes
       src dest bytes move
     ;
 
     \ Redefine FILL
     : fill { addr bytes val -- }
-      addr cast-from-int to addr
-      bytes cast-from-int to bytes
-      val cast-from-int to val
+      addr integral> to addr
+      bytes integral> to bytes
+      val integral> to val
       addr bytes val fill
     ;
     
@@ -1267,7 +1232,7 @@ begin-module zscript
   
   \ Start compiling a word with a name
   : start-compile ( seq -- )
-    unsafe::bytes> cast-from-int swap cast-from-int swap internal::start-compile
+    unsafe::bytes> integral> swap integral> swap internal::start-compile
   ;
 
   \ Make a foreign word usable
@@ -1275,17 +1240,17 @@ begin-module zscript
     { in-count out-count xt }
     token dup 0<> averts x-token-expected
     start-compile visible
-    in-count 0 ?do postpone cast-from-int loop
+    in-count 0 ?do postpone integral> loop
     xt unbound-xt> lit, postpone forth::execute
-    out-count 0 ?do postpone cast-to-int loop
+    out-count 0 ?do postpone >integral loop
     internal::end-compile,
   ;
 
   \ Execute a foreign word
   : execute-foreign ( in-count out-count xt -- )
-    rot 0 ?do cast-from-int loop
+    rot 0 ?do integral> loop
     execute
-    0 ?do cast-to-int loop
+    0 ?do >integral loop
   ;
 
   \ Unsafe operations raising exceptions outside of UNSAFE module
