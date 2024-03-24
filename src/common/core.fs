@@ -123,7 +123,7 @@ begin-module zscript
     28 constant type-shift
     
     \ Size mask
-    $7FFFFFFF constant size-mask
+    -1 32 type-shift - tuck lshift swap rshift constant size-mask
 
     \ Set whether a value is an integer
     : int? ( value -- int? ) [inlined] 1 and 0<> ;
@@ -136,28 +136,50 @@ begin-module zscript
     
     \ Get an allocation's type
     : >type ( value -- type )
-      dup int? if
-        drop int-type
-      else
-        dup 0= if
-          drop null-type
-        else
-          @ type-shift rshift 2 +
-        then
-      then
+      code[
+      1 r0 movs_,#_
+      r0 tos tst_,_
+      eq bc>
+      int-type tos movs_,#_
+      pc 1 pop
+      >mark
+      0 tos cmp_,#_
+      ne bc>
+      null-type tos movs_,#_
+      pc 1 pop
+      >mark
+      0 tos tos ldr_,[_,#_]
+      type-shift tos tos lsrs_,_,#_
+      2 tos adds_,#_
+      ]code
     ;
 
     \ Get whether a value is null, an integer, or a word
     : integral? ( value -- integral? )
-      dup 0= if
-        drop true
-      else
-        dup int? if
-          drop true
-        else
-          >type word-type =
-        then
-      then
+      code[
+      1 r0 movs_,#_
+      r0 tos tst_,_
+      eq bc>
+      31 r0 tos lsls_,_,#_
+      31 tos tos asrs_,_,#_
+      pc 1 pop
+      >mark
+      0 tos cmp_,#_
+      ne bc>
+      31 r0 tos lsls_,_,#_
+      31 tos tos asrs_,_,#_
+      pc 1 pop
+      >mark
+      0 tos tos ldr_,[_,#_]
+      type-shift tos tos lsrs_,_,#_
+      word-type 2 - tos cmp_,#_
+      31 r0 tos lsls_,_,#_
+      31 tos tos asrs_,_,#_
+      pc 1 pop
+      ne bc>
+      >mark
+      0 tos movs_,#_
+      ]code
     ;
 
     \ Get whether a value is an xt or closure
@@ -179,13 +201,21 @@ begin-module zscript
     
     \ Get an allocation's size
     : >size ( value -- size )
-      dup int? if
-        drop 0
-      else
-        dup 0<> if
-          @ size-mask and 1 rshift
-        then
-      then
+      code[
+      0 tos cmp_,#_
+      ne bc>
+      pc 1 pop
+      >mark
+      1 r0 movs_,#_
+      r0 tos tst_,_
+      eq bc>
+      0 tos movs_,#_
+      pc 1 pop
+      >mark
+      0 tos tos ldr_,[_,#_]
+      32 type-shift - tos tos lsls_,_,#_
+      33 type-shift - tos tos lsrs_,_,#_
+      ]code
     ;
     
     \ Relocate a block of memory
@@ -333,25 +363,47 @@ begin-module zscript
 
     \ Cast nulls, integers, and words to cells, validating them
     : integral> ( 0 | int | addr -- x' )
-      dup if
-        dup int? if
-          1 arshift
-        else
-          dup validate-word
-          cell+ @
-        then
-      then
+      code[
+      0 tos cmp_,#_
+      ne bc>
+      pc 1 pop
+      >mark
+      1 r0 movs_,#_
+      r0 tos tst_,_
+      eq bc>
+      1 tos tos asrs_,_,#_
+      pc 1 pop
+      >mark
+      0 tos r0 ldr_,[_,#_]
+      type-shift r0 r0 lsrs_,_,#_
+      word-type 2 - r0 cmp_,#_
+      ne bc>
+      cell tos tos ldr_,[_,#_]
+      pc 1 pop
+      >mark
+      ]code
+      ['] x-incorrect-type ?raise
     ;
 
     \ Cast cells to nulls, integers, and words
     : >integral ( x -- 0 | int | addr )
-      dup if
-        dup $3FFFFFFF u<= over $BFFFFFFF > and if
-          1 lshift 1 or
-        else
-          word-type allocate-cell tuck cell+ !
-        then
-      then
+      code[
+      0 tos cmp_,#_
+      ne bc>
+      pc 1 pop
+      30 tos r0 lsrs_,_,#_
+      1 r0 cmp_,#_
+      eq bc>
+      2 r0 cmp_,#_
+      eq bc>
+      1 tos tos lsls_,_,#_
+      1 r0 movs_,#_
+      r0 tos orrs_,_
+      pc 1 pop
+      >mark
+      >mark
+      ]code
+      word-type allocate-cell tuck cell+ !
     ;
 
     \ Convert a pair of cells to nulls, integers, and words
