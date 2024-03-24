@@ -20,6 +20,8 @@
 
 begin-module zscript
 
+  armv6m import
+  
   \ We are out of memory
   : x-out-of-memory ." out of memory" cr ;
 
@@ -163,19 +165,6 @@ begin-module zscript
       >type dup xt-type = swap closure-type = or
     ;
 
-    \ Get an xt
-    : xt> ( value -- xt )
-      dup >type case
-        xt-type of
-          cell+ @
-        endof
-        closure-type of
-          cell+ @ integral>
-        then
-        ['] x-incorrect-type ?raise
-      endcase
-    ;
-
     \ Get an unbound xt
     : unbound-xt> ( value -- xt )
       dup >type xt-type = averts x-incorrect-type
@@ -207,7 +196,7 @@ begin-module zscript
           dup 1 and 0= if
             header size-mask and 1 rshift { size }
             second-space-current@ { current }
-            second-space-top@ current size + - <= averts x-out-of-meory
+            second-space-top@ current size + - <= averts x-out-of-memory
             orig current size move
             current 1 or orig !
             current size cell align + second-space-current!
@@ -225,11 +214,8 @@ begin-module zscript
 
     \ Relocate the stack
     : relocate-stack ( -- )
-      depth dup
-      begin dup 0> while rot relocate >r 1- repeat
-      drop
-      begin dup 0> while r> swap 1- repeat
-      drop
+      sp@ stack-base @ swap ?do i @ relocate i ! loop
+      rp@ rstack-base @ swap ?do i @ relocate i ! loop
     ;
 
     \ Swap spaces
@@ -273,7 +259,7 @@ begin-module zscript
       bytes current + second-space-top@ > if
         gc
         second-space-current@ to current
-        bytes current + second-space-top@ <= averts x-out-of-meory
+        bytes current + second-space-top@ <= averts x-out-of-memory
       then
       bytes current + second-space-current!
       current
@@ -288,7 +274,7 @@ begin-module zscript
       bytes current + second-space-top@ > if
         gc
         second-space-current@ to current
-        bytes current + second-space-top@ <= averts x-out-of-meory
+        bytes current + second-space-top@ <= averts x-out-of-memory
       then
       bytes current + second-space-current!
       current
@@ -336,7 +322,7 @@ begin-module zscript
       bytes current + second-space-top@ > if
         gc
         second-space-current@ to current
-        bytes current + second-space-top@ <= averts x-out-of-meory
+        bytes current + second-space-top@ <= averts x-out-of-memory
       then
       bytes current + second-space-current!
       current
@@ -368,8 +354,18 @@ begin-module zscript
       then
     ;
 
+    \ Convert a pair of cells to nulls, integers, and words
+    : 2>integral ( x0 x1 -- 0|int|addr 0|int|addr )
+      >integral swap >integral swap
+    ;
+
+    \ Convert a pair of nulls, integers, or words to cells
+    : 2integral> ( 0|int|addr 0|int|addr -- x0 x1 )
+      integral> swap integral> swap
+    ;
+
     \ Cast cells to xts
-    : cast-to-xt ( x -- xt )
+    : >xt ( x -- xt )
       xt-type allocate-cell { xt-value }
       xt-value cell+ !
       xt-value
@@ -459,13 +455,14 @@ begin-module zscript
   \ Convert an address/length pair into constant bytes
   : >const-bytes ( c-addr u -- const-bytes )
     const-bytes-type allocate-2cell { const-bytes }
-    const-bytes [ 2 cells ] literal + !
-    const-bytes cell+ !
+    integral> const-bytes [ 2 cells ] literal + !
+    integral> const-bytes cell+ !
     const-bytes
   ;
 
   \ Convert an address/length pair into bytes
   : >bytes ( c-addr u -- bytes )
+    swap integral> swap
     integral> dup allocate-bytes { bytes }
     bytes cell+ swap move
     bytes
@@ -514,12 +511,12 @@ begin-module zscript
   : s" ( "string" -- triple )
     state @ if
       postpone s"
-      postpone >integral
+      postpone 2>integral
       postpone >const-bytes
       postpone seq>triple
     else
-      [char] " parse-to-char
-      >integral
+      [char] " internal::parse-to-char
+      2>integral
       >bytes
       seq>triple
     then
@@ -608,7 +605,7 @@ begin-module zscript
       const-bytes-type of
         dup [ 2 cells ] literal + @ { len }
         over len u< averts x-offset-out-of-range
-        cell+ @ + c@ 1 shift 1 or
+        cell+ @ + c@ 1 lshift 1 or
       endof
       ['] x-incorrect-type ?raise
     endcase
@@ -881,16 +878,16 @@ begin-module zscript
     [immediate]
     [compile-only]
     postpone integral>
-    postpone while
+    postpone until
   ;
 
   \ Redefine DO
   : do ( end start -- )
     [immediate]
     state @ forth::if
-      postpone integral> postpone swap postpone integral> postpone swap
+      postpone 2integral>
     else
-      integral> swap integral> swap
+      2integral>
     then
     postpone do
   ;
@@ -899,9 +896,9 @@ begin-module zscript
   : ?do ( end start -- )
     [immediate]
     state @ forth::if
-      postpone integral> postpone swap postpone integral> postpone swap
+      postpone 2integral>
     else
-      integral> swap integral> swap
+      2integral>
     then
     postpone ?do
   ;
@@ -914,6 +911,22 @@ begin-module zscript
     postpone +loop
   ;
 
+  \ Redefine I
+  : i ( -- x )
+    [immediate]
+    [compile-only]
+    postpone i
+    postpone >integral
+  ;
+
+  \ Redefine J
+  : j ( -- x )
+    [immediate]
+    [compile-only]
+    postpone j
+    postpone >integral
+  ;
+  
   \ Redefine CASE
   : case ( x -- )
     [immediate]
@@ -1037,7 +1050,9 @@ begin-module zscript
       xt-type of forth::cell+ @ execute endof
       closure-type of
         dup >size over forth::+ swap forth::cell+ { xt-addr }
-        begin forth::cell forth::- dup @ swap dup xt-addr forth::= until drop
+        begin
+          forth::cell forth::- dup @ swap dup xt-addr forth::=
+        forth::until drop
         integral> execute
       endof
       ['] x-incorrect-type ?raise
@@ -1056,14 +1071,14 @@ begin-module zscript
   \ Bind a scope to a lambda
   : bind ( xn ... x0 count xt -- closure )
     dup >type xt-type = averts x-incorrect-type
-    forth::cell+ @ { arg-count xt-cell }
+    forth::cell+ @ { xt-cell } integral> { arg-count }
     arg-count 1+ cells closure-type allocate-cells { closure }
     closure forth::cell+
     xt-cell over ! forth::cell+
-    begin arg-count 0> while
+    begin arg-count 0> forth::while
       tuck ! forth::cell+
-      -1 +to arg-count
-    then
+      -1 forth::+to arg-count
+    repeat
     drop
     closure
   ;
@@ -1099,9 +1114,6 @@ begin-module zscript
       endcase
     ;
     
-    \ Cast a value from an integer
-    : integral> ( value -- x ) integral> ;
-
     \ Redefine @
     : @ ( addr -- x )
       integral>
@@ -1117,7 +1129,39 @@ begin-module zscript
       dup 3 forth::and triggers x-unaligned-deference
       swap integral> swap !
     ;
-  
+
+    \ Redefine +!
+    : +! ( x addr -- )
+      integral>
+      dup averts x-null-dereference
+      dup 3 forth::and triggers x-unaligned-dereference
+      swap integral> swap +!
+    ;
+
+    \ Redefine BIS!
+    : bis! ( x addr -- )
+      integral>
+      dup averts x-null-dereference
+      dup 3 forth::and triggers x-unaligned-dereference
+      swap integral> swap bis!
+    ;
+    
+    \ Redefine BIC!
+    : bic! ( x addr -- )
+      integral>
+      dup averts x-null-dereference
+      dup 3 forth::and triggers x-unaligned-dereference
+      swap integral> swap bic!
+    ;
+
+    \ Redefine XOR!
+    : xor! ( x addr -- )
+      integral>
+      dup averts x-null-dereference
+      dup 3 forth::and triggers x-unaligned-dereference
+      swap integral> swap xor!
+    ;
+
     \ Redefine H@
     : h@ ( addr -- h )
       integral>
@@ -1134,6 +1178,38 @@ begin-module zscript
       swap integral> swap h!
     ;
   
+    \ Redefine H+!
+    : h+! ( h addr -- )
+      integral>
+      dup averts x-null-dereference
+      dup 1 forth::and triggers x-unaligned-dereference
+      swap integral> swap h+!
+    ;
+
+    \ Redefine HBIS!
+    : hbis! ( x addr -- )
+      integral>
+      dup averts x-null-dereference
+      dup 1 forth::and triggers x-unaligned-dereference
+      swap integral> swap hbis!
+    ;
+    
+    \ Redefine HBIC!
+    : hbic! ( x addr -- )
+      integral>
+      dup averts x-null-dereference
+      dup 1 forth::and triggers x-unaligned-dereference
+      swap integral> swap hbic!
+    ;
+
+    \ Redefine HXOR!
+    : hxor! ( x addr -- )
+      integral>
+      dup averts x-null-dereference
+      dup 1 forth::and triggers x-unaligned-dereference
+      swap integral> swap hxor!
+    ;
+
     \ Redefine C@
     : c@ ( addr -- c )
       integral>
@@ -1146,6 +1222,34 @@ begin-module zscript
       integral>
       dup averts x-null-dereference
       swap integral> swap c!
+    ;
+
+    \ Redefine C+!
+    : c+! ( c addr -- )
+      integral>
+      dup averts x-null-dereference
+      swap integral> swap c+!
+    ;
+
+    \ Redefine CBIS!
+    : cbis! ( x addr -- )
+      integral>
+      dup averts x-null-dereference
+      swap integral> swap cbis!
+    ;
+    
+    \ Redefine CBIC!
+    : cbic! ( x addr -- )
+      integral>
+      dup averts x-null-dereference
+      swap integral> swap cbic!
+    ;
+
+    \ Redefine CXOR!
+    : cxor! ( x addr -- )
+      integral>
+      dup averts x-null-dereference
+      swap integral> swap hxor!
     ;
 
     \ Redefine MOVE
@@ -1164,7 +1268,13 @@ begin-module zscript
       addr bytes val fill
     ;
     
+    \ Cast a value from an integer
+    : integral> ( value -- x ) integral> ;
+
   end-module
+
+  \ Get the compilation state
+  : state? state forth::@ >integral ;
   
   \ Get an xt at interpretation-time
   : ' ( "name" -- xt )
@@ -1177,7 +1287,7 @@ begin-module zscript
     [compile-time]
     token-word word>xt
     forth::cell+ @ lit,
-    postpone cast-to-xt
+    postpone >xt
   ;
   
   \ Raise an exception
@@ -1195,7 +1305,7 @@ begin-module zscript
     [immediate]
     token-word
     word>xt
-    state unsafe::@ if
+    state? if
       postpone 0=
       postpone if
       rot lit,
@@ -1215,7 +1325,7 @@ begin-module zscript
     [immediate]
     token-word
     word>xt
-    state unsafe::@ if
+    state? if
       postpone 0<>
       postpone if
       rot lit,
@@ -1253,13 +1363,113 @@ begin-module zscript
     0 ?do >integral loop
   ;
 
+  continue-module zscript-internal
+
+    \ Currently unsupported data type
+    : x-currently-unsupported-data-type ( -- )
+      ." currently unsupported data type" cr
+    ;
+    
+    \ Compile adding to a cell variable
+    : compile-add-cell-local { index -- }
+      undefer-lit
+      6 push,
+      index 128 forth::< forth::if
+        [ armv6m-instr import ]
+        index 4 forth::* tos ldr_,[sp,#_]
+        [ armv6m-instr unimport ]
+      else
+        index 4 forth::* r0 literal,
+        r0 add4_,sp
+        0 r0 tos ldr_,[_,#_]
+      then
+      postpone +
+      index 128 forth::< forth::if
+        [ armv6m-instr import ]
+        index 4 forth::* tos str_,[sp,#_]
+        [ armv6m-instr unimport ]
+      else
+        index 4 forth::* r0 literal,
+        r0 add4_,sp
+        0 r0 tos str_,[_,#_]
+      then
+      6 pull,
+    ;
+    
+    \ Add to a local variable
+    : parse-add-local ( c-addr u -- match? )
+      2>r 0 internal::local-buf-top @ begin
+        dup internal::local-buf-bottom @ forth::<
+      forth::while
+        dup forth::1+ forth::count 2r@ forth::equal-case-strings? forth::if
+          rdrop rdrop c@ case
+            internal::cell-local of compile-add-cell-local endof
+            internal::cell-addr-local of compile-add-cell-local endof
+            ['] x-currently-unsupported-data-type ?raise
+            \ double-local of compile-add-double-local endof
+            \ double-addr-local of compile-add-double-local endof
+          endcase
+          true exit
+        else
+          dup c@ dup internal::double-local forth::=
+          swap internal::double-addr-local forth::= forth::or forth::if
+            forth::1+ dup c@ forth::1+ forth::+ swap 2 forth::+ swap
+          else
+            forth::1+ dup c@ forth::1+ forth::+ swap forth::1+ swap
+          then
+        then
+      repeat
+      rdrop rdrop 2drop false
+    ;
+
+  \ Compile adding to a VALUE
+    : compile-+to-value ( xt -- )
+      internal::value-addr@ lit,
+      postpone dup
+      postpone @
+      postpone rot
+      postpone +
+      postpone swap
+      postpone !
+    ;
+    
+  end-module
+
+  \ Add to a local or a VALUE
+  : +to ( x "name" -- )
+    [immediate]
+    token dup 0<> averts x-token-expected
+    state? if
+      dup parse-add-local not if
+        find dup 0<> averts x-unknown-word word>xt compile-+to-value
+      else
+        drop
+      then
+    else
+      find dup 0<> averts x-unknown-word word>xt unbound-xt>
+      internal::value-addr@ tuck @ + swap !
+    then
+  ;
+
   \ Unsafe operations raising exceptions outside of UNSAFE module
   : @ ['] x-unsafe-op ?raise ;
   : ! ['] x-unsafe-op ?raise ;
+  : +! ['] x-unsafe-op ?raise ;
+  : bis! ['] x-unsafe-op ?raise ;
+  : bic! ['] x-unsafe-op ?raise ;
+  : xor! ['] x-unsafe-op ?raise ;
   : h@ ['] x-unsafe-op ?raise ;
   : h! ['] x-unsafe-op ?raise ;
+  : h+! ['] x-unsafe-op ?raise ;
+  : hbis! ['] x-unsafe-op ?raise ;
+  : hbic! ['] x-unsafe-op ?raise ;
+  : hxor! ['] x-unsafe-op ?raise ;
   : c@ ['] x-unsafe-op ?raise ;
   : c! ['] x-unsafe-op ?raise ;
+  : c+! ['] x-unsafe-op ?raise ;
+  : cbis! ['] x-unsafe-op ?raise ;
+  : cbic! ['] x-unsafe-op ?raise ;
+  : cxor! ['] x-unsafe-op ?raise ;
   : move ['] x-unsafe-op ?raise ;
   : fill ['] x-unsafe-op ?raise ;
   
