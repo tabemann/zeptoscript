@@ -102,6 +102,7 @@ begin-module zscript
     2 constant bytes-type
     3 constant word-type
     4 constant 2word-type
+    5 constant const-bytes-type
     10 constant cells-type
 
     \ Bit in the type indicating whether a value contains cells to GC
@@ -119,7 +120,7 @@ begin-module zscript
 
     \ Get whether a value is an address
     : addr? ( value -- addr? ) [inlined] 1 and 0= ;
-    
+
     \ Value to integer
     : >int ( value -- n ) [inlined] 1 arshift ;
 
@@ -312,6 +313,23 @@ begin-module zscript
       [ 3 cells 1 lshift ] literal or over !
     ;
 
+    \ Allocate a constant bytes object
+    : allocate-const-bytes { -- addr }
+      second-space-current@ { current }
+      current [ 3 cells ] literal + second-space-top@ > if
+        gc
+        second-space-current@ to current
+        current [ 3 cells ] literal + second-space-top@
+        <= averts x-out-of-memory
+      then
+      current [ 3 cells ] literal + second-space-current!
+      current
+      0 over cell+ !
+      0 over [ 2 cells ] literal + !
+      [ const-bytes-type 2 - type-shift lshift ] literal
+      [ 3 cells 1 lshift ] literal or over !
+    ;
+
     \ Cast nulls, integers, and words to cells, validating them
     : cast-from-int ( 0 | int | addr -- x' )
       dup if
@@ -325,13 +343,27 @@ begin-module zscript
     ;
 
     \ Cast cells to nulls, integers, and words
-    : cast-from-int ( x -- 0 | int | addr )
+    : cast-to-int ( x -- 0 | int | addr )
       dup if
         dup $3FFFFFFF u<= over $BFFFFFFF > and if
           1 lshift 1 or
         else
           allocate-word tuck cell+ !
         then
+      then
+    ;
+
+    \ Normalize a value
+    : normalize ( value -- value' )
+      dup integral? if
+        dup if
+          dup int? if
+            1 arshift
+          else
+            cell+ @
+          then
+        then
+        cast-to-int
       then
     ;
     
@@ -380,14 +412,25 @@ begin-module zscript
       bytes-type of
         >size cell -
       endof
+      const-bytes-type of
+        [ 2 cells ] literal + @
+      endof
       ['] x-incorrect-type ?raise
     endcase
     cast-to-int
   ;
 
+  \ Convert an address/length pair into constant bytes
+  : >const-bytes ( c-addr u -- const-bytes )
+    allocate-const-bytes { const-bytes }
+    const-bytes [ 2 cells ] literal + !
+    const-bytes cell+ !
+    const-bytes
+  ;
+
   \ Convert an address/length pair into bytes
   : >bytes ( c-addr u -- bytes )
-    dup allocate-bytes { bytes }
+    cast-from-int dup allocate-bytes { bytes }
     bytes cell+ swap move
     bytes
   ;
@@ -435,10 +478,12 @@ begin-module zscript
   : s" ( "string" -- triple )
     state @ if
       postpone s"
-      postpone >bytes
+      postpone cast-to-int
+      postpone >const-bytes
       postpone seq>triple
     else
       [char] " parse-to-char
+      cast-to-int
       >bytes
       seq>triple
     then
@@ -448,7 +493,7 @@ begin-module zscript
   : v@+ ( index object -- value )
     dup >type cells-type = averts x-incorrect-type
     swap cast-from-int 1+ cells
-    over >size over u< x-offset-out-of-range
+    over >size over u< averts x-offset-out-of-range
     + @
   ;
 
@@ -456,59 +501,88 @@ begin-module zscript
   : v!+ ( value index object -- )
     dup >type cells-type = averts x-incorrect-type
     swap cast-from-int 1+ cells
-    over >size over u< x-offset-out-of-range
+    over >size over u< averts x-offset-out-of-range
     + !
   ;
 
   \ Get a word in a bytes data structure
   : @+ ( index object -- byte )
-    dup >type cells-type = averts x-incorrect-type
-    swap cast-from-int cell+
-    over >size over u< x-offset-out-of-range
-    dup 3 and triggers x-unaligned-dereference
-    + @ cast-to-int
+    dup >type case
+      bytes-type of
+        swap cast-from-int cell+
+        over >size over u< averts x-offset-out-of-range
+        dup 3 and triggers x-unaligned-dereference
+        + @ cast-to-int
+      endof
+      const-bytes-type of
+        dup [ 2 cells ] literal + @ { len }
+        over len u< averts x-offset-out-of-range
+        over 3 and triggers x-unaligned-dereference
+        cell+ @ + @ cast-to-int
+      endof
+      ['] x-incorrect-type ?raise
+    endcase
   ;
 
   \ Set a word in a bytes data structure
-  : h!+ ( byte index object -- )
-    dup >type cells-type = averts x-incorrect-type
+  : !+ ( byte index object -- )
+    dup >type bytes-type = averts x-incorrect-type
     swap cast-from-int cell+
-    over >size over u< x-offset-out-of-range
+    over >size over u< averts x-offset-out-of-range
     dup 3 and triggers x-unaligned-dereference
     + swap cast-from-int swap !
   ;
 
   \ Get a halfword in a bytes data structure
   : h@+ ( index object -- byte )
-    dup >type cells-type = averts x-incorrect-type
-    swap cast-from-int cell+
-    over >size over u< x-offset-out-of-range
-    dup 1 and triggers x-unaligned-dereference
-    + h@ 1 lshift 1 or
+    dup >type case
+      bytes-type of
+        swap cast-from-int cell+
+        over >size over u< averts x-offset-out-of-range
+        dup 1 and triggers x-unaligned-dereference
+        + h@ 1 lshift 1 or
+      endof
+      const-bytes-type of
+        dup [ 2 cells ] literal + @ { len }
+        over len u< averts x-offset-out-of-range
+        over 1 and triggers x-unaligned-dereference
+        cell+ @ + h@ 1 lshift 1 or
+      endof
+      ['] x-incorrect-type ?raise
+    endcase
   ;
 
   \ Set a halfword in a bytes data structure
   : h!+ ( byte index object -- )
-    dup >type cells-type = averts x-incorrect-type
+    dup >type bytes-type = averts x-incorrect-type
     swap cast-from-int cell+
-    over >size over u< x-offset-out-of-range
+    over >size over u< averts x-offset-out-of-range
     dup 1 and triggers x-unaligned-dereference
     + swap cast-from-int swap h!
   ;
 
   \ Get a byte in a bytes data structure
   : c@+ ( index object -- byte )
-    dup >type cells-type = averts x-incorrect-type
-    swap cast-from-int cell+
-    over >size over u< x-offset-out-of-range
-    + c@ 1 lshift 1 or
+    dup >type case
+      bytes-type of
+        swap cast-from-int cell+
+        over >size over u< averts x-offset-out-of-range
+        + c@ 1 lshift 1 or
+      endof
+      const-bytes-type of
+        dup [ 2 cells ] literal + @ { len }
+        over len u< averts x-offset-out-of-range
+        cell+ @ + c@ 1 shift 1 or
+      endof
+      ['] x-incorrect-type ?raise
+    endcase
   ;
 
   \ Set a byte in a bytes data structure
   : c!+ ( byte index object -- )
-    dup >type cells-type = averts x-incorrect-type
+    dup >type bytes-type = averts x-incorrect-type
     swap cast-from-int cell+
-    over >size over u< x-offset-out-of-range
+    over >size over u< averts x-offset-out-of-range
     + swap cast-from-int swap c!
   ;
   
@@ -734,6 +808,16 @@ begin-module zscript
     cast-from-int 0>=
   ;
 
+  \ Get the minimum of two numbers
+  : min ( n0 n1 -- n2 )
+    cast-from-int swap cast-from-int min cast-to-int
+  ;
+
+  \ Get the maximum of two numbers
+  : max ( n0 n1 -- n2 )
+    cast-from-int swap cast-from-int max cast-to-int
+  ;
+  
   \ False constant
   1 constant false
 
@@ -794,6 +878,25 @@ begin-module zscript
     postpone +loop
   ;
 
+  \ Redefine CASE
+  : case ( x -- )
+    [immediate]
+    state @ forth::if
+      postpone normalize
+    else
+      normalize
+    then
+    postpone case
+  ;
+
+  \ Redefine OF
+  : of ( x -- )
+    [immediate]
+    [compile-only]
+    postpone normalize
+    postpone of
+  ;
+
   \ Redefine .
   : . ( n -- )
     cast-from-int .
@@ -836,6 +939,20 @@ begin-module zscript
     >triple
   ;
 
+  \ Get the type of a value
+  : >type ( value -- type )
+    >type cast-to-int
+  ;
+  
+  \ The types, this time as values
+  0 cast-to-int constant null-type
+  1 cast-to-int constant int-type
+  2 cast-to-int constant bytes-type
+  3 cast-to-int constant word-type
+  4 cast-to-int constant 2word-type
+  5 cast-to-int constant const-bytes-type
+  10 cast-to-int constant cells-type
+
   \ Get whether a value is an int
   : int? ( value -- int? )
     int? cast-to-int
@@ -845,9 +962,46 @@ begin-module zscript
   : integral? ( value -- integral? )
     integral? cast-to-int
   ;
-  
+
+  \ Get a token
+  : token ( runtime: "name" -- seq | 0 )
+    token cast-to-int dup 0<> if >bytes else 2drop 0 then
+  ;
+    
   begin-module unsafe
-  
+    
+    \ Get the address and size of a bytes or constant bytes value
+    : bytes> ( value -- addr len )
+      dup >type case
+        bytes-type of
+          dup forth::cell+
+          swap >len
+        endof
+        const-bytes-type of
+          dup forth::cell+ @ cast-to-int
+          swap [ 2 cells ] literal + @ cast-to-int
+        endof
+        cells-type of
+          triple> { bytes offset len }
+          bytes >type case
+            bytes-type of
+              bytes forth::cell+ cast-to-int offset +
+              bytes >len offset - len min 0 max
+            endof
+            const-bytes-type of
+              bytes forth::cell+ @ cast-to-int offset +
+              bytes >len offset - len min 0 max
+            endof
+            ['] x-incorrect-type ?raise
+          endcase
+        endof
+        ['] x-incorrect-type ?raise
+      endcase
+    ;
+    
+    \ Cast a value from an integer
+    : cast-from-int ( value -- x ) cast-from-int ;
+
     \ Redefine @
     : @ ( addr -- x )
       cast-from-int
@@ -894,15 +1048,46 @@ begin-module zscript
       swap cast-from-int swap c!
     ;
 
+    \ Redefine MOVE
+    : move { src dest bytes -- }
+      src cast-from-int to src
+      dest cast-from-int to dest
+      bytes cast-from-int to bytes
+      src dest bytes move
+    ;
+
     \ Redefine FILL
     : fill { addr bytes val -- }
       addr cast-from-int to addr
       bytes cast-from-int to bytes
-      val cast-from-int to bytes
+      val cast-from-int to val
       addr bytes val fill
     ;
     
   end-module
+
+  \ Start compiling a word with a name
+  : start-compile ( seq -- )
+    unsafe::bytes> cast-from-int swap cast-from-int swap internal::start-compile
+  ;
+
+  \ Make a foreign word usable
+  : foreign ( in-count out-count xt "name" -- )
+    { in-count out-count xt }
+    token dup 0<> cast-from-int averts x-token-expected
+    start-compile visible
+    in-count 0 ?do postpone cast-from-int loop
+    xt cast-from-int lit, postpone execute
+    out-count 0 ?do postpone cast-to-int loop
+    internal::end-compile,
+  ;
+
+  \ Execute a foreign word
+  : execute-foreign ( in-count out-count xt -- )
+    rot 0 ?do cast-from-int loop
+    execute
+    0 ?do cast-to-int loop
+  ;
 
   \ Unsafe operations raising exceptions outside of UNSAFE module
   : @ ['] x-unsafe-op ?raise ;
@@ -911,6 +1096,7 @@ begin-module zscript
   : h! ['] x-unsafe-op ?raise ;
   : c@ ['] x-unsafe-op ?raise ;
   : c! ['] x-unsafe-op ?raise ;
+  : move ['] x-unsafe-op ?raise ;
   : fill ['] x-unsafe-op ?raise ;
   
 end-module
