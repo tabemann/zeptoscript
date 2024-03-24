@@ -42,6 +42,9 @@ begin-module zscript
 
   \ Unsafe operation
   : x-unsafe-op ." unsafe operation" cr ;
+
+  \ Value not small integer
+  : x-not-small-int ." not small int" cr ;
   
   begin-module zscript-internal
     
@@ -55,6 +58,15 @@ begin-module zscript
 
     \ The zeptoscript structure
     begin-structure zscript-size
+
+      \ The RAM globals array
+      field: ram-globals-array
+
+      \ The new RAM globals array
+      field: new-ram-globals-array
+
+      \ The flash globals array
+      field: flash-globals-array
       
       \ The bottom of the first semi-space
       field: first-space-bottom
@@ -73,6 +85,15 @@ begin-module zscript
 
     end-structure
 
+    \ Get the RAM globals array
+    : ram-globals-array@ zscript-state @ ram-globals-array @ ;
+
+    \ Get the new RAM globals array
+    : new-ram-globals-array@ zscript-state @ new-ram-globals-array @ ;
+
+    \ Get the flash globals array
+    : flash-globals-array@ zscript-state @ flash-globals-array @ ;
+
     \ Get the bottom of the first semi-space
     : first-space-bottom@ zscript-state @ first-space-bottom @ ;
     
@@ -88,6 +109,15 @@ begin-module zscript
     \ Get the top of the second semi-space
     : second-space-top@ zscript-state @ second-space-top @ ;
 
+    \ Set the RAM globals array
+    : ram-globals-array! zscript-state @ ram-globals-array ! ;
+
+    \ Set the new RAM globals array
+    : new-ram-globals-array! zscript-state @ new-ram-globals-array ! ;
+
+    \ Set the flash globals array
+    : flash-globals-array! zscript-state @ flash-globals-array ! ;
+    
     \ Set the bottom of the first semi-space
     : first-space-bottom! zscript-state @ first-space-bottom ! ;
     
@@ -268,6 +298,9 @@ begin-module zscript
     : gc ( -- )
       swap-spaces
       relocate-stack
+      ram-globals-array@ relocate ram-globals-array!
+      new-ram-globals-array@ relocate new-ram-globals-array!
+      flash-globals-array@ relocate flash-globals-array!
       second-space-bottom@ { gc-current }
       begin gc-current second-space-current@ < while
         gc-current @ { header }
@@ -409,6 +442,27 @@ begin-module zscript
       word-type allocate-cell tuck cell+ !
     ;
 
+    \ Case cells to nulls, integers, but not words
+    : >small-int ( x -- 0 | int )
+      code[
+      0 tos cmp_,#_
+      ne bc>
+      pc 1 pop
+      30 tos r0 lsrs_,_,#_
+      1 r0 cmp_,#_
+      eq bc>
+      2 r0 cmp_,#_
+      eq bc>
+      1 tos tos lsls_,_,#_
+      1 r0 movs_,#_
+      r0 tos orrs_,_
+      pc 1 pop
+      >mark
+      >mark
+      ]code
+      ['] x-not-small-int ?raise
+    ;
+
     \ Convert a pair of cells to nulls, integers, and words
     : 2>integral ( x0 x1 -- 0|int|addr 0|int|addr )
       >integral swap >integral swap
@@ -426,6 +480,22 @@ begin-module zscript
       xt-value
     ;
 
+    \ Convert an xt to an integral
+    : xt>integral ( xt -- integral )
+      dup >type xt-type = averts x-incorrect-type
+      forth::cell+ @ >integral
+    ;
+
+    \ Convert an integral to an xt
+    : integral>xt ( integral -- xt )
+      integral> >xt
+    ;
+
+    \ Raise an exception with an integral value
+    : integral-?raise ( integral-xt -- )
+      integral> ?raise
+    ;
+
     \ Normalize a value
     : normalize ( value -- value' )
       dup integral? if
@@ -437,6 +507,15 @@ begin-module zscript
           then
         then
         >integral
+      then
+    ;
+
+    \ Get whether an integer is a small integer
+    : small-int? ( value -- small? )
+      normalize dup integral? if
+        >type word-type <>
+      else
+        drop false
       then
     ;
     
@@ -465,8 +544,13 @@ begin-module zscript
     \ Handle a number
     : do-handle-number { addr bytes -- [value] -1 | 0 }
       parse-integer if
+        >integral
         state @ if
-          lit, postpone >integral
+          dup small-int? if
+            lit,
+          else
+            integral> lit, postpone >integral
+          then
         else
           >integral
         then
@@ -476,18 +560,44 @@ begin-module zscript
       then
     ;
 
+    \ RAM current global id
+    0 value current-ram-global-id
+
+    \ Specify current flash global variable ID
+    : set-current-flash-global-id ( id -- )
+      get-current
+      swap
+      internal set-current
+      integral> s" *GLOBAL*" constant-with-name
+      set-current
+    ;
+
+    \ Get current flash global variable ID
+    : get-current-flash-global-id ( -- id )
+      s" *GLOBAL*" flash-latest find-all-dict dup if
+        forth::>xt execute >integral
+      else
+        drop 0
+      then
+    ;
+
+    \ Initial RAM global ID index
+    0 constant current-ram-global-id-index
+
+    \ Initial RAM global ID
+    1 >integral constant init-ram-global-id
+
+    \ Initial RAM globals count
+    1 >integral constant init-ram-global-count
+
   end-module> import
+
+  \ Get the raw LIT,
+  : raw-lit, ( x -- ) integral> lit, ;
   
-  \ Initialize zeptoscript
-  : init-zscript { size -- }
-    size [ 2 cells ] literal align to size
-    cell align, here zscript-size allot zscript-state !
-    here size allot { heap }
-    heap first-space-bottom!
-    heap size 1 lshift +
-    dup first-space-top! dup second-space-current! second-space-bottom!
-    heap size + second-space-top!
-    ['] do-handle-number handle-number-hook !
+  \ Redefine LIT,
+  : lit, ( xt -- )
+    dup small-int? if lit, else integral> lit, postpone >integral then
   ;
 
   \ Get the length of cells in entries or bytes in bytes
@@ -555,6 +665,21 @@ begin-module zscript
     dup cell+ @
     swap [ 2 cells ] literal + @
     swap [ 3 cells ] literal + @
+  ;
+
+  \ Create a tuple
+  : >tuple ( xn ... x0 count -- tuple )
+    integral> dup cells-type allocate-cell
+    tuple over 1+ cells + swap 0 ?do cell - tuck ! loop drop
+    tuple
+  ;
+
+  \ Explode a tuple
+  : tuple> ( tuple -- xn ... x0 count )
+    dup >type cells-type = averts x-incorrect-type
+    dup >size cell - 2 rshift { count }
+    count 0 ?do cell + dup @ swap loop drop
+    count >integral
   ;
   
   \ Convert a sequence into a sequence triple
@@ -672,6 +797,25 @@ begin-module zscript
     swap integral> cell+
     over >size over u< averts x-offset-out-of-range
     + swap integral> swap c!
+  ;
+
+  \ Initialize zeptoscript
+  : init-zscript { size -- }
+    size [ 2 cells ] literal align to size
+    cell align, here zscript-size allot zscript-state !
+    here size allot { heap }
+    heap first-space-bottom!
+    heap size 1 lshift +
+    dup first-space-top! dup second-space-current! second-space-bottom!
+    heap size + second-space-top!
+    init-ram-global-count integral>
+    cells-type allocate-cells { ram-globals }
+    init-ram-global-id current-ram-global-id-index ram-globals v!+
+    ram-globals ram-globals-array!
+    ram-globals new-ram-globals-array!
+    get-current-flash-global-id integral>
+    cells-type allocate-cells flash-globals-array!
+    ['] do-handle-number handle-number-hook !
   ;
 
   \ Copy from one value to another in a type-safe fashion
@@ -926,9 +1070,6 @@ begin-module zscript
     integral> swap integral> max >integral
   ;
   
-  \ False constant
-  1 constant false
-
   \ Redefine IF
   : if ( flag -- )
     [immediate]
@@ -1069,13 +1210,16 @@ begin-module zscript
   ;
   
   \ The types, this time as values
-  0 >integral constant null-type
-  1 >integral constant int-type
-  2 >integral constant bytes-type
-  3 >integral constant word-type
-  4 >integral constant 2word-type
-  5 >integral constant const-bytes-type
-  10 >integral constant cells-type
+  null-type >small-int constant null-type
+  int-type >small-int constant int-type
+  bytes-type >small-int constant bytes-type
+  word-type >small-int constant word-type
+  2word-type >small-int constant 2word-type
+  const-bytes-type >small-int constant const-bytes-type
+  xt-type >small-int constant xt-type
+  tagged-type >small-int constant tagged-type
+  cells-type >small-int constant cells-type
+  closure-type >small-int constant closure-type
 
   \ Get whether a value is an int
   : int? ( value -- int? )
@@ -1147,7 +1291,7 @@ begin-module zscript
   : bind ( xn ... x0 count xt -- closure )
     dup >type xt-type = averts x-incorrect-type
     forth::cell+ @ { xt-cell } integral> { arg-count }
-    arg-count 1+ cells closure-type allocate-cells { closure }
+    arg-count forth::1+ forth::cells closure-type allocate-cells { closure }
     closure forth::cell+
     xt-cell over ! forth::cell+
     begin arg-count 0> forth::while
@@ -1169,7 +1313,7 @@ begin-module zscript
         endof
         const-bytes-type of
           dup forth::cell+ @ >integral
-          swap [ 2 cells ] literal + @ >integral
+          swap [ 2 forth::cells ] literal + @ >integral
         endof
         cells-type of
           triple> { bytes offset len }
@@ -1366,8 +1510,7 @@ begin-module zscript
   : ['] ( 'name" -- xt )
     [immediate]
     [compile-time]
-    token-word word>xt
-    forth::cell+ @ lit,
+    token-word word>xt xt>integral lit,
     postpone >xt
   ;
   
@@ -1389,8 +1532,8 @@ begin-module zscript
     state? if
       postpone 0=
       postpone if
-      rot lit,
-      postpone ?raise
+      rot xt>integral lit,
+      postpone integral-?raise
       postpone then
     else
       swap 0= if
@@ -1409,8 +1552,8 @@ begin-module zscript
     state? if
       postpone 0<>
       postpone if
-      rot lit,
-      postpone ?raise
+      rot xt>integral lit,
+      postpone integral-?raise
       postpone then
     else
       swap 0<> if
@@ -1425,9 +1568,6 @@ begin-module zscript
   : start-compile ( seq -- )
     unsafe::bytes> 2integral> internal::start-compile
   ;
-
-  \ Redefine LIT,
-  : lit, ( xt -- ) integral> lit, ;
 
   \ Redefine CHAR
   : char ( "name" -- x )
@@ -1484,7 +1624,7 @@ begin-module zscript
     token dup 0<> averts x-token-expected
     start-compile visible
     in-count 0 ?do postpone integral> loop
-    xt unbound-xt> lit, postpone forth::execute
+    xt unbound-xt> raw-lit, postpone forth::execute
     out-count 0 ?do postpone >integral loop
     internal::end-compile,
   ;
@@ -1557,13 +1697,13 @@ begin-module zscript
 
   \ Compile adding to a VALUE
     : compile-+to-value ( xt -- )
-      internal::value-addr@ lit,
+      internal::value-addr@ raw-lit,
       postpone dup
-      postpone @
+      postpone forth::@
       postpone rot
       postpone +
       postpone swap
-      postpone !
+      postpone forth::!
     ;
     
   end-module
@@ -1584,6 +1724,105 @@ begin-module zscript
     then
   ;
 
+  \ Define a CONSTANT
+  : constant ( x "name" -- )
+    dup small-int? if
+      constant
+    else
+      token dup 0<> averts x-token-expected
+      start-compile visible
+      lit,
+      end-compile,
+    then
+  ;
+
+  \ Define a 2CONSTANT
+  : 2constant ( x0 x1 "name" -- )
+    dup small-int? over small-int? and if
+      2constant
+    else
+      token dup 0<> averts x-token-expected
+      start-compile visible
+      swap lit, lit,
+      end-compile,
+    then
+  ;
+  
+  continue-module zscript-internal
+
+    \ Get a RAM global at an index
+    : ram-global@ ( index -- x )
+      ram-global-array@ v@+
+    ;
+
+    \ Set a RAM global at an index
+    : ram-global! ( x index -- )
+      ram-global-array@ v!+
+    ;
+
+    \ Get a flash global at an index
+    : flash-global@ ( index -- x )
+      flash-global-array@ v@+
+    ;
+
+    \ Set a flash global at an index
+    : flash-global! ( x index -- )
+      flash-global-array@ v@+
+    ;
+
+    \ Create a RAM global
+    : ram-global ( "name" --)
+      { offset }
+      token dup 0<> averts x-token-expected { name }
+      name >len { len }
+      current-ram-global-id-index ram-global@ { index }
+      index 1+ current-ram-global-id-index ram-global!
+      index 1+ integral> cells-type integral> allocate-cells { new-globals }
+      new-globals new-ram-global-array!
+      ram-global-array@ 0 new-ram-global-array@ 0 index copy
+      new-ram-global-array@ ram-global-array!
+      len 1+ allocate-bytes { accessor-name }
+      name 0 accessor-name 0 len copy
+      [char] @ len 1+ accessor-name c!+
+      accessor-name start-compile visible
+      index lit,
+      postpone ram-global@
+      end-compile,
+      [char] ! len 1+ accessor-name c!+
+      accessor-name start-compile visible
+      index lit,
+      postpone ram-global!
+      end-compile,
+    ;
+
+    \ Create a flash global
+    : flash-global ( "name" --)
+      { offset }
+      token dup 0<> averts x-token-expected { name }
+      name >len { len }
+      get-current-flash-global-id { index }
+      len 1+ allocate-bytes { accessor-name }
+      name 0 accessor-name 0 len copy
+      [char] @ len 1+ accessor-name c!+
+      accessor-name start-compile visible
+      index lit,
+      postpone flash-global@
+      end-compile,
+      [char] ! len 1+ accessor-name c!+
+      accessor-name start-compile visible
+      index lit,
+      postpone flash-global!
+      end-compile,
+      index 1+ set-current-flash-global-id
+    ;
+    
+  end-module
+
+  \ Create a global
+  : global ( "name" -- )
+    compiling-to-flash? if flash-global else ram-global then
+  ;
+  
   \ Unsafe operations raising exceptions outside of UNSAFE module
   : @ ['] x-unsafe-op ?raise ;
   : ! ['] x-unsafe-op ?raise ;
