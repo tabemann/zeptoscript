@@ -252,11 +252,11 @@ begin-module zscript
     : relocate { orig -- new }
       orig addr? if
         orig first-space-bottom@ >= orig first-space-top@ < and if
-          orig @ { header }
+          orig @
           dup 1 and 0= if
-            header size-mask and 1 rshift { size }
+            size-mask and 1 rshift { size }
             second-space-current@ { current }
-            second-space-top@ current size + - <= averts x-out-of-memory
+            second-space-top@ current size + > averts x-out-of-memory
             orig current size move
             current 1 or orig !
             current size cell align + second-space-current!
@@ -274,8 +274,8 @@ begin-module zscript
 
     \ Relocate the stack
     : relocate-stack ( -- )
-      sp@ stack-base @ swap ?do i @ relocate i ! loop
-      rp@ rstack-base @ swap ?do i @ relocate i ! loop
+      sp@ stack-base @ swap ?do i @ relocate i ! cell +loop
+      rp@ rstack-base @ swap ?do i @ relocate i ! cell +loop
     ;
 
     \ Swap spaces
