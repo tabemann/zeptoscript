@@ -47,6 +47,9 @@ begin-module zscript
   : x-not-small-int ." not small int" cr ;
   
   begin-module zscript-internal
+
+    \ Are we initialized
+    false value inited?
     
     \ Record syntax
     255 constant syntax-record
@@ -220,12 +223,6 @@ begin-module zscript
       >type dup xt-type = swap closure-type = or
     ;
 
-    \ Get an unbound xt
-    : unbound-xt> ( value -- xt )
-      dup >type xt-type = averts x-incorrect-type
-      cell+ @ >integral
-    ;
-
     \ Validate whether a value is an integer
     : validate-int ( value -- ) 1 and 0<> averts x-incorrect-type ;
 
@@ -330,7 +327,7 @@ begin-module zscript
       bytes current + second-space-current!
       current
       dup cell+ bytes cell - 0 fill
-      type 2 - type-shift lshift bytes 1 lshift or over !
+      bytes 1 lshift type 2 - type-shift lshift or over !
     ;
 
     \ Allocate memory as bytes
@@ -345,7 +342,8 @@ begin-module zscript
       bytes current + second-space-current!
       current
       dup cell+ bytes cell - 0 fill
-      [ bytes-type 2 - type-shift lshift ] literal count 1 lshift or over !
+      count cell+ 1 lshift
+      [ bytes-type 2 - type-shift lshift ] literal or over !
     ;
     
     \ Allocate a cell
@@ -394,7 +392,8 @@ begin-module zscript
       current
       tag dup cell+ !
       dup [ 2 cells ] literal + bytes [ 2 cells ] literal - 0 fill
-      [ tagged-type 2 - type-shift lshift ] literal count 1 lshift or over !
+      count cell+ 1 lshift
+      [ tagged-type 2 - type-shift lshift ] literal or over !
     ;
 
     \ Cast nulls, integers, and words to cells, validating them
@@ -427,6 +426,7 @@ begin-module zscript
       0 tos cmp_,#_
       ne bc>
       pc 1 pop
+      >mark
       30 tos r0 lsrs_,_,#_
       1 r0 cmp_,#_
       eq bc>
@@ -448,6 +448,7 @@ begin-module zscript
       0 tos cmp_,#_
       ne bc>
       pc 1 pop
+      >mark
       30 tos r0 lsrs_,_,#_
       1 r0 cmp_,#_
       eq bc>
@@ -500,7 +501,7 @@ begin-module zscript
     : normalize ( value -- value' )
       dup integral? if
         dup if
-          dup int? if
+          dup 1 and if
             1 arshift
           else
             cell+ @
@@ -542,7 +543,7 @@ begin-module zscript
     ;
 
     \ Handle a number
-    : do-handle-number { addr bytes -- [value] -1 | 0 }
+    : do-handle-number ( addr bytes -- [value] -1 | 0 )
       parse-integer if
         >integral
         state @ if
@@ -551,8 +552,6 @@ begin-module zscript
           else
             integral> lit, postpone >integral
           then
-        else
-          >integral
         then
         true
       else
@@ -568,7 +567,7 @@ begin-module zscript
       get-current
       swap
       internal set-current
-      integral> s" *GLOBAL*" constant-with-name
+      integral> s" *GLOBAL*" internal::constant-with-name
       set-current
     ;
 
@@ -585,10 +584,10 @@ begin-module zscript
     0 constant current-ram-global-id-index
 
     \ Initial RAM global ID
-    1 >integral constant init-ram-global-id
+    1 >small-int constant init-ram-global-id
 
     \ Initial RAM globals count
-    1 >integral constant init-ram-global-count
+    1 >small-int constant init-ram-global-count
 
   end-module> import
 
@@ -663,13 +662,13 @@ begin-module zscript
     dup >type cells-type = averts x-incorrect-type
     dup >size [ 4 cells ] literal = averts x-incorrect-size
     dup cell+ @
-    swap [ 2 cells ] literal + @
-    swap [ 3 cells ] literal + @
+    over [ 2 cells ] literal + @
+    rot [ 3 cells ] literal + @
   ;
 
   \ Create a tuple
   : >tuple ( xn ... x0 count -- tuple )
-    integral> dup cells-type allocate-cell
+    integral> dup cells-type allocate-cells { tuple }
     tuple over 1+ cells + swap 0 ?do cell - tuck ! loop drop
     tuple
   ;
@@ -681,14 +680,176 @@ begin-module zscript
     count 0 ?do cell + dup @ swap loop drop
     count >integral
   ;
+
+  \ Explode a tuple without pushing its count
+  : tuple-no-count> ( tuple -- xn ... x0 )
+    dup >type cells-type = averts x-incorrect-type
+    dup >size cell - 2 rshift { count }
+    count 0 ?do cell + dup @ swap loop drop
+  ;
   
   \ Convert a sequence into a sequence triple
   : seq>triple ( seq -- triple )
     0 over >len >triple
   ;
 
-  \ Redefine s"
+  \ Get a value in a cells data structure
+  : v@+ ( index object -- value )
+    dup >type cells-type = averts x-incorrect-type
+    swap integral> 1+ cells
+    over >size over u>= averts x-offset-out-of-range
+    + @
+  ;
+
+  \ Set a value in a cells data structure
+  : v!+ ( value index object -- )
+    dup >type cells-type = averts x-incorrect-type
+    swap integral> 1+ cells
+    over >size over u>= averts x-offset-out-of-range
+    + !
+  ;
+
+  \ Get a word in a bytes data structure
+  : @+ ( index object -- byte )
+    dup >type case
+      bytes-type of
+        swap integral> cell+
+        over >size over u>= averts x-offset-out-of-range
+        dup 3 and triggers x-unaligned-dereference
+        + @ >integral
+      endof
+      const-bytes-type of
+        dup [ 2 cells ] literal + @ { len }
+        over len u>= averts x-offset-out-of-range
+        over 3 and triggers x-unaligned-dereference
+        cell+ @ + @ >integral
+      endof
+      ['] x-incorrect-type ?raise
+    endcase
+  ;
+
+  \ Set a word in a bytes data structure
+  : !+ ( byte index object -- )
+    dup >type bytes-type = averts x-incorrect-type
+    swap integral> cell+
+    over >size over u>= averts x-offset-out-of-range
+    dup 3 and triggers x-unaligned-dereference
+    + swap integral> swap !
+  ;
+
+  \ Get a halfword in a bytes data structure
+  : h@+ ( index object -- byte )
+    dup >type case
+      bytes-type of
+        swap integral> cell+
+        over >size over u>= averts x-offset-out-of-range
+        dup 1 and triggers x-unaligned-dereference
+        + h@ 1 lshift 1 or
+      endof
+      const-bytes-type of
+        dup [ 2 cells ] literal + @ { len }
+        over len u>= averts x-offset-out-of-range
+        over 1 and triggers x-unaligned-dereference
+        cell+ @ + h@ 1 lshift 1 or
+      endof
+      ['] x-incorrect-type ?raise
+    endcase
+  ;
+
+  \ Set a halfword in a bytes data structure
+  : h!+ ( byte index object -- )
+    dup >type bytes-type = averts x-incorrect-type
+    swap integral> cell+
+    over >size over u>= averts x-offset-out-of-range
+    dup 1 and triggers x-unaligned-dereference
+    + swap integral> swap h!
+  ;
+
+  \ Get a byte in a bytes data structure
+  : c@+ ( index object -- byte )
+    dup >type case
+      bytes-type of
+        swap integral> cell+
+        over >size over u>= averts x-offset-out-of-range
+        + c@ 1 lshift 1 or
+      endof
+      const-bytes-type of
+        dup [ 2 cells ] literal + @ { len }
+        over len u>= averts x-offset-out-of-range
+        cell+ @ + c@ 1 lshift 1 or
+      endof
+      ['] x-incorrect-type ?raise
+    endcase
+  ;
+
+  \ Set a byte in a bytes data structure
+  : c!+ ( byte index object -- )
+    dup >type bytes-type = averts x-incorrect-type
+    swap integral> cell+
+    over >size over u>= averts x-offset-out-of-range
+    + swap integral> swap c!
+  ;
+
+  \ Initialize zeptoscript
+  defer init-zscript
+  :noname { compile-size runtime-size -- }
+    compile-size [ 2 cells ] literal align to compile-size
+    runtime-size [ 2 cells ] literal align to runtime-size
+    compiling-to-flash? if
+      s" init" flash-latest find-all-dict
+      get-current -rot
+      forth set-current
+      s" init" internal::start-compile visible
+      ?dup if forth::>xt lit, postpone execute then
+      runtime-size lit, runtime-size lit, postpone init-zscript
+      internal::end-compile,
+      set-current
+      compile-size
+    else
+      runtime-size
+    then { size }
+    cell ram-align, ram-here zscript-size ram-allot zscript-state !
+    ram-here size ram-allot { heap }
+    heap first-space-bottom!
+    heap size 1 rshift +
+    dup first-space-top! dup second-space-current! second-space-bottom!
+    heap size + second-space-top!
+    0 ram-globals-array!
+    0 new-ram-globals-array!
+    0 flash-globals-array!
+    init-ram-global-count integral>
+    cells-type allocate-cells { ram-globals }
+    init-ram-global-id current-ram-global-id-index ram-globals v!+
+    ram-globals ram-globals-array!
+    ram-globals new-ram-globals-array!
+    get-current-flash-global-id integral>
+    cells-type allocate-cells flash-globals-array!
+    ['] do-handle-number handle-number-hook !
+  ; is init-zscript
+
+  \ Copy from one value to another in a type-safe fashion
+  : copy { value0 offset0 value1 offset1 count -- }
+    count integral> to count
+    offset0 integral> to offset0
+    offset1 integral> to offset1
+    value0 addr? averts x-incorrect-type
+    value1 addr? averts x-incorrect-type
+    value0 >type { type0 }
+    type0 value1 >type = averts x-incorrect-type
+    count 0>= averts x-offset-out-of-range
+    value0 >size cell - offset0 count + >= averts x-offset-out-of-range
+    value1 >size cell - offset1 count + >= averts x-offset-out-of-range
+    type0 2 - has-values and if
+      count cells to count
+      offset0 cells to offset0
+      offset1 cells to offset1
+    then
+    value0 cell+ offset0 + value1 cell+ offset1 + count move
+  ;
+  
+  \ Redefine S"
   : s" ( "string" -- triple )
+    [immediate]
     state @ if
       postpone s"
       postpone 2>integral
@@ -701,141 +862,25 @@ begin-module zscript
       seq>triple
     then
   ;
-  
-  \ Get a value in a cells data structure
-  : v@+ ( index object -- value )
-    dup >type cells-type = averts x-incorrect-type
-    swap integral> 1+ cells
-    over >size over u< averts x-offset-out-of-range
-    + @
-  ;
 
-  \ Set a value in a cells data structure
-  : v!+ ( value index object -- )
-    dup >type cells-type = averts x-incorrect-type
-    swap integral> 1+ cells
-    over >size over u< averts x-offset-out-of-range
-    + !
-  ;
-
-  \ Get a word in a bytes data structure
-  : @+ ( index object -- byte )
-    dup >type case
-      bytes-type of
-        swap integral> cell+
-        over >size over u< averts x-offset-out-of-range
-        dup 3 and triggers x-unaligned-dereference
-        + @ >integral
-      endof
-      const-bytes-type of
-        dup [ 2 cells ] literal + @ { len }
-        over len u< averts x-offset-out-of-range
-        over 3 and triggers x-unaligned-dereference
-        cell+ @ + @ >integral
-      endof
-      ['] x-incorrect-type ?raise
-    endcase
-  ;
-
-  \ Set a word in a bytes data structure
-  : !+ ( byte index object -- )
-    dup >type bytes-type = averts x-incorrect-type
-    swap integral> cell+
-    over >size over u< averts x-offset-out-of-range
-    dup 3 and triggers x-unaligned-dereference
-    + swap integral> swap !
-  ;
-
-  \ Get a halfword in a bytes data structure
-  : h@+ ( index object -- byte )
-    dup >type case
-      bytes-type of
-        swap integral> cell+
-        over >size over u< averts x-offset-out-of-range
-        dup 1 and triggers x-unaligned-dereference
-        + h@ 1 lshift 1 or
-      endof
-      const-bytes-type of
-        dup [ 2 cells ] literal + @ { len }
-        over len u< averts x-offset-out-of-range
-        over 1 and triggers x-unaligned-dereference
-        cell+ @ + h@ 1 lshift 1 or
-      endof
-      ['] x-incorrect-type ?raise
-    endcase
-  ;
-
-  \ Set a halfword in a bytes data structure
-  : h!+ ( byte index object -- )
-    dup >type bytes-type = averts x-incorrect-type
-    swap integral> cell+
-    over >size over u< averts x-offset-out-of-range
-    dup 1 and triggers x-unaligned-dereference
-    + swap integral> swap h!
-  ;
-
-  \ Get a byte in a bytes data structure
-  : c@+ ( index object -- byte )
-    dup >type case
-      bytes-type of
-        swap integral> cell+
-        over >size over u< averts x-offset-out-of-range
-        + c@ 1 lshift 1 or
-      endof
-      const-bytes-type of
-        dup [ 2 cells ] literal + @ { len }
-        over len u< averts x-offset-out-of-range
-        cell+ @ + c@ 1 lshift 1 or
-      endof
-      ['] x-incorrect-type ?raise
-    endcase
-  ;
-
-  \ Set a byte in a bytes data structure
-  : c!+ ( byte index object -- )
-    dup >type bytes-type = averts x-incorrect-type
-    swap integral> cell+
-    over >size over u< averts x-offset-out-of-range
-    + swap integral> swap c!
-  ;
-
-  \ Initialize zeptoscript
-  : init-zscript { size -- }
-    size [ 2 cells ] literal align to size
-    cell align, here zscript-size allot zscript-state !
-    here size allot { heap }
-    heap first-space-bottom!
-    heap size 1 lshift +
-    dup first-space-top! dup second-space-current! second-space-bottom!
-    heap size + second-space-top!
-    init-ram-global-count integral>
-    cells-type allocate-cells { ram-globals }
-    init-ram-global-id current-ram-global-id-index ram-globals v!+
-    ram-globals ram-globals-array!
-    ram-globals new-ram-globals-array!
-    get-current-flash-global-id integral>
-    cells-type allocate-cells flash-globals-array!
-    ['] do-handle-number handle-number-hook !
-  ;
-
-  \ Copy from one value to another in a type-safe fashion
-  : copy { value0 offset0 value1 offset1 count -- }
-    count integral> to count
-    offset0 integral> to offset0
-    offset1 integral> to offset1
-    value0 addr? averts x-incorrect-type
-    value1 addr? averts x-incorrect-type
-    value0 >type { type0 }
-    type0 value1 >type = averts x-incorrect-type
-    count 0>= averts x-offset-out-of-range
-    value0 >size cell - offset0 count + >= averts x-offset-ouf-of-range
-    value1 >size cell - offset1 count + >= averts x-offset-ouf-of-range
-    type0 2 - has-values and if
-      count cells to count
-      offset0 cells to offset0
-      offset1 cells to offset1
+  \ Redefer S\"
+  : s\" ( "string" -- triple )
+    [immediate]
+    state @ if
+      postpone s\"
+      postpone 2>integral
+      postpone >const-bytes
+      postpone seq>triple
+    else
+      [:
+        here dup [char] " esc-string::parse-esc-string
+        here over -
+        2>integral
+        >bytes
+        seq>triple
+        swap ram-here!
+      ;] with-ram
     then
-    value0 cell+ offset0 + value1 cell+ offset1 + count move
   ;
   
   \ Add two integers
@@ -972,6 +1017,12 @@ begin-module zscript
     swap integral> arshift >integral
   ;
 
+  \ Align a value to a power of two
+  : align ( x0 x1 -- x2 )
+    swap integral>
+    swap integral> align >integral
+  ;
+  
   \ Get whether two values are equal
   : = { x0 x1 -- flag }
     x0 integral? x1 integral? forth::and if
@@ -1069,6 +1120,9 @@ begin-module zscript
   : max ( n0 n1 -- n2 )
     integral> swap integral> max >integral
   ;
+
+  \ Cell constant
+  cell >small-int constant cell
   
   \ Redefine IF
   : if ( flag -- )
@@ -1208,6 +1262,16 @@ begin-module zscript
   : >type ( value -- type )
     >type >integral
   ;
+
+  \ Get whether a value is integral
+  : integral? ( value -- integral? )
+    integral? >integral
+  ;
+  
+  \ Get whether a value is a small integer
+  : small-int? ( value -- small-int? )
+    small-int? >integral
+  ;
   
   \ The types, this time as values
   null-type >small-int constant null-type
@@ -1337,7 +1401,7 @@ begin-module zscript
     : @ ( addr -- x )
       integral>
       dup averts x-null-dereference
-      dup 3 forth::and triggers x-unaligned-deference
+      dup 3 forth::and triggers x-unaligned-dereference
       @ >integral
     ;
   
@@ -1345,7 +1409,7 @@ begin-module zscript
     : ! ( x addr -- )
       integral>
       dup averts x-null-dereference
-      dup 3 forth::and triggers x-unaligned-deference
+      dup 3 forth::and triggers x-unaligned-dereference
       swap integral> swap !
     ;
 
@@ -1385,7 +1449,7 @@ begin-module zscript
     : h@ ( addr -- h )
       integral>
       dup averts x-null-dereference
-      dup 1 forth::and triggers x-unaligned-deference
+      dup 1 forth::and triggers x-unaligned-dereference
       h@ >integral
     ;
   
@@ -1393,7 +1457,7 @@ begin-module zscript
     : h! ( h addr -- )
       integral>
       dup averts x-null-dereference
-      dup 1 forth::and triggers x-unaligned-deference
+      dup 1 forth::and triggers x-unaligned-dereference
       swap integral> swap h!
     ;
   
@@ -1498,6 +1562,11 @@ begin-module zscript
     
   end-module
 
+  \ Type a string
+  : type ( seq -- )
+    unsafe::bytes> 2integral> type
+  ;
+  
   \ Get the compilation state
   : state? state forth::@ >integral ;
   
@@ -1509,7 +1578,7 @@ begin-module zscript
   \ Get an xt at compile-time
   : ['] ( 'name" -- xt )
     [immediate]
-    [compile-time]
+    [compile-only]
     token-word word>xt xt>integral lit,
     postpone >xt
   ;
@@ -1527,17 +1596,16 @@ begin-module zscript
   \ Assert that a value is true, otherwise raise a specified exception
   : averts ( f "name" -- )
     [immediate]
-    token-word
-    word>xt
-    state? if
+    forth::token-word forth::>xt
+    state @ forth::if
       postpone 0=
       postpone if
-      rot xt>integral lit,
-      postpone integral-?raise
+      rot forth::lit,
+      postpone forth::?raise
       postpone then
     else
       swap 0= if
-        ?raise
+        forth::?raise
       else
         drop
       then
@@ -1547,26 +1615,51 @@ begin-module zscript
   \ Assert that a value is false, otherwise raise a specified exception
   : triggers ( f "name" -- )
     [immediate]
-    token-word
-    word>xt
-    state? if
+    forth::token-word forth::>xt
+    state @ forth::if
       postpone 0<>
       postpone if
-      rot xt>integral lit,
-      postpone integral-?raise
+      rot forth::lit,
+      postpone forth::?raise
       postpone then
     else
       swap 0<> if
-        ?raise
+        forth::?raise
       else
         drop
       then
+    then
+  ;
+
+  \ Always raise an exception; this is needed due to issues with compiling code
+  \ before zeptoscript is initialized
+  : raise ( "name" -- )
+    [immediate]
+    forth::token-word forth::>xt
+    state @ forth::if
+      forth::lit, postpone forth::?raise
+    else
+      forth::?raise
     then
   ;
   
   \ Start compiling a word with a name
   : start-compile ( seq -- )
     unsafe::bytes> 2integral> internal::start-compile
+  ;
+
+  \ End compiling, exported to match start-compile
+  : end-compile, ( -- )
+    internal::end-compile,
+  ;
+
+  \ Define a constant with a name
+  : constant-with-name ( x name -- )
+    swap dup small-int? if
+      integral> swap unsafe::bytes> 2integral> internal::constant-with-name
+    else
+      swap start-compile visible lit, end-compile,
+    then
   ;
 
   \ Redefine CHAR
@@ -1579,20 +1672,50 @@ begin-module zscript
   : [char] ( "name" -- x )
     [immediate]
     [compile-only]
-    token dup 0<> averts x-token-exppected
+    token dup 0<> averts x-token-expected
     unsafe::bytes> drop 0 swap unsafe::c@ lit,
   ;
 
   \ Begin declaring a record
   : begin-record ( "name" -- offset )
     syntax-record internal::push-syntax
-    <builds here 0 4 allot does> @ cells-type allocate-cells
+    token dup 0<> averts x-token-expected
+    0
   ;
 
   \ Finish declaring a record
   : end-record ( offset -- )
     syntax-record internal::verify-syntax internal::drop-syntax
-    swap current!
+    { name count }
+    name >len { len }
+    len 1+ allocate-bytes { accessor-name }
+    forth::[char] > >integral 0 accessor-name c!+
+    name 0 accessor-name 1 len copy
+    accessor-name start-compile visible
+    count lit,
+    postpone >tuple
+    end-compile,
+    forth::[char] > >integral len accessor-name c!+
+    name 0 accessor-name 0 len copy
+    accessor-name start-compile visible
+    postpone tuple-no-count>
+    end-compile,
+    s" make-" { make-bytes make-offset make-len }
+    make-len len + allocate-bytes to accessor-name
+    make-bytes make-offset accessor-name 0 make-len copy
+    name 0 accessor-name make-len len copy
+    accessor-name start-compile visible
+    count raw-lit,
+    cells-type raw-lit,
+    postpone allocate-cells
+    end-compile,
+    s" -size" triple> { size-bytes size-offset size-len }
+    [ false ] [if] \ This is only needed if make-len size-len <>
+      size-len len + allocate-bytes to accessor-name
+    [then]
+    name 0 accessor-name 0 len copy
+    size-bytes size-offset accessor-name len size-len copy
+    count accessor-name constant-with-name
   ;
 
   \ Create a field in a record
@@ -1603,13 +1726,13 @@ begin-module zscript
     name >len { len }
     len 1+ allocate-bytes { accessor-name }
     name 0 accessor-name 0 len copy
-    [char] @ len 1+ accessor-name c!+
+    forth::[char] @ >integral len 1+ accessor-name c!+
     accessor-name start-compile visible
     offset lit,
     postpone swap
     postpone v@+
     end-compile,
-    [char] ! len 1+ accessor-name c!+
+    forth::[char] ! >integral len 1+ accessor-name c!+
     accessor-name start-compile visible
     offset lit,
     postpone swap
@@ -1624,7 +1747,7 @@ begin-module zscript
     token dup 0<> averts x-token-expected
     start-compile visible
     in-count 0 ?do postpone integral> loop
-    xt unbound-xt> raw-lit, postpone forth::execute
+    xt xt>integral raw-lit, postpone forth::execute
     out-count 0 ?do postpone >integral loop
     internal::end-compile,
   ;
@@ -1646,15 +1769,17 @@ begin-module zscript
     \ Compile adding to a cell variable
     : compile-add-cell-local { index -- }
       undefer-lit
-      6 push,
+      6 internal::push,
       index 128 forth::< forth::if
         [ armv6m-instr import ]
         index 4 forth::* tos ldr_,[sp,#_]
         [ armv6m-instr unimport ]
       else
-        index 4 forth::* r0 literal,
+        [ armv6m-instr import ]
+        index 4 forth::* r0 internal::literal,
         r0 add4_,sp
         0 r0 tos ldr_,[_,#_]
+        [ armv6m-instr unimport ]
       then
       postpone +
       index 128 forth::< forth::if
@@ -1662,11 +1787,13 @@ begin-module zscript
         index 4 forth::* tos str_,[sp,#_]
         [ armv6m-instr unimport ]
       else
-        index 4 forth::* r0 literal,
+        [ armv6m-instr import ]
+        index 4 forth::* r0 internal::literal,
         r0 add4_,sp
         0 r0 tos str_,[_,#_]
+        [ armv6m-instr unimport ]
       then
-      6 pull,
+      6 internal::pull,
     ;
     
     \ Add to a local variable
@@ -1678,7 +1805,7 @@ begin-module zscript
           rdrop rdrop c@ case
             internal::cell-local of compile-add-cell-local endof
             internal::cell-addr-local of compile-add-cell-local endof
-            ['] x-currently-unsupported-data-type ?raise
+            raise x-currently-unsupported-data-type
             \ double-local of compile-add-double-local endof
             \ double-addr-local of compile-add-double-local endof
           endcase
@@ -1709,6 +1836,7 @@ begin-module zscript
   end-module
 
   \ Add to a local or a VALUE
+  \ Do not execute this after this point before zeptoscript is initialized
   : +to ( x "name" -- )
     [immediate]
     token dup 0<> averts x-token-expected
@@ -1719,7 +1847,7 @@ begin-module zscript
         drop
       then
     else
-      find dup 0<> averts x-unknown-word word>xt unbound-xt>
+      find dup 0<> averts x-unknown-word word>xt xt>integral integral>
       internal::value-addr@ tuck @ + swap !
     then
   ;
@@ -1752,22 +1880,22 @@ begin-module zscript
 
     \ Get a RAM global at an index
     : ram-global@ ( index -- x )
-      ram-global-array@ v@+
+      ram-globals-array@ v@+
     ;
 
     \ Set a RAM global at an index
     : ram-global! ( x index -- )
-      ram-global-array@ v!+
+      ram-globals-array@ v!+
     ;
 
     \ Get a flash global at an index
     : flash-global@ ( index -- x )
-      flash-global-array@ v@+
+      flash-globals-array@ v@+
     ;
 
     \ Set a flash global at an index
     : flash-global! ( x index -- )
-      flash-global-array@ v@+
+      flash-globals-array@ v@+
     ;
 
     \ Create a RAM global
@@ -1778,17 +1906,17 @@ begin-module zscript
       current-ram-global-id-index ram-global@ { index }
       index 1+ current-ram-global-id-index ram-global!
       index 1+ integral> cells-type integral> allocate-cells { new-globals }
-      new-globals new-ram-global-array!
-      ram-global-array@ 0 new-ram-global-array@ 0 index copy
-      new-ram-global-array@ ram-global-array!
+      new-globals new-ram-globals-array!
+      ram-globals-array@ 0 new-ram-globals-array@ 0 index copy
+      new-ram-globals-array@ ram-globals-array!
       len 1+ allocate-bytes { accessor-name }
       name 0 accessor-name 0 len copy
-      [char] @ len 1+ accessor-name c!+
+      forth::[char] @ >integral len 1+ accessor-name c!+
       accessor-name start-compile visible
       index lit,
       postpone ram-global@
       end-compile,
-      [char] ! len 1+ accessor-name c!+
+      forth::[char] ! >integral len 1+ accessor-name c!+
       accessor-name start-compile visible
       index lit,
       postpone ram-global!
@@ -1803,12 +1931,12 @@ begin-module zscript
       get-current-flash-global-id { index }
       len 1+ allocate-bytes { accessor-name }
       name 0 accessor-name 0 len copy
-      [char] @ len 1+ accessor-name c!+
+      forth::[char] @ >integral len 1+ accessor-name c!+
       accessor-name start-compile visible
       index lit,
       postpone flash-global@
       end-compile,
-      [char] ! len 1+ accessor-name c!+
+      forth::[char] ! >integral len 1+ accessor-name c!+
       accessor-name start-compile visible
       index lit,
       postpone flash-global!
@@ -1824,27 +1952,27 @@ begin-module zscript
   ;
   
   \ Unsafe operations raising exceptions outside of UNSAFE module
-  : @ ['] x-unsafe-op ?raise ;
-  : ! ['] x-unsafe-op ?raise ;
-  : +! ['] x-unsafe-op ?raise ;
-  : bis! ['] x-unsafe-op ?raise ;
-  : bic! ['] x-unsafe-op ?raise ;
-  : xor! ['] x-unsafe-op ?raise ;
-  : h@ ['] x-unsafe-op ?raise ;
-  : h! ['] x-unsafe-op ?raise ;
-  : h+! ['] x-unsafe-op ?raise ;
-  : hbis! ['] x-unsafe-op ?raise ;
-  : hbic! ['] x-unsafe-op ?raise ;
-  : hxor! ['] x-unsafe-op ?raise ;
-  : c@ ['] x-unsafe-op ?raise ;
-  : c! ['] x-unsafe-op ?raise ;
-  : c+! ['] x-unsafe-op ?raise ;
-  : cbis! ['] x-unsafe-op ?raise ;
-  : cbic! ['] x-unsafe-op ?raise ;
-  : cxor! ['] x-unsafe-op ?raise ;
-  : move ['] x-unsafe-op ?raise ;
-  : fill ['] x-unsafe-op ?raise ;
-  : here ['] x-unsafe-op ?raise ;
-  : allot ['] x-unsafe-op ?raise ;
+  : @ raise x-unsafe-op ;
+  : ! raise x-unsafe-op ;
+  : +! raise x-unsafe-op ;
+  : bis! raise x-unsafe-op ;
+  : bic! raise x-unsafe-op ;
+  : xor! raise x-unsafe-op ;
+  : h@ raise x-unsafe-op ;
+  : h! raise x-unsafe-op ;
+  : h+! raise x-unsafe-op ;
+  : hbis! raise x-unsafe-op ;
+  : hbic! raise x-unsafe-op ;
+  : hxor! raise x-unsafe-op ;
+  : c@ raise x-unsafe-op ;
+  : c! raise x-unsafe-op ;
+  : c+! raise x-unsafe-op ;
+  : cbis! raise x-unsafe-op ;
+  : cbic! raise x-unsafe-op ;
+  : cxor! raise x-unsafe-op ;
+  : move raise x-unsafe-op ;
+  : fill raise x-unsafe-op ;
+  : here raise x-unsafe-op ;
+  : allot raise x-unsafe-op ;
   
 end-module
