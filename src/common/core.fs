@@ -249,27 +249,55 @@ begin-module zscript
     ;
     
     \ Relocate a block of memory
-    : relocate { orig -- new }
-      orig addr? if
-        orig first-space-bottom@ >= orig first-space-top@ < and if
-          orig @
-          dup 1 and 0= if
-            size-mask and 1 rshift { size }
-            second-space-current@ { current }
-            second-space-top@ current size + > averts x-out-of-memory
-            orig current size move
-            current 1 or orig !
-            current size cell align + second-space-current!
-            current
-          else
-            1 bic
-          then
-        else
-          orig
-        then
-      else
-        orig
-      then
+    : relocate ( orig -- new )
+      code[
+      0 tos cmp_,#_
+      ne bc>
+      pc 1 pop
+      >mark
+      1 r0 movs_,#_
+      r0 tos tst_,_
+      eq bc>
+      pc 1 pop
+      >mark
+      ]code
+      first-space-bottom@
+      first-space-top@
+      code[
+      4 dp r0 ldr_,[_,#_]
+      tos r0 cmp_,_
+      lo bc>
+      4 dp adds_,#_
+      tos 1 dp ldm
+      pc 1 pop
+      >mark
+      tos 1 dp ldm
+      tos r0 cmp_,_
+      hs bc>
+      4 dp adds_,#_
+      r0 tos movs_,_
+      pc 1 pop
+      >mark
+      4 dp adds_,#_
+      r0 tos movs_,_
+      tos r2 movs_,_
+      0 r2 tos ldr_,[_,#_]
+      1 r1 movs_,#_
+      r1 tos tst_,_
+      eq bc>
+      r1 tos bics_,_
+      pc 1 pop
+      >mark
+      4 dp subs_,#_
+      0 dp r2 str_,[_,#_]
+      ]code
+      size-mask and 1 rshift { size }
+      second-space-current@ { current }
+      second-space-top@ current size + > averts x-out-of-memory
+      dup current size move
+      current 1 or swap !
+      current size cell align + second-space-current!
+      current
     ;
 
     \ Relocate the stack
@@ -301,9 +329,8 @@ begin-module zscript
       second-space-bottom@ { gc-current }
       begin gc-current second-space-current@ < while
         gc-current @ { header }
-        header type-shift rshift { type }
         header size-mask and 1 rshift cell align { aligned-size }
-        type has-values and if
+        header [ has-values type-shift lshift ] literal and if
           gc-current aligned-size + { gc-current-end }
           gc-current cell+ begin dup gc-current-end < while
             dup @ relocate over ! cell+
