@@ -45,6 +45,9 @@ begin-module zscript
   
   begin-module zscript-internal
     
+    \ Record syntax
+    255 constant syntax-record
+    
     \ The per-task zeptoscript structure
     \ This will ultimately be a user variable, but for testing purposes it will
     \ be a plain variable.
@@ -190,7 +193,7 @@ begin-module zscript
     \ Get an unbound xt
     : unbound-xt> ( value -- xt )
       dup >type xt-type = averts x-incorrect-type
-      cell+ @
+      cell+ @ >integral
     ;
 
     \ Validate whether a value is an integer
@@ -669,6 +672,26 @@ begin-module zscript
     swap integral> cell+
     over >size over u< averts x-offset-out-of-range
     + swap integral> swap c!
+  ;
+
+  \ Copy from one value to another in a type-safe fashion
+  : copy { value0 offset0 value1 offset1 count -- }
+    count integral> to count
+    offset0 integral> to offset0
+    offset1 integral> to offset1
+    value0 addr? averts x-incorrect-type
+    value1 addr? averts x-incorrect-type
+    value0 >type { type0 }
+    type0 value1 >type = averts x-incorrect-type
+    count 0>= averts x-offset-out-of-range
+    value0 >size cell - offset0 count + >= averts x-offset-ouf-of-range
+    value1 >size cell - offset1 count + >= averts x-offset-ouf-of-range
+    type0 2 - has-values and if
+      count cells to count
+      offset0 cells to offset0
+      offset1 cells to offset1
+    then
+    value0 cell+ offset0 + value1 cell+ offset1 + count move
   ;
   
   \ Add two integers
@@ -1323,6 +1346,12 @@ begin-module zscript
     \ Cast a value from an integer
     : integral> ( value -- x ) integral> ;
 
+    \ Get the HERE pointer
+    : here ( -- x ) here >integral ;
+
+    \ ALLOT space
+    : allot ( x -- ) integral> allot ;
+    
   end-module
 
   \ Get the compilation state
@@ -1394,9 +1423,61 @@ begin-module zscript
   
   \ Start compiling a word with a name
   : start-compile ( seq -- )
-    unsafe::bytes> integral> swap integral> swap internal::start-compile
+    unsafe::bytes> 2integral> internal::start-compile
   ;
 
+  \ Redefine LIT,
+  : lit, ( xt -- ) integral> lit, ;
+
+  \ Redefine CHAR
+  : char ( "name" -- x )
+    token dup 0<> averts x-token-expected
+    unsafe::bytes> drop 0 swap unsafe::c@
+  ;
+
+  \ Redefine [CHAR]
+  : [char] ( "name" -- x )
+    [immediate]
+    [compile-only]
+    token dup 0<> averts x-token-exppected
+    unsafe::bytes> drop 0 swap unsafe::c@ lit,
+  ;
+
+  \ Begin declaring a record
+  : begin-record ( "name" -- offset )
+    syntax-record internal::push-syntax
+    <builds here 0 4 allot does> @ cells-type allocate-cells
+  ;
+
+  \ Finish declaring a record
+  : end-record ( offset -- )
+    syntax-record internal::verify-syntax internal::drop-syntax
+    swap current!
+  ;
+
+  \ Create a field in a record
+  : item: ( offset "name" -- offset' )
+    { offset }
+    syntax-record internal::verify-syntax
+    token dup 0<> averts x-token-expected { name }
+    name >len { len }
+    len 1+ allocate-bytes { accessor-name }
+    name 0 accessor-name 0 len copy
+    [char] @ len 1+ accessor-name c!+
+    accessor-name start-compile visible
+    offset lit,
+    postpone swap
+    postpone v@+
+    end-compile,
+    [char] ! len 1+ accessor-name c!+
+    accessor-name start-compile visible
+    offset lit,
+    postpone swap
+    postpone v!+
+    end-compile,
+    offset 1+
+  ;
+  
   \ Make a foreign word usable
   : foreign ( in-count out-count xt "name" -- )
     { in-count out-count xt }
@@ -1524,5 +1605,7 @@ begin-module zscript
   : cxor! ['] x-unsafe-op ?raise ;
   : move ['] x-unsafe-op ?raise ;
   : fill ['] x-unsafe-op ?raise ;
+  : here ['] x-unsafe-op ?raise ;
+  : allot ['] x-unsafe-op ?raise ;
   
 end-module
