@@ -71,20 +71,20 @@ begin-module zscript
       \ The flash globals array
       field: flash-globals-array
       
-      \ The bottom of the first semi-space
-      field: first-space-bottom
+      \ The bottom of the from semi-space
+      field: from-space-bottom
       
-      \ The top of the first semi-space
-      field: first-space-top
+      \ The top of the from semi-space
+      field: from-space-top
       
-      \ The current second semi-space address
-      field: second-space-current
+      \ The current to semi-space address
+      field: to-space-current
       
-      \ The bottom of the second semi-space
-      field: second-space-bottom
+      \ The bottom of the to semi-space
+      field: to-space-bottom
       
-      \ The top of the second semi-space
-      field: second-space-top
+      \ The top of the to semi-space
+      field: to-space-top
 
     end-structure
 
@@ -97,20 +97,20 @@ begin-module zscript
     \ Get the flash globals array
     : flash-globals-array@ zscript-state @ flash-globals-array @ ;
 
-    \ Get the bottom of the first semi-space
-    : first-space-bottom@ zscript-state @ first-space-bottom @ ;
+    \ Get the bottom of the from semi-space
+    : from-space-bottom@ zscript-state @ from-space-bottom @ ;
     
-    \ Get the top of the first semi-space
-    : first-space-top@ zscript-state @ first-space-top @ ;
+    \ Get the top of the from semi-space
+    : from-space-top@ zscript-state @ from-space-top @ ;
     
-    \ Get the current second semi-space address
-    : second-space-current@ zscript-state @ second-space-current @ ;
+    \ Get the current to semi-space address
+    : to-space-current@ zscript-state @ to-space-current @ ;
     
-    \ Get the bottom of the second semi-space
-    : second-space-bottom@ zscript-state @ second-space-bottom @ ;
+    \ Get the bottom of the to semi-space
+    : to-space-bottom@ zscript-state @ to-space-bottom @ ;
     
-    \ Get the top of the second semi-space
-    : second-space-top@ zscript-state @ second-space-top @ ;
+    \ Get the top of the to semi-space
+    : to-space-top@ zscript-state @ to-space-top @ ;
 
     \ Set the RAM globals array
     : ram-globals-array! zscript-state @ ram-globals-array ! ;
@@ -121,20 +121,20 @@ begin-module zscript
     \ Set the flash globals array
     : flash-globals-array! zscript-state @ flash-globals-array ! ;
     
-    \ Set the bottom of the first semi-space
-    : first-space-bottom! zscript-state @ first-space-bottom ! ;
+    \ Set the bottom of the from semi-space
+    : from-space-bottom! zscript-state @ from-space-bottom ! ;
     
-    \ Set the top of the first semi-space
-    : first-space-top! zscript-state @ first-space-top ! ;
+    \ Set the top of the from semi-space
+    : from-space-top! zscript-state @ from-space-top ! ;
     
-    \ Set the current second semi-space address
-    : second-space-current! zscript-state @ second-space-current ! ;
+    \ Set the current to semi-space address
+    : to-space-current! zscript-state @ to-space-current ! ;
     
-    \ Set the bottom of the second semi-space
-    : second-space-bottom! zscript-state @ second-space-bottom ! ;
+    \ Set the bottom of the to semi-space
+    : to-space-bottom! zscript-state @ to-space-bottom ! ;
     
-    \ Set the top of the second semi-space
-    : second-space-top! zscript-state @ second-space-top ! ;
+    \ Set the top of the to semi-space
+    : to-space-top! zscript-state @ to-space-top ! ;
 
     \ Tags
     1 constant word-tag
@@ -171,8 +171,8 @@ begin-module zscript
       pc 1 pop
       >mark
       ]code
-      first-space-bottom@
-      first-space-top@
+      from-space-bottom@
+      from-space-top@
       code[
       4 dp r0 ldr_,[_,#_]
       tos r0 cmp_,_
@@ -199,22 +199,22 @@ begin-module zscript
       0 dp r0 str_,[_,#_]
       ]code
       size-mask and 1 rshift cell align { size }
-      second-space-current@ { current }
+      to-space-current@ { current }
       current size + { next-current }
 
       \ display-red
       \ ." [ "
       \ current h.8 space
       \ next-current h.8 space
-      \ second-space-top@ h.8 space
+      \ to-space-top@ h.8 space
       \ size .
       \ ." ] "
       \ display-normal
       
-      second-space-top@ next-current >= averts x-out-of-memory
+      to-space-top@ next-current >= averts x-out-of-memory
       dup current size move
       current 1 or swap !
-      next-current second-space-current!
+      next-current to-space-current!
       current
     ;
 
@@ -240,15 +240,15 @@ begin-module zscript
 
     \ Swap spaces
     : swap-spaces ( -- )
-      second-space-bottom@
-      second-space-top@
-      first-space-bottom@
-      first-space-top@
-      second-space-top!
-      dup second-space-current!
-      second-space-bottom!
-      first-space-top!
-      first-space-bottom!
+      to-space-bottom@
+      to-space-top@
+      from-space-bottom@
+      from-space-top@
+      to-space-top!
+      dup to-space-current!
+      to-space-bottom!
+      from-space-top!
+      from-space-bottom!
     ;
 
     \ Carry out a GC cycle
@@ -258,8 +258,8 @@ begin-module zscript
       ram-globals-array@ relocate ram-globals-array!
       new-ram-globals-array@ relocate new-ram-globals-array!
       flash-globals-array@ relocate flash-globals-array!
-      second-space-bottom@ { gc-current }
-      begin gc-current second-space-current@ < while
+      to-space-bottom@ { gc-current }
+      begin gc-current to-space-current@ < while
         gc-current @ { header }
         header size-mask and 1 rshift cell align { aligned-size }
         header [ has-values type-shift lshift ] literal and if
@@ -395,24 +395,14 @@ begin-module zscript
     \ Allocate memory as cells
     : allocate-cells { count type -- addr }
       count integral> 1+ cells >small-int { bytes }
-      second-space-current@ { current }
-      bytes integral> current + second-space-top@ > if
-
-        \ display-red
-        \ ."  ( "
-        \ current h.8 space
-        \ bytes h.8 space
-        \ type h.8 space
-        \ count h.8 space
-        \ ." ) "
-        \ display-normal
-        
+      bytes integral> to-space-current@ + to-space-top@ > if
         gc
-        second-space-current@ to current
-        bytes current + second-space-top@ <= averts x-out-of-memory
+        bytes to-space-current@ +
+        to-space-top@ <= averts x-out-of-memory
       then
+      to-space-current@ { current }
       bytes integral> to bytes
-      bytes current + second-space-current!
+      bytes current + to-space-current!
       current
       dup cell+ bytes cell - 0 fill
       bytes 1 lshift type integral> 2 - type-shift lshift or over !
@@ -421,14 +411,14 @@ begin-module zscript
     \ Allocate memory as bytes
     : allocate-bytes { count -- addr }
       count integral> cell+ cell align >small-int { bytes }
-      second-space-current@ { current }
-      bytes integral> current + second-space-top@ > if
+      bytes integral> to-space-current@ + to-space-top@ > if
         gc
-        second-space-current@ to current
-        bytes current + second-space-top@ <= averts x-out-of-memory
+        bytes to-space-current@ +
+        to-space-top@ <= averts x-out-of-memory
       then
+      to-space-current@ { current }
       bytes integral> to bytes
-      bytes current + second-space-current!
+      bytes current + to-space-current!
       current
       dup cell+ bytes cell - 0 fill
       count cell+ 1 lshift
@@ -437,14 +427,13 @@ begin-module zscript
     
     \ Allocate a cell
     : allocate-cell { type -- addr }
-      second-space-current@ { current }
-      current [ 2 cells ] literal + second-space-top@ > if
+      to-space-current@ [ 2 cells ] literal + to-space-top@ > if
         gc
-        second-space-current@ to current
-        current [ 2 cells ] literal + second-space-top@ <=
+        to-space-current@ [ 2 cells ] literal + to-space-top@ <=
         averts x-out-of-memory
       then
-      current [ 2 cells ] literal + second-space-current!
+      to-space-current@ { current }
+      current [ 2 cells ] literal + to-space-current!
       current
       dup cell+ 0 !
       type integral> 2 - type-shift lshift
@@ -453,14 +442,13 @@ begin-module zscript
 
     \ Allocate a double-word
     : allocate-2cell { type -- addr }
-      second-space-current@ { current }
-      current [ 3 cells ] literal + second-space-top@ > if
+      to-space-current@ [ 3 cells ] literal + to-space-top@ > if
         gc
-        second-space-current@ to current
-        current [ 3 cells ] literal + second-space-top@
+        to-space-current@ [ 3 cells ] literal + to-space-top@
         <= averts x-out-of-memory
       then
-      current [ 3 cells ] literal + second-space-current!
+      to-space-current@ { current }
+      current [ 3 cells ] literal + to-space-current!
       current
       0 over cell+ !
       0 over [ 2 cells ] literal + !
@@ -471,14 +459,14 @@ begin-module zscript
     \ Allocate a tagged value
     : allocate-tagged { count tag -- addr }
       count integral> [ 2 cells ] literal + cell align >small-int { bytes }
-      second-space-current@ { current }
-      bytes current + second-space-top@ > if
+      bytes to-space-current@ + to-space-top@ > if
         gc
-        second-space-current@ to current
-        bytes current + second-space-top@ <= averts x-out-of-memory
+        bytes to-space-current@ +
+        to-space-top@ <= averts x-out-of-memory
       then
+      to-space-current@ { current }
       bytes integral> to bytes
-      bytes current + second-space-current!
+      bytes current + to-space-current!
       current
       tag integral> dup cell+ !
       dup [ 2 cells ] literal + bytes [ 2 cells ] literal - 0 fill
@@ -876,10 +864,10 @@ begin-module zscript
     then { size }
     cell ram-align, ram-here zscript-size ram-allot zscript-state !
     ram-here size ram-allot { heap }
-    heap first-space-bottom!
+    heap from-space-bottom!
     heap size 1 rshift +
-    dup first-space-top! dup second-space-current! second-space-bottom!
-    heap size + second-space-top!
+    dup from-space-top! dup to-space-current! to-space-bottom!
+    heap size + to-space-top!
     0 ram-globals-array!
     0 new-ram-globals-array!
     0 flash-globals-array!
