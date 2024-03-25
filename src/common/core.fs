@@ -136,18 +136,6 @@ begin-module zscript
     \ Set the top of the second semi-space
     : second-space-top! zscript-state @ second-space-top ! ;
 
-    \ Types
-    0 constant null-type
-    1 constant int-type
-    2 constant bytes-type
-    3 constant word-type
-    4 constant 2word-type
-    5 constant const-bytes-type
-    6 constant xt-type
-    7 constant tagged-type
-    10 constant cells-type
-    11 constant closure-type
-
     \ Tags
     1 constant word-tag
 
@@ -169,84 +157,6 @@ begin-module zscript
 
     \ Value to address
     : >addr ( value -- addr ) [inlined] 1 bic ;
-    
-    \ Get an allocation's type
-    : >type ( value -- type )
-      code[
-      1 r0 movs_,#_
-      r0 tos tst_,_
-      eq bc>
-      int-type tos movs_,#_
-      pc 1 pop
-      >mark
-      0 tos cmp_,#_
-      ne bc>
-      null-type tos movs_,#_
-      pc 1 pop
-      >mark
-      0 tos tos ldr_,[_,#_]
-      type-shift tos tos lsrs_,_,#_
-      2 tos adds_,#_
-      ]code
-    ;
-
-    \ Get whether a value is null, an integer, or a word
-    : integral? ( value -- integral? )
-      code[
-      1 r0 movs_,#_
-      r0 tos tst_,_
-      eq bc>
-      31 r0 tos lsls_,_,#_
-      31 tos tos asrs_,_,#_
-      pc 1 pop
-      >mark
-      0 tos cmp_,#_
-      ne bc>
-      31 r0 tos lsls_,_,#_
-      31 tos tos asrs_,_,#_
-      pc 1 pop
-      >mark
-      0 tos tos ldr_,[_,#_]
-      type-shift tos tos lsrs_,_,#_
-      word-type 2 - tos cmp_,#_
-      31 r0 tos lsls_,_,#_
-      31 tos tos asrs_,_,#_
-      pc 1 pop
-      ne bc>
-      >mark
-      0 tos movs_,#_
-      ]code
-    ;
-
-    \ Get whether a value is an xt or closure
-    : xt? ( value -- xt? )
-      >type dup xt-type = swap closure-type = or
-    ;
-
-    \ Validate whether a value is an integer
-    : validate-int ( value -- ) 1 and 0<> averts x-incorrect-type ;
-
-    \ Validate whether a value is a word
-    : validate-word ( value -- ) >type word-type = averts x-incorrect-type ;
-    
-    \ Get an allocation's size
-    : >size ( value -- size )
-      code[
-      0 tos cmp_,#_
-      ne bc>
-      pc 1 pop
-      >mark
-      1 r0 movs_,#_
-      r0 tos tst_,_
-      eq bc>
-      0 tos movs_,#_
-      pc 1 pop
-      >mark
-      0 tos tos ldr_,[_,#_]
-      32 type-shift - tos tos lsls_,_,#_
-      33 type-shift - tos tos lsrs_,_,#_
-      ]code
-    ;
     
     \ Relocate a block of memory
     : relocate ( orig -- new )
@@ -278,32 +188,54 @@ begin-module zscript
       r0 tos movs_,_
       pc 1 pop
       >mark
-      4 dp adds_,#_
-      r0 tos movs_,_
-      tos r2 movs_,_
-      0 r2 tos ldr_,[_,#_]
+      0 r0 tos ldr_,[_,#_]
       1 r1 movs_,#_
       r1 tos tst_,_
       eq bc>
+      4 dp adds_,#_
       r1 tos bics_,_
       pc 1 pop
       >mark
-      4 dp subs_,#_
-      0 dp r2 str_,[_,#_]
+      0 dp r0 str_,[_,#_]
       ]code
-      size-mask and 1 rshift { size }
+      size-mask and 1 rshift cell align { size }
       second-space-current@ { current }
-      second-space-top@ current size + > averts x-out-of-memory
+      current size + { next-current }
+
+      \ display-red
+      \ ." [ "
+      \ current h.8 space
+      \ next-current h.8 space
+      \ second-space-top@ h.8 space
+      \ size .
+      \ ." ] "
+      \ display-normal
+      
+      second-space-top@ next-current >= averts x-out-of-memory
       dup current size move
       current 1 or swap !
-      current size cell align + second-space-current!
+      next-current second-space-current!
       current
     ;
 
     \ Relocate the stack
     : relocate-stack ( -- )
-      sp@ stack-base @ swap ?do i @ relocate i ! cell +loop
-      rp@ rstack-base @ swap ?do i @ relocate i ! cell +loop
+\       display-red
+\       ."  Garbage collecting the stack... "
+      sp@ stack-base @ swap begin 2dup > while
+\         dup @ h.8 space
+        dup @ relocate over !
+        cell+
+      repeat
+      2drop
+\       ."  Garbage collecting the return stack... "
+      rp@ rstack-base @ swap begin 2dup > while
+\         dup @ h.8 space
+        dup @ relocate over !
+        cell+
+      repeat
+      2drop
+\       display-normal 
     ;
 
     \ Swap spaces
@@ -335,140 +267,12 @@ begin-module zscript
           gc-current cell+ begin dup gc-current-end < while
             dup @ relocate over ! cell+
           repeat
-          to gc-current
-        else
-          aligned-size +to gc-current
+          drop
         then
+        aligned-size +to gc-current
       repeat
     ;
     
-    \ Allocate memory as cells
-    : allocate-cells { count type -- addr }
-      count 1+ cells { bytes }
-      second-space-current@ { current }
-      bytes current + second-space-top@ > if
-        gc
-        second-space-current@ to current
-        bytes current + second-space-top@ <= averts x-out-of-memory
-      then
-      bytes current + second-space-current!
-      current
-      dup cell+ bytes cell - 0 fill
-      bytes 1 lshift type 2 - type-shift lshift or over !
-    ;
-
-    \ Allocate memory as bytes
-    : allocate-bytes { count -- addr }
-      count cell+ cell align { bytes }
-      second-space-current@ { current }
-      bytes current + second-space-top@ > if
-        gc
-        second-space-current@ to current
-        bytes current + second-space-top@ <= averts x-out-of-memory
-      then
-      bytes current + second-space-current!
-      current
-      dup cell+ bytes cell - 0 fill
-      count cell+ 1 lshift
-      [ bytes-type 2 - type-shift lshift ] literal or over !
-    ;
-    
-    \ Allocate a cell
-    : allocate-cell { type -- addr }
-      second-space-current@ { current }
-      current [ 2 cells ] literal + second-space-top@ > if
-        gc
-        second-space-current@ to current
-        current [ 2 cells ] literal + second-space-top@ <=
-        averts x-out-of-memory
-      then
-      current [ 2 cells ] literal + second-space-current!
-      current
-      dup cell+ 0 !
-      type 2 - type-shift lshift
-      [ 2 cells 1 lshift ] literal or over !
-    ;
-
-    \ Allocate a double-word
-    : allocate-2cell { type -- addr }
-      second-space-current@ { current }
-      current [ 3 cells ] literal + second-space-top@ > if
-        gc
-        second-space-current@ to current
-        current [ 3 cells ] literal + second-space-top@
-        <= averts x-out-of-memory
-      then
-      current [ 3 cells ] literal + second-space-current!
-      current
-      0 over cell+ !
-      0 over [ 2 cells ] literal + !
-      type 2 - type-shift lshift
-      [ 3 cells 1 lshift ] literal or over !
-    ;
-
-    \ Allocate a tagged value
-    : allocate-tagged { count tag -- addr }
-      count [ 2 cells ] literal + cell align { bytes }
-      second-space-current@ { current }
-      bytes current + second-space-top@ > if
-        gc
-        second-space-current@ to current
-        bytes current + second-space-top@ <= averts x-out-of-memory
-      then
-      bytes current + second-space-current!
-      current
-      tag dup cell+ !
-      dup [ 2 cells ] literal + bytes [ 2 cells ] literal - 0 fill
-      count cell+ 1 lshift
-      [ tagged-type 2 - type-shift lshift ] literal or over !
-    ;
-
-    \ Cast nulls, integers, and words to cells, validating them
-    : integral> ( 0 | int | addr -- x' )
-      code[
-      0 tos cmp_,#_
-      ne bc>
-      pc 1 pop
-      >mark
-      1 r0 movs_,#_
-      r0 tos tst_,_
-      eq bc>
-      1 tos tos asrs_,_,#_
-      pc 1 pop
-      >mark
-      0 tos r0 ldr_,[_,#_]
-      type-shift r0 r0 lsrs_,_,#_
-      word-type 2 - r0 cmp_,#_
-      ne bc>
-      cell tos tos ldr_,[_,#_]
-      pc 1 pop
-      >mark
-      ]code
-      ['] x-incorrect-type ?raise
-    ;
-
-    \ Cast cells to nulls, integers, and words
-    : >integral ( x -- 0 | int | addr )
-      code[
-      0 tos cmp_,#_
-      ne bc>
-      pc 1 pop
-      >mark
-      30 tos r0 lsrs_,_,#_
-      1 r0 cmp_,#_
-      eq bc>
-      2 r0 cmp_,#_
-      eq bc>
-      1 tos tos lsls_,_,#_
-      1 r0 movs_,#_
-      r0 tos orrs_,_
-      pc 1 pop
-      >mark
-      >mark
-      ]code
-      word-type allocate-cell tuck cell+ !
-    ;
-
     \ Case cells to nulls, integers, but not words
     : >small-int ( x -- 0 | int )
       code[
@@ -491,9 +295,225 @@ begin-module zscript
       ['] x-not-small-int ?raise
     ;
 
+    \ Types
+    0 >small-int constant null-type
+    1 >small-int constant int-type
+    2 >small-int constant bytes-type
+    3 >small-int constant word-type
+    4 >small-int constant 2word-type
+    5 >small-int constant const-bytes-type
+    6 >small-int constant xt-type
+    7 >small-int constant tagged-type
+    10 >small-int constant cells-type
+    11 >small-int constant closure-type
+
+    \ Cast nulls, integers, and words to cells, validating them
+    : integral> ( 0 | int | addr -- x' )
+      code[
+      0 tos cmp_,#_
+      ne bc>
+      pc 1 pop
+      >mark
+      1 r0 movs_,#_
+      r0 tos tst_,_
+      eq bc>
+      1 tos tos asrs_,_,#_
+      pc 1 pop
+      >mark
+      0 tos r0 ldr_,[_,#_]
+      type-shift r0 r0 lsrs_,_,#_
+      [ word-type 1 rshift 2 - ] literal r0 cmp_,#_
+      ne bc>
+      cell tos tos ldr_,[_,#_]
+      pc 1 pop
+      >mark
+      ]code
+      ['] x-incorrect-type ?raise
+    ;
+
+    \ Get an allocation's type
+    : >type ( value -- type )
+      code[
+      1 r0 movs_,#_
+      r0 tos tst_,_
+      eq bc>
+      int-type tos movs_,#_
+      pc 1 pop
+      >mark
+      0 tos cmp_,#_
+      ne bc>
+      null-type tos movs_,#_
+      pc 1 pop
+      >mark
+      0 tos tos ldr_,[_,#_]
+      type-shift tos tos lsrs_,_,#_
+      2 tos adds_,#_
+      1 tos tos lsls_,_,#_
+      r0 tos orrs_,_
+      ]code
+    ;
+
+    \ Get whether a value is null, an integer, or a word
+    : integral? ( value -- integral? )
+      code[
+      1 r0 movs_,#_
+      r0 tos tst_,_
+      eq bc>
+      31 r0 tos lsls_,_,#_
+      31 tos tos asrs_,_,#_
+      pc 1 pop
+      >mark
+      0 tos cmp_,#_
+      ne bc>
+      31 r0 tos lsls_,_,#_
+      31 tos tos asrs_,_,#_
+      pc 1 pop
+      >mark
+      0 tos tos ldr_,[_,#_]
+      type-shift tos tos lsrs_,_,#_
+      [ word-type integral> 2 - ] literal tos cmp_,#_
+      31 r0 tos lsls_,_,#_
+      31 tos tos asrs_,_,#_
+      pc 1 pop
+      ne bc>
+      >mark
+      0 tos movs_,#_
+      ]code
+    ;
+
+    \ Validate whether a value is an integer
+    : validate-int ( value -- ) 1 and 0<> averts x-incorrect-type ;
+
+    \ Validate whether a value is a word
+    : validate-word ( value -- ) >type word-type = averts x-incorrect-type ;
+    
+    \ Get whether a value is an xt or closure
+    : xt? ( value -- xt? )
+      >type dup xt-type = swap closure-type = or
+    ;
+
+    \ Allocate memory as cells
+    : allocate-cells { count type -- addr }
+      count integral> 1+ cells >small-int { bytes }
+      second-space-current@ { current }
+      bytes integral> current + second-space-top@ > if
+
+        \ display-red
+        \ ."  ( "
+        \ current h.8 space
+        \ bytes h.8 space
+        \ type h.8 space
+        \ count h.8 space
+        \ ." ) "
+        \ display-normal
+        
+        gc
+        second-space-current@ to current
+        bytes current + second-space-top@ <= averts x-out-of-memory
+      then
+      bytes integral> to bytes
+      bytes current + second-space-current!
+      current
+      dup cell+ bytes cell - 0 fill
+      bytes 1 lshift type integral> 2 - type-shift lshift or over !
+    ;
+
+    \ Allocate memory as bytes
+    : allocate-bytes { count -- addr }
+      count integral> cell+ cell align >small-int { bytes }
+      second-space-current@ { current }
+      bytes integral> current + second-space-top@ > if
+        gc
+        second-space-current@ to current
+        bytes current + second-space-top@ <= averts x-out-of-memory
+      then
+      bytes integral> to bytes
+      bytes current + second-space-current!
+      current
+      dup cell+ bytes cell - 0 fill
+      count cell+ 1 lshift
+      [ bytes-type 2 - type-shift lshift ] literal or over !
+    ;
+    
+    \ Allocate a cell
+    : allocate-cell { type -- addr }
+      second-space-current@ { current }
+      current [ 2 cells ] literal + second-space-top@ > if
+        gc
+        second-space-current@ to current
+        current [ 2 cells ] literal + second-space-top@ <=
+        averts x-out-of-memory
+      then
+      current [ 2 cells ] literal + second-space-current!
+      current
+      dup cell+ 0 !
+      type integral> 2 - type-shift lshift
+      [ 2 cells 1 lshift ] literal or over !
+    ;
+
+    \ Allocate a double-word
+    : allocate-2cell { type -- addr }
+      second-space-current@ { current }
+      current [ 3 cells ] literal + second-space-top@ > if
+        gc
+        second-space-current@ to current
+        current [ 3 cells ] literal + second-space-top@
+        <= averts x-out-of-memory
+      then
+      current [ 3 cells ] literal + second-space-current!
+      current
+      0 over cell+ !
+      0 over [ 2 cells ] literal + !
+      type integral> 2 - type-shift lshift
+      [ 3 cells 1 lshift ] literal or over !
+    ;
+
+    \ Allocate a tagged value
+    : allocate-tagged { count tag -- addr }
+      count integral> [ 2 cells ] literal + cell align >small-int { bytes }
+      second-space-current@ { current }
+      bytes current + second-space-top@ > if
+        gc
+        second-space-current@ to current
+        bytes current + second-space-top@ <= averts x-out-of-memory
+      then
+      bytes integral> to bytes
+      bytes current + second-space-current!
+      current
+      tag integral> dup cell+ !
+      dup [ 2 cells ] literal + bytes [ 2 cells ] literal - 0 fill
+      count integral> cell+ 1 lshift
+      [ tagged-type 2 - type-shift lshift ] literal or over !
+    ;
+
+    \ Cast cells to nulls, integers, and words
+    : >integral ( x -- 0 | int | addr )
+      code[
+      0 tos cmp_,#_
+      ne bc>
+      pc 1 pop
+      >mark
+      30 tos r0 lsrs_,_,#_
+      1 r0 cmp_,#_
+      eq bc>
+      2 r0 cmp_,#_
+      eq bc>
+      1 tos tos lsls_,_,#_
+      1 r0 movs_,#_
+      r0 tos orrs_,_
+      pc 1 pop
+      >mark
+      >mark
+      ]code
+      dup 1 and { lowest }
+      1 or
+      word-type allocate-cell swap 1 bic lowest or over cell+ !
+    ;
+
     \ Convert a pair of cells to nulls, integers, and words
     : 2>integral ( x0 x1 -- 0|int|addr 0|int|addr )
-      >integral swap >integral swap
+      swap 1 and { lowest } 1 or swap
+      >integral swap 1 bic lowest or >integral swap
     ;
 
     \ Convert a pair of nulls, integers, or words to cells
@@ -540,17 +560,37 @@ begin-module zscript
 
     \ Get whether an integer is a small integer
     : small-int? ( value -- small? )
-      normalize dup integral? if
-        >type word-type <>
+      dup 1 and if
+        drop true
       else
-        drop false
-      then
+        0=
+      then          
     ;
     
     \ Get the tag of a tagged value
     : >tag ( value -- tag )
       dup >type tagged-type = averts x-incorrect-type
-      cell+ @
+      cell+ @ >integral
+    ;
+    
+    \ Get an allocation's size - note that the return value is not an integral
+    \ value
+    : >size ( value -- size )
+      code[
+      0 tos cmp_,#_
+      ne bc>
+      pc 1 pop
+      >mark
+      1 r0 movs_,#_
+      r0 tos tst_,_
+      eq bc>
+      0 tos movs_,#_
+      pc 1 pop
+      >mark
+      0 tos tos ldr_,[_,#_]
+      32 type-shift - tos tos lsls_,_,#_
+      33 type-shift - tos tos lsrs_,_,#_
+      ]code
     ;
     
     \ Get a value in a tagged data structure
@@ -558,7 +598,7 @@ begin-module zscript
       dup >type tagged-type = averts x-incorrect-type
       swap integral> 1+ cells
       over >size over u< averts x-offset-out-of-range
-      + @
+      + @ >integral
     ;
 
     \ Set a value in a tagged data structure
@@ -566,7 +606,7 @@ begin-module zscript
       dup >type tagged-type = averts x-incorrect-type
       swap integral> 1+ cells
       over >size over u< averts x-offset-out-of-range
-      + !
+      + swap integral> swap !
     ;
 
     \ Handle a number
@@ -653,15 +693,14 @@ begin-module zscript
 
   \ Convert an address/length pair into bytes
   : >bytes ( c-addr u -- bytes )
-    swap integral> swap
-    integral> dup allocate-bytes { bytes }
-    bytes cell+ swap move
+    dup allocate-bytes { bytes }
+    swap integral> bytes cell+ rot integral> move
     bytes
   ;
 
   \ Convert two values into a pair
   : >pair ( x0 x1 -- pair )
-    2 cells-type allocate-cells { pair }
+    [ 2 >small-int ] literal cells-type allocate-cells { pair }
     pair [ 2 cells ] literal + !
     pair cell+ !
     pair
@@ -677,7 +716,7 @@ begin-module zscript
 
   \ Convert three values into a triple
   : >triple ( x0 x1 x2 -- triple )
-    3 cells-type allocate-cells { triple }
+    [ 3 >small-int ] literal cells-type allocate-cells { triple }
     triple [ 3 cells ] literal + !
     triple [ 2 cells ] literal + !
     triple cell+ !
@@ -695,7 +734,7 @@ begin-module zscript
 
   \ Create a tuple
   : >tuple ( xn ... x0 count -- tuple )
-    integral> dup cells-type allocate-cells { tuple }
+    dup cells-type allocate-cells { tuple }
     tuple over 1+ cells + swap 0 ?do cell - tuck ! loop drop
     tuple
   ;
@@ -844,12 +883,11 @@ begin-module zscript
     0 ram-globals-array!
     0 new-ram-globals-array!
     0 flash-globals-array!
-    init-ram-global-count integral>
-    cells-type allocate-cells { ram-globals }
+    init-ram-global-count cells-type allocate-cells { ram-globals }
     init-ram-global-id current-ram-global-id-index ram-globals v!+
     ram-globals ram-globals-array!
     ram-globals new-ram-globals-array!
-    get-current-flash-global-id integral>
+    get-current-flash-global-id
     cells-type allocate-cells flash-globals-array!
     ['] do-handle-number handle-number-hook !
   ; is init-zscript
@@ -1051,6 +1089,7 @@ begin-module zscript
   ;
   
   \ Get whether two values are equal
+  \ Note that this takes advantage of the fact that TRUE and FALSE do not change
   : = { x0 x1 -- flag }
     x0 integral? x1 integral? forth::and if
       x0 integral> x1 integral> =
@@ -1060,6 +1099,7 @@ begin-module zscript
   ;
 
   \ Get whether two values are unequal
+  \ Note that this takes advantage of the fact that TRUE and FALSE do not change
   : <> { x0 x1 -- flag }
     x0 integral? x1 integral? forth::and if
       x0 integral> x1 integral> <>
@@ -1069,71 +1109,85 @@ begin-module zscript
   ;
 
   \ Signed less than
+  \ Note that this takes advantage of the fact that TRUE and FALSE do not change
   : < ( x0 x1 -- flag )
     integral> swap integral> >
   ;
 
   \ Signed greater than
+  \ Note that this takes advantage of the fact that TRUE and FALSE do not change
   : > ( x0 x1 -- flag )
     integral> swap integral> forth::<
   ;
 
   \ Signed less than or equal
+  \ Note that this takes advantage of the fact that TRUE and FALSE do not change
   : <= ( x0 x1 -- flag )
     integral> swap integral> >=
   ;
 
   \ Signed greater than or equal
+  \ Note that this takes advantage of the fact that TRUE and FALSE do not change
   : >= ( x0 x1 -- flag )
     integral> swap integral> forth::<=
   ;
 
   \ Unsigned less than
+  \ Note that this takes advantage of the fact that TRUE and FALSE do not change
   : u< ( x0 x1 -- flag )
     integral> swap integral> u>
   ;
 
   \ Unsigned greater than
+  \ Note that this takes advantage of the fact that TRUE and FALSE do not change
   : u> ( x0 x1 -- flag )
     integral> swap integral> forth::u<
   ;
 
   \ Unsigned less than or equal
+  \ Note that this takes advantage of the fact that TRUE and FALSE do not change
   : u<= ( x0 x1 -- flag )
     integral> swap integral> u>=
   ;
 
   \ Unsigned greater than or equal
+  \ Note that this takes advantage of the fact that TRUE and FALSE do not change
   : u>= ( x0 x1 -- flag )
     integral> swap integral> forth::u<=
   ;
 
   \ Equal to zero
+  \ Note that this takes advantage of the fact that TRUE and FALSE do not change
   : 0= ( n -- flag )
     dup integral? if integral> 0= else drop false then
   ;
 
   \ Not equal to zero
+  \ Note that this takes advantage of the fact that TRUE and FALSE do not change
   : 0<> ( n -- flag )
     dup integral? if integral> 0<> else drop true then
   ;
 
   \ Less than zero
+  \ Note that this takes advantage of the fact that TRUE and FALSE do not change
   : 0< ( n -- flag )
     integral> 0<
   ;
 
   \ Greater than zero
+  \ Note that this takes advantage of the fact that TRUE and FALSE do not change
   : 0> ( n -- flag )
     integral> 0>
   ;
 
   \ Less than or equal to zero
+  \ Note that this takes advantage of the fact that TRUE and FALSE do not change
   : 0<= ( n -- flag )
     integral> 0<=
   ;
 
   \ Greater than or equal to zero
+  \ Note that this takes advantage of the fact that TRUE and FALSE do not change
   : 0>= ( n -- flag )
     integral> 0>=
   ;
@@ -1178,50 +1232,176 @@ begin-module zscript
     postpone until
   ;
 
-  \ Redefine DO
-  : do ( end start -- )
-    [immediate]
-    state @ forth::if
-      postpone 2integral>
-    else
-      2integral>
-    then
-    postpone do
-  ;
-
   \ Redefine ?DO
   : ?do ( end start -- )
     [immediate]
     state @ forth::if
-      postpone 2integral>
+      postpone 2dup
+      postpone =
+      postpone if
+      postpone 2drop
+      0 lit, 0 lit,
+      postpone then
     else
-      2integral>
+      2dup = if 2drop 0 0 then
     then
     postpone ?do
   ;
 
-  \ Redefine +LOOP
-  : +loop ( change -- )
-    [immediate]
-    [compile-only]
+  \ Close a DO LOOP
+  : loop ( compile: loop-addr leave-addr -- ) ( runtime: -- )
+    [immediate] [compile-only]
+    undefer-lit
+    internal::syntax-do internal::verify-syntax internal::drop-syntax
+    internal::end-block
+    swap
+    [ armv6m-instr import ]
+
+    tos internal::push,
+    
+    internal::find-i-var 4 forth::*
+    dup 128 forth::< forth::if
+      tos ldr_,[sp,#_]
+    else
+      r2 internal::literal,
+      r2 add4_,sp
+      0 r2 tos ldr_,[_,#_]
+    then
+    
     postpone integral>
-    postpone +loop
+    1 tos adds_,#_
+    tos internal::push,
+    
+    internal::find-limit-var 4 forth::*
+    dup 128 forth::< forth::if
+      tos ldr_,[sp,#_]
+    else
+      r2 internal::literal,
+      r2 add4_,sp
+      0 r2 tos ldr_,[_,#_]
+    then
+
+    postpone integral>
+    tos r1 movs_,_
+    tos 1 dp ldm
+    
+    r1 tos cmp_,_
+    eq bc>
+
+    postpone >integral
+    
+    internal::find-i-var 4 forth::*
+    dup 128 forth::< forth::if
+      tos str_,[sp,#_]
+    else
+      r2 internal::literal,
+      r2 add4_,sp
+      0 r2 tos str_,[_,#_]
+    then
+    tos 1 dp ldm
+    rot internal::branch,
+    >mark
+    tos 1 dp ldm
+    [ armv6m-instr unimport ]
+    internal::end-block
+    here 1 forth::or 0 rot internal::literal!
+
+    implicit-internal::try-end-implicit
   ;
 
-  \ Redefine I
-  : i ( -- x )
-    [immediate]
-    [compile-only]
-    postpone i
-    postpone >integral
-  ;
+  \ Close a DO +LOOP
+  : +loop ( compile: loop-addr leave-addr -- ) ( runtime: -- )
+    [immediate] [compile-only]
+    undefer-lit
+    internal::syntax-do internal::verify-syntax internal::drop-syntax
+    internal::end-block
+    swap
+    [ armv6m-instr import ]
+    
+    tos internal::push,
+    
+    internal::find-i-var 4 forth::*
+    dup 128 forth::< forth::if
+      tos ldr_,[sp,#_]
+    else
+      r3 internal::literal,
+      r3 add4_,sp
+      0 r3 tos ldr_,[_,#_]
+    then
 
-  \ Redefine J
-  : j ( -- x )
-    [immediate]
-    [compile-only]
-    postpone j
-    postpone >integral
+    postpone 2dup
+    postpone +
+
+    tos 1 push
+    tos 1 dp ldm
+    postpone 2integral>
+    tos internal::push,
+    tos 1 pop
+    
+    internal::find-i-var 4 forth::*
+    dup 128 forth::< forth::if
+      tos str_,[sp,#_]
+    else
+      r3 internal::literal,
+      r3 add4_,sp
+      0 r3 tos str_,[_,#_]
+    then
+
+    postpone integral>
+    tos internal::push,
+    
+    internal::find-limit-var 4 forth::*
+    dup 128 forth::< forth::if
+      tos ldr_,[sp,#_]
+    else
+      r3 internal::literal,
+      r3 add4_,sp
+      0 r3 tos ldr_,[_,#_]
+    then
+
+    postpone integral>
+    tos r1 movs_,_
+    r0 1 dp ldm
+    r2 1 dp ldm
+    tos 1 dp ldm
+    
+    0 tos cmp_,#_
+    lt bc>
+
+    tos 1 dp ldm
+    
+    r1 r2 cmp_,_
+    le bc>
+    4 pick internal::branch,
+    >mark
+
+    r0 r1 cmp_,_
+    le bc>
+    4 pick internal::branch,
+
+    2swap >mark
+
+    tos 1 dp ldm
+
+    r1 r2 cmp_,_
+    ge bc>
+    4 pick internal::branch,
+    >mark
+    
+    r0 r1 cmp_,_
+    gt bc>
+    4 pick internal::branch,
+
+    >mark
+    >mark
+
+    drop
+
+    [ armv6m-instr unimport ]
+    internal::end-block
+    here 1 forth::or 0 rot internal::literal!
+
+    implicit-internal::try-end-implicit
   ;
   
   \ Redefine CASE
@@ -1263,10 +1443,40 @@ begin-module zscript
     integral> (u.)
   ;
 
+  \ Redefine H.1
+  : h.1 ( x -- )
+    integral> h.1
+  ;
+
+  \ Redefine H.2
+  : h.2 ( x -- )
+    integral> h.2
+  ;
+
+  \ Redefine H.4
+  : h.4 ( x -- )
+    integral> h.4
+  ;
+
+  \ Redefine H.8
+  : h.8 ( x -- )
+    integral> h.8
+  ;
+
+  \ Redefine H.16
+  : h.16 ( d -- )
+    2integral> h.16
+  ;
+
+  \ Redefine SPACES
+  : spaces ( x -- )
+    integral> spaces
+  ;
+
   \ Truncate the start of a sequence triple
   : truncate-start { count triple -- triple' }
     triple triple> { seq start len }
-    count len <  if
+    count len < if
       seq start count + len count -
     else
       seq start len + 0
@@ -1287,50 +1497,28 @@ begin-module zscript
 
   \ Get the type of a value
   : >type ( value -- type )
-    >type >integral
+    >type
   ;
 
   \ Get whether a value is integral
   : integral? ( value -- integral? )
-    integral? >integral
+    integral?
   ;
   
   \ Get whether a value is a small integer
   : small-int? ( value -- small-int? )
-    small-int? >integral
+    small-int?
   ;
   
-  \ The types, this time as values
-  null-type >small-int constant null-type
-  int-type >small-int constant int-type
-  bytes-type >small-int constant bytes-type
-  word-type >small-int constant word-type
-  2word-type >small-int constant 2word-type
-  const-bytes-type >small-int constant const-bytes-type
-  xt-type >small-int constant xt-type
-  tagged-type >small-int constant tagged-type
-  cells-type >small-int constant cells-type
-  closure-type >small-int constant closure-type
-
-  \ Get whether a value is an int
-  : int? ( value -- int? )
-    int? >integral
-  ;
-  
-  \ Get whether a value is integral
-  : integral? ( value -- integral? )
-    integral? >integral
-  ;
-
   \ Get a token
   : token ( runtime: "name" -- seq | 0 )
-    token >integral dup 0<> if >bytes else 2drop 0 then
+    token 2>integral dup 0<> if >bytes else 2drop 0 then
   ;
 
   \ Get a word from a token
   : token-word ( runtime: "name" -- word )
-    token-word { word }
-    word-tag forth::cell allocate-tagged { tagged-word }
+    token-word >integral { word }
+    forth::cell word-tag allocate-tagged { tagged-word }
     word 0 tagged-word t!+
     tagged-word
   ;
@@ -1340,7 +1528,7 @@ begin-module zscript
     dup >type tagged-type = averts x-incorrect-type
     dup >tag word-tag = averts x-incorrect-type
     xt-type allocate-cell { xt-value }
-    0 swap t@+ xt-value forth::cell+ !
+    0 swap t@+ integral> forth::>xt xt-value forth::cell+ !
     xt-value
   ;
   
@@ -1349,8 +1537,10 @@ begin-module zscript
     [immediate]
     [compile-only]
     postpone ;]
+    >integral
     xt-type allocate-cell
     tuck
+    swap integral> swap
     forth::cell+ !
   ;
   
@@ -1378,28 +1568,13 @@ begin-module zscript
     then
   ;
   
-  \ Bind a scope to a lambda
-  : bind ( xn ... x0 count xt -- closure )
-    dup >type xt-type = averts x-incorrect-type
-    forth::cell+ @ { xt-cell } integral> { arg-count }
-    arg-count forth::1+ forth::cells closure-type allocate-cells { closure }
-    closure forth::cell+
-    xt-cell over ! forth::cell+
-    begin arg-count 0> forth::while
-      tuck ! forth::cell+
-      -1 forth::+to arg-count
-    repeat
-    drop
-    closure
-  ;
-  
   begin-module unsafe
     
     \ Get the address and size of a bytes or constant bytes value
     : bytes> ( value -- addr len )
       dup >type case
         bytes-type of
-          dup forth::cell+
+          dup forth::cell+ >integral
           swap >len
         endof
         const-bytes-type of
@@ -1732,8 +1907,8 @@ begin-module zscript
     make-bytes make-offset accessor-name 0 make-len copy
     name 0 accessor-name make-len len copy
     accessor-name start-compile visible
-    count raw-lit,
-    cells-type raw-lit,
+    count lit,
+    cells-type lit,
     postpone allocate-cells
     end-compile,
     s" -size" triple> { size-bytes size-offset size-len }
@@ -1773,9 +1948,13 @@ begin-module zscript
     { in-count out-count xt }
     token dup 0<> averts x-token-expected
     start-compile visible
-    in-count 0 ?do postpone integral> loop
+    in-count 0 ?do
+      postpone integral>
+    loop
     xt xt>integral raw-lit, postpone forth::execute
-    out-count 0 ?do postpone >integral loop
+    out-count 0 ?do
+      postpone >integral
+    loop
     internal::end-compile,
   ;
 
@@ -1849,7 +2028,7 @@ begin-module zscript
       rdrop rdrop 2drop false
     ;
 
-  \ Compile adding to a VALUE
+    \ Compile adding to a VALUE
     : compile-+to-value ( xt -- )
       internal::value-addr@ raw-lit,
       postpone dup
@@ -1862,6 +2041,16 @@ begin-module zscript
     
   end-module
 
+  \ Find a word
+  : find ( seq -- word|0 )
+    unsafe::bytes> 2integral> find dup forth::if
+      >integral { word }
+      forth::cell word-tag allocate-tagged { tagged-word }
+      word 0 tagged-word t!+
+      tagged-word
+    then
+  ;
+  
   \ Add to a local or a VALUE
   \ Do not execute this after this point before zeptoscript is initialized
   : +to ( x "name" -- )
@@ -1976,6 +2165,31 @@ begin-module zscript
   \ Create a global
   : global ( "name" -- )
     compiling-to-flash? if flash-global else ram-global then
+  ;
+  
+  \ Bind a scope to a lambda
+  : bind ( xn ... x0 count xt -- closure )
+    dup >type xt-type = averts x-incorrect-type
+    forth::cell+ @ { xt-cell } { arg-count }
+    arg-count 1+ closure-type allocate-cells { closure }
+    closure forth::cell+
+    xt-cell over ! forth::cell+
+    begin arg-count 0> while
+      tuck ! forth::cell+
+      arg-count 1 - to arg-count
+    repeat
+    drop
+    closure
+  ;
+  
+  \ Redefine PICK
+  : pick ( xn ... x0 u -- x )
+    integral> pick
+  ;
+
+  \ Redefine ROLL
+  : roll ( xn ... x0 u -- xn-1 ... x0 xn u )
+    integral> roll
   ;
   
   \ Unsafe operations raising exceptions outside of UNSAFE module
