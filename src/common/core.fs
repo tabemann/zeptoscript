@@ -359,7 +359,7 @@ begin-module zscript
       1 r0 movs_,#_
       r0 tos tst_,_
       eq bc>
-      31 r0 tos lsls_,_,#_
+      31 tos tos lsls_,_,#_
       31 tos tos asrs_,_,#_
       pc 1 pop
       >mark
@@ -371,11 +371,11 @@ begin-module zscript
       >mark
       0 tos tos ldr_,[_,#_]
       type-shift tos tos lsrs_,_,#_
-      [ word-type integral> 2 - ] literal tos cmp_,#_
+      word-type integral> 2 - tos cmp_,#_
+      ne bc>
       31 r0 tos lsls_,_,#_
       31 tos tos asrs_,_,#_
       pc 1 pop
-      ne bc>
       >mark
       0 tos movs_,#_
       ]code
@@ -421,8 +421,8 @@ begin-module zscript
       bytes current + to-space-current!
       current
       dup cell+ bytes cell - 0 fill
-      count cell+ 1 lshift
-      [ bytes-type 2 - type-shift lshift ] literal or over !
+      count integral> cell+ 1 lshift
+      [ bytes-type integral> 2 - type-shift lshift ] literal or over !
     ;
     
     \ Allocate a cell
@@ -471,7 +471,7 @@ begin-module zscript
       tag integral> dup cell+ !
       dup [ 2 cells ] literal + bytes [ 2 cells ] literal - 0 fill
       count integral> cell+ 1 lshift
-      [ tagged-type 2 - type-shift lshift ] literal or over !
+      [ tagged-type integral> 2 - type-shift lshift ] literal or over !
     ;
 
     \ Cast cells to nulls, integers, and words
@@ -500,7 +500,7 @@ begin-module zscript
 
     \ Convert a pair of cells to nulls, integers, and words
     : 2>integral ( x0 x1 -- 0|int|addr 0|int|addr )
-      swap 1 and { lowest } 1 or swap
+      swap dup 1 and { lowest } 1 or swap
       >integral swap 1 bic lowest or >integral swap
     ;
 
@@ -509,6 +509,9 @@ begin-module zscript
       integral> swap integral> swap
     ;
 
+    \ Get the compilation state
+    : state? state forth::@ >integral ;
+  
     \ Cast cells to xts
     : >xt ( x -- xt )
       xt-type allocate-cell { xt-value }
@@ -751,7 +754,7 @@ begin-module zscript
   : v@+ ( index object -- value )
     dup >type cells-type = averts x-incorrect-type
     swap integral> 1+ cells
-    over >size over u>= averts x-offset-out-of-range
+    over >size over u> averts x-offset-out-of-range
     + @
   ;
 
@@ -759,7 +762,7 @@ begin-module zscript
   : v!+ ( value index object -- )
     dup >type cells-type = averts x-incorrect-type
     swap integral> 1+ cells
-    over >size over u>= averts x-offset-out-of-range
+    over >size over u> averts x-offset-out-of-range
     + !
   ;
 
@@ -768,13 +771,13 @@ begin-module zscript
     dup >type case
       bytes-type of
         swap integral> cell+
-        over >size over u>= averts x-offset-out-of-range
+        over >size over u> averts x-offset-out-of-range
         dup 3 and triggers x-unaligned-dereference
         + @ >integral
       endof
       const-bytes-type of
         dup [ 2 cells ] literal + @ { len }
-        over len u>= averts x-offset-out-of-range
+        over len u> averts x-offset-out-of-range
         over 3 and triggers x-unaligned-dereference
         cell+ @ + @ >integral
       endof
@@ -786,7 +789,7 @@ begin-module zscript
   : !+ ( byte index object -- )
     dup >type bytes-type = averts x-incorrect-type
     swap integral> cell+
-    over >size over u>= averts x-offset-out-of-range
+    over >size over u> averts x-offset-out-of-range
     dup 3 and triggers x-unaligned-dereference
     + swap integral> swap !
   ;
@@ -796,13 +799,13 @@ begin-module zscript
     dup >type case
       bytes-type of
         swap integral> cell+
-        over >size over u>= averts x-offset-out-of-range
+        over >size over u> averts x-offset-out-of-range
         dup 1 and triggers x-unaligned-dereference
         + h@ 1 lshift 1 or
       endof
       const-bytes-type of
         dup [ 2 cells ] literal + @ { len }
-        over len u>= averts x-offset-out-of-range
+        over len u> averts x-offset-out-of-range
         over 1 and triggers x-unaligned-dereference
         cell+ @ + h@ 1 lshift 1 or
       endof
@@ -814,7 +817,7 @@ begin-module zscript
   : h!+ ( byte index object -- )
     dup >type bytes-type = averts x-incorrect-type
     swap integral> cell+
-    over >size over u>= averts x-offset-out-of-range
+    over >size over u> averts x-offset-out-of-range
     dup 1 and triggers x-unaligned-dereference
     + swap integral> swap h!
   ;
@@ -824,12 +827,12 @@ begin-module zscript
     dup >type case
       bytes-type of
         swap integral> cell+
-        over >size over u>= averts x-offset-out-of-range
+        over >size over u> averts x-offset-out-of-range
         + c@ 1 lshift 1 or
       endof
       const-bytes-type of
         dup [ 2 cells ] literal + @ { len }
-        over len u>= averts x-offset-out-of-range
+        over len u> averts x-offset-out-of-range
         cell+ @ + c@ 1 lshift 1 or
       endof
       ['] x-incorrect-type ?raise
@@ -840,7 +843,7 @@ begin-module zscript
   : c!+ ( byte index object -- )
     dup >type bytes-type = averts x-incorrect-type
     swap integral> cell+
-    over >size over u>= averts x-offset-out-of-range
+    over >size over u> averts x-offset-out-of-range
     + swap integral> swap c!
   ;
 
@@ -888,16 +891,24 @@ begin-module zscript
     value0 addr? averts x-incorrect-type
     value1 addr? averts x-incorrect-type
     value0 >type { type0 }
-    type0 value1 >type = averts x-incorrect-type
-    count 0>= averts x-offset-out-of-range
-    value0 >size cell - offset0 count + >= averts x-offset-out-of-range
-    value1 >size cell - offset1 count + >= averts x-offset-out-of-range
-    type0 2 - has-values and if
-      count cells to count
-      offset0 cells to offset0
-      offset1 cells to offset1
+    type0 const-bytes-type = if
+      value1 >type bytes-type = averts x-incorrect-type
+      count 0>= averts x-offset-out-of-range
+      value0 >len integral> offset0 count + >= averts x-offset-out-of-range
+      value1 >len integral> offset1 count + >= averts x-offset-out-of-range
+      value0 cell+ @ offset0 + value1 cell+ offset1 + count move
+    else
+      type0 value1 >type = averts x-incorrect-type
+      count 0>= averts x-offset-out-of-range
+      value0 >len integral> offset0 count + >= averts x-offset-out-of-range
+      value1 >len integral> offset1 count + >= averts x-offset-out-of-range
+      type0 integral> 2 - has-values and if
+        count cells to count
+        offset0 cells to offset0
+        offset1 cells to offset1
+      then
+      value0 cell+ offset0 + value1 cell+ offset1 + count move
     then
-    value0 cell+ offset0 + value1 cell+ offset1 + count move
   ;
   
   \ Redefine S"
@@ -1567,7 +1578,7 @@ begin-module zscript
         endof
         const-bytes-type of
           dup forth::cell+ @ >integral
-          swap [ 2 forth::cells ] literal + @ >integral
+          swap [ 2 forth::cells ] literal forth::+ @ >integral
         endof
         cells-type of
           triple> { bytes offset len }
@@ -1756,9 +1767,6 @@ begin-module zscript
   : type ( seq -- )
     unsafe::bytes> 2integral> type
   ;
-  
-  \ Get the compilation state
-  : state? state forth::@ >integral ;
   
   \ Get an xt at interpretation-time
   : ' ( "name" -- xt )
@@ -2099,28 +2107,27 @@ begin-module zscript
 
     \ Set a flash global at an index
     : flash-global! ( x index -- )
-      flash-globals-array@ v@+
+      flash-globals-array@ v!+
     ;
 
     \ Create a RAM global
-    : ram-global ( "name" --)
-      { offset }
+    : ram-global ( "name" -- )
       token dup 0<> averts x-token-expected { name }
       name >len { len }
       current-ram-global-id-index ram-global@ { index }
       index 1+ current-ram-global-id-index ram-global!
-      index 1+ integral> cells-type integral> allocate-cells { new-globals }
+      index 1+ cells-type allocate-cells { new-globals }
       new-globals new-ram-globals-array!
       ram-globals-array@ 0 new-ram-globals-array@ 0 index copy
       new-ram-globals-array@ ram-globals-array!
       len 1+ allocate-bytes { accessor-name }
       name 0 accessor-name 0 len copy
-      forth::[char] @ >integral len 1+ accessor-name c!+
+      forth::[char] @ >integral len accessor-name c!+
       accessor-name start-compile visible
       index lit,
       postpone ram-global@
       end-compile,
-      forth::[char] ! >integral len 1+ accessor-name c!+
+      forth::[char] ! >integral len accessor-name c!+
       accessor-name start-compile visible
       index lit,
       postpone ram-global!
@@ -2128,19 +2135,18 @@ begin-module zscript
     ;
 
     \ Create a flash global
-    : flash-global ( "name" --)
-      { offset }
+    : flash-global ( "name" -- )
       token dup 0<> averts x-token-expected { name }
       name >len { len }
       get-current-flash-global-id { index }
       len 1+ allocate-bytes { accessor-name }
       name 0 accessor-name 0 len copy
-      forth::[char] @ >integral len 1+ accessor-name c!+
+      forth::[char] @ >integral len accessor-name c!+
       accessor-name start-compile visible
       index lit,
       postpone flash-global@
       end-compile,
-      forth::[char] ! >integral len 1+ accessor-name c!+
+      forth::[char] ! >integral len accessor-name c!+
       accessor-name start-compile visible
       index lit,
       postpone flash-global!
