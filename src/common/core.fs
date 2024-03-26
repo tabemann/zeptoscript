@@ -726,7 +726,7 @@ begin-module zscript
   \ Create a tuple
   : >tuple ( xn ... x0 count -- tuple )
     dup cells-type allocate-cells { tuple }
-    tuple over 1+ cells + swap 0 ?do cell - tuck ! loop drop
+    integral> tuple over 1+ cells + swap 0 ?do cell - tuck ! loop drop
     tuple
   ;
 
@@ -1854,7 +1854,7 @@ begin-module zscript
   \ Define a constant with a name
   : constant-with-name ( x name -- )
     swap dup small-int? if
-      integral> swap unsafe::bytes> 2integral> internal::constant-with-name
+      swap unsafe::bytes> 2integral> internal::constant-with-name
     else
       swap start-compile visible lit, end-compile,
     then
@@ -1875,20 +1875,20 @@ begin-module zscript
   ;
 
   \ Begin declaring a record
-  : begin-record ( "name" -- offset )
+  : begin-record ( "name" -- token offset )
     syntax-record internal::push-syntax
     token dup 0<> averts x-token-expected
     0
   ;
 
   \ Finish declaring a record
-  : end-record ( offset -- )
+  : end-record ( token offset -- )
     syntax-record internal::verify-syntax internal::drop-syntax
     { name count }
     name >len { len }
     len 1+ allocate-bytes { accessor-name }
     forth::[char] > >integral 0 accessor-name c!+
-    name 0 accessor-name 1 len copy
+    name 0 accessor-name [ 1 >small-int ] literal len copy
     accessor-name start-compile visible
     count lit,
     postpone >tuple
@@ -1898,7 +1898,7 @@ begin-module zscript
     accessor-name start-compile visible
     postpone tuple-no-count>
     end-compile,
-    s" make-" { make-bytes make-offset make-len }
+    s" make-" triple> { make-bytes make-offset make-len }
     make-len len + allocate-bytes to accessor-name
     make-bytes make-offset accessor-name 0 make-len copy
     name 0 accessor-name make-len len copy
@@ -1924,13 +1924,13 @@ begin-module zscript
     name >len { len }
     len 1+ allocate-bytes { accessor-name }
     name 0 accessor-name 0 len copy
-    forth::[char] @ >integral len 1+ accessor-name c!+
+    forth::[char] @ >integral len accessor-name c!+
     accessor-name start-compile visible
     offset lit,
     postpone swap
     postpone v@+
     end-compile,
-    forth::[char] ! >integral len 1+ accessor-name c!+
+    forth::[char] ! >integral len accessor-name c!+
     accessor-name start-compile visible
     offset lit,
     postpone swap
