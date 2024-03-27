@@ -435,7 +435,7 @@ begin-module zscript
       to-space-current@ { current }
       current [ 2 cells ] literal + to-space-current!
       current
-      dup cell+ 0 !
+      0 over cell+ !
       type integral> 2 - type-shift lshift
       [ 2 cells 1 lshift ] literal or over !
     ;
@@ -468,9 +468,9 @@ begin-module zscript
       bytes integral> to bytes
       bytes current + to-space-current!
       current
-      tag integral> dup cell+ !
+      tag integral> over cell+ !
       dup [ 2 cells ] literal + bytes [ 2 cells ] literal - 0 fill
-      count integral> cell+ 1 lshift
+      count integral> [ 2 cells ] literal + 1 lshift
       [ tagged-type integral> 2 - type-shift lshift ] literal or over !
     ;
 
@@ -515,7 +515,7 @@ begin-module zscript
     \ Cast cells to xts
     : >xt ( x -- xt )
       xt-type allocate-cell { xt-value }
-      xt-value cell+ !
+      integral> xt-value cell+ !
       xt-value
     ;
 
@@ -587,16 +587,16 @@ begin-module zscript
     \ Get a value in a tagged data structure
     : t@+ ( index object -- value )
       dup >type tagged-type = averts x-incorrect-type
-      swap integral> 1+ cells
-      over >size over u< averts x-offset-out-of-range
+      swap integral> 2 + cells
+      over >size over u> averts x-offset-out-of-range
       + @ >integral
     ;
 
     \ Set a value in a tagged data structure
     : t!+ ( value index object -- )
       dup >type tagged-type = averts x-incorrect-type
-      swap integral> 1+ cells
-      over >size over u< averts x-offset-out-of-range
+      swap integral> 2 + cells
+      over >size over u> averts x-offset-out-of-range
       + swap integral> swap !
     ;
 
@@ -648,6 +648,18 @@ begin-module zscript
     1 >small-int constant init-ram-global-count
 
   end-module> import
+
+  \ Types
+  null-type constant null-type
+  int-type constant int-type
+  bytes-type constant bytes-type
+  word-type constant word-type
+  2word-type constant 2word-type
+  const-bytes-type constant const-bytes-type
+  xt-type constant xt-type
+  tagged-type constant tagged-type
+  cells-type constant cells-type
+  closure-type constant closure-type
 
   \ Get the raw LIT,
   : raw-lit, ( x -- ) integral> lit, ;
@@ -1517,7 +1529,7 @@ begin-module zscript
   \ Get a word from a token
   : token-word ( runtime: "name" -- word )
     token-word >integral { word }
-    forth::cell word-tag allocate-tagged { tagged-word }
+    cell word-tag allocate-tagged { tagged-word }
     word 0 tagged-word t!+
     tagged-word
   ;
@@ -1530,17 +1542,35 @@ begin-module zscript
     0 swap t@+ integral> forth::>xt xt-value forth::cell+ !
     xt-value
   ;
-  
-  \ End a lambda
-  : ;]
+
+  \ End lambda
+  : ;] ( -- )
     [immediate]
     [compile-only]
-    postpone ;]
-    >integral
-    xt-type allocate-cell
-    tuck
-    swap integral> swap
-    forth::cell+ !
+    undefer-lit
+    internal::get-syntax dup internal::syntax-lambda forth::= forth::if
+      drop internal::drop-syntax
+      word-exit-hook @ ?execute
+      word-end-hook @ ?execute
+      [ thumb-2? forth::not ] [if] internal::consts-inline, [then]
+      $BD00 h,
+      here rot internal::branch-back!
+      forth::lit,
+      xt-type lit, postpone allocate-cell
+      postpone tuck
+      postpone forth::cell+
+      postpone !
+    else
+      internal::syntax-naked-lambda forth::=
+      averts internal::x-unexpected-syntax
+      internal::drop-syntax
+      internal::syntax-word internal::push-syntax
+      postpone ;
+      xt-type allocate-cell
+      tuck
+      forth::cell+
+      !
+    then
   ;
   
   \ Execute a closure
@@ -2164,10 +2194,10 @@ begin-module zscript
   \ Bind a scope to a lambda
   : bind ( xn ... x0 count xt -- closure )
     dup >type xt-type = averts x-incorrect-type
-    forth::cell+ @ { xt-cell } { arg-count }
+    swap { arg-count }
     arg-count 1+ closure-type allocate-cells { closure }
     closure forth::cell+
-    xt-cell over ! forth::cell+
+    swap forth::cell+ @ over ! forth::cell+
     begin arg-count 0> while
       tuck ! forth::cell+
       arg-count 1 - to arg-count
@@ -2184,6 +2214,27 @@ begin-module zscript
   \ Redefine ROLL
   : roll ( xn ... x0 u -- xn-1 ... x0 xn u )
     integral> roll
+  ;
+
+  \ Set BASE
+  : base! ( base -- )
+    integral> base forth::!
+  ;
+
+  \ Get BASE
+  : base@ ( -- base )
+    base forth::@ >integral
+  ;
+
+  \ Execute an xt with a BASE
+  : with-base ( base xt -- )
+    base@ { old-base }
+    swap base! execute old-base base!
+  ;
+
+  \ Parse an integer
+  : parse-integer ( seq -- n success )
+    unsafe::bytes> 2integral> parse-integer 2>integral
   ;
   
   \ Unsafe operations raising exceptions outside of UNSAFE module
