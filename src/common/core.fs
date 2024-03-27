@@ -306,6 +306,7 @@ begin-module zscript
     7 >small-int constant tagged-type
     10 >small-int constant cells-type
     11 >small-int constant closure-type
+    12 >small-int constant bytes-section-type
 
     \ Cast nulls, integers, and words to cells, validating them
     : integral> ( 0 | int | addr -- x' )
@@ -660,6 +661,7 @@ begin-module zscript
   tagged-type constant tagged-type
   cells-type constant cells-type
   closure-type constant closure-type
+  bytes-section-type constant bytes-section-type
 
   \ Get the raw LIT,
   : raw-lit, ( x -- ) integral> lit, ;
@@ -667,23 +669,6 @@ begin-module zscript
   \ Redefine LIT,
   : lit, ( xt -- )
     dup small-int? if lit, else integral> lit, postpone >integral then
-  ;
-
-  \ Get the length of cells in entries or bytes in bytes
-  : >len ( cells | bytes -- len )
-    dup >type case
-      cells-type of
-        >size cell - 2 rshift
-      endof
-      bytes-type of
-        >size cell -
-      endof
-      const-bytes-type of
-        [ 2 cells ] literal + @
-      endof
-      ['] x-incorrect-type ?raise
-    endcase
-    >integral
   ;
 
   \ Convert an address/length pair into constant bytes
@@ -757,11 +742,6 @@ begin-module zscript
     count 0 ?do cell + dup @ swap loop drop
   ;
   
-  \ Convert a sequence into a sequence triple
-  : seq>triple ( seq -- triple )
-    0 over >len >triple
-  ;
-
   \ Get a value in a cells data structure
   : v@+ ( index object -- value )
     dup >type cells-type = averts x-incorrect-type
@@ -859,6 +839,65 @@ begin-module zscript
     + swap integral> swap c!
   ;
 
+  \ Get the length of cells in entries or bytes in bytes
+  : >len ( cells | bytes -- len )
+    dup >type case
+      cells-type of
+        >size cell - 2 rshift >integral
+      endof
+      bytes-type of
+        >size cell - >integral
+      endof
+      const-bytes-type of
+        [ 2 cells ] literal + @ >integral
+      endof
+      bytes-section-type of
+        [ 3 cells ] literal + @
+      endof
+      ['] x-incorrect-type ?raise
+    endcase
+  ;
+
+  \ Is something bytes
+  : bytes? ( x -- bytes? )
+    >type case
+      bytes-type of true endof
+      const-bytes-type of true endof
+      bytes-section-type of true endof
+      swap false swap
+    endcase
+  ;
+  
+  \ Get the raw bytes of a bytes or bytes section value
+  : >raw-bytes ( bytes -- bytes' )
+    begin
+      dup >type case
+        bytes-type of true endof
+        const-bytes-type of true endof
+        bytes-section-type of cell+ @ false endof
+        ['] x-incorrect-type ?raise
+      endcase
+    until
+  ;
+
+  \ Get the raw offset of a bytes or bytes section value
+  : >raw-bytes-offset ( bytes -- offset )
+    0 { offset }
+    begin
+      dup >type case
+        bytes-type of drop true endof
+        const-bytes-type of drop true endof
+        bytes-section-type of
+          dup [ 2 cells ] literal + @
+          offset integral> swap integral> + >integral to offset
+          cell+ @ false
+        endof
+        ['] x-incorrect-type ?raise
+      endcase
+    until
+    offset
+  ;
+  
   \ Initialize zeptoscript
   defer init-zscript
   :noname { compile-size runtime-size -- }
@@ -930,12 +969,10 @@ begin-module zscript
       postpone s"
       postpone 2>integral
       postpone >const-bytes
-      postpone seq>triple
     else
       [char] " internal::parse-to-char
       2>integral
       >bytes
-      seq>triple
     then
   ;
 
@@ -946,14 +983,12 @@ begin-module zscript
       postpone s\"
       postpone 2>integral
       postpone >const-bytes
-      postpone seq>triple
     else
       [:
         here dup [char] " esc-string::parse-esc-string
         here over -
         2>integral
         >bytes
-        seq>triple
         swap ram-here!
       ;] with-ram
     then
@@ -1484,26 +1519,30 @@ begin-module zscript
     integral> spaces
   ;
 
-  \ Truncate the start of a sequence triple
-  : truncate-start { count triple -- triple' }
-    triple triple> { seq start len }
-    count len < if
-      seq start count + len count -
-    else
-      seq start len + 0
-    then
-    >triple
+  \ Truncate the start of bytes
+  : truncate-start { count bytes -- bytes' }
+    bytes bytes? averts x-incorrect-type
+    bytes >raw-bytes { raw-bytes }
+    bytes >raw-bytes-offset { offset }
+    bytes >len { len }
+    [ 3 >small-int ] literal bytes-section-type allocate-cells { section }
+    raw-bytes section forth::cell+ !
+    offset count + section [ 2 forth::cells ] literal forth::+ !
+    len count - section [ 3 forth::cells ] literal forth::+ !
+    section
   ;
 
-  \ Truncate the end of a sequence triple
-  : truncate-end { count triple -- triple' }
-    triple triple> { seq start len }
-    count len < if
-      seq start len count -
-    else
-      seq start 0
-    then
-    >triple
+  \ Truncate the end of bytes
+  : truncate-end { count bytes -- bytes' }
+    bytes bytes? averts x-incorrect-type
+    bytes >raw-bytes { raw-bytes }
+    bytes >raw-bytes-offset { offset }
+    bytes >len { len }
+    [ 3 >small-int ] literal bytes-section-type allocate-cells { section }
+    raw-bytes section forth::cell+ !
+    offset section [ 2 forth::cells ] literal forth::+ !
+    len count - section [ 3 forth::cells ] literal forth::+ !
+    section
   ;
 
   \ Get the type of a value
@@ -1601,31 +1640,19 @@ begin-module zscript
     
     \ Get the address and size of a bytes or constant bytes value
     : bytes> ( value -- addr len )
-      dup >type case
+      dup bytes? averts x-incorrect-type
+      dup >len { len }
+      dup >raw-bytes-offset { offset }
+      dup >raw-bytes dup >type case
         bytes-type of
-          dup forth::cell+ >integral
-          swap >len
+          forth::cell+ >integral offset +
         endof
         const-bytes-type of
-          dup forth::cell+ @ >integral
-          swap [ 2 forth::cells ] literal forth::+ @ >integral
-        endof
-        cells-type of
-          triple> { bytes offset len }
-          bytes >type case
-            bytes-type of
-              bytes forth::cell+ >integral offset +
-              bytes >len offset - len min 0 max
-            endof
-            const-bytes-type of
-              bytes forth::cell+ @ >integral offset +
-              bytes >len offset - len min 0 max
-            endof
-            ['] x-incorrect-type ?raise
-          endcase
+          dup forth::cell+ @ offset + >integral
         endof
         ['] x-incorrect-type ?raise
       endcase
+      len
     ;
     
     \ Redefine @
