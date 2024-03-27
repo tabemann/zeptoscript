@@ -2197,10 +2197,10 @@ begin-module zscript
     swap { arg-count }
     arg-count 1+ closure-type allocate-cells { closure }
     closure forth::cell+
-    swap forth::cell+ @ over ! forth::cell+
+    swap xt>integral over ! forth::cell+
     begin arg-count 0> while
       tuck ! forth::cell+
-      arg-count 1 - to arg-count
+      arg-count 1- to arg-count
     repeat
     drop
     closure
