@@ -306,7 +306,7 @@ begin-module zscript
     7 >small-int constant tagged-type
     10 >small-int constant cells-type
     11 >small-int constant closure-type
-    12 >small-int constant bytes-section-type
+    12 >small-int constant slice-type
 
     \ Cast nulls, integers, and words to cells, validating them
     : integral> ( 0 | int | addr -- x' )
@@ -661,7 +661,7 @@ begin-module zscript
   tagged-type constant tagged-type
   cells-type constant cells-type
   closure-type constant closure-type
-  bytes-section-type constant bytes-section-type
+  slice-type constant slice-type
 
   \ Get the raw LIT,
   : raw-lit, ( x -- ) integral> lit, ;
@@ -686,157 +686,36 @@ begin-module zscript
     bytes
   ;
 
-  \ Convert two values into a pair
-  : >pair ( x0 x1 -- pair )
-    [ 2 >small-int ] literal cells-type allocate-cells { pair }
-    pair [ 2 cells ] literal + !
-    pair cell+ !
-    pair
+  \ Get the raw bytes of a cells, bytes, or slice value
+  : >raw ( x -- x' )
+    begin
+      dup >type case
+        cells-type of true endof
+        bytes-type of true endof
+        const-bytes-type of true endof
+        slice-type of cell+ @ false endof
+        ['] x-incorrect-type ?raise
+      endcase
+    until
   ;
 
-  \ Convert a pair into two values
-  : pair> ( pair -- x0 x1 )
-    dup >type cells-type = averts x-incorrect-type
-    dup >size [ 3 cells ] literal = averts x-incorrect-size
-    dup cell+ @
-    swap [ 2 cells ] literal + @
-  ;
-
-  \ Convert three values into a triple
-  : >triple ( x0 x1 x2 -- triple )
-    [ 3 >small-int ] literal cells-type allocate-cells { triple }
-    triple [ 3 cells ] literal + !
-    triple [ 2 cells ] literal + !
-    triple cell+ !
-    triple
-  ;
-
-  \ Convert a triple into three values
-  : triple> ( pair -- x0 x1 x2 )
-    dup >type cells-type = averts x-incorrect-type
-    dup >size [ 4 cells ] literal = averts x-incorrect-size
-    dup cell+ @
-    over [ 2 cells ] literal + @
-    rot [ 3 cells ] literal + @
-  ;
-
-  \ Create a tuple
-  : >tuple ( xn ... x0 count -- tuple )
-    dup cells-type allocate-cells { tuple }
-    integral> tuple over 1+ cells + swap 0 ?do cell - tuck ! loop drop
-    tuple
-  ;
-
-  \ Explode a tuple
-  : tuple> ( tuple -- xn ... x0 count )
-    dup >type cells-type = averts x-incorrect-type
-    dup >size cell - 2 rshift { count }
-    count 0 ?do cell + dup @ swap loop drop
-    count >integral
-  ;
-
-  \ Explode a tuple without pushing its count
-  : tuple-no-count> ( tuple -- xn ... x0 )
-    dup >type cells-type = averts x-incorrect-type
-    dup >size cell - 2 rshift { count }
-    count 0 ?do cell + dup @ swap loop drop
-  ;
-  
-  \ Get a value in a cells data structure
-  : v@+ ( index object -- value )
-    dup >type cells-type = averts x-incorrect-type
-    swap integral> 1+ cells
-    over >size over u> averts x-offset-out-of-range
-    + @
-  ;
-
-  \ Set a value in a cells data structure
-  : v!+ ( value index object -- )
-    dup >type cells-type = averts x-incorrect-type
-    swap integral> 1+ cells
-    over >size over u> averts x-offset-out-of-range
-    + !
-  ;
-
-  \ Get a word in a bytes data structure
-  : @+ ( index object -- byte )
-    dup >type case
-      bytes-type of
-        swap integral> cell+
-        over >size over u> averts x-offset-out-of-range
-        dup 3 and triggers x-unaligned-dereference
-        + @ >integral
-      endof
-      const-bytes-type of
-        dup [ 2 cells ] literal + @ { len }
-        over len u> averts x-offset-out-of-range
-        over 3 and triggers x-unaligned-dereference
-        cell+ @ + @ >integral
-      endof
-      ['] x-incorrect-type ?raise
-    endcase
-  ;
-
-  \ Set a word in a bytes data structure
-  : !+ ( byte index object -- )
-    dup >type bytes-type = averts x-incorrect-type
-    swap integral> cell+
-    over >size over u> averts x-offset-out-of-range
-    dup 3 and triggers x-unaligned-dereference
-    + swap integral> swap !
-  ;
-
-  \ Get a halfword in a bytes data structure
-  : h@+ ( index object -- byte )
-    dup >type case
-      bytes-type of
-        swap integral> cell+
-        over >size over u> averts x-offset-out-of-range
-        dup 1 and triggers x-unaligned-dereference
-        + h@ 1 lshift 1 or
-      endof
-      const-bytes-type of
-        dup [ 2 cells ] literal + @ { len }
-        over len u> averts x-offset-out-of-range
-        over 1 and triggers x-unaligned-dereference
-        cell+ @ + h@ 1 lshift 1 or
-      endof
-      ['] x-incorrect-type ?raise
-    endcase
-  ;
-
-  \ Set a halfword in a bytes data structure
-  : h!+ ( byte index object -- )
-    dup >type bytes-type = averts x-incorrect-type
-    swap integral> cell+
-    over >size over u> averts x-offset-out-of-range
-    dup 1 and triggers x-unaligned-dereference
-    + swap integral> swap h!
-  ;
-
-  \ Get a byte in a bytes data structure
-  : c@+ ( index object -- byte )
-    dup >type case
-      bytes-type of
-        swap integral> cell+
-        over >size over u> averts x-offset-out-of-range
-        + c@ 1 lshift 1 or
-      endof
-      const-bytes-type of
-        dup [ 2 cells ] literal + @ { len }
-        over len u> averts x-offset-out-of-range
-        cell+ @ + c@ 1 lshift 1 or
-      endof
-      ['] x-incorrect-type ?raise
-    endcase
-  ;
-
-  \ Set a byte in a bytes data structure
-  : c!+ ( byte index object -- )
-    dup >type bytes-type = averts x-incorrect-type
-    swap integral> cell+
-    over >size over u> averts x-offset-out-of-range
-    + swap integral> swap c!
+  \ Get the raw offset of a cells, bytes, or slice value
+  : >raw-offset ( x -- offset )
+    0 { offset }
+    begin
+      dup >type case
+        cells-type of drop true endof
+        bytes-type of drop true endof
+        const-bytes-type of drop true endof
+        slice-type of
+          dup [ 2 cells ] literal + @
+          offset integral> swap integral> + >integral to offset
+          cell+ @ false
+        endof
+        ['] x-incorrect-type ?raise
+      endcase
+    until
+    offset
   ;
 
   \ Get the length of cells in entries or bytes in bytes
@@ -851,11 +730,366 @@ begin-module zscript
       const-bytes-type of
         [ 2 cells ] literal + @ >integral
       endof
-      bytes-section-type of
+      slice-type of
         [ 3 cells ] literal + @
       endof
       ['] x-incorrect-type ?raise
     endcase
+  ;
+
+  \ Convert two values into a pair
+  : >pair ( x0 x1 -- pair )
+    [ 2 >small-int ] literal cells-type allocate-cells { pair }
+    pair [ 2 cells ] literal + !
+    pair cell+ !
+    pair
+  ;
+
+  \ Convert a pair into two values
+  : pair> ( pair -- x0 x1 )
+    dup >type case
+      cells-type of
+        dup >size [ 3 cells ] literal = averts x-incorrect-size
+        dup cell+ @
+        over [ 2 cells ] literal + @
+      endof
+      slice-type of
+        dup >raw { raw }
+        dup >raw-offset { offset }
+        >len { len }
+        raw >type cells-type = averts x-incorrect-type
+        len [ 2 >small-int ] literal = averts x-incorrect-size
+        raw offset 1+ cells + dup @
+        swap cell+ @
+      endof
+      ['] x-incorrect-type ?raise
+    endcase
+  ;
+
+  \ Convert three values into a triple
+  : >triple ( x0 x1 x2 -- triple )
+    [ 3 >small-int ] literal cells-type allocate-cells { triple }
+    triple [ 3 cells ] literal + !
+    triple [ 2 cells ] literal + !
+    triple cell+ !
+    triple
+  ;
+
+  \ Convert a triple into three values
+  : triple> ( pair -- x0 x1 x2 )
+    dup >type case
+      cells-type of
+        dup >size [ 4 cells ] literal = averts x-incorrect-size
+        dup cell+ @
+        over [ 2 cells ] literal + @
+        rot [ 3 cells ] literal + @
+      endof
+      slice-type of
+        dup >raw { raw }
+        dup >raw-offset { offset }
+        >len { len }
+        raw >type cells-type = averts x-incorrect-type
+        len [ 3 >small-int ] literal = averts x-incorrect-size
+        raw offset 1+ cells + dup @
+        swap cell+ dup @
+        swap cell+ @
+      endof
+      ['] x-incorrect-type ?raise
+    endcase
+  ;
+
+  \ Allocate a tuple
+  : make-tuple ( count -- tuple )
+    cells-type allocate-cells
+  ;
+
+  \ Allocate bytes
+  : make-bytes ( count -- bytes )
+    allocate-bytes
+  ;
+
+  \ Create a tuple
+  : >tuple ( xn ... x0 count -- tuple )
+    dup cells-type allocate-cells { tuple }
+    integral> tuple over 1+ cells + swap 0 ?do cell - tuck ! loop drop
+    tuple
+  ;
+
+  \ Explode a tuple
+  : tuple> ( tuple -- xn ... x0 count )
+    dup >type case
+      cells-type of
+        dup >size cell - 2 rshift { count }
+        count 0 ?do cell + dup @ swap loop drop
+        count >integral
+      endof
+      slice-type of
+        dup >raw { raw }
+        dup >raw-offset { offset }
+        >len { len }
+        raw >type cells-type = averts x-incorrect-type
+        raw offset integral> cells +
+        len integral> 0 ?do cell + dup @ swap loop drop
+        len
+      endof
+      ['] x-incorrect-type ?raise
+    endcase
+  ;
+
+  \ Explode a tuple without pushing its count
+  : tuple-no-count> ( tuple -- xn ... x0 )
+    dup >type case
+      cells-type of
+        dup >size cell - 2 rshift { count }
+        count 0 ?do cell + dup @ swap loop drop
+      endof
+      slice-type of
+        dup >raw { raw }
+        dup >raw-offset { offset }
+        >len { len }
+        raw >type cells-type = averts x-incorrect-type
+        raw offset integral> cells +
+        len integral> 0 ?do cell + dup @ swap loop drop
+      endof
+      ['] x-incorrect-type ?raise
+    endcase
+  ;
+  
+  \ Get a value in a cells data structure
+  : @+ ( index object -- value )
+    dup >type case
+      cells-type of
+        swap integral> 1+ cells
+        over >size over u> averts x-offset-out-of-range
+        + @
+      endof
+      slice-type of
+        { index slice }
+        slice >raw { raw }
+        raw >type cells-type = averts x-incorrect-type
+        slice >raw-offset integral> { offset }
+        slice >len integral> { len }
+        len index u> averts x-offset-out-of-range
+        raw index offset + 1+ cells + @
+      endof
+      ['] x-incorrect-type ?raise
+    endcase
+  ;
+
+  \ Set a value in a cells data structure
+  : !+ ( value index object -- )
+    dup >type case
+      cells-type of
+        swap integral> 1+ cells
+        over >size over u> averts x-offset-out-of-range
+        + !
+      endof
+      slice-type of
+        { index slice }
+        slice >raw { raw }
+        raw >type cells-type = averts x-incorrect-type
+        slice >raw-offset integral> { offset }
+        slice >len integral> { len }
+        len index u> averts x-offset-out-of-range
+        raw index offset + 1+ cells + !
+      endof
+      ['] x-incorrect-type ?raise
+    endcase
+  ;
+
+  \ Get a word in a bytes data structure
+  : w@+ ( index object -- byte )
+    dup >type case
+      bytes-type of
+        swap integral> cell+
+        over >size over 4 + u>= averts x-offset-out-of-range
+        dup 3 and triggers x-unaligned-dereference
+        +
+      endof
+      const-bytes-type of
+        dup [ 2 cells ] literal + @ { len }
+        over len 4 + u>= averts x-offset-out-of-range
+        over 3 and triggers x-unaligned-dereference
+        cell+ @ +
+      endof
+      slice-type of
+        { index slice }
+        slice >raw { raw }
+        slice >raw-offset integral> { offset }
+        >len integral> { len }
+        raw >type case
+          bytes-type of
+            len index 4 + u>= averts x-offset-out-of-range
+            index 3 and triggers x-unaligned-dereference
+            raw index offset + cell+ +
+          endof
+          const-bytes-type of
+            len index 4 + u>= averts x-offset-out-of-range
+            index 3 and triggers x-unaligned-dereference
+            raw cell+ @ index offset + +
+          endof
+          ['] x-incorrect-type ?raise
+        endcase
+      endof
+      ['] x-incorrect-type ?raise
+    endcase
+    @ >integral
+  ;
+
+  \ Set a word in a bytes data structure
+  : w!+ ( byte index object -- )
+    dup >type case
+      bytes-type of
+        swap integral> cell+
+        over >size over 4 + u>= averts x-offset-out-of-range
+        dup 3 and triggers x-unaligned-dereference
+        + 
+      endof
+      slice-type of
+        { index slice }
+        slice >raw { raw }
+        slice >raw-offset integral> { offset }
+        >len integral> { len }
+        raw >type case
+          bytes-type of
+            len index 4 + u>= averts x-offset-out-of-range
+            index 3 and triggers x-unaligned-dereference
+            raw index offset + cell+ +
+          endof
+          ['] x-incorrect-type ?raise
+        endcase
+      endof
+      ['] x-incorrect-type ?raise
+    endcase
+    swap integral> swap !
+  ;
+
+  \ Get a halfword in a bytes data structure
+  : h@+ ( index object -- byte )
+    dup >type case
+      bytes-type of
+        swap integral> cell+
+        over >size over 2 + u>= averts x-offset-out-of-range
+        dup 1 and triggers x-unaligned-dereference
+        +
+      endof
+      const-bytes-type of
+        dup [ 2 cells ] literal + @ { len }
+        over len 2 + u>= averts x-offset-out-of-range
+        over 1 and triggers x-unaligned-dereference
+        cell+ @ +
+      endof
+      slice-type of
+        { index slice }
+        slice >raw { raw }
+        slice >raw-offset integral> { offset }
+        >len integral> { len }
+        raw >type case
+          bytes-type of
+            len index 2 + u>= averts x-offset-out-of-range
+            index 1 and triggers x-unaligned-dereference
+            raw index offset + cell+ +
+          endof
+          const-bytes-type of
+            len index 2 + u>= averts x-offset-out-of-range
+            index 1 and triggers x-unaligned-dereference
+            raw cell+ @ index offset + +
+          endof
+          ['] x-incorrect-type ?raise
+        endcase
+      endof
+      ['] x-incorrect-type ?raise
+    endcase
+    h@ >integral
+  ;
+
+  \ Set a halfword in a bytes data structure
+  : h!+ ( byte index object -- )
+    dup >type case
+      bytes-type of
+        swap integral> cell+
+        over >size over 2 + u>= averts x-offset-out-of-range
+        dup 1 and triggers x-unaligned-dereference
+        + 
+      endof
+      slice-type of
+        { index slice }
+        slice >raw { raw }
+        slice >raw-offset integral> { offset }
+        >len integral> { len }
+        raw >type case
+          bytes-type of
+            len index 2 + u>= averts x-offset-out-of-range
+            index 1 and triggers x-unaligned-dereference
+            raw index offset + cell+ +
+          endof
+          ['] x-incorrect-type ?raise
+        endcase
+      endof
+      ['] x-incorrect-type ?raise
+    endcase
+    swap integral> swap h!
+  ;
+
+  \ Get a byte in a bytes data structure
+  : c@+ ( index object -- byte )
+    dup >type case
+      bytes-type of
+        swap integral> cell+
+        over >size over u> averts x-offset-out-of-range
+        +
+      endof
+      const-bytes-type of
+        dup [ 2 cells ] literal + @ { len }
+        over len u> averts x-offset-out-of-range
+        cell+ @ +
+      endof
+      slice-type of
+        { index slice }
+        slice >raw { raw }
+        slice >raw-offset integral> { offset }
+        >len integral> { len }
+        raw >type case
+          bytes-type of
+            len index u> averts x-offset-out-of-range
+            raw index offset + cell+ +
+          endof
+          const-bytes-type of
+            len index u> averts x-offset-out-of-range
+            raw cell+ @ index offset + +
+          endof
+          ['] x-incorrect-type ?raise
+        endcase
+      endof
+      ['] x-incorrect-type ?raise
+    endcase
+    c@ >integral
+  ;
+
+  \ Set a byte in a bytes data structure
+  : c!+ ( byte index object -- )
+    dup >type case
+      bytes-type of
+        swap integral> cell+
+        over >size over u> averts x-offset-out-of-range
+        + 
+      endof
+      slice-type of
+        { index slice }
+        slice >raw { raw }
+        slice >raw-offset integral> { offset }
+        >len integral> { len }
+        raw >type case
+          bytes-type of
+            len index u> averts x-offset-out-of-range
+            raw index offset + cell+ +
+          endof
+          ['] x-incorrect-type ?raise
+        endcase
+      endof
+      ['] x-incorrect-type ?raise
+    endcase
+    swap integral> swap c!
   ;
 
   \ Is something bytes
@@ -863,40 +1097,10 @@ begin-module zscript
     >type case
       bytes-type of true endof
       const-bytes-type of true endof
-      bytes-section-type of true endof
+      slice-type of true endof
       swap false swap
     endcase
-  ;
-  
-  \ Get the raw bytes of a bytes or bytes section value
-  : >raw-bytes ( bytes -- bytes' )
-    begin
-      dup >type case
-        bytes-type of true endof
-        const-bytes-type of true endof
-        bytes-section-type of cell+ @ false endof
-        ['] x-incorrect-type ?raise
-      endcase
-    until
-  ;
-
-  \ Get the raw offset of a bytes or bytes section value
-  : >raw-bytes-offset ( bytes -- offset )
-    0 { offset }
-    begin
-      dup >type case
-        bytes-type of drop true endof
-        const-bytes-type of drop true endof
-        bytes-section-type of
-          dup [ 2 cells ] literal + @
-          offset integral> swap integral> + >integral to offset
-          cell+ @ false
-        endof
-        ['] x-incorrect-type ?raise
-      endcase
-    until
-    offset
-  ;
+  ;  
   
   \ Initialize zeptoscript
   defer init-zscript
@@ -926,7 +1130,7 @@ begin-module zscript
     0 new-ram-globals-array!
     0 flash-globals-array!
     init-ram-global-count cells-type allocate-cells { ram-globals }
-    init-ram-global-id current-ram-global-id-index ram-globals v!+
+    init-ram-global-id current-ram-global-id-index ram-globals !+
     ram-globals ram-globals-array!
     ram-globals new-ram-globals-array!
     get-current-flash-global-id
@@ -941,24 +1145,32 @@ begin-module zscript
     offset1 integral> to offset1
     value0 addr? averts x-incorrect-type
     value1 addr? averts x-incorrect-type
-    value0 >type { type0 }
+    value0 >raw { raw0 }
+    value1 >raw { raw1 }
+    value0 >raw-offset integral> { raw-offset0 }
+    value1 >raw-offset integral> { raw-offset1 }
+    raw0 >type { type0 }
     type0 const-bytes-type = if
-      value1 >type bytes-type = averts x-incorrect-type
+      raw1 >type bytes-type = averts x-incorrect-type
       count 0>= averts x-offset-out-of-range
       value0 >len integral> offset0 count + >= averts x-offset-out-of-range
       value1 >len integral> offset1 count + >= averts x-offset-out-of-range
-      value0 cell+ @ offset0 + value1 cell+ offset1 + count move
+      raw0 cell+ @ offset0 + raw-offset0 +
+      raw1 cell+ offset1 + raw-offset1 + count move
     else
-      type0 value1 >type = averts x-incorrect-type
+      type0 raw1 >type = averts x-incorrect-type
       count 0>= averts x-offset-out-of-range
       value0 >len integral> offset0 count + >= averts x-offset-out-of-range
       value1 >len integral> offset1 count + >= averts x-offset-out-of-range
-      type0 integral> 2 - has-values and if
+      type0 2 - has-values and if
         count cells to count
         offset0 cells to offset0
         offset1 cells to offset1
+        raw-offset0 cells to raw-offset0
+        raw-offset1 cells to raw-offset1
       then
-      value0 cell+ offset0 + value1 cell+ offset1 + count move
+      raw0 cell+ offset0 + raw-offset0 +
+      raw1 cell+ offset1 + raw-offset1 + count move
     then
   ;
   
@@ -1140,7 +1352,11 @@ begin-module zscript
     x0 integral? x1 integral? forth::and if
       x0 integral> x1 integral> =
     else
-      x0 x1 =
+      x0 >type xt-type = x1 >type xt-type = and if
+        x0 forth::cell+ @ x1 forth::cell+ @ =
+      else
+        x0 x1 =
+      then
     then
   ;
 
@@ -1150,7 +1366,11 @@ begin-module zscript
     x0 integral? x1 integral? forth::and if
       x0 integral> x1 integral> <>
     else
-      x0 x1 <>
+      x0 >type xt-type = x1 >type xt-type = and if
+        x0 forth::cell+ @ x1 forth::cell+ @ <>
+      else
+        x0 x1 <>
+      then
     then
   ;
 
@@ -1519,30 +1739,43 @@ begin-module zscript
     integral> spaces
   ;
 
-  \ Truncate the start of bytes
-  : truncate-start { count bytes -- bytes' }
-    bytes bytes? averts x-incorrect-type
-    bytes >raw-bytes { raw-bytes }
-    bytes >raw-bytes-offset { offset }
-    bytes >len { len }
-    [ 3 >small-int ] literal bytes-section-type allocate-cells { section }
-    raw-bytes section forth::cell+ !
-    offset count + section [ 2 forth::cells ] literal forth::+ !
-    len count - section [ 3 forth::cells ] literal forth::+ !
-    section
+  \ Get an arbitrary slice of a sequence
+  : >slice { offset len seq -- slice }
+    seq >raw { raw-seq }
+    seq >raw-offset { raw-offset }
+    seq >len { raw-len }
+    offset 0>= averts x-offset-out-of-range
+    len 0>= averts x-offset-out-of-range
+    offset len + raw-len <= averts x-offset-out-of-range
+    [ 3 >small-int ] literal slice-type allocate-cells { slice }
+    raw-seq slice forth::cell+ !
+    raw-offset offset + slice [ 2 forth::cells ] literal forth::+ !
+    len slice [ 3 forth::cells ] literal forth::+ !
+    slice
   ;
 
-  \ Truncate the end of bytes
-  : truncate-end { count bytes -- bytes' }
-    bytes bytes? averts x-incorrect-type
-    bytes >raw-bytes { raw-bytes }
-    bytes >raw-bytes-offset { offset }
-    bytes >len { len }
-    [ 3 >small-int ] literal bytes-section-type allocate-cells { section }
-    raw-bytes section forth::cell+ !
-    offset section [ 2 forth::cells ] literal forth::+ !
-    len count - section [ 3 forth::cells ] literal forth::+ !
-    section
+  \ Truncate the start of a sequence
+  : truncate-start { count seq -- slice }
+    seq >raw { raw-seq }
+    seq >raw-offset { offset }
+    seq >len { len }
+    [ 3 >small-int ] literal slice-type allocate-cells { slice }
+    raw-seq slice forth::cell+ !
+    offset count + slice [ 2 forth::cells ] literal forth::+ !
+    len count - slice [ 3 forth::cells ] literal forth::+ !
+    slice
+  ;
+
+  \ Truncate the end of a sequence
+  : truncate-end { count seq -- slice }
+    seq >raw { raw-seq }
+    seq >raw-offset { offset }
+    seq >len { len }
+    [ 3 >small-int ] literal slice-type allocate-cells { slice }
+    raw-seq slice forth::cell+ !
+    offset slice [ 2 forth::cells ] literal forth::+ !
+    len count - slice [ 3 forth::cells ] literal forth::+ !
+    slice
   ;
 
   \ Get the type of a value
@@ -1615,18 +1848,36 @@ begin-module zscript
   \ Execute a closure
   : execute ( xt -- )
     dup >type case
-      xt-type of forth::cell+ @ execute endof
+      xt-type of forth::cell+ @ endof
       closure-type of
         dup >size over forth::+ swap forth::cell+ { xt-addr }
         begin
           forth::cell forth::- dup @ swap dup xt-addr forth::=
         forth::until drop
-        integral> execute
+        integral>
       endof
       ['] x-incorrect-type ?raise
     endcase
+    execute
+  ;
+  
+  \ Try a closure
+  : try ( xt -- )
+    dup >type case
+      xt-type of forth::cell+ @ endof
+      closure-type of
+        dup >size over forth::+ swap forth::cell+ { xt-addr }
+        begin
+          forth::cell forth::- dup @ swap dup xt-addr forth::=
+        forth::until drop
+        integral>
+      endof
+      ['] x-incorrect-type ?raise
+    endcase
+    try >integral
   ;
 
+  
   \ Execute a non-null closure
   : ?execute ( xt -- )
     dup integral? not if
@@ -1642,8 +1893,8 @@ begin-module zscript
     : bytes> ( value -- addr len )
       dup bytes? averts x-incorrect-type
       dup >len { len }
-      dup >raw-bytes-offset { offset }
-      dup >raw-bytes dup >type case
+      dup >raw-offset { offset }
+      >raw dup >type case
         bytes-type of
           forth::cell+ >integral offset +
         endof
@@ -1837,7 +2088,7 @@ begin-module zscript
     token-word word>xt xt>integral lit,
     postpone >xt
   ;
-  
+
   \ Raise an exception
   : ?raise ( xt -- )
     dup 0<> if
@@ -1943,33 +2194,30 @@ begin-module zscript
     syntax-record internal::verify-syntax internal::drop-syntax
     { name count }
     name >len { len }
-    len 1+ allocate-bytes { accessor-name }
-    forth::[char] > >integral 0 accessor-name c!+
+    len 1+ make-bytes { accessor-name }
+    [char] > 0 accessor-name c!+
     name 0 accessor-name [ 1 >small-int ] literal len copy
     accessor-name start-compile visible
     count lit,
     postpone >tuple
     end-compile,
-    forth::[char] > >integral len accessor-name c!+
+    [char] > len accessor-name c!+
     name 0 accessor-name 0 len copy
     accessor-name start-compile visible
     postpone tuple-no-count>
     end-compile,
-    s" make-" triple> { make-bytes make-offset make-len }
-    make-len len + allocate-bytes to accessor-name
-    make-bytes make-offset accessor-name 0 make-len copy
-    name 0 accessor-name make-len len copy
+    s" make-" { make-prefix }
+    [ 5 >small-int ] literal len + make-bytes to accessor-name
+    make-prefix 0 accessor-name 0 [ 5 >small-int ] literal copy
+    name 0 accessor-name [ 5 >small-int ] literal len copy
     accessor-name start-compile visible
     count lit,
     cells-type lit,
     postpone allocate-cells
     end-compile,
-    s" -size" triple> { size-bytes size-offset size-len }
-    [ false ] [if] \ This is only needed if make-len size-len <>
-      size-len len + allocate-bytes to accessor-name
-    [then]
+    s" -size" { size-suffix }
     name 0 accessor-name 0 len copy
-    size-bytes size-offset accessor-name len size-len copy
+    size-suffix 0 accessor-name len [ 5 >small-int ] literal copy
     count accessor-name constant-with-name
   ;
 
@@ -1979,19 +2227,19 @@ begin-module zscript
     syntax-record internal::verify-syntax
     token dup 0<> averts x-token-expected { name }
     name >len { len }
-    len 1+ allocate-bytes { accessor-name }
+    len 1+ make-bytes { accessor-name }
     name 0 accessor-name 0 len copy
-    forth::[char] @ >integral len accessor-name c!+
+    [char] @ len accessor-name c!+
     accessor-name start-compile visible
     offset lit,
     postpone swap
-    postpone v@+
+    postpone @+
     end-compile,
-    forth::[char] ! >integral len accessor-name c!+
+    [char] ! len accessor-name c!+
     accessor-name start-compile visible
     offset lit,
     postpone swap
-    postpone v!+
+    postpone !+
     end-compile,
     offset 1+
   ;
@@ -2149,22 +2397,22 @@ begin-module zscript
 
     \ Get a RAM global at an index
     : ram-global@ ( index -- x )
-      ram-globals-array@ v@+
+      ram-globals-array@ @+
     ;
 
     \ Set a RAM global at an index
     : ram-global! ( x index -- )
-      ram-globals-array@ v!+
+      ram-globals-array@ !+
     ;
 
     \ Get a flash global at an index
     : flash-global@ ( index -- x )
-      flash-globals-array@ v@+
+      flash-globals-array@ @+
     ;
 
     \ Set a flash global at an index
     : flash-global! ( x index -- )
-      flash-globals-array@ v!+
+      flash-globals-array@ !+
     ;
 
     \ Create a RAM global
