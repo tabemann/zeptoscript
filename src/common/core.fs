@@ -2612,14 +2612,14 @@ begin-module zscript
   : fold-right ( x ) { seq xt -- }
     seq cells? if
       seq >len dup 0> if
-        0 swap 1- ?do i seq @+ xt execute -1 +loop
+        0 swap 1- ?do i seq @+ swap xt execute -1 +loop
       else
         drop
       then
     else
       seq bytes? averts x-incorrect-type
       seq >len dup 0> if
-        0 swap 1- ?do i seq c@+ xt execute -1 +loop
+        0 swap 1- ?do i seq c@+ swap xt execute -1 +loop
       else
         drop
       then
