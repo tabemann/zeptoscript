@@ -799,7 +799,7 @@ begin-module zscript
   ;
 
   \ Allocate a tuple
-  : make-tuple ( count -- tuple )
+  : make-cells ( count -- tuple )
     cells-type allocate-cells
   ;
 
@@ -809,14 +809,14 @@ begin-module zscript
   ;
 
   \ Create a tuple
-  : >tuple ( xn ... x0 count -- tuple )
+  : >cells ( xn ... x0 count -- tuple )
     dup cells-type allocate-cells { tuple }
     integral> tuple over 1+ cells + swap 0 ?do cell - tuck ! loop drop
     tuple
   ;
 
   \ Explode a tuple
-  : tuple> ( tuple -- xn ... x0 count )
+  : cells> ( tuple -- xn ... x0 count )
     dup >type case
       cells-type of
         dup >size cell - 2 rshift { count }
@@ -837,7 +837,7 @@ begin-module zscript
   ;
 
   \ Explode a tuple without pushing its count
-  : tuple-no-count> ( tuple -- xn ... x0 )
+  : cells-no-count> ( tuple -- xn ... x0 )
     dup >type case
       cells-type of
         dup >size cell - 2 rshift { count }
@@ -1092,14 +1092,27 @@ begin-module zscript
     swap integral> swap c!
   ;
 
+  \ Is something cells
+  : cells? ( x -- cells? )
+    begin
+      dup >type case
+        cells-type of drop true true endof
+        slice-type of cell+ @ false endof
+        nip false true rot
+      endcase
+    until
+  ;  
+
   \ Is something bytes
   : bytes? ( x -- bytes? )
-    >type case
-      bytes-type of true endof
-      const-bytes-type of true endof
-      slice-type of true endof
-      swap false swap
-    endcase
+    begin
+      dup >type case
+        bytes-type of drop true true endof
+        const-bytes-type of drop true true endof
+        slice-type of cell+ @ false endof
+        nip false true rot
+      endcase
+    until
   ;  
   
   \ Initialize zeptoscript
@@ -1162,7 +1175,7 @@ begin-module zscript
       count 0>= averts x-offset-out-of-range
       value0 >len integral> offset0 count + >= averts x-offset-out-of-range
       value1 >len integral> offset1 count + >= averts x-offset-out-of-range
-      type0 2 - has-values and if
+      type0 integral> 2 - has-values and if
         count cells to count
         offset0 cells to offset0
         offset1 cells to offset1
@@ -2170,16 +2183,14 @@ begin-module zscript
 
   \ Redefine CHAR
   : char ( "name" -- x )
-    token dup 0<> averts x-token-expected
-    unsafe::bytes> drop 0 swap unsafe::c@
+    char >small-int
   ;
 
   \ Redefine [CHAR]
   : [char] ( "name" -- x )
     [immediate]
     [compile-only]
-    token dup 0<> averts x-token-expected
-    unsafe::bytes> drop 0 swap unsafe::c@ lit,
+    char >small-int lit,
   ;
 
   \ Begin declaring a record
@@ -2199,12 +2210,12 @@ begin-module zscript
     name 0 accessor-name [ 1 >small-int ] literal len copy
     accessor-name start-compile visible
     count lit,
-    postpone >tuple
+    postpone >cells
     end-compile,
     [char] > len accessor-name c!+
     name 0 accessor-name 0 len copy
     accessor-name start-compile visible
-    postpone tuple-no-count>
+    postpone cells-no-count>
     end-compile,
     s" make-" { make-prefix }
     [ 5 >small-int ] literal len + make-bytes to accessor-name
@@ -2510,6 +2521,109 @@ begin-module zscript
   \ Parse an integer
   : parse-integer ( seq -- n success )
     unsafe::bytes> 2integral> parse-integer 2>integral
+  ;
+
+  \ Duplicate a cell or byte sequence; this converts slices to non-slices and
+  \ constant byte sequences into non-constant byte sequences
+  : duplicate { seq0 -- seq1 }
+    seq0 cells? if
+      seq0 >len { len }
+      len make-cells { seq1 }
+      seq0 0 seq1 0 len copy
+      seq1
+    else
+      seq0 bytes? averts x-incorrect-type
+      seq0 >len { len }
+      len make-bytes { seq1 }
+      seq0 0 seq1 0 len copy
+      seq1
+    then
+  ;
+  
+  \ Concatenate two cell or byte sequences
+  : concat { seq0 seq1 -- seq2 }
+    seq0 cells? if
+      seq1 cells? averts x-incorrect-type
+      seq0 >len { len0 }
+      seq1 >len { len1 }
+      len0 len1 + make-cells { seq2 }
+      seq0 0 seq2 0 len0 copy
+      seq1 0 seq2 len0 len1 copy
+      seq2
+    else
+      seq0 bytes? averts x-incorrect-type
+      seq1 bytes? averts x-incorrect-type
+      seq0 >len { len0 }
+      seq1 >len { len1 }
+      len0 len1 + make-bytes { seq2 }
+      seq0 0 seq2 0 len0 copy
+      seq1 0 seq2 len0 len1 copy
+      seq2
+    then
+  ;
+
+  \ Iterate over a cell sequence
+  : iter { seq xt -- }
+    seq cells? if
+      seq >len 0 ?do i seq @+ xt execute loop
+    else
+      seq bytes? averts x-incorrect-type
+      seq >len 0 ?do i seq c@+ xt execute loop
+    then
+  ;
+
+  \ Map a cell sequence into a new cell sequence
+  : map { seq xt -- seq' }
+    seq cells? if
+      seq >len { len }
+      len make-cells { seq' }
+      len 0 ?do i seq @+ xt execute i seq' !+ loop
+      seq'
+    else
+      seq bytes? averts x-incorrect-type
+      seq >len { len }
+      len make-bytes { seq' }
+      len 0 ?do i seq c@+ xt execute i seq' c!+ loop
+      seq'
+    then
+  ;
+
+  \ Map a cell sequence in place
+  : map! { seq xt -- }
+    seq cells? if
+      seq >len 0 ?do i seq @+ xt execute i seq !+ loop
+    else
+      seq bytes? averts x-incorrect-type
+      seq >len 0 ?do i seq c@+ xt execute i seq c!+ loop
+    then      
+  ;
+
+  \ Fold left over a cell sequence
+  : fold-left ( x ) { seq xt -- }
+    seq cells? if
+      seq >len 0 ?do i seq @+ xt execute loop
+    else
+      seq bytes? averts x-incorrect-type
+      seq >len 0 ?do i seq c@+ xt execute loop
+    then
+  ;
+
+  \ Fold right over a cell sequence
+  : fold-right ( x ) { seq xt -- }
+    seq cells? if
+      seq >len dup 0> if
+        0 swap 1- ?do i seq @+ xt execute -1 +loop
+      else
+        drop
+      then
+    else
+      seq bytes? averts x-incorrect-type
+      seq >len dup 0> if
+        0 swap 1- ?do i seq c@+ xt execute -1 +loop
+      else
+        drop
+      then
+    then
   ;
   
   \ Unsafe operations raising exceptions outside of UNSAFE module
