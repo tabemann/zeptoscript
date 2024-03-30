@@ -867,8 +867,11 @@ begin-module zscript
         { index slice }
         slice >raw { raw }
         raw >type cells-type = averts x-incorrect-type
-        slice >raw-offset integral> { offset }
-        slice >len integral> { len }
+        slice >raw-offset { offset }
+        slice >len { len }
+        offset integral> to offset
+        len integral> to len
+        index integral> to index
         len index u> averts x-offset-out-of-range
         raw index offset + 1+ cells + @
       endof
@@ -888,8 +891,11 @@ begin-module zscript
         { index slice }
         slice >raw { raw }
         raw >type cells-type = averts x-incorrect-type
-        slice >raw-offset integral> { offset }
-        slice >len integral> { len }
+        slice >raw-offset { offset }
+        slice >len { len }
+        offset integral> to offset
+        len integral> to len
+        index integral> to index
         len index u> averts x-offset-out-of-range
         raw index offset + 1+ cells + !
       endof
@@ -915,8 +921,11 @@ begin-module zscript
       slice-type of
         { index slice }
         slice >raw { raw }
-        slice >raw-offset integral> { offset }
-        >len integral> { len }
+        slice >raw-offset { offset }
+        >len { len }
+        offset integral> to offset
+        len integral> to len
+        index integral> to index
         raw >type case
           bytes-type of
             len index 4 + u>= averts x-offset-out-of-range
@@ -948,8 +957,11 @@ begin-module zscript
       slice-type of
         { index slice }
         slice >raw { raw }
-        slice >raw-offset integral> { offset }
-        >len integral> { len }
+        slice >raw-offset { offset }
+        >len { len }
+        offset integral> to offset
+        len integral> to len
+        index integral> to index
         raw >type case
           bytes-type of
             len index 4 + u>= averts x-offset-out-of-range
@@ -982,8 +994,11 @@ begin-module zscript
       slice-type of
         { index slice }
         slice >raw { raw }
-        slice >raw-offset integral> { offset }
-        >len integral> { len }
+        slice >raw-offset { offset }
+        >len { len }
+        offset integral> to offset
+        len integral> to len
+        index integral> to index
         raw >type case
           bytes-type of
             len index 2 + u>= averts x-offset-out-of-range
@@ -1015,8 +1030,11 @@ begin-module zscript
       slice-type of
         { index slice }
         slice >raw { raw }
-        slice >raw-offset integral> { offset }
-        >len integral> { len }
+        slice >raw-offset { offset }
+        >len { len }
+        offset integral> to offset
+        len integral> to len
+        index integral> to index
         raw >type case
           bytes-type of
             len index 2 + u>= averts x-offset-out-of-range
@@ -1047,8 +1065,11 @@ begin-module zscript
       slice-type of
         { index slice }
         slice >raw { raw }
-        slice >raw-offset integral> { offset }
-        >len integral> { len }
+        slice >raw-offset { offset }
+        >len { len }
+        offset integral> to offset
+        len integral> to len
+        index integral> to index
         raw >type case
           bytes-type of
             len index u> averts x-offset-out-of-range
@@ -1077,8 +1098,11 @@ begin-module zscript
       slice-type of
         { index slice }
         slice >raw { raw }
-        slice >raw-offset integral> { offset }
-        >len integral> { len }
+        slice >raw-offset { offset }
+        >len { len }
+        offset integral> to offset
+        len integral> to len
+        index integral> to index
         raw >type case
           bytes-type of
             len index u> averts x-offset-out-of-range
