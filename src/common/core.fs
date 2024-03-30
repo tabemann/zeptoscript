@@ -680,7 +680,7 @@ begin-module zscript
   ;
 
   \ Convert an address/length pair into bytes
-  : >bytes ( c-addr u -- bytes )
+  : addr-len>bytes ( c-addr u -- bytes )
     dup allocate-bytes { bytes }
     swap integral> bytes cell+ rot integral> move
     bytes
@@ -808,15 +808,24 @@ begin-module zscript
     allocate-bytes
   ;
 
-  \ Create a tuple
-  : >cells ( xn ... x0 count -- tuple )
-    dup cells-type allocate-cells { tuple }
-    integral> tuple over 1+ cells + swap 0 ?do cell - tuck ! loop drop
-    tuple
+  \ Create a cell sequence
+  : >cells ( xn ... x0 count -- cells )
+    dup cells-type allocate-cells { seq }
+    integral> seq over 1+ cells + swap 0 ?do cell - tuck ! loop drop
+    seq
   ;
 
-  \ Explode a tuple
-  : cells> ( tuple -- xn ... x0 count )
+  \ Create a byte sequence
+  : >bytes ( cn ... c0 count -- bytes )
+    dup allocate-bytes { seq }
+    integral> seq over cell+ + swap 0 ?do
+      1- tuck swap integral> swap c!
+    loop drop
+    seq
+  ;
+
+  \ Explode a cell sequence
+  : cells> ( cells -- xn ... x0 count )
     dup >type case
       cells-type of
         dup >size cell - 2 rshift { count }
@@ -836,8 +845,42 @@ begin-module zscript
     endcase
   ;
 
-  \ Explode a tuple without pushing its count
-  : cells-no-count> ( tuple -- xn ... x0 )
+  \ Explode a byte sequence
+  : bytes> ( bytes -- cn ... c0 count )
+    dup >type case
+      bytes-type of
+        dup >size cell - { count }
+        cell+ count 0 ?do dup c@ >integral swap 1+ loop drop
+        count >integral
+      endof
+      const-bytes-type of
+        dup [ 2 cells ] literal + @ { count }
+        cell+ @ count 0 ?do dup c@ >integral swap 1+ loop drop
+        count >integral
+      endof
+      slice-type of
+        dup >raw { raw }
+        dup >raw-offset { offset }
+        >len { len }
+        raw >type case
+          bytes-type of
+            raw cell+ offset integral> +
+            len integral> 0 ?do dup c@ >integral swap 1+ loop drop
+          endof
+          const-bytes-type of
+            raw cell+ @ offset integral> +
+            len integral> 0 ?do dup c@ >integral swap 1+ loop drop
+          endof
+          ['] x-incorrect-type ?raise
+        endcase
+        len
+      endof
+      ['] x-incorrect-type ?raise
+    endcase
+  ;
+
+  \ Explode a cell sequence without pushing its count
+  : cells-no-count> ( cells -- xn ... x0 )
     dup >type case
       cells-type of
         dup >size cell - 2 rshift { count }
@@ -855,6 +898,37 @@ begin-module zscript
     endcase
   ;
   
+  \ Explode a byte sequence without pushing its count
+  : bytes-no-count> ( bytes -- cn ... c0 )
+    dup >type case
+      bytes-type of
+        dup >size cell - { count }
+        cell+ count 0 ?do dup c@ >integral swap 1+ loop drop
+      endof
+      const-bytes-type of
+        dup [ 2 cells ] literal + @ { count }
+        cell+ @ count 0 ?do dup c@ >integral swap 1+ loop drop
+      endof
+      slice-type of
+        dup >raw { raw }
+        dup >raw-offset { offset }
+        >len { len }
+        raw >type case
+          bytes-type of
+            raw cell+ offset integral> +
+            len integral> 0 ?do dup c@ >integral swap 1+ loop drop
+          endof
+          const-bytes-type of
+            raw cell+ @ offset integral> +
+            len integral> 0 ?do dup c@ >integral swap 1+ loop drop
+          endof
+          ['] x-incorrect-type ?raise
+        endcase
+      endof
+      ['] x-incorrect-type ?raise
+    endcase
+  ;
+
   \ Get a value in a cells data structure
   : @+ ( index object -- value )
     dup >type case
@@ -1221,7 +1295,7 @@ begin-module zscript
     else
       [char] " internal::parse-to-char
       2>integral
-      >bytes
+      addr-len>bytes
     then
   ;
 
@@ -1237,7 +1311,7 @@ begin-module zscript
         here dup [char] " esc-string::parse-esc-string
         here over -
         2>integral
-        >bytes
+        addr-len>bytes
         swap ram-here!
       ;] with-ram
     then
@@ -1832,7 +1906,7 @@ begin-module zscript
   
   \ Get a token
   : token ( runtime: "name" -- seq | 0 )
-    token 2>integral dup 0<> if >bytes else 2drop 0 then
+    token 2>integral dup 0<> if addr-len>bytes else 2drop 0 then
   ;
 
   \ Get a word from a token
@@ -1927,7 +2001,7 @@ begin-module zscript
   begin-module unsafe
     
     \ Get the address and size of a bytes or constant bytes value
-    : bytes> ( value -- addr len )
+    : bytes>addr-len ( value -- addr len )
       dup bytes? averts x-incorrect-type
       dup >len { len }
       dup >raw-offset { offset }
@@ -2110,7 +2184,7 @@ begin-module zscript
 
   \ Type a string
   : type ( seq -- )
-    unsafe::bytes> 2integral> type
+    unsafe::bytes>addr-len 2integral> type
   ;
   
   \ Get an xt at interpretation-time
@@ -2188,7 +2262,7 @@ begin-module zscript
   
   \ Start compiling a word with a name
   : start-compile ( seq -- )
-    unsafe::bytes> 2integral> internal::start-compile
+    unsafe::bytes>addr-len 2integral> internal::start-compile
   ;
 
   \ End compiling, exported to match start-compile
@@ -2199,7 +2273,7 @@ begin-module zscript
   \ Define a constant with a name
   : constant-with-name ( x name -- )
     swap dup small-int? if
-      swap unsafe::bytes> 2integral> internal::constant-with-name
+      swap unsafe::bytes>addr-len 2integral> internal::constant-with-name
     else
       swap start-compile visible lit, end-compile,
     then
@@ -2340,7 +2414,7 @@ begin-module zscript
     
     \ Add to a local variable
     : parse-add-local ( name -- match? )
-      unsafe::bytes> 2integral> 2>r 0 internal::local-buf-top @ begin
+      unsafe::bytes>addr-len 2integral> 2>r 0 internal::local-buf-top @ begin
         dup internal::local-buf-bottom @ forth::<
       forth::while
         dup forth::1+ forth::count 2r@ forth::equal-case-strings? forth::if
@@ -2379,7 +2453,7 @@ begin-module zscript
 
   \ Find a word
   : find ( seq -- word|0 )
-    unsafe::bytes> 2integral> find dup forth::if
+    unsafe::bytes>addr-len 2integral> find dup forth::if
       >integral { word }
       forth::cell word-tag allocate-tagged { tagged-word }
       word 0 tagged-word t!+
@@ -2544,7 +2618,7 @@ begin-module zscript
 
   \ Parse an integer
   : parse-integer ( seq -- n success )
-    unsafe::bytes> 2integral> parse-integer 2>integral
+    unsafe::bytes>addr-len 2integral> parse-integer 2>integral
   ;
 
   \ Duplicate a cell or byte sequence; this converts slices to non-slices and
