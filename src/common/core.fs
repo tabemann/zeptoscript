@@ -2287,16 +2287,16 @@ begin-module zscript
     then
   ;
 
-  \ Redefine CHAR
-  : char ( "name" -- x )
-    char >small-int
-  ;
-
   \ Redefine [CHAR]
   : [char] ( "name" -- x )
     [immediate]
     [compile-only]
     char >small-int lit,
+  ;
+
+  \ Redefine CHAR
+  : char ( "name" -- x )
+    char >small-int
   ;
 
   \ Begin declaring a record
