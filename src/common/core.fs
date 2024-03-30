@@ -2315,14 +2315,14 @@ begin-module zscript
     ;
     
     \ Add to a local variable
-    : parse-add-local ( c-addr u -- match? )
-      2>r 0 internal::local-buf-top @ begin
+    : parse-add-local ( name -- match? )
+      unsafe::bytes> 2integral> 2>r 0 internal::local-buf-top @ begin
         dup internal::local-buf-bottom @ forth::<
       forth::while
         dup forth::1+ forth::count 2r@ forth::equal-case-strings? forth::if
-          rdrop rdrop c@ case
-            internal::cell-local of compile-add-cell-local endof
-            internal::cell-addr-local of compile-add-cell-local endof
+          rdrop rdrop c@ forth::case
+            internal::cell-local forth::of compile-add-cell-local endof
+            internal::cell-addr-local forth::of compile-add-cell-local endof
             raise x-currently-unsupported-data-type
             \ double-local of compile-add-double-local endof
             \ double-addr-local of compile-add-double-local endof
@@ -2342,7 +2342,7 @@ begin-module zscript
 
     \ Compile adding to a VALUE
     : compile-+to-value ( xt -- )
-      internal::value-addr@ raw-lit,
+      internal::value-addr@ forth::lit,
       postpone dup
       postpone forth::@
       postpone rot
@@ -2572,7 +2572,7 @@ begin-module zscript
     then
   ;
 
-  \ Map a cell sequence into a new cell sequence
+  \ Map a cell or byte sequence into a new cell sequence
   : map { seq xt -- seq' }
     seq cells? if
       seq >len { len }
@@ -2588,7 +2588,7 @@ begin-module zscript
     then
   ;
 
-  \ Map a cell sequence in place
+  \ Map a cell or byte sequence in place
   : map! { seq xt -- }
     seq cells? if
       seq >len 0 ?do i seq @+ xt execute i seq !+ loop
@@ -2598,7 +2598,74 @@ begin-module zscript
     then      
   ;
 
-  \ Fold left over a cell sequence
+  \ Make a zeroed bit sequence
+  : make-bits { len -- bits }
+    len [ 8 >small-int ] literal align
+    [ 3 >small-int ] literal rshift cell+ make-bytes { bits }
+    len 0 bits w!+
+    bits
+  ;
+
+  \ Get the length of bits
+  : bits>len ( bits -- len )
+    0 swap w@+
+  ;
+
+  \ Set a bit in a bit sequence
+  : bit! { bit index bits -- }
+    index bits bits>len u< averts x-offset-out-of-range
+    index [ 3 >small-int ] literal rshift cell+ { index' }
+    index' bits c@+ bit if
+      [ 1 >small-int ] literal index [ $7 >small-int ] literal and lshift or
+    else
+      [ 1 >small-int ] literal index [ $7 >small-int ] literal and lshift bic
+    then
+    index' bits c!+
+  ;
+  
+  \ Get a bit in a bit sequence
+  : bit@ { index bits -- }
+    index bits bits>len u< averts x-offset-out-of-range
+    index [ 3 >small-int ] literal rshift cell+ bits c@+
+    [ 1 >small-int ] literal index [ $7 >small-int ] literal and lshift and 0<>
+  ;
+
+  \ Filter a cell or byte sequence
+  : filter { seq xt -- seq' }
+    seq cells? seq bytes? or averts x-incorrect-type
+    seq >len { len }
+    len make-bits { bits }
+    0 { count }
+    len 0 ?do
+      i seq @+ xt execute if
+        true i bits bit!
+        count [ 1 >small-int ] literal + to count
+      then
+    loop
+    seq cells? if
+      count make-cells { seq' }
+      0 { current }
+      len 0 ?do
+        i bits bit@ if
+          i seq @+ current seq' !+
+          current [ 1 >small-int ] literal + to current
+        then
+      loop
+      seq'
+    else
+      count make-bytes { seq' }
+      0 { current }
+      len 0 ?do
+        i bits bit@ if
+          i seq c@+ current seq' c!+
+          current [ 1 >small-int ] literal + to current
+        then
+      loop
+      seq'
+    then
+  ;
+
+  \ Fold left over a cell or byte sequence
   : fold-left ( x ) { seq xt -- }
     seq cells? if
       seq >len 0 ?do i seq @+ xt execute loop
@@ -2608,7 +2675,7 @@ begin-module zscript
     then
   ;
 
-  \ Fold right over a cell sequence
+  \ Fold right over a cell or byte sequence
   : fold-right ( x ) { seq xt -- }
     seq cells? if
       seq >len dup 0> if
@@ -2649,5 +2716,21 @@ begin-module zscript
   : fill raise x-unsafe-op ;
   : here raise x-unsafe-op ;
   : allot raise x-unsafe-op ;
+
+  \ Empty cells
+  \
+  \ This is not garbage collected so does not need to be in the heap.
+  forth::here forth::constant empty-cells
+  cells-type integral> 2 forth::-
+  type-shift forth::lshift
+  forth::cell 1 forth::lshift forth::or ,
+
+  \ Empty bytes
+  \
+  \ This is not garbage collected so does not need to be in the heap.
+  forth::here forth::constant empty-bytes
+  bytes-type integral> 2 forth::-
+  type-shift forth::lshift
+  forth::cell 1 forth::lshift forth::or ,
   
 end-module
