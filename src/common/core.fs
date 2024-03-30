@@ -1820,6 +1820,11 @@ begin-module zscript
     integral> (u.)
   ;
 
+  \ Type a character
+  : emit ( c -- )
+    integral> emit
+  ;
+
   \ Redefine H.1
   : h.1 ( x -- )
     integral> h.1
