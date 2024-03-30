@@ -988,7 +988,8 @@ begin-module zscript
       endof
       const-bytes-type of
         dup [ 2 cells ] literal + @ { len }
-        over len 4 + u>= averts x-offset-out-of-range
+        swap integral> swap
+        over len 4 + u<= averts x-offset-out-of-range
         over 3 and triggers x-unaligned-dereference
         cell+ @ +
       endof
@@ -1061,7 +1062,8 @@ begin-module zscript
       endof
       const-bytes-type of
         dup [ 2 cells ] literal + @ { len }
-        over len 2 + u>= averts x-offset-out-of-range
+        swap integral> swap
+        over len 2 + u<= averts x-offset-out-of-range
         over 1 and triggers x-unaligned-dereference
         cell+ @ +
       endof
@@ -1133,7 +1135,8 @@ begin-module zscript
       endof
       const-bytes-type of
         dup [ 2 cells ] literal + @ { len }
-        over len u> averts x-offset-out-of-range
+        swap integral> swap
+        over len u< averts x-offset-out-of-range
         cell+ @ +
       endof
       slice-type of
