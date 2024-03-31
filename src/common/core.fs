@@ -499,7 +499,7 @@ begin-module zscript
       word-type allocate-cell swap 1 bic lowest or over cell+ !
     ;
 
-    \ Convert a pair of cells to nulls, integers, and words
+    \ Convert a pair of cells to nulls, integers, or words
     : 2>integral ( x0 x1 -- 0|int|addr 0|int|addr )
       swap dup 1 and { lowest } 1 or swap
       >integral swap 1 bic lowest or >integral swap
@@ -508,6 +508,28 @@ begin-module zscript
     \ Convert a pair of nulls, integers, or words to cells
     : 2integral> ( 0|int|addr 0|int|addr -- x0 x1 )
       integral> swap integral> swap
+    ;
+
+    \ Convert any number of cells to nulls, integers, or words
+    : n>integral ( xn ... x0 count -- 0|int|addr ... 0|int|addr )
+      dup integral> cells [:
+        { count buf }
+        buf count integral> cells + buf ?do i ! loop
+        buf dup count integral> 1- cells + ?do
+          i @ >integral
+        [ cell negate ] literal +loop
+      ;] with-aligned-allot
+    ;
+
+    \ Convert any number of nulls, integers, or words to cells
+    : nintegral> ( 0|int|addr ... 0|int|addr count -- xn ... x0 )
+      dup integral> cells [:
+        { count buf }
+        buf count integral> cells + buf ?do i ! loop
+        buf dup count integral> 1- cells + ?do
+          i @ integral>
+        [ cell negate ] literal +loop
+      ;] with-aligned-allot
     ;
 
     \ Get the compilation state
@@ -2366,21 +2388,19 @@ begin-module zscript
     { in-count out-count xt }
     token dup 0<> averts x-token-expected
     start-compile visible
-    in-count 0 ?do
-      postpone integral>
-    loop
+    in-count lit,
+    postpone nintegral>
     xt xt>integral raw-lit, postpone forth::execute
-    out-count 0 ?do
-      postpone >integral
-    loop
+    out-count lit,
+    postpone n>integral
     internal::end-compile,
   ;
 
   \ Execute a foreign word
-  : execute-foreign ( in-count out-count xt -- )
-    rot 0 ?do integral> loop
-    execute
-    0 ?do >integral loop
+  : execute-foreign { in-count out-count xt -- }
+    in-count nintegral>
+    xt execute
+    out-count n>integral
   ;
 
   continue-module zscript-internal
@@ -2796,6 +2816,38 @@ begin-module zscript
       else
         drop
       then
+    then
+  ;
+
+  \ Reverse a sequence producing a new sequence
+  : reverse { seq -- seq' }
+    seq >len { len }
+    seq cells? if
+      len make-cells { seq' }
+      len 0 ?do i seq @+ len 1- i - seq' !+ loop
+      seq'
+    else
+      seq bytes? averts x-incorrect-type
+      len make-bytes { seq' }
+      len 0 ?do i seq c@+ len 1- i - seq' c!+ loop
+      seq'
+    then
+  ;
+
+  \ Reverse a sequence in place
+  : reverse! { seq -- }
+    seq >len { len }
+    seq cells? if
+      len [ 1 >small-int ] literal rshift 0 ?do
+        len 1- i - { rev-i }
+        i seq @+ rev-i seq @+ i seq !+ rev-i seq !+
+      loop
+    else
+      seq bytes? averts x-incorrect-type
+      len [ 1 >small-int ] literal rshift 0 ?do
+        len 1- i - { rev-i }
+        i seq c@+ rev-i seq c@+ i seq c!+ rev-i seq c!+
+      loop
     then
   ;
   
