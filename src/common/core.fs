@@ -2874,8 +2874,8 @@ begin-module zscript
       x
     ;
 
-    \ Sort a cell sequence in place for quicksort
-    : sort-cells! { lo hi seq xt -- } \ xt is ( x0 x1 -- le? )
+    \ Quicksort a cell sequence in place for quicksort
+    : qsort-cells! { lo hi seq xt -- } \ xt is ( x0 x1 -- le? )
       lo hi < lo 0>= and if
         lo hi seq xt partition-cells!
         lo over 1- seq xt recurse
@@ -2904,8 +2904,8 @@ begin-module zscript
       x
     ;
 
-    \ Sort a byte sequence in place for quicksort
-    : sort-bytes! { lo hi seq xt -- } \ xt is ( x0 x1 -- le? )
+    \ Quicksort a byte sequence in place for quicksort
+    : qsort-bytes! { lo hi seq xt -- } \ xt is ( x0 x1 -- le? )
       lo hi < lo 0>= and if
         lo hi seq xt partition-bytes!
         lo over 1- seq xt recurse
@@ -2915,19 +2915,19 @@ begin-module zscript
 
   end-module
 
-  \ Sort a cell or byte sequence in place
-  : sort! { seq xt -- }
+  \ Quicksort a cell or byte sequence in place
+  : qsort! { seq xt -- }
     seq cells? if
-      0 seq >len 1- seq xt sort-cells!
+      0 seq >len 1- seq xt qsort-cells!
     else
       seq bytes? averts x-incorrect-type
-      0 seq >len 1- seq xt sort-bytes!
+      0 seq >len 1- seq xt qsort-bytes!
     then
   ;
 
-  \ Sort a cell or byte sequence, copying it
-  : sort ( seq xt -- )
-    swap duplicate tuck swap sort!
+  \ Quicksort a cell or byte sequence, copying it
+  : qsort ( seq xt -- )
+    swap duplicate tuck swap qsort!
   ;
   
   \ Unsafe operations raising exceptions outside of UNSAFE module
