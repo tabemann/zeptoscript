@@ -2850,6 +2850,85 @@ begin-module zscript
       loop
     then
   ;
+
+  continue-module zscript-internal
+
+    \ Partition a cell sequence for quicksort
+    : partition-cells! { lo hi seq xt -- i }
+      hi seq @+ { pivot }
+      [ -1 >small-int ] literal { x }
+      hi 0 ?do
+        i seq @+ { item }
+        item pivot xt execute if
+          x 1+ to x
+          x seq @+ { x-item }
+          x-item i seq !+
+          item x seq !+
+        then
+      loop
+      x 1+ to x
+      x seq @+ { x-item }
+      hi seq @+ { hi-item }
+      hi-item x seq !+
+      x-item hi seq !+
+      x
+    ;
+
+    \ Sort a cell sequence in place for quicksort
+    : sort-cells! { lo hi seq xt -- } \ xt is ( x0 x1 -- le? )
+      lo hi < lo 0>= and if
+        lo hi seq xt partition-cells!
+        lo over 1- seq xt recurse
+        1+ hi seq xt recurse
+      then
+    ;
+
+    \ Partition a byte sequence for quicksort
+    : partition-bytes! { lo hi seq xt -- i }
+      hi seq c@+ { pivot }
+      [ -1 >small-int ] literal { x }
+      hi 0 ?do
+        i seq c@+ { item }
+        item pivot xt execute if
+          x 1+ to x
+          x seq c@+ { x-item }
+          x-item i seq c!+
+          item x seq c!+
+        then
+      loop
+      x 1+ to x
+      x seq c@+ { x-item }
+      hi seq c@+ { hi-item }
+      hi-item x seq c!+
+      x-item hi seq c!+
+      x
+    ;
+
+    \ Sort a byte sequence in place for quicksort
+    : sort-bytes! { lo hi seq xt -- } \ xt is ( x0 x1 -- le? )
+      lo hi < lo 0>= and if
+        lo hi seq xt partition-bytes!
+        lo over 1- seq xt recurse
+        1+ hi seq xt recurse
+      then
+    ;
+
+  end-module
+
+  \ Sort a cell or byte sequence in place
+  : sort! { seq xt -- }
+    seq cells? if
+      0 seq >len 1- seq xt sort-cells!
+    else
+      seq bytes? averts x-incorrect-type
+      0 seq >len 1- seq xt sort-bytes!
+    then
+  ;
+
+  \ Sort a cell or byte sequence, copying it
+  : sort ( seq xt -- )
+    swap duplicate tuck swap sort!
+  ;
   
   \ Unsafe operations raising exceptions outside of UNSAFE module
   : @ raise x-unsafe-op ;
