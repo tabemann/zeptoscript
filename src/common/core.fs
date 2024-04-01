@@ -2851,83 +2851,95 @@ begin-module zscript
     then
   ;
 
+  \ ---------------------------------------------------------------------------
+  \ Note that below the heapsort was chosen because it functions in constant
+  \ space while providing adequate performance.
+  \ ---------------------------------------------------------------------------
+  
   continue-module zscript-internal
 
-    \ Partition a cell sequence for quicksort
-    : partition-cells! { lo hi seq xt -- i }
-      hi seq @+ { pivot }
-      [ -1 >small-int ] literal { x }
-      hi 0 ?do
-        i seq @+ { item }
-        item pivot xt execute if
-          x 1+ to x
-          x seq @+ { x-item }
-          x-item i seq !+
-          item x seq !+
+    \ Left child
+    : left-child ( index -- index' )
+      [ 1 >small-int ] literal lshift 1+
+    ;
+
+    \ Heapsort a cell sequence
+    : sort-cells! { seq xt -- }
+      seq >len { len }
+      len [ 1 >small-int ] literal rshift { start }
+      len { end }
+      begin end [ 1 >small-int ] literal > while
+        start 0> if
+          start 1- to start
+        else
+          end 1- to end
+          0 seq @+ end seq @+ 0 seq !+ end seq !+
         then
-      loop
-      x 1+ to x
-      x seq @+ { x-item }
-      hi seq @+ { hi-item }
-      hi-item x seq !+
-      x-item hi seq !+
-      x
+        start { root }
+        true { continue }
+        begin root left-child end < continue and while
+          root left-child { child }
+          child 1+ end < if
+            child seq @+ child 1+ seq @+ xt execute if
+              child 1+ to child
+            then
+          then
+          root seq @+ child seq @+ xt execute if
+            root seq @+ child seq @+ root seq !+ child seq !+
+            child to root
+          else
+            false to continue
+          then
+        repeat
+      repeat
     ;
 
-    \ Quicksort a cell sequence in place for quicksort
-    : qsort-cells! { lo hi seq xt -- } \ xt is ( x0 x1 -- le? )
-      lo hi < lo 0>= and if
-        lo hi seq xt partition-cells!
-        lo over 1- seq xt recurse
-        1+ hi seq xt recurse
-      then
-    ;
-
-    \ Partition a byte sequence for quicksort
-    : partition-bytes! { lo hi seq xt -- i }
-      hi seq c@+ { pivot }
-      [ -1 >small-int ] literal { x }
-      hi 0 ?do
-        i seq c@+ { item }
-        item pivot xt execute if
-          x 1+ to x
-          x seq c@+ { x-item }
-          x-item i seq c!+
-          item x seq c!+
+    \ Heapsort a byte sequence
+    : sort-bytes! { seq xt -- }
+      seq >len { len }
+      len [ 1 >small-int ] literal rshift { start }
+      len { end }
+      begin end [ 1 >small-int ] literal > while
+        start 0> if
+          start 1- to start
+        else
+          end 1- to end
+          0 seq c@+ end seq c@+ 0 seq c!+ end seq c!+
         then
-      loop
-      x 1+ to x
-      x seq c@+ { x-item }
-      hi seq c@+ { hi-item }
-      hi-item x seq c!+
-      x-item hi seq c!+
-      x
-    ;
-
-    \ Quicksort a byte sequence in place for quicksort
-    : qsort-bytes! { lo hi seq xt -- } \ xt is ( x0 x1 -- le? )
-      lo hi < lo 0>= and if
-        lo hi seq xt partition-bytes!
-        lo over 1- seq xt recurse
-        1+ hi seq xt recurse
-      then
+        start { root }
+        true { continue }
+        begin root left-child end < continue and while
+          root left-child { child }
+          child 1+ end < if
+            child seq c@+ child 1+ seq c@+ xt execute if
+              child 1+ to child
+            then
+          then
+          root seq c@+ child seq c@+ xt execute if
+            root seq c@+ child seq c@+ root seq c!+ child seq c!+
+            child to root
+          else
+            false to continue
+          then
+        repeat
+      repeat
     ;
 
   end-module
 
-  \ Quicksort a cell or byte sequence in place
-  : qsort! { seq xt -- }
+  \ Heapsort a cell or byte sequence in place
+  : sort! { seq xt -- }
     seq cells? if
-      0 seq >len 1- seq xt qsort-cells!
+      seq xt sort-cells!
     else
       seq bytes? averts x-incorrect-type
-      0 seq >len 1- seq xt qsort-bytes!
+      seq xt sort-bytes!
     then
   ;
 
-  \ Quicksort a cell or byte sequence, copying it
-  : qsort ( seq xt -- )
-    swap duplicate tuck swap qsort!
+  \ Heapsort a cell or byte sequence, copying it
+  : sort ( seq xt -- )
+    swap duplicate tuck swap sort!
   ;
   
   \ Unsafe operations raising exceptions outside of UNSAFE module
