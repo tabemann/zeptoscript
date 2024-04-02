@@ -1019,7 +1019,7 @@ begin-module zscript
         { index slice }
         slice >raw { raw }
         slice >raw-offset { offset }
-        >len { len }
+        slice >len { len }
         offset integral> to offset
         len integral> to len
         index integral> to index
@@ -1055,7 +1055,7 @@ begin-module zscript
         { index slice }
         slice >raw { raw }
         slice >raw-offset { offset }
-        >len { len }
+        slice >len { len }
         offset integral> to offset
         len integral> to len
         index integral> to index
@@ -1093,7 +1093,7 @@ begin-module zscript
         { index slice }
         slice >raw { raw }
         slice >raw-offset { offset }
-        >len { len }
+        slice >len { len }
         offset integral> to offset
         len integral> to len
         index integral> to index
@@ -1129,7 +1129,7 @@ begin-module zscript
         { index slice }
         slice >raw { raw }
         slice >raw-offset { offset }
-        >len { len }
+        slice >len { len }
         offset integral> to offset
         len integral> to len
         index integral> to index
@@ -1165,7 +1165,7 @@ begin-module zscript
         { index slice }
         slice >raw { raw }
         slice >raw-offset { offset }
-        >len { len }
+        slice >len { len }
         offset integral> to offset
         len integral> to len
         index integral> to index
@@ -1198,7 +1198,7 @@ begin-module zscript
         { index slice }
         slice >raw { raw }
         slice >raw-offset { offset }
-        >len { len }
+        slice >len { len }
         offset integral> to offset
         len integral> to len
         index integral> to index
@@ -1213,6 +1213,70 @@ begin-module zscript
       ['] x-incorrect-type ?raise
     endcase
     swap integral> swap c!
+  ;
+
+  \ Get a cell in a cell sequence or slice and a byte in a byte sequence or
+  \ slice
+  : x@+ ( index object -- x )
+    dup >type case
+      cells-type of
+        swap integral> 1+ cells
+        over >size over u> averts x-offset-out-of-range
+        + @
+      endof
+      bytes-type of
+        swap integral> cell+
+        over >size over u> averts x-offset-out-of-range
+        + c@ >integral
+      endof
+      const-bytes-type of
+        dup [ 2 cells ] literal + @ { len }
+        swap integral> swap
+        over len u< averts x-offset-out-of-range
+        cell+ @ + c@ >integral
+      endof
+      slice-type of
+        { index slice }
+        slice >raw { raw }
+        raw >type case
+          cells-type of
+            slice >raw-offset { offset }
+            slice >len { len }
+            offset integral> to offset
+            len integral> to len
+            index integral> to index
+            len index u> averts x-offset-out-of-range
+            raw index offset + 1+ cells + @
+          endof
+          bytes-type of
+            begin
+              slice >raw-offset { offset }
+              slice >len { len }
+              offset integral> to offset
+              len integral> to len
+              index integral> to index
+              len index u> averts x-offset-out-of-range
+              raw index offset + cell+ + c@
+            end
+            >integral
+          endof
+          const-bytes-type of
+            begin
+              slice >raw-offset { offset }
+              slice >len { len }
+              offset integral> to offset
+              len integral> to len
+              index integral> to index
+              len index u> averts x-offset-out-of-range
+              raw cell+ @ index offset + + c@
+            end
+            >integral
+          endof
+          ['] x-incorrect-type ?raise
+        endcase
+      endof
+      ['] x-incorrect-type ?raise
+    endcase
   ;
 
   \ Is something cells
@@ -2689,7 +2753,7 @@ begin-module zscript
   ;
 
   \ Iterate over a cell sequence
-  : iter { seq xt -- }
+  : iter { seq xt -- } \ xt ( item -- )
     seq cells? if
       seq >len 0 ?do i seq @+ xt execute loop
     else
@@ -2698,8 +2762,18 @@ begin-module zscript
     then
   ;
 
+  \ Iterate over a cell sequence with an index
+  : iteri { seq xt -- } \ xt ( item index -- )
+    seq cells? if
+      seq >len 0 ?do i seq @+ i xt execute loop
+    else
+      seq bytes? averts x-incorrect-type
+      seq >len 0 ?do i seq c@+ i xt execute loop
+    then
+  ;
+
   \ Map a cell or byte sequence into a new cell sequence
-  : map { seq xt -- seq' }
+  : map { seq xt -- seq' } \ xt ( item -- item' )
     seq cells? if
       seq >len { len }
       len make-cells { seq' }
@@ -2714,13 +2788,39 @@ begin-module zscript
     then
   ;
 
+  \ Map a cell or byte sequence into a new cell sequence with an index
+  : mapi { seq xt -- seq' } \ xt ( item index -- item' )
+    seq cells? if
+      seq >len { len }
+      len make-cells { seq' }
+      len 0 ?do i seq @+ i xt execute i seq' !+ loop
+      seq'
+    else
+      seq bytes? averts x-incorrect-type
+      seq >len { len }
+      len make-bytes { seq' }
+      len 0 ?do i seq c@+ i xt execute i seq' c!+ loop
+      seq'
+    then
+  ;
+
   \ Map a cell or byte sequence in place
-  : map! { seq xt -- }
+  : map! { seq xt -- } \ xt ( item -- item' )
     seq cells? if
       seq >len 0 ?do i seq @+ xt execute i seq !+ loop
     else
       seq bytes? averts x-incorrect-type
       seq >len 0 ?do i seq c@+ xt execute i seq c!+ loop
+    then      
+  ;
+
+  \ Map a cell or byte sequence in place with an index
+  : mapi! { seq xt -- } \ xt ( item index -- item' )
+    seq cells? if
+      seq >len 0 ?do i seq @+ i xt execute i seq !+ loop
+    else
+      seq bytes? averts x-incorrect-type
+      seq >len 0 ?do i seq c@+ i xt execute i seq c!+ loop
     then      
   ;
 
@@ -2757,7 +2857,7 @@ begin-module zscript
   ;
 
   \ Filter a cell or byte sequence
-  : filter { seq xt -- seq' }
+  : filter { seq xt -- seq' } \ xt ( item -- filtered? )
     seq cells? seq bytes? or averts x-incorrect-type
     seq >len { len }
     len make-bits { bits }
@@ -2790,9 +2890,44 @@ begin-module zscript
       seq'
     then
   ;
+  
+  \ Filter a cell or byte sequence with an index
+  : filteri { seq xt -- seq' } \ xt ( item index -- filtered? )
+    seq cells? seq bytes? or averts x-incorrect-type
+    seq >len { len }
+    len make-bits { bits }
+    0 { count }
+    len 0 ?do
+      i seq @+ i xt execute if
+        true i bits bit!
+        count [ 1 >small-int ] literal + to count
+      then
+    loop
+    seq cells? if
+      count make-cells { seq' }
+      0 { current }
+      len 0 ?do
+        i bits bit@ if
+          i seq @+ current seq' !+
+          current [ 1 >small-int ] literal + to current
+        then
+      loop
+      seq'
+    else
+      count make-bytes { seq' }
+      0 { current }
+      len 0 ?do
+        i bits bit@ if
+          i seq c@+ current seq' c!+
+          current [ 1 >small-int ] literal + to current
+        then
+      loop
+      seq'
+    then
+  ;
 
   \ Fold left over a cell or byte sequence
-  : fold-left ( x ) { seq xt -- }
+  : foldl ( x ) { seq xt -- } \ xt ( x item -- x' )
     seq cells? if
       seq >len 0 ?do i seq @+ xt execute loop
     else
@@ -2801,8 +2936,18 @@ begin-module zscript
     then
   ;
 
+  \ Fold left over a cell or byte sequence with an index
+  : foldli ( x ) { seq xt -- } \ xt ( x item index -- x' )
+    seq cells? if
+      seq >len 0 ?do i seq @+ i xt execute loop
+    else
+      seq bytes? averts x-incorrect-type
+      seq >len 0 ?do i seq c@+ i xt execute loop
+    then
+  ;
+
   \ Fold right over a cell or byte sequence
-  : fold-right ( x ) { seq xt -- }
+  : foldr ( x ) { seq xt -- } \ xt ( item x -- x' )
     seq cells? if
       seq >len dup 0> if
         0 swap 1- ?do i seq @+ swap xt execute -1 +loop
@@ -2813,6 +2958,24 @@ begin-module zscript
       seq bytes? averts x-incorrect-type
       seq >len dup 0> if
         0 swap 1- ?do i seq c@+ swap xt execute -1 +loop
+      else
+        drop
+      then
+    then
+  ;
+  
+  \ Fold right over a cell or byte sequence with an index
+  : foldri ( x ) { seq xt -- } \ xt ( item x index -- x' )
+    seq cells? if
+      seq >len dup 0> if
+        0 swap 1- ?do i seq @+ swap i xt execute -1 +loop
+      else
+        drop
+      then
+    else
+      seq bytes? averts x-incorrect-type
+      seq >len dup 0> if
+        0 swap 1- ?do i seq c@+ swap i xt execute -1 +loop
       else
         drop
       then
@@ -2851,6 +3014,32 @@ begin-module zscript
     then
   ;
 
+  \ Zip two sequences into a new sequence, using the length of the shorter
+  \ sequence
+  : zip { seq0 seq1 -- seq2 }
+    seq0 cells? seq0 bytes? or averts x-incorrect-type
+    seq1 cells? seq1 bytes? or averts x-incorrect-type
+    seq0 >len seq1 >len min { len }
+    len make-cells { seq2 }
+    len 0 ?do
+      i seq0 x@+ i seq1 x@+ [ 2 >small-int ] literal >cells i seq2 !+
+    loop
+    seq2
+  ;
+
+  \ Zip two sequences into the first sequence in-place; note that if the ranges
+  \ do not match an exception is raised, and the first sequence must be a cell
+  \ sequence
+  : zip! { seq0 seq1 -- }
+    seq0 cells? averts x-incorrect-type
+    seq1 cells? seq1 bytes? or averts x-incorrect-type
+    seq0 >len { len }
+    len seq1 >len = averts x-offset-out-of-range
+    len 0 ?do
+      i seq0 x@+ i seq1 x@+ [ 2 >small-int ] literal >cells i seq0 !+
+    loop
+  ;
+  
   \ ---------------------------------------------------------------------------
   \ Note that below the heapsort was chosen because it functions in constant
   \ space while providing adequate performance.
