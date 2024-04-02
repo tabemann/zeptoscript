@@ -3027,6 +3027,21 @@ begin-module zscript
     seq2
   ;
 
+  \ Zip three sequences into a new sequence, using the length of the shorter
+  \ sequence
+  : zip3 { seq0 seq1 seq2 -- seq3 }
+    seq0 cells? seq0 bytes? or averts x-incorrect-type
+    seq1 cells? seq1 bytes? or averts x-incorrect-type
+    seq2 cells? seq2 bytes? or averts x-incorrect-type
+    seq0 >len seq1 >len min seq2 >len min { len }
+    len make-cells { seq3 }
+    len 0 ?do
+      i seq0 x@+ i seq1 x@+ i seq2 x@+
+      [ 3 >small-int ] literal >cells i seq3 !+
+    loop
+    seq3
+  ;
+
   \ Zip two sequences into the first sequence in-place; note that if the ranges
   \ do not match an exception is raised, and the first sequence must be a cell
   \ sequence
@@ -3040,6 +3055,22 @@ begin-module zscript
     loop
   ;
   
+  \ Zip three sequences into the first sequence in-place; note that if the
+  \ ranges do not match an exception is raised, and the first sequence must be
+  \ a cell sequence
+  : zip3! { seq0 seq1 seq2 -- }
+    seq0 cells? averts x-incorrect-type
+    seq1 cells? seq1 bytes? or averts x-incorrect-type
+    seq2 cells? seq2 bytes? or averts x-incorrect-type
+    seq0 >len { len }
+    len seq1 >len = averts x-offset-out-of-range
+    len seq2 >len = averts x-offset-out-of-range
+    len 0 ?do
+      i seq0 x@+ i seq1 x@+ i seq2 x@+
+      [ 3 >small-int ] literal >cells i seq0 !+
+    loop
+  ;
+
   \ ---------------------------------------------------------------------------
   \ Note that below the heapsort was chosen because it functions in constant
   \ space while providing adequate performance.
