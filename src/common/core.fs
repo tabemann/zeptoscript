@@ -3276,7 +3276,7 @@ begin-module zscript
   cells-type integral> 2 forth::-
   type-shift forth::lshift
   forth::cell 1 forth::lshift forth::or ,
-  forth::constant empty-cells
+  forth::constant 0cells
 
   \ Empty bytes
   \
@@ -3285,6 +3285,6 @@ begin-module zscript
   bytes-type integral> 2 forth::-
   type-shift forth::lshift
   forth::cell 1 forth::lshift forth::or ,
-  forth::constant empty-bytes
+  forth::constant 0bytes
   
 end-module
