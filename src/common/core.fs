@@ -323,7 +323,7 @@ begin-module zscript
       >mark
       0 tos r0 ldr_,[_,#_]
       type-shift r0 r0 lsrs_,_,#_
-      [ word-type 1 rshift 2 - ] literal r0 cmp_,#_
+      1 r0 cmp_,#_
       ne bc>
       cell tos tos ldr_,[_,#_]
       pc 1 pop
@@ -3272,17 +3272,19 @@ begin-module zscript
   \ Empty cells
   \
   \ This is not garbage collected so does not need to be in the heap.
-  forth::here forth::constant empty-cells
+  forth::here
   cells-type integral> 2 forth::-
   type-shift forth::lshift
   forth::cell 1 forth::lshift forth::or ,
+  forth::constant empty-cells
 
   \ Empty bytes
   \
   \ This is not garbage collected so does not need to be in the heap.
-  forth::here forth::constant empty-bytes
+  forth::here
   bytes-type integral> 2 forth::-
   type-shift forth::lshift
   forth::cell 1 forth::lshift forth::or ,
+  forth::constant empty-bytes
   
 end-module
