@@ -3162,6 +3162,89 @@ begin-module zscript
     swap duplicate tuck swap sort!
   ;
   
+  \ Get whether a predicate applies to all elements of a sequence; note that
+  \ not all elements will be iterated over if an element returns false, and
+  \ true will be returned if the sequence is empty
+  : all { seq xt -- all? }
+    seq cells? if
+      seq >len 0 ?do
+        i seq @+ xt execute not if false exit then
+      loop
+    else
+      seq bytes? averts x-incorrect-type
+      seq >len 0 ?do
+        i seq c@+ xt execute not if false exit then
+      loop
+    then
+    true
+  ;
+
+  \ Get whether a predicate applies to any element of a sequence; note that
+  \ not all elements will be iterated over if an element returns true, and
+  \ false will be returned if the sequence is empty
+  : any { seq xt -- any? }
+    seq cells? if
+      seq >len 0 ?do
+        i seq @+ xt execute if true exit then
+      loop
+    else
+      seq bytes? averts x-incorrect-type
+      seq >len 0 ?do
+        i seq c@+ xt execute if true exit then
+      loop
+    then
+    false
+  ;
+  
+  \ Join a cell sequence of cell or byte sequences
+  : join { list-seq join-seq -- seq' }
+    list-seq cells? averts x-incorrect-type
+    list-seq [: cells? ;] all if
+      join-seq cells? averts x-incorrect-type
+      list-seq >len { list-seq-len }
+      list-seq-len 0= if 0 make-cells exit then
+      0 list-seq [: >len + ;] foldl { elements-len }
+      join-seq >len { join-seq-len }
+      elements-len list-seq-len 1- 0 max join-seq-len * + { total-len }
+      total-len make-cells { seq' }
+      0 { dest-index }
+      list-seq-len 1- 0 max 0 ?do
+        i list-seq @+ { current-seq }
+        current-seq >len { current-len }
+        current-seq 0 seq' dest-index current-len copy
+        dest-index current-len + to dest-index
+        join-seq 0 seq' dest-index join-seq-len copy
+        dest-index join-seq-len + to dest-index
+      loop
+      list-seq-len 1- list-seq @+ { current-seq }
+      current-seq >len { current-len }
+      current-seq 0 seq' dest-index current-len copy
+      seq'
+    else
+      list-seq [: bytes? ;] all averts x-incorrect-type
+      join-seq bytes? averts x-incorrect-type
+      list-seq >len { list-seq-len }
+      list-seq-len 0= if 0 make-bytes exit then
+      0 list-seq [: >len + ;] foldl { elements-len }
+      join-seq >len { join-seq-len }
+      elements-len list-seq-len 1- 0 max join-seq-len * + { total-len }
+      total-len make-bytes { seq' }
+      0 { dest-index }
+      list-seq-len 1- 0 max 0 ?do
+        i list-seq @+ { current-seq }
+        current-seq >len { current-len }
+        current-seq 0 seq' dest-index current-len copy
+        dest-index current-len + to dest-index
+        join-seq 0 seq' dest-index join-seq-len copy
+        dest-index join-seq-len + to dest-index
+      loop
+      list-seq-len 1- list-seq @+ { current-seq }
+      current-seq >len { current-len }
+      current-seq 0 seq' dest-index current-len copy
+      seq'
+    then
+  ;
+  
   \ Unsafe operations raising exceptions outside of UNSAFE module
   : @ raise x-unsafe-op ;
   : ! raise x-unsafe-op ;
