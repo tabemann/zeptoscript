@@ -642,9 +642,6 @@ begin-module zscript
       then
     ;
 
-    \ RAM current global id
-    0 value current-ram-global-id
-
     \ Specify current flash global variable ID
     : set-current-flash-global-id ( id -- )
       get-current
