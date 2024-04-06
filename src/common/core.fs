@@ -1304,15 +1304,16 @@ begin-module zscript
   \ Initialize zeptoscript
   defer init-zscript
   :noname { compile-size runtime-size -- }
+    inited? if exit then
     compile-size [ 2 cells ] literal align to compile-size
     runtime-size [ 2 cells ] literal align to runtime-size
     compiling-to-flash? if
       s" init" flash-latest find-all-dict
-      get-current -rot
+      get-current swap
       forth set-current
       s" init" internal::start-compile visible
-      ?dup if forth::>xt lit, postpone execute then
-      runtime-size lit, runtime-size lit, postpone init-zscript
+      ?dup if forth::>xt forth::lit, postpone execute then
+      runtime-size forth::lit, runtime-size forth::lit, postpone init-zscript
       internal::end-compile,
       set-current
       compile-size
@@ -1335,6 +1336,7 @@ begin-module zscript
     get-current-flash-global-id
     cells-type allocate-cells flash-globals-array!
     ['] do-handle-number handle-number-hook !
+    true to inited?
   ; is init-zscript
 
   \ Copy from one value to another in a type-safe fashion
