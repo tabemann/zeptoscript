@@ -511,10 +511,11 @@ begin-module zscript
     ;
 
     \ Convert any number of cells to nulls, integers, or words
+    \ Note: do not call with a count of 0 or 1
     : n>integral ( xn ... x0 count -- 0|int|addr ... 0|int|addr )
       dup integral> cells [:
         { count buf }
-        buf count integral> cells + buf ?do i ! loop
+        buf count integral> cells + buf ?do i ! cell +loop
         buf dup count integral> 1- cells + ?do
           i @ >integral
         [ cell negate ] literal +loop
@@ -522,10 +523,11 @@ begin-module zscript
     ;
 
     \ Convert any number of nulls, integers, or words to cells
+    \ Note: do not call with a count of 0 or 1
     : nintegral> ( 0|int|addr ... 0|int|addr count -- xn ... x0 )
       dup integral> cells [:
         { count buf }
-        buf count integral> cells + buf ?do i ! loop
+        buf count integral> cells + buf ?do i ! cell +loop
         buf dup count integral> 1- cells + ?do
           i @ integral>
         [ cell negate ] literal +loop
@@ -2446,25 +2448,73 @@ begin-module zscript
     end-compile,
     offset 1+
   ;
+
+  \ Make a foreign constant
+  : foreign-constant ( "foreign-name" "new-name" -- )
+    token-word word>xt { xt }
+    token dup 0<> averts x-token-expected
+    xt execute >integral swap constant-with-name
+  ;
   
   \ Make a foreign word usable
-  : foreign ( in-count out-count xt "name" -- )
-    { in-count out-count xt }
+  : foreign ( in-count out-count "foreign-name" "new-name" -- )
+    { in-count out-count }
+    token-word word>xt { xt }
     token dup 0<> averts x-token-expected
     start-compile visible
-    in-count lit,
-    postpone nintegral>
+    in-count 0 > if
+      in-count [ 1 >small-int ] literal = if
+        postpone integral>
+      else
+        in-count [ 2 >small-int ] literal = if
+          postpone 2integral>
+        else
+          in-count lit,
+          postpone nintegral>
+        then
+      then
+    then
     xt xt>integral raw-lit, postpone forth::execute
-    out-count lit,
-    postpone n>integral
+    out-count 0 > if
+      out-count [ 1 >small-int ] literal = if
+        postpone >integral
+      else
+        out-count [ 2 >small-int ] literal = if
+          postpone 2>integral
+        else
+          out-count lit,
+          postpone n>integral
+        then
+      then
+    then
     internal::end-compile,
   ;
 
   \ Execute a foreign word
   : execute-foreign { in-count out-count xt -- }
-    in-count nintegral>
+    in-count 0 > if
+      in-count [ 1 >small-int ] literal = if
+        integral>
+      else
+        in-count [ 2 >small-int ] literal = if
+          2integral>
+        else
+          in-count nintegral>
+        then
+      then
+    then
     xt execute
-    out-count n>integral
+    out-count 0 > if
+      out-count [ 1 >small-int ] literal = if
+        >integral
+      else
+        out-count [ 2 >small-int ] literal = if
+          2>integral
+        else
+          out-count n>integral
+        then
+      then
+    then
   ;
 
   continue-module zscript-internal
