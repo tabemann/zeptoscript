@@ -253,6 +253,7 @@ begin-module zscript
 
     \ Carry out a GC cycle
     : gc ( -- )
+      display-red ." *** RUNNING GC *** " display-normal flush-console \ DEBUG
       swap-spaces
       relocate-stack
       ram-globals-array@ relocate ram-globals-array!
@@ -293,6 +294,44 @@ begin-module zscript
       >mark
       ]code
       ['] x-not-small-int ?raise
+    ;
+
+    \ Get whether a value is not false
+    : flag> ( x -- flag )
+      code[
+      0 tos cmp_,#_
+      ne bc>
+      pc 1 pop
+      >mark
+      1 r0 movs_,#_
+      r0 tos tst_,_
+      eq bc>
+      r0 tos cmp_,_
+      eq bc>
+      0 tos movs_,#_
+      tos tos mvns_,_
+      pc 1 pop
+      >mark
+      0 tos movs_,#_
+      pc 1 pop
+      >mark
+      0 tos r0 ldr_,[_,#_]
+      type-shift r0 r0 lsrs_,_,#_
+      1 r0 cmp_,#_
+      eq bc>
+      0 tos movs_,#_
+      tos tos mvns_,_
+      pc 1 pop
+      >mark
+      4 tos r0 ldr_,[_,#_]
+      0 r0 cmp_,#_
+      eq bc>
+      0 tos movs_,#_
+      tos tos mvns_,_
+      pc 1 pop
+      >mark
+      r0 tos movs_,#_
+      ]code
     ;
 
     \ Types
@@ -1676,9 +1715,9 @@ begin-module zscript
   : if ( flag -- )
     [immediate]
     state @ if
-      postpone integral>
+      postpone flag>
     else
-      integral>
+      flag>
     then
     postpone if
   ;
@@ -1687,7 +1726,7 @@ begin-module zscript
   : while ( flag -- )
     [immediate]
     [compile-only]
-    postpone integral>
+    postpone flag>
     postpone while
   ;
 
@@ -1695,7 +1734,7 @@ begin-module zscript
   : until ( flag -- )
     [immediate]
     [compile-only]
-    postpone integral>
+    postpone flag>
     postpone until
   ;
 
@@ -2329,7 +2368,6 @@ begin-module zscript
     [immediate]
     forth::token-word forth::>xt
     state @ forth::if
-      postpone 0<>
       postpone if
       rot forth::lit,
       postpone forth::?raise

@@ -421,9 +421,10 @@ begin-module zscript-action
     true schedule schedule-running?!
     begin schedule schedule-running?@ while
       schedule schedule-next@ { next-action }
-      next-action 0<> if
+      next-action if
         next-action action-msg-src@ ?dup if
-          no-msg = if
+          dup no-msg = if
+            drop
             next-action action-systick-delay@ { systick-delay }
             systick-delay 0>=
             systick-counter next-action action-systick-start@ -
@@ -447,7 +448,7 @@ begin-module zscript-action
           then
         else
           next-action action-send-xt@ 0= if
-            next-action action-resume-xt@ 0<> if
+            next-action action-resume-xt@ if
               next-action action-systick-delay@ { systick-delay }
               systick-delay 0<
               systick-counter next-action action-systick-start@ -
@@ -466,7 +467,7 @@ begin-module zscript-action
               next-action remove-action
             then
           else
-            next-action action-resume-xt@ 0<> if
+            next-action action-resume-xt@ if
               next-action action-systick-delay@ { systick-delay }
               systick-delay 0>=
               systick-counter next-action action-systick-start@ -
