@@ -3346,25 +3346,25 @@ begin-module zscript
   ;
 
   \ Start defining a cell sequence
-  : (( ( -- )
+  : #( ( -- )
     depth seq-define-index ram-global@ >pair seq-define-index ram-global!
   ;
 
   \ Start defining a byte sequence
-  : << ( -- )
+  : #< ( -- )
     depth negate 1-
     seq-define-index ram-global@ >pair seq-define-index ram-global!
   ;
 
   \ Finish definining a cell sequence
-  : )) ( xn ... x0 -- cells )
+  : )# ( xn ... x0 -- cells )
     depth seq-define-index ram-global@ pair> seq-define-index ram-global!
     dup 0>= averts x-incorrect-type
     - 0 max >cells
   ;
 
   \ Finish defining a byte sequence
-  : >> ( cn ... c0 -- bytes )
+  : ># ( cn ... c0 -- bytes )
     depth seq-define-index ram-global@ pair> seq-define-index ram-global!
     dup 0< averts x-incorrect-type
     1+ negate - 0 max >bytes
