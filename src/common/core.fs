@@ -544,12 +544,6 @@ begin-module zscript
       xt-value
     ;
 
-    \ Convert an xt to an integral
-    : xt>integral ( xt -- integral )
-      dup >type xt-type = averts x-incorrect-type
-      forth::cell+ @ >integral
-    ;
-
     \ Convert an integral to an xt
     : integral>xt ( integral -- xt )
       integral> >xt
@@ -670,6 +664,12 @@ begin-module zscript
     1 >small-int constant init-ram-global-count
 
   end-module> import
+
+  \ Convert an xt to an integral
+  : xt>integral ( xt -- integral )
+    dup >type xt-type = averts x-incorrect-type
+    forth::cell+ @ >integral
+  ;
 
   \ Types
   null-type constant null-type
