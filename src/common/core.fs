@@ -693,14 +693,17 @@ begin-module zscript
       then
     ;
 
-    \ Initial RAM global ID index
+    \ RAM global ID index
     0 constant current-ram-global-id-index
 
+    \ Sequence definition index
+    1 >small-int constant seq-define-index
+    
     \ Initial RAM global ID
-    1 >small-int constant init-ram-global-id
+    2 >small-int constant init-ram-global-id
 
     \ Initial RAM globals count
-    1 >small-int constant init-ram-global-count
+    2 >small-int constant init-ram-global-count
 
   end-module> import
 
@@ -811,7 +814,7 @@ begin-module zscript
       cells-type of
         dup >size [ 3 cells ] literal = averts x-incorrect-size
         dup cell+ @
-        over [ 2 cells ] literal + @
+        swap [ 2 cells ] literal + @
       endof
       slice-type of
         dup >raw { raw }
@@ -1528,6 +1531,11 @@ begin-module zscript
     swap integral> umod >integral
   ;
 
+  \ Negate a number
+  : negate ( n0 -- n1 )
+    integral> negate >integral
+  ;
+  
   \ Or two integers
   : or ( x0 x1 -- x2 )
     integral>
@@ -3330,6 +3338,36 @@ begin-module zscript
       current-seq 0 seq' dest-index current-len copy
       seq'
     then
+  ;
+
+  \ Get the current depth
+  : depth ( -- depth )
+    depth >integral
+  ;
+
+  \ Start defining a cell sequence
+  : (( ( -- )
+    depth seq-define-index ram-global@ >pair seq-define-index ram-global!
+  ;
+
+  \ Start defining a byte sequence
+  : << ( -- )
+    depth negate 1-
+    seq-define-index ram-global@ >pair seq-define-index ram-global!
+  ;
+
+  \ Finish definining a cell sequence
+  : )) ( xn ... x0 -- cells )
+    depth seq-define-index ram-global@ pair> seq-define-index ram-global!
+    dup 0>= averts x-incorrect-type
+    - 0 max >cells
+  ;
+
+  \ Finish defining a byte sequence
+  : >> ( cn ... c0 -- bytes )
+    depth seq-define-index ram-global@ pair> seq-define-index ram-global!
+    dup 0< averts x-incorrect-type
+    1+ negate - 0 max >bytes
   ;
   
   \ Unsafe operations raising exceptions outside of UNSAFE module
