@@ -1211,12 +1211,12 @@
       </navPoint>
       <navPoint id="navPoint201" playOrder="199">
         <navLabel>
-          <text>Unsafe words</text>
+          <text>unsafe words</text>
         </navLabel>
         <content src="main/core.xhtml#unsafe-words" />  
         <navPoint id="navPoint202" playOrder="199">
           <navLabel>
-            <text>Unsafe words</text>
+            <text>unsafe words</text>
           </navLabel>
           <content src="main/core.xhtml#unsafe-words" />  
         </navPoint>

@@ -1036,7 +1036,7 @@ Empty cell sequence.
 
 Empty byte sequence.
 
-## Unsafe words
+## `unsafe` words
 
 ### `bytes>addr-len`
 ( bytes -- addr len )
