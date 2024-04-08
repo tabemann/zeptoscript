@@ -21,6 +21,19 @@ Many of the operations work on all of cell sequences, cell slices, byte sequence
 
 Execution tokens and closures are closely related. Both execution tokens and closures may be executed with the words `execute`, `?execute`, and `try`; however, only execution tokens may be used as exceptions with `?raise`. The words `;]`, `'`, and `[']` create execution tokens, which reference code outside the zeptoscript heap which may be executed. The word `bind` ( *xn* ... *x0* *count* *xt* -- *closure* ) takes an execution token *xt* and binds it to *count* values on the stack, producing a *closure*, which when executed will push values *xn* ... *x0* onto the stack prior to executing *xt*. Both execution tokens and closures live on the heap. Note, though, that there may be cases where one may need to convert between execution tokens and integrals referencing the addresses of their underlying code; these conversions are achieved with `unsafe::integral>xt` ( *integral* -- *xt* ) and `unsafe::xt>integral` ( *xt* -- *integral* ). These conversions may not be made with closures.
 
+zeptoscript does not make use of standard Forth `variable` and `value`; while these are retained for legacy reasons they may only be used with extreme caution and are best avoided when possible. Rather, zeptoscript provides `global` ( "name" -- ); unlike `variable` and `value`, the garbage collector is aware of `global`s, so potentially garbage-collected values can be stored in them, whereas it is very much unsafe to put allocated values, including big integers, in `variable`s or `value`s. Note that globals may be declared either when compiling to RAM or when compiling to flash.
+
+Take the following for example:
+
+```
+global foo
+```
+
+This creates the following words:
+
+* A getter word `foo@` ( -- *foo* )
+* A setter word `foo!` ( *foo* -- )
+
 One feature of zeptoscript is *records*. *Records* are essentially syntactic sugar on top of cell sequences which provides accessor words for constructing, setting, and accessing cell sequences and their elements. In many cases it reads to more readable code than using `>cells`, `cells>`, `@+`, and `!+` directly when one is using a cell sequence for purposes other than acting as a vector/array.
 
 Take the following for example:
