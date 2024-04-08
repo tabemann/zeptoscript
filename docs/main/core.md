@@ -34,7 +34,7 @@ This creates the following words:
 * A getter word `foo@` ( -- *foo* )
 * A setter word `foo!` ( *foo* -- )
 
-One feature of zeptoscript is *records*. *Records* are essentially syntactic sugar on top of cell sequences which provides accessor words for constructing, setting, and accessing cell sequences and their elements. In many cases it reads to more readable code than using `>cells`, `cells>`, `@+`, and `!+` directly when one is using a cell sequence for purposes other than acting as a vector/array.
+One feature of zeptoscript is *records*. *Records* are essentially syntactic sugar on top of cell sequences which provides accessor words for constructing, setting, and accessing cell sequences and their elements. In many cases it leads to more readable code than using `>cells`, `cells>`, `@+`, and `!+` directly when one is using a cell sequence for purposes other than acting as a vector/array.
 
 Take the following for example:
 
