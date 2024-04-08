@@ -253,7 +253,6 @@ begin-module zscript
 
     \ Carry out a GC cycle
     : gc ( -- )
-      display-red ." *** RUNNING GC *** " display-normal flush-console \ DEBUG
       swap-spaces
       relocate-stack
       ram-globals-array@ relocate ram-globals-array!
@@ -273,7 +272,7 @@ begin-module zscript
         aligned-size +to gc-current
       repeat
     ;
-    
+
     \ Case cells to nulls, integers, but not words
     : >small-int ( x -- 0 | int )
       code[
@@ -318,7 +317,7 @@ begin-module zscript
       0 tos r0 ldr_,[_,#_]
       type-shift r0 r0 lsrs_,_,#_
       1 r0 cmp_,#_
-      eq bc>
+       eq bc>
       0 tos movs_,#_
       tos tos mvns_,_
       pc 1 pop
@@ -432,6 +431,14 @@ begin-module zscript
       >type dup xt-type = swap closure-type = or
     ;
 
+    \ Preemptively carry out a GC cycle to ensure that a certain amount of space
+    \ is available
+    : ensure { bytes -- }
+      bytes integral> to-space-current@ + to-space-top@ > if gc then
+      bytes integral> to-space-current@ + to-space-top@
+      <= averts x-out-of-memory
+    ;
+    
     \ Allocate memory as cells
     : allocate-cells { count type -- addr }
       count integral> 1+ cells >small-int { bytes }
@@ -573,19 +580,17 @@ begin-module zscript
       ;] with-aligned-allot
     ;
 
-    \ Get the compilation state
-    : state? state forth::@ >integral ;
-  
     \ Cast cells to xts
-    : >xt ( x -- xt )
+    : integral>xt ( x -- xt )
       xt-type allocate-cell { xt-value }
       integral> xt-value cell+ !
       xt-value
     ;
 
-    \ Convert an integral to an xt
-    : integral>xt ( integral -- xt )
-      integral> >xt
+    \ Convert an xt to an integral
+    : xt>integral ( xt -- integral )
+      dup >type xt-type = averts x-incorrect-type
+      forth::cell+ @ >integral
     ;
 
     \ Raise an exception with an integral value
@@ -706,12 +711,6 @@ begin-module zscript
     2 >small-int constant init-ram-global-count
 
   end-module> import
-
-  \ Convert an xt to an integral
-  : xt>integral ( xt -- integral )
-    dup >type xt-type = averts x-incorrect-type
-    forth::cell+ @ >integral
-  ;
 
   \ Types
   null-type constant null-type
@@ -2141,10 +2140,11 @@ begin-module zscript
   ;
   
   begin-module unsafe
-    
+
     \ Get the address and size of a bytes or constant bytes value
     : bytes>addr-len ( value -- addr len )
       dup bytes? averts x-incorrect-type
+      [ 4 forth::cells >small-int ] literal ensure
       dup >len { len }
       dup >raw-offset { offset }
       >raw dup >type case
@@ -2312,9 +2312,24 @@ begin-module zscript
       val integral> to val
       addr bytes val fill
     ;
+
+    \ Cast a value to an integer
+    : >integral ( x -- value ) >integral ;
     
     \ Cast a value from an integer
     : integral> ( value -- x ) integral> ;
+
+    \ Cast two values to integers
+    : 2>integral ( x0 x1 -- value0 value1 ) 2>integral ;
+
+    \ Cast two values from integers
+    : 2integral> ( value0 value1 -- x0 x1 ) 2integral> ;
+
+    \ Convert an xt to an integral
+    : xt>integral ( xt -- value ) xt>integral ;
+
+    \ Convert an integral to an xt
+    : integral>xt ( value -- xt ) integral>xt ;
 
     \ Get the HERE pointer
     : here ( -- x ) here >integral ;
@@ -2339,7 +2354,7 @@ begin-module zscript
     [immediate]
     [compile-only]
     token-word word>xt xt>integral lit,
-    postpone >xt
+    postpone integral>xt
   ;
 
   \ Raise an exception
@@ -2500,6 +2515,27 @@ begin-module zscript
     token dup 0<> averts x-token-expected
     xt execute >integral swap constant-with-name
   ;
+
+  \ Make a foreign variable
+  : foreign-variable ( "foreign-name" "new-name" -- )
+    token-word word>xt { xt }
+    token dup 0<> averts x-token-expected { name }
+    name >len { len }
+    len 1+ make-bytes { accessor-name }
+    name 0 accessor-name 0 len copy
+    [char] @ len accessor-name c!+
+    accessor-name start-compile visible
+    xt execute >integral raw-lit,
+    postpone forth::@
+    postpone >integral
+    end-compile,
+    [char] ! len accessor-name c!+
+    accessor-name start-compile visible
+    postpone integral>
+    xt execute >integral raw-lit,
+    postpone forth::!
+    end-compile,
+  ;
   
   \ Make a foreign word usable
   : foreign ( in-count out-count "foreign-name" "new-name" -- )
@@ -2647,6 +2683,9 @@ begin-module zscript
       tagged-word
     then
   ;
+
+  \ Get the compilation state
+  : state? state forth::@ >integral ;
   
   \ Add to a local or a VALUE
   \ Do not execute this after this point before zeptoscript is initialized
