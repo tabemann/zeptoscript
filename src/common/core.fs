@@ -729,12 +729,12 @@ begin-module zscript
   : raw-lit, ( x -- ) integral> lit, ;
   
   \ Redefine LIT,
-  : lit, ( xt -- )
+  : lit, ( x -- )
     dup small-int? if lit, else integral> lit, postpone >integral then
   ;
 
   \ Convert an address/length pair into constant bytes
-  : >const-bytes ( c-addr u -- const-bytes )
+  : addr-len>const-bytes ( c-addr u -- const-bytes )
     const-bytes-type allocate-2cell { const-bytes }
     integral> const-bytes [ 2 cells ] literal + !
     integral> const-bytes cell+ !
@@ -860,24 +860,24 @@ begin-module zscript
     endcase
   ;
 
-  \ Allocate a tuple
-  : make-cells ( count -- tuple )
+  \ Create a cell sequence initialized to null
+  : make-cells ( count -- cells )
     cells-type allocate-cells
   ;
 
-  \ Allocate bytes
+  \ Create a byte sequence initialized to null
   : make-bytes ( count -- bytes )
     allocate-bytes
   ;
 
-  \ Create a cell sequence
+  \ Create a cell sequence from elements on the stack
   : >cells ( xn ... x0 count -- cells )
     dup cells-type allocate-cells { seq }
     integral> seq over 1+ cells + swap 0 ?do cell - tuck ! loop drop
     seq
   ;
 
-  \ Create a byte sequence
+  \ Create a byte sequence from bytes on the stack
   : >bytes ( cn ... c0 count -- bytes )
     dup allocate-bytes { seq }
     integral> seq over cell+ + swap 0 ?do
@@ -1417,12 +1417,12 @@ begin-module zscript
   ;
   
   \ Redefine S"
-  : s" ( "string" -- triple )
+  : s" ( "string" -- bytes )
     [immediate]
     state @ if
       postpone s"
       postpone 2>integral
-      postpone >const-bytes
+      postpone addr-len>const-bytes
     else
       [char] " internal::parse-to-char
       2>integral
@@ -1431,12 +1431,12 @@ begin-module zscript
   ;
 
   \ Redefer S\"
-  : s\" ( "string" -- triple )
+  : s\" ( "string" -- bytes )
     [immediate]
     state @ if
       postpone s\"
       postpone 2>integral
-      postpone >const-bytes
+      postpone addr-len>const-bytes
     else
       [:
         here dup [char] " esc-string::parse-esc-string
@@ -1530,7 +1530,7 @@ begin-module zscript
     swap integral> umod >integral
   ;
 
-  \ Negate a number
+  \ Negate an integer
   : negate ( n0 -- n1 )
     integral> negate >integral
   ;
@@ -1623,61 +1623,61 @@ begin-module zscript
 
   \ Signed less than
   \ Note that this takes advantage of the fact that TRUE and FALSE do not change
-  : < ( x0 x1 -- flag )
+  : < ( n0 n1 -- flag )
     integral> swap integral> >
   ;
 
   \ Signed greater than
   \ Note that this takes advantage of the fact that TRUE and FALSE do not change
-  : > ( x0 x1 -- flag )
+  : > ( n0 n1 -- flag )
     integral> swap integral> forth::<
   ;
 
   \ Signed less than or equal
   \ Note that this takes advantage of the fact that TRUE and FALSE do not change
-  : <= ( x0 x1 -- flag )
+  : <= ( n0 n1 -- flag )
     integral> swap integral> >=
   ;
 
   \ Signed greater than or equal
   \ Note that this takes advantage of the fact that TRUE and FALSE do not change
-  : >= ( x0 x1 -- flag )
+  : >= ( n0 n1 -- flag )
     integral> swap integral> forth::<=
   ;
 
   \ Unsigned less than
   \ Note that this takes advantage of the fact that TRUE and FALSE do not change
-  : u< ( x0 x1 -- flag )
+  : u< ( u0 u1 -- flag )
     integral> swap integral> u>
   ;
 
   \ Unsigned greater than
   \ Note that this takes advantage of the fact that TRUE and FALSE do not change
-  : u> ( x0 x1 -- flag )
+  : u> ( u0 u1 -- flag )
     integral> swap integral> forth::u<
   ;
 
   \ Unsigned less than or equal
   \ Note that this takes advantage of the fact that TRUE and FALSE do not change
-  : u<= ( x0 x1 -- flag )
+  : u<= ( u0 u1 -- flag )
     integral> swap integral> u>=
   ;
 
   \ Unsigned greater than or equal
   \ Note that this takes advantage of the fact that TRUE and FALSE do not change
-  : u>= ( x0 x1 -- flag )
+  : u>= ( u0 u1 -- flag )
     integral> swap integral> forth::u<=
   ;
 
   \ Equal to zero
   \ Note that this takes advantage of the fact that TRUE and FALSE do not change
-  : 0= ( n -- flag )
+  : 0= ( x -- flag )
     dup integral? if integral> 0= else drop false then
   ;
 
   \ Not equal to zero
   \ Note that this takes advantage of the fact that TRUE and FALSE do not change
-  : 0<> ( n -- flag )
+  : 0<> ( x -- flag )
     dup integral? if integral> 0<> else drop true then
   ;
 
@@ -1719,7 +1719,7 @@ begin-module zscript
   cell >small-int constant cell
   
   \ Redefine IF
-  : if ( flag -- )
+  : if ( x -- )
     [immediate]
     state @ if
       postpone flag>
@@ -1730,7 +1730,7 @@ begin-module zscript
   ;
 
   \ Redefine WHILE
-  : while ( flag -- )
+  : while ( x -- )
     [immediate]
     [compile-only]
     postpone flag>
@@ -1738,7 +1738,7 @@ begin-module zscript
   ;
 
   \ Redefine UNTIL
-  : until ( flag -- )
+  : until ( x -- )
     [immediate]
     [compile-only]
     postpone flag>
@@ -2098,7 +2098,7 @@ begin-module zscript
   ;
   
   \ Execute a closure
-  : execute ( xt -- )
+  : execute ( xt | closure -- )
     dup >type case
       xt-type of forth::cell+ @ endof
       closure-type of
@@ -2114,7 +2114,7 @@ begin-module zscript
   ;
   
   \ Try a closure
-  : try ( xt -- )
+  : try ( xt | closure -- exception | 0 )
     dup >type case
       xt-type of forth::cell+ @ endof
       closure-type of
@@ -2131,7 +2131,7 @@ begin-module zscript
 
   
   \ Execute a non-null closure
-  : ?execute ( xt -- )
+  : ?execute ( xt | closure | 0  -- )
     dup integral? not if
       execute
     else
@@ -3061,7 +3061,7 @@ begin-module zscript
   ;
 
   \ Fold left over a cell or byte sequence
-  : foldl ( x ) { seq xt -- } \ xt ( x item -- x' )
+  : foldl ( x ) { seq xt -- x' } \ xt ( x item -- x' )
     seq cells? if
       seq >len 0 ?do i seq @+ xt execute loop
     else
@@ -3071,7 +3071,7 @@ begin-module zscript
   ;
 
   \ Fold left over a cell or byte sequence with an index
-  : foldli ( x ) { seq xt -- } \ xt ( x item index -- x' )
+  : foldli ( x ) { seq xt -- x' } \ xt ( x item index -- x' )
     seq cells? if
       seq >len 0 ?do i seq @+ i xt execute loop
     else
@@ -3081,7 +3081,7 @@ begin-module zscript
   ;
 
   \ Fold right over a cell or byte sequence
-  : foldr ( x ) { seq xt -- } \ xt ( item x -- x' )
+  : foldr ( x ) { seq xt -- x' } \ xt ( item x -- x' )
     seq cells? if
       seq >len dup 0> if
         0 swap 1- ?do i seq @+ swap xt execute -1 +loop
@@ -3099,7 +3099,7 @@ begin-module zscript
   ;
   
   \ Fold right over a cell or byte sequence with an index
-  : foldri ( x ) { seq xt -- } \ xt ( item x index -- x' )
+  : foldri ( x ) { seq xt -- x' } \ xt ( item x index -- x' )
     seq cells? if
       seq >len dup 0> if
         0 swap 1- ?do i seq @+ swap i xt execute -1 +loop
