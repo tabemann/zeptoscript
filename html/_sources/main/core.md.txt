@@ -4,7 +4,7 @@ zeptoscript is a high-level, dynamically-typed language implemented on top of ze
 
 zeptoscript has the following basic data types:
 
-* Integrals, with subtypes being nulls, small integers (i.e. 31-bit), and big integers (i.e. 32-bit).
+* Integrals, with subtypes being nulls, small integers (i.e. 31-bit), and big integers (i.e. 32-bit); note that `true` and `false` are integrals, specifically -1 and 0.
 * Cell sequences
 * Cell slices
 * Byte sequences, with normal and constant subtypes
