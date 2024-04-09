@@ -250,7 +250,9 @@ begin-module zscript-oo
           set-current
         then
       else
-        ram-method-id@ 1- dup ram-method-id!
+        ram-method-id@
+        dup 0 = if drop -1 then
+        1- dup ram-method-id!
       then
     ;
 
