@@ -168,7 +168,7 @@ begin-module zscript-oo
     ;
 
     \ Look up and execute a method
-    : execute-method ( ? class method-id -- ? class )
+    : execute-method ( ? class method-id -- ? )
       code[
       r0 1 unsafe::integral> dp ldm
       0 r0 r1 ldr_,[_,#_]
