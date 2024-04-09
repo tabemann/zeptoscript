@@ -456,7 +456,7 @@ begin-module zscript
     ;
 
     \ Allocate memory as bytes
-    : allocate-bytes { count -- addr }
+    : allocate-bytes { count type -- addr }
       count integral> cell+ cell align >small-int { bytes }
       bytes integral> to-space-current@ + to-space-top@ > if
         gc
@@ -469,7 +469,7 @@ begin-module zscript
       current
       dup cell+ bytes cell - 0 fill
       count integral> cell+ 1 lshift
-      [ bytes-type integral> 2 - type-shift lshift ] literal or over !
+      type integral> 2 - type-shift lshift or over !
     ;
     
     \ Allocate a cell
@@ -743,7 +743,7 @@ begin-module zscript
 
   \ Convert an address/length pair into bytes
   : addr-len>bytes ( c-addr u -- bytes )
-    dup allocate-bytes { bytes }
+    dup bytes-type allocate-bytes { bytes }
     swap integral> bytes cell+ rot integral> move
     bytes
   ;
@@ -867,7 +867,7 @@ begin-module zscript
 
   \ Create a byte sequence initialized to null
   : make-bytes ( count -- bytes )
-    allocate-bytes
+    bytes-type allocate-bytes
   ;
 
   \ Create a cell sequence from elements on the stack
@@ -879,7 +879,7 @@ begin-module zscript
 
   \ Create a byte sequence from bytes on the stack
   : >bytes ( cn ... c0 count -- bytes )
-    dup allocate-bytes { seq }
+    dup bytes-type allocate-bytes { seq }
     integral> seq over cell+ + swap 0 ?do
       1- tuck swap integral> swap c!
     loop drop
@@ -2435,6 +2435,11 @@ begin-module zscript
     then
   ;
 
+  \ Define a raw constant with a name
+  : raw-constant-with-name ( x name -- )
+    unsafe::bytes>addr-len 2integral> internal::constant-with-name
+  ;
+
   \ Redefine [CHAR]
   : [char] ( "name" -- x )
     [immediate]
@@ -2678,10 +2683,48 @@ begin-module zscript
   : find ( seq -- word|0 )
     unsafe::bytes>addr-len 2integral> find dup forth::if
       >integral { word }
-      forth::cell word-tag allocate-tagged { tagged-word }
+      cell word-tag allocate-tagged { tagged-word }
       word 0 tagged-word t!+
       tagged-word
     then
+  ;
+
+  \ Find a word in all dictionaries
+  : find-all-dict { seq word -- word | 0 }
+    word >type tagged-type = averts x-incorrect-type
+    word >tag word-tag = averts x-incorrect-type
+    seq unsafe::bytes>addr-len 2integral>
+    0 word t@+ integral>
+    find-all-dict dup forth::if
+      >integral { word }
+      cell word-tag allocate-tagged { tagged-word }
+      word 0 tagged-word t!+
+      tagged-word
+    then
+  ;
+
+  \ Flash latest word
+  : flash-latest ( -- word )
+    flash-latest >integral { word }
+    cell word-tag allocate-tagged { tagged-word }
+    word 0 tagged-word t!+
+    tagged-word
+  ;
+
+  \ RAM latest word
+  : ram-latest ( -- word )
+    ram-latest >integral { word }
+    cell word-tag allocate-tagged { tagged-word }
+    word 0 tagged-word t!+
+    tagged-word
+  ;
+
+  \ Latest word
+  : latest ( -- word )
+    latest >integral { word }
+    cell word-tag allocate-tagged { tagged-word }
+    word 0 tagged-word t!+
+    tagged-word
   ;
 
   \ Get the compilation state
@@ -2760,7 +2803,7 @@ begin-module zscript
       new-globals new-ram-globals-array!
       ram-globals-array@ 0 new-ram-globals-array@ 0 index copy
       new-ram-globals-array@ ram-globals-array!
-      len 1+ allocate-bytes { accessor-name }
+      len 1+ bytes-type allocate-bytes { accessor-name }
       name 0 accessor-name 0 len copy
       forth::[char] @ >integral len accessor-name c!+
       accessor-name start-compile visible
@@ -2779,7 +2822,7 @@ begin-module zscript
       token dup 0<> averts x-token-expected { name }
       name >len { len }
       get-current-flash-global-id { index }
-      len 1+ allocate-bytes { accessor-name }
+      len 1+ bytes-type allocate-bytes { accessor-name }
       name 0 accessor-name 0 len copy
       forth::[char] @ >integral len accessor-name c!+
       accessor-name start-compile visible

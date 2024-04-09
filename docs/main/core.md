@@ -746,6 +746,11 @@ End compiling, exported to match start-compile.
 
 Define a constant with a name.
 
+### `raw-constant-with-name`
+( x name -- )
+
+Define a raw constant with a name.
+
 ### `[char]`
 ( "name" -- x )
 
@@ -796,8 +801,28 @@ Execute a foreign word.
 
 Find a word.
 
+### `find-all-dict`
+( seq word -- word'|0 )
+
+Find a word in a dictionary in all wordlists.
+
+### `flash-latest`
+( -- word )
+
+Get the latest word in flash.
+
+### `ram-latest`
+( -- word )
+
+Get the latest word in RAM.
+
+### `latest`
+( -- word )
+
+Get the latest word.
+
 ### `state?`
-state forth::@ >integral ;
+( -- state? )
 
 Get the compilation state.
   
