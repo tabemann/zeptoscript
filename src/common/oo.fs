@@ -179,11 +179,11 @@ begin-module zscript-oo
       3 unsafe::integral> tos r2 lsls_,_,#_
       mark>
       r1 r2 ands_,_
-      r0 r2 r3 ldr_,[_,#_]
+      r0 r2 r3 ldr_,[_,_]
       tos r3 cmp_,_
       ne bc>
       cell unsafe::integral> r2 adds_,#_
-      r0 r2 r3 ldr_,[_,#_]
+      r0 r2 r3 ldr_,[_,_]
       tos 1 unsafe::integral> dp ldm
       r3 bx_
       >mark
