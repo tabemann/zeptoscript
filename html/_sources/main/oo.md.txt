@@ -89,7 +89,7 @@ With these definitions in place, one will get the following:
 1 2 make-barbaz foo unimplemented method
 1 2 make-barbaz bar barbaz-y: 1  ok
 1 2 make-barbaz baz barbaz-z: 2  ok
-``
+```
 
 ## `zscript-oo` Words
 

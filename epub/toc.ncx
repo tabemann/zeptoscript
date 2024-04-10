@@ -1413,6 +1413,72 @@
         <text>zeptoscript Object-Orientation</text>
       </navLabel>
       <content src="main/oo.xhtml" />  
+      <navPoint id="navPoint235" playOrder="231">
+        <navLabel>
+          <text>zeptoscript Object-Orientation</text>
+        </navLabel>
+        <content src="main/oo.xhtml" />  
+      </navPoint>
+      <navPoint id="navPoint236" playOrder="232">
+        <navLabel>
+          <text>zscript-oo Words</text>
+        </navLabel>
+        <content src="main/oo.xhtml#zscript-oo-words" />  
+        <navPoint id="navPoint237" playOrder="232">
+          <navLabel>
+            <text>zscript-oo Words</text>
+          </navLabel>
+          <content src="main/oo.xhtml#zscript-oo-words" />  
+        </navPoint>
+        <navPoint id="navPoint238" playOrder="233">
+          <navLabel>
+            <text>method</text>
+          </navLabel>
+          <content src="main/oo.xhtml#method" />  
+        </navPoint>
+        <navPoint id="navPoint239" playOrder="234">
+          <navLabel>
+            <text>begin-class</text>
+          </navLabel>
+          <content src="main/oo.xhtml#begin-class" />  
+        </navPoint>
+        <navPoint id="navPoint240" playOrder="235">
+          <navLabel>
+            <text>end-class</text>
+          </navLabel>
+          <content src="main/oo.xhtml#end-class" />  
+        </navPoint>
+        <navPoint id="navPoint241" playOrder="236">
+          <navLabel>
+            <text>member:</text>
+          </navLabel>
+          <content src="main/oo.xhtml#member" />  
+        </navPoint>
+        <navPoint id="navPoint242" playOrder="237">
+          <navLabel>
+            <text>:method</text>
+          </navLabel>
+          <content src="main/oo.xhtml#id1" />  
+        </navPoint>
+        <navPoint id="navPoint243" playOrder="238">
+          <navLabel>
+            <text>x-member-not-for-class</text>
+          </navLabel>
+          <content src="main/oo.xhtml#x-member-not-for-class" />  
+        </navPoint>
+        <navPoint id="navPoint244" playOrder="239">
+          <navLabel>
+            <text>x-unimplemented-method</text>
+          </navLabel>
+          <content src="main/oo.xhtml#x-unimplemented-method" />  
+        </navPoint>
+        <navPoint id="navPoint245" playOrder="240">
+          <navLabel>
+            <text>x-not-a-method</text>
+          </navLabel>
+          <content src="main/oo.xhtml#x-not-a-method" />  
+        </navPoint>
+      </navPoint>
     </navPoint>
   </navMap>
 </ncx>
