@@ -29,14 +29,14 @@
       </navPoint>
       <navPoint id="navPoint4" playOrder="3">
         <navLabel>
-          <text>Words</text>
+          <text>zscript Words</text>
         </navLabel>
-        <content src="main/core.xhtml#words" />  
+        <content src="main/core.xhtml#zscript-words" />  
         <navPoint id="navPoint5" playOrder="3">
           <navLabel>
-            <text>Words</text>
+            <text>zscript Words</text>
           </navLabel>
-          <content src="main/core.xhtml#words" />  
+          <content src="main/core.xhtml#zscript-words" />  
         </navPoint>
         <navPoint id="navPoint6" playOrder="4">
           <navLabel>
@@ -1407,6 +1407,12 @@
           <content src="main/core.xhtml#allot" />  
         </navPoint>
       </navPoint>
+    </navPoint>
+    <navPoint id="navPoint234" playOrder="231">
+      <navLabel>
+        <text>zeptoscript Object-Orientation</text>
+      </navLabel>
+      <content src="main/oo.xhtml" />  
     </navPoint>
   </navMap>
 </ncx>

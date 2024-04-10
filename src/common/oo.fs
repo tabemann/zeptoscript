@@ -50,6 +50,9 @@ begin-module zscript-oo
     \ Write a cell to the current dictionary
     2 0 foreign forth::current! current!
 
+    \ Reserve a cell
+    0 1 foreign forth::reserve reserve
+    
     \ Write a word to the dictionary
     1 0 foreign forth::, ,
 
@@ -82,8 +85,11 @@ begin-module zscript-oo
     \ Class building record
     begin-record class-record
 
-      \ Class name
-      item: class-name
+      \ Class constructor address
+      item: class-construct
+      
+      \ Class address
+      item: class-addr
 
       \ Class ID
       item: class-id
@@ -347,7 +353,17 @@ begin-module zscript-oo
   \ Define a class
   : begin-class ( "name" -- class-rec )
     token dup 0<> averts x-token-expected
-    get-next-class-id 0cells 0 0 >class-record
+    s" make-" swap concat start-compile visible
+    [ armv6m-instr import ]
+    r0 ldr_,[pc]
+    r0 blx_
+    pc 1 unsafe::integral> pop
+    cell align,
+    >mark
+    reserve
+    [ armv6m-instr unimport ]
+    end-compile,
+    0 get-next-class-id 0cells 0 0 >class-record
     syntax-class push-syntax
   ;
 
@@ -379,8 +395,8 @@ begin-module zscript-oo
     syntax-class verify-syntax internal::drop-syntax
     class-rec generate-methods
     class-rec class-addr@ unsafe::integral> { our-class }
-    s" make-" class-rec class-name@ concat { make-name }
-    make-name start-compile visible
+    :noname unsafe::>integral
+    1 or class-rec class-construct@ current!
     class-rec class-member-count@ lit,
     our-class unsafe::>integral raw-lit,
     postpone make-object
@@ -390,7 +406,7 @@ begin-module zscript-oo
       postpone new
       postpone r>
     then
-    end-compile,
+    postpone ;
   ;
   
 end-module

@@ -61,7 +61,7 @@ zeptoscript code may only execute in one task, because the zeptoscript garbage c
 
 S15.16 fixed-point numerics are provided by `src/common/fixed32.fs`. These fixed-point numbers are cell-sized so they fit in the space of normal integrals. Note that operations for addition, subtraction, and negation are not included in `src/common/fixed32.fs`. This is because normal integral `+`, `-`, and `negate` fits these roles. Note that loading `src/common/fixed32.fs` overrides the numeric parser to enable parsing S15.16 literals, which have the form `x;y` where `;` is the decimal point.
 
-## Words
+## `zscript` Words
 
 ### `null-type`
 ( -- type )
