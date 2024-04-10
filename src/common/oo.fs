@@ -79,59 +79,41 @@ begin-module zscript-oo
       
     end-record
 
-    \ Member record
-    begin-record member-record
-
-      \ Member index
-      item: member-index
-
-      \ Member name
-      item: member-name
-
-    end-record
-    
     \ Class building record
     begin-record class-record
 
       \ Class name
       item: class-name
-      
-      \ Class address
-      item: class-addr
+
+      \ Class ID
+      item: class-id
       
       \ Method sequence
       item: class-methods
       
-      \ Member sequence
-      item: class-members
+      \ Member count
+      item: class-member-count
+
+      \ Class address
+      item: class-addr
       
     end-record
 
-    \ Add a method to a class
-    : add-method { method-rec class-rec -- }
-      class-rec class-methods@ method-rec 1 >cells concat
-      class-rec class-methods!
-    ;
-    
-    \ Add a member to a class
-    : add-member { member-rec class-rec -- }
-      class-rec class-members@ member-rec 1 >cells concat
-      class-rec class-members!
-    ;
-
     \ Look up a member
-    : lookup-member ( object class-addr member-index -- addr )
+    : lookup-member ( object member-offset class-id -- addr )
       rot
       code[
-      r0 1 unsafe::integral> dp ldm
-      0 r0 r1 ldr_,[_,#_]
-      object-type 2 - unsafe::integral> r1 cmp_,#_
+      0 tos r0 ldr_,[_,#_]
+      type-shift unsafe::integral> r0 r0 lsrs_,_,#_
+      object-type 2 - unsafe::integral> r0 cmp_,#_
       ne bc>
-      4 unsafe::integral> r0 r1 ldr_,[_,#_]
-      r1 tos cmp_,_
+      r0 1 unsafe::integral> dp ldm
+      cell unsafe::integral> tos r1 ldr_,[_,#_]
+      cell unsafe::integral> r1 r1 ldr_,[_,#_]
+      r1 r0 cmp_,_
       ne bc>
       r1 1 unsafe::integral> dp ldm
-      r1 r0 tos adds_,_,_
+      r1 tos tos adds_,_,_
       pc 1 unsafe::integral> pop
       >mark
       0 tos movs_,#_
@@ -174,8 +156,8 @@ begin-module zscript-oo
       0 r0 r1 ldr_,[_,#_]
       32 type-shift - unsafe::integral> r1 r1 lsls_,_,#_
       32 type-shift - 1+ unsafe::integral> r1 r1 lsrs_,_,#_
-      cell 1+ unsafe::integral> r1 subs_,#_
-      cell unsafe::integral> r0 adds_,#_
+      2 cells 1+ unsafe::integral> r1 subs_,#_
+      2 cells unsafe::integral> r0 adds_,#_
       3 unsafe::integral> tos r2 lsls_,_,#_
       mark>
       r1 r2 ands_,_
@@ -229,26 +211,20 @@ begin-module zscript-oo
     \ The current RAM method ID
     global ram-method-id
 
-    \ The current flash method ID
-    global flash-method-id
-
     \ Get a method ID
     : get-next-method-id ( -- id )
       compiling-to-flash? if
-        flash-method-id@ if
+        s" *METHOD*" flash-latest find-all-dict dup if
+          word>xt execute
         else
-          s" *METHOD*" flash-latest find-all-dict dup if
-            word>xt execute
-          else
-            0
-          then
-          1+ dup
-          get-current
-          swap
-          forth::internal unsafe::>integral set-current
-          s" *METHOD*" constant-with-name
-          set-current
+          0
         then
+        1+ dup
+        get-current
+        swap
+        forth::internal unsafe::>integral set-current
+        s" *METHOD*" constant-with-name
+        set-current
       else
         ram-method-id@
         dup 0 = if drop -1 then
@@ -256,24 +232,45 @@ begin-module zscript-oo
       then
     ;
 
-    \ Generate a member
-    : generate-member { member-rec class-rec -- }
-      member-rec member-name@ s" @" concat start-compile visible
-      class-rec class-addr@ raw-lit, member-rec member-index@ cells raw-lit,
-      postpone lookup-member
-      postpone @
-      end-compile,
-      member-rec member-name@ s" !" concat start-compile visible
-      class-rec class-addr@ unsafe::>integral raw-lit,
-      member-rec member-index@ cells raw-lit,
-      postpone lookup-member
-      postpone !
-      end-compile,
+    \ The current RAM class ID
+    global ram-class-id
+
+    \ Get a class ID
+    : get-next-class-id ( -- id )
+      compiling-to-flash? if
+        s" *CLASS*" flash-latest find-all-dict dup if
+          word>xt execute
+        else
+          0
+        then
+        1+ dup
+        get-current
+        swap
+        forth::internal unsafe::>integral set-current
+        s" *CLASS*" constant-with-name
+        set-current
+      else
+        ram-class-id@
+        dup 0 = if drop -1 then
+        1- dup ram-class-id!
+      then
     ;
 
-    \ Generate members
-    : generate-members { class-rec -- }
-      class-rec class-members@ class-rec 1 ['] generate-member bind iter
+    \ Generate a member
+    : generate-member { member-name class-rec -- }
+      class-rec class-id@ { id }
+      class-rec class-member-count@ { member-count }
+      member-name s" @" concat start-compile visible
+      member-count 2 + cells raw-lit, id raw-lit,
+      postpone lookup-member
+      postpone forth::@
+      end-compile,
+      member-name s" !" concat start-compile visible
+      member-count 2 + cells raw-lit, id raw-lit,
+      postpone lookup-member
+      postpone forth::!
+      end-compile,
+      member-count 1+ class-rec class-member-count!
     ;
 
     \ Round up to the next power of two
@@ -297,14 +294,16 @@ begin-module zscript-oo
       class-rec class-methods@ { methods }
       methods >len 1+ round-to-pow2 { table-size }
       unsafe::here { class-table }
-      table-size 2* cells cell+ unsafe::allot
+      table-size 2* cells [ 2 cells ] literal + unsafe::allot
       class-type 2 - type-shift lshift
-      table-size 2* cells cell+ 1 lshift or class-table current!
+      table-size 2* cells [ 2 cells ] literal + 1 lshift or class-table current!
+      class-rec class-id@ class-table cell+ current!
       compiling-to-flash? not if
-        class-table cell+ table-size 2* cells $FF unsafe::fill
+        class-table [ 2 cells ] literal + table-size 2* cells $FF unsafe::fill
       then
-      methods class-table cell+ table-size 2 ['] generate-method bind iter
-      class-table cell+ dup table-size 2* cells + swap ?do
+      methods class-table [ 2 cells ] literal + table-size
+      2 ['] generate-method bind iter
+      class-table [ 2 cells ] literal + dup table-size 2* cells + swap ?do
         i unsafe::@ $FFFFFFFF = if
           0 i current!
           0 i cell+ current!
@@ -331,7 +330,7 @@ begin-module zscript-oo
       ['] new unsafe::xt>integral get-method-id { id }
       our-class unsafe::@
       32 type-shift - lshift 32 type-shift - 1+ rshift { size }
-      our-class size + our-class cell+ ?do
+      our-class size + our-class [ 2 cells ] literal + ?do
         i unsafe::@ id = if true exit then
       [ 2 cells ] literal +loop
       false
@@ -348,7 +347,7 @@ begin-module zscript-oo
   \ Define a class
   : begin-class ( "name" -- class-rec )
     token dup 0<> averts x-token-expected
-    0 0cells 0cells >class-record
+    get-next-class-id 0cells 0 0 >class-record
     syntax-class push-syntax
   ;
 
@@ -356,10 +355,8 @@ begin-module zscript-oo
   : member: ( class-rec "name" -- class-rec )
     { class-rec }
     syntax-class verify-syntax
-    token dup 0<> averts x-token-expected { name }
-    class-rec class-members@ { members }
-    members dup >len name >member-record 1 >cells concat
-    class-rec class-members!
+    token dup 0<> averts x-token-expected
+    class-rec generate-member
     class-rec
   ;
 
@@ -381,11 +378,10 @@ begin-module zscript-oo
   : end-class { class-rec -- }
     syntax-class verify-syntax internal::drop-syntax
     class-rec generate-methods
-    class-rec generate-members
     class-rec class-addr@ unsafe::integral> { our-class }
     s" make-" class-rec class-name@ concat { make-name }
     make-name start-compile visible
-    class-rec class-members@ >len lit,
+    class-rec class-member-count@ lit,
     our-class unsafe::>integral raw-lit,
     postpone make-object
     our-class has-constructor? if
