@@ -1462,17 +1462,23 @@
         </navPoint>
         <navPoint id="navPoint243" playOrder="238">
           <navLabel>
+            <text>has-method?</text>
+          </navLabel>
+          <content src="main/oo.xhtml#has-method" />  
+        </navPoint>
+        <navPoint id="navPoint244" playOrder="239">
+          <navLabel>
             <text>x-member-not-for-class</text>
           </navLabel>
           <content src="main/oo.xhtml#x-member-not-for-class" />  
         </navPoint>
-        <navPoint id="navPoint244" playOrder="239">
+        <navPoint id="navPoint245" playOrder="240">
           <navLabel>
             <text>x-unimplemented-method</text>
           </navLabel>
           <content src="main/oo.xhtml#x-unimplemented-method" />  
         </navPoint>
-        <navPoint id="navPoint245" playOrder="240">
+        <navPoint id="navPoint246" playOrder="241">
           <navLabel>
             <text>x-not-a-method</text>
           </navLabel>

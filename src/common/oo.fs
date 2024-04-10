@@ -330,10 +330,10 @@ begin-module zscript-oo
 
   continue-module zscript-oo-internal
 
-    \ Does a class have a constructor?
-    : has-constructor? { our-class -- }
+    \ Does a class have a method?
+    : class-has-method? { xt our-class -- }
       our-class unsafe::>integral to our-class
-      ['] new unsafe::xt>integral get-method-id { id }
+      xt unsafe::xt>integral get-method-id { id }
       our-class unsafe::@
       32 type-shift - lshift 32 type-shift - 1+ rshift { size }
       our-class size + our-class [ 2 cells ] literal + ?do
@@ -400,13 +400,20 @@ begin-module zscript-oo
     class-rec class-member-count@ lit,
     our-class unsafe::>integral raw-lit,
     postpone make-object
-    our-class has-constructor? if
+    ['] new our-class class-has-method? if
       postpone dup
       postpone >r
       postpone new
       postpone r>
     then
     postpone ;
+  ;
+
+  \ Get whether an object has a method
+  : has-method? { xt object -- }
+    object >type object-type = averts x-incorrect-type
+    xt object unsafe::>integral cell+ unsafe::@
+    unsafe::integral> class-has-method?
   ;
   
 end-module

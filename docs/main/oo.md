@@ -118,6 +118,11 @@ Define a member with a given name in the context of the definition of a class to
 
 Implement a method with a given name in the context of the definition of a class to which it will belong. The method must already be declared with `method`. If a name of a word that is not a method is provided `x-not-a-method` will be raised. The method implementation will be finished with `;`.
 
+### `has-method?`
+( method object -- has-method? )
+
+Get whether an object has a method.
+
 ### `x-member-not-for-class`
 ( -- )
 
