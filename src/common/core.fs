@@ -337,8 +337,8 @@ begin-module zscript
     0 >small-int constant null-type
     1 >small-int constant int-type
     2 >small-int constant bytes-type
-    3 >small-int constant word-type
-    4 >small-int constant 2word-type
+    3 >small-int constant big-int-type
+    4 >small-int constant double-type
     5 >small-int constant const-bytes-type
     6 >small-int constant xt-type
     7 >small-int constant tagged-type
@@ -370,6 +370,25 @@ begin-module zscript
       ['] x-incorrect-type ?raise
     ;
 
+    \ Cast doubles to cells, validating them
+    : double> ( double -- x0 x1 )
+      code[
+      0 tos cmp_,#_
+      eq bc>
+      1 r0 movs_,#_
+      r0 tos tst_,_
+      ne bc>
+      4 r7 subs_,#_
+      8 r6 r0 ldr_,[_,#_]
+      0 r7 r0 str_,[_,#_]
+      4 r6 r6 ldr_,[_,#_]
+      pc 1 pop
+      >mark
+      >mark
+      ]code
+      ['] x-incorrect-type ?raise
+    ;
+    
     \ Get an allocation's type
     : >type ( value -- type )
       code[
@@ -410,7 +429,7 @@ begin-module zscript
       >mark
       0 tos tos ldr_,[_,#_]
       type-shift tos tos lsrs_,_,#_
-      word-type integral> 2 - tos cmp_,#_
+      big-int-type integral> 2 - tos cmp_,#_
       ne bc>
       31 r0 tos lsls_,_,#_
       31 tos tos asrs_,_,#_
@@ -424,7 +443,7 @@ begin-module zscript
     : validate-int ( value -- ) 1 and 0<> averts x-incorrect-type ;
 
     \ Validate whether a value is a word
-    : validate-word ( value -- ) >type word-type = averts x-incorrect-type ;
+    : validate-word ( value -- ) >type big-int-type = averts x-incorrect-type ;
     
     \ Get whether a value is an xt or closure
     : xt? ( value -- xt? )
@@ -434,11 +453,18 @@ begin-module zscript
     \ Preemptively carry out a GC cycle to ensure that a certain amount of space
     \ is available
     : ensure { bytes -- }
-      bytes integral> to-space-current@ + to-space-top@ > if gc then
-      bytes integral> to-space-current@ + to-space-top@
-      <= averts x-out-of-memory
+      bytes integral> to-space-current@ + to-space-top@ > if
+        gc
+        bytes integral> to-space-current@ + to-space-top@
+        <= averts x-out-of-memory
+      then
     ;
-    
+
+    \ Low level routine used to check whether enough un-GC'ed space is available
+    : needs-gc? ( bytes -- )
+      to-space-current@ + to-space-top@ >
+    ;
+
     \ Allocate memory as cells
     : allocate-cells { count type -- addr }
       count integral> 1+ cells >small-int { bytes }
@@ -471,34 +497,81 @@ begin-module zscript
       count integral> cell+ 1 lshift
       type integral> 2 - type-shift lshift or over !
     ;
-    
-    \ Allocate a cell
-    : allocate-cell { type -- addr }
+
+    \ Allocate a word
+    : >big-int { x -- addr }
       to-space-current@ [ 2 cells ] literal + to-space-top@ > if
+        x dup 1 and { lowest }
+        x 1 or to x
         gc
+        x 1 bic lowest or to x
         to-space-current@ [ 2 cells ] literal + to-space-top@ <=
         averts x-out-of-memory
       then
       to-space-current@ { current }
       current [ 2 cells ] literal + to-space-current!
       current
-      0 over cell+ !
+      x over cell+ !
+      [ big-int-type integral> 2 - type-shift lshift 2 cells 1 lshift or ]
+      literal over !
+    ;
+    
+    \ Allocate a cell
+    : allocate-cell { x type -- addr }
+      to-space-current@ [ 2 cells ] literal + to-space-top@ > if
+        x dup 1 and { lowest }
+        x 1 or to x
+        gc
+        x 1 bic lowest or to x
+        to-space-current@ [ 2 cells ] literal + to-space-top@ <=
+        averts x-out-of-memory
+      then
+      to-space-current@ { current }
+      current [ 2 cells ] literal + to-space-current!
+      current
+      x over cell+ !
       type integral> 2 - type-shift lshift
       [ 2 cells 1 lshift ] literal or over !
     ;
 
     \ Allocate a double-word
-    : allocate-2cell { type -- addr }
+    : >double { x0 x1 -- addr }
       to-space-current@ [ 3 cells ] literal + to-space-top@ > if
+        x0 dup 1 and { lowest0 }
+        x1 dup 1 and { lowest1 }
+        x0 1 or to x0
+        x1 1 or to x1
         gc
+        x0 1 bic lowest0 or to x0
+        x1 1 bic lowest1 or to x1
         to-space-current@ [ 3 cells ] literal + to-space-top@
         <= averts x-out-of-memory
       then
       to-space-current@ { current }
       current [ 3 cells ] literal + to-space-current!
+      x0 x1 current cell+ 2!
       current
-      0 over cell+ !
-      0 over [ 2 cells ] literal + !
+      [ double-type integral> 2 - type-shift lshift 2 cells 1 lshift or ]
+      literal over !
+    ;
+
+    \ Allocate a double-word
+    : allocate-2cell { x0 x1 type -- addr }
+      to-space-current@ [ 3 cells ] literal + to-space-top@ > if
+        x0 dup 1 and { lowest0 }
+        x1 dup 1 and { lowest1 }
+        x0 1 or to x0
+        x1 1 or to x1
+        gc
+        x0 1 bic lowest0 or to x0
+        x1 1 bic lowest1 or to x1
+        to-space-current@ [ 3 cells ] literal + to-space-top@
+        <= averts x-out-of-memory
+      then
+      to-space-current@ { current }
+      current [ 3 cells ] literal + to-space-current!
+      x0 x1 current cell+ 2!
+      current
       type integral> 2 - type-shift lshift
       [ 3 cells 1 lshift ] literal or over !
     ;
@@ -540,20 +613,45 @@ begin-module zscript
       >mark
       >mark
       ]code
-      dup 1 and { lowest }
-      1 or
-      word-type allocate-cell swap 1 bic lowest or over cell+ !
+      >big-int
     ;
 
     \ Convert a pair of cells to nulls, integers, or words
     : 2>integral ( x0 x1 -- 0|int|addr 0|int|addr )
-      swap dup 1 and { lowest } 1 or swap
-      >integral swap 1 bic lowest or >integral swap
+      4 cells needs-gc? if
+        2 cells [: { buffer }
+          buffer 2!
+          gc
+          4 cells needs-gc? triggers x-out-of-memory
+          buffer 2@
+        ;] with-aligned-allot
+      then
+      >integral swap >integral swap
     ;
 
     \ Convert a pair of nulls, integers, or words to cells
     : 2integral> ( 0|int|addr 0|int|addr -- x0 x1 )
       integral> swap integral> swap
+    ;
+
+    \ Convert a pair of cell-pairs into doubles
+    : 2>double ( x0 x1 x2 x3 -- double0 double1 )
+      6 cells needs-gc? if
+        4 cells [: { buffer }
+          buffer 2!
+          buffer [ 2 cells ] literal + 2!
+          gc
+          6 cells needs-gc? triggers x-out-of-memory
+          buffer [ 2 cells ] literal + 2@
+          buffer 2@
+        ;] with-aligned-allot
+      then
+      >double -rot >double swap
+    ;
+
+    \ Convert a pair of doubles into cell-pairs
+    : 2double> ( double0 double1 -- x0 x1 x2 x3 )
+      double> rot double> 2swap
     ;
 
     \ Convert any number of cells to nulls, integers, or words
@@ -582,9 +680,7 @@ begin-module zscript
 
     \ Cast cells to xts
     : integral>xt ( x -- xt )
-      xt-type allocate-cell { xt-value }
-      integral> xt-value cell+ !
-      xt-value
+      integral> xt-type allocate-cell
     ;
 
     \ Convert an xt to an integral
@@ -716,8 +812,8 @@ begin-module zscript
   null-type constant null-type
   int-type constant int-type
   bytes-type constant bytes-type
-  word-type constant word-type
-  2word-type constant 2word-type
+  big-int-type constant big-int-type
+  double-type constant double-type
   const-bytes-type constant const-bytes-type
   xt-type constant xt-type
   tagged-type constant tagged-type
@@ -2062,9 +2158,7 @@ begin-module zscript
   : word>xt ( word -- xt )
     dup >type tagged-type = averts x-incorrect-type
     dup >tag word-tag = averts x-incorrect-type
-    xt-type allocate-cell { xt-value }
-    0 swap t@+ integral> forth::>xt xt-value forth::cell+ !
-    xt-value
+    0 swap t@+ integral> forth::>xt xt-type allocate-cell
   ;
 
   \ End lambda
@@ -2081,9 +2175,6 @@ begin-module zscript
       here rot internal::branch-back!
       forth::lit,
       xt-type lit, postpone allocate-cell
-      postpone tuck
-      postpone forth::cell+
-      postpone !
     else
       internal::syntax-naked-lambda forth::=
       averts internal::x-unexpected-syntax
@@ -2091,9 +2182,6 @@ begin-module zscript
       internal::syntax-word internal::push-syntax
       postpone ;
       xt-type allocate-cell
-      tuck
-      forth::cell+
-      !
     then
   ;
   
@@ -2324,6 +2412,18 @@ begin-module zscript
 
     \ Cast two values from integers
     : 2integral> ( value0 value1 -- x0 x1 ) 2integral> ;
+
+    \ Cast a value to an integer
+    : >double ( d -- value ) >double ;
+    
+    \ Cast a value from an integer
+    : double> ( value -- d ) double> ;
+
+    \ Cast two values to integers
+    : 2>double ( d0 d1 -- value0 value1 ) 2>double ;
+
+    \ Cast two values from integers
+    : 2double> ( value0 value1 -- d0 xd ) 2double> ;
 
     \ Convert an xt to an integral
     : xt>integral ( xt -- value ) xt>integral ;
