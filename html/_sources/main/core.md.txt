@@ -1173,6 +1173,26 @@ Cast two values to integers.
 
 Cast two values from integers.
 
+### `>double`
+( x -- dvalue )
+
+Cast a value to an double.
+    
+### `double>`
+( dvalue -- x )
+
+Cast a value from an double.
+
+### `2>double`
+( x0 x1 -- dvalue0 dvalue1 )
+
+Cast two values to doubles.
+
+### `2double>`
+( dvalue0 dvalue1 -- x0 x1 )
+
+Cast two values from doubles.
+
 ### `xt>integral`
 ( xt -- value )
 

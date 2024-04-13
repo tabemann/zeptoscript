@@ -378,11 +378,16 @@ begin-module zscript
       1 r0 movs_,#_
       r0 tos tst_,_
       ne bc>
+      0 tos r0 ldr_,[_,#_]
+      type-shift r0 r0 lsrs_,_,#_
+      double-type integral> 2 - r0 cmp_,#_
+      ne bc>
       4 r7 subs_,#_
       8 r6 r0 ldr_,[_,#_]
       0 r7 r0 str_,[_,#_]
       4 r6 r6 ldr_,[_,#_]
       pc 1 pop
+      >mark
       >mark
       >mark
       ]code
@@ -549,9 +554,9 @@ begin-module zscript
       then
       to-space-current@ { current }
       current [ 3 cells ] literal + to-space-current!
-      x0 x1 current 2!
+      x0 x1 current cell+ 2!
       current
-      [ double-type integral> 2 - type-shift lshift 2 cells 1 lshift or ]
+      [ double-type integral> 2 - type-shift lshift 3 cells 1 lshift or ]
       literal over !
     ;
 
@@ -828,6 +833,11 @@ begin-module zscript
   \ Redefine LIT,
   : lit, ( x -- )
     dup small-int? if lit, else integral> lit, postpone >integral then
+  ;
+
+  \ Redefine LIT,
+  : double-lit, ( dvalue -- )
+    double> swap forth::lit, forth::lit, postpone >double
   ;
 
   \ Convert an address/length pair into constant bytes
