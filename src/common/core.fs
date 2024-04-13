@@ -2238,7 +2238,7 @@ begin-module zscript
           forth::cell+ >integral offset +
         endof
         const-bytes-type of
-          dup forth::cell+ @ >integral offset +
+          forth::cell+ @ >integral offset +
         endof
         ['] x-incorrect-type ?raise
       endcase
