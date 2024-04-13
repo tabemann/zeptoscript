@@ -549,7 +549,7 @@ begin-module zscript
       then
       to-space-current@ { current }
       current [ 3 cells ] literal + to-space-current!
-      x0 x1 current cell+ 2!
+      x0 x1 current 2!
       current
       [ double-type integral> 2 - type-shift lshift 2 cells 1 lshift or ]
       literal over !
@@ -570,7 +570,8 @@ begin-module zscript
       then
       to-space-current@ { current }
       current [ 3 cells ] literal + to-space-current!
-      x0 x1 current cell+ 2!
+      x0 current cell+ !
+      x1 current [ 2 cells ] literal + !
       current
       type integral> 2 - type-shift lshift
       [ 3 cells 1 lshift ] literal or over !
@@ -831,10 +832,7 @@ begin-module zscript
 
   \ Convert an address/length pair into constant bytes
   : addr-len>const-bytes ( c-addr u -- const-bytes )
-    const-bytes-type allocate-2cell { const-bytes }
-    integral> const-bytes [ 2 cells ] literal + !
-    integral> const-bytes cell+ !
-    const-bytes
+    2integral> const-bytes-type allocate-2cell
   ;
 
   \ Convert an address/length pair into bytes
