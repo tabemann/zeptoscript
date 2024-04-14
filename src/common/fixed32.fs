@@ -40,12 +40,20 @@ begin-module zscript-fixed32
   \ Convert a 16-bit integer to an S15.16 fixed-point number
   1 1 foreign fixed32::s>f32 s>f32 ( x -- y )
 
-  \ Convert an S31.32 fixed-point number to an S15.16 fixed-point number
-  2 1 foreign fixed32::f64>f32 f64>f32 ( D: x -- y )
+  defined? zscript-double [if]
+    
+    \ Convert an S31.32 fixed-point number to an S15.16 fixed-point number
+    : f64>f32 ( dvalue -- x )
+      16 zscript-double::2arshift zscript-double::d>s
+    ;
 
-  \ Convert an S15.16 fixed-point number to an S31.32 fixed-point number
-  1 2 foreign fixed32::f32>f64 f32>f64 ( x -- D: y )
-  
+    \ Convert an S15.16 fixed-point number to an S31.32 fixed-point number
+    : f32>f64 ( x -- dvalue )
+      zscript-double::s>d 16 zscript-double::2lshift
+    ;
+
+  [then]
+
   \ Calculate the modulus of two S15.16 fixed-point numbers
   2 1 foreign fixed32::f32mod f32mod ( x y -- z )
 

@@ -124,25 +124,28 @@ begin-module zscript-double
   ;
 
   \ Double left shift
-  : 2lshift ( dvalue0 dvalue1 -- dvalue2 )
-    zscript-internal::2double> 2lshift zscript-internal::>double
+  : 2lshift ( dvalue0 x -- dvalue2 )
+    zscript-internal::integral> swap zscript-internal::double> rot 2lshift
+    zscript-internal::>double
   ;
 
   \ Double right shift
-  : 2rshift ( dvalue0 dvalue1 -- dvalue2 )
-    zscript-internal::2double> 2rshift zscript-internal::>double
+  : 2rshift ( dvalue0 x -- dvalue2 )
+    zscript-internal::integral> swap zscript-internal::double> rot 2rshift
+    zscript-internal::>double
   ;
 
   \ Double arithmetic right shift
-  : 2arshift ( dvalue0 dvalue1 -- dvalue2 )
-    zscript-internal::2double> 2arshift zscript-internal::>double
+  : 2arshift ( dvalue0 x -- dvalue2 )
+    zscript-internal::integral> swap zscript-internal::double> rot 2arshift
+    zscript-internal::>double
   ;
 	
   \ Negate a double word
   : dnegate ( dvalue0 -- dvalue1 )
     zscript-internal::double> dnegate zscript-internal::>double
   ;
-	
+
   \ Add two double words
   : d+ ( dvalue0 dvalue1 -- dvalue2 )
     zscript-internal::2double> d+ zscript-internal::>double
