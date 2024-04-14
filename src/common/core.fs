@@ -2954,17 +2954,44 @@ begin-module zscript
   
   \ Bind a scope to a lambda
   : bind ( xn ... x0 count xt -- closure )
-    dup >type xt-type = averts x-incorrect-type
-    swap { arg-count }
-    arg-count 1+ closure-type allocate-cells { closure }
-    closure forth::cell+
-    swap xt>integral over ! forth::cell+
-    begin arg-count 0> while
-      tuck ! forth::cell+
-      arg-count 1- to arg-count
-    repeat
-    drop
-    closure
+    dup >type case
+      xt-type of
+        swap { arg-count }
+        arg-count 1+ closure-type allocate-cells { closure }
+        closure forth::cell+
+        swap xt>integral over ! forth::cell+
+        begin arg-count 0> while
+          tuck ! forth::cell+
+          arg-count 1- to arg-count
+        repeat
+        drop
+        closure
+      endof
+      closure-type of
+        { new-arg-count old-closure }
+        old-closure >size >integral
+        [ 2 >small-int ] literal rshift [ 1 >small-int ] literal -
+        new-arg-count + { full-count }
+        full-count closure-type allocate-cells { new-closure }
+        new-closure forth::cell+ { new-current }
+        begin
+          old-closure forth::cell+ { old-current }
+          old-closure dup >size forth::+ { old-end }
+          begin old-current old-end forth::< while
+            old-current @ new-current !
+            old-current forth::cell+ to old-current
+            new-current forth::cell+ to new-current
+          repeat
+        end
+        new-closure dup >size forth::+ { new-end }
+        begin new-current new-end forth::< while
+          new-current !
+          new-current forth::cell+ to new-current
+        repeat
+        new-closure
+      endof
+      raise x-incorrect-type
+    endcase
   ;
   
   \ Redefine PICK
