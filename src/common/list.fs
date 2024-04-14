@@ -48,14 +48,29 @@ begin-module zscript-list
     0 begin list while 1+ list tail@ to list repeat
   ;
   
-  \ Convert a list to a sequence
-  : list>seq { list -- seq }
+  \ Convert a list to a cell sequence
+  : list>cells { list -- seq }
     list if
       list list>len { len }
       len make-cells { seq }
       0 { index }
       begin list while
         list head@ index seq !+ 1 +to index list tail@ to list
+      repeat
+      seq
+    else
+      0cells
+    then
+  ;
+
+  \ Convert a list to a byte sequence
+  : list>bytes { list -- seq }
+    list if
+      list list>len { len }
+      len make-bytes { seq }
+      0 { index }
+      begin list while
+        list head@ index seq c!+ 1 +to index list tail@ to list
       repeat
       seq
     else
@@ -137,13 +152,24 @@ begin-module zscript-list
     list'
   ;
 
-  \ Reverse a list and convert it to a sequence
-  : rev-list>seq { list -- seq }
+  \ Reverse a list and convert it to a cell sequence
+  : rev-list>cells { list -- seq }
     list list>len { len }
     len make-cells { seq }
     len { index }
     begin index 0> while
       -1 +to index list head@ index seq !+ list tail@ to list
+    repeat
+    seq
+  ;
+  
+  \ Reverse a list and convert it to a byte sequence
+  : rev-list>bytes { list -- seq }
+    list list>len { len }
+    len make-bytes { seq }
+    len { index }
+    begin index 0> while
+      -1 +to index list head@ index seq c!+ list tail@ to list
     repeat
     seq
   ;
@@ -269,17 +295,28 @@ begin-module zscript-list
 
   \ Fold right over a list
   : foldr-list { x list xt -- xt' } \ xt ( item x -- x' )
-    x list list>seq xt foldr
+    x list list>cells xt foldr
   ;
 
   \ Fold right over a list with an index
   : foldri-list { x list xt -- xt' } \ xt ( item x index -- x' )
-    x list list>seq xt foldri
+    x list list>cells xt foldri
   ;
 
   \ Sort a list
   : sort-list { list xt -- list' } \ xt ( item0 item1 -- lt? )
-    list list>seq dup xt sort! seq>list
+    list list>cells dup xt sort! seq>list
+  ;
+
+  \ Create a reverse list from the stack
+  : >rev-list ( xn ... x0 count -- list )
+    { count }
+    empty begin count 0> while cons -1 +to count repeat
+  ;
+
+  \ Create a list from the stack (note that it first creates a sequence)
+  : >list ( xn ... x0 count -- list )
+    >cells seq>list
   ;
 
 end-module
