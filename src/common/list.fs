@@ -194,6 +194,24 @@ begin-module zscript-list
     list'
   ;
 
+  \ Mutating map a list
+  : map!-list { list xt -- } \ xt ( item -- item' )
+    begin list while
+      list head@ xt execute list head!
+      list tail@ to list
+    repeat
+  ;
+
+  \ Mutating a list with an index
+  : mapi!-list { list xt -- } \ xt ( item index -- item' )
+    0 { index }
+    begin list while
+      list head@ index xt execute list head!
+      list tail@ to list
+      1 +to index
+    repeat
+  ;
+
   \ Filter a list
   : filter-list { list xt -- list' } \ xt ( item -- flag )
     empty { list' }
