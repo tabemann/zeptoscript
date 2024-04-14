@@ -1510,5 +1510,227 @@
         </navPoint>
       </navPoint>
     </navPoint>
+    <navPoint id="navPoint251" playOrder="246">
+      <navLabel>
+        <text>Lists</text>
+      </navLabel>
+      <content src="main/list.xhtml" />  
+      <navPoint id="navPoint252" playOrder="246">
+        <navLabel>
+          <text>Lists</text>
+        </navLabel>
+        <content src="main/list.xhtml" />  
+      </navPoint>
+      <navPoint id="navPoint253" playOrder="247">
+        <navLabel>
+          <text>zscript-list Words</text>
+        </navLabel>
+        <content src="main/list.xhtml#zscript-list-words" />  
+        <navPoint id="navPoint254" playOrder="247">
+          <navLabel>
+            <text>zscript-list Words</text>
+          </navLabel>
+          <content src="main/list.xhtml#zscript-list-words" />  
+        </navPoint>
+        <navPoint id="navPoint255" playOrder="248">
+          <navLabel>
+            <text>cons</text>
+          </navLabel>
+          <content src="main/list.xhtml#cons" />  
+        </navPoint>
+        <navPoint id="navPoint256" playOrder="249">
+          <navLabel>
+            <text>empty</text>
+          </navLabel>
+          <content src="main/list.xhtml#empty" />  
+        </navPoint>
+        <navPoint id="navPoint257" playOrder="250">
+          <navLabel>
+            <text>head@</text>
+          </navLabel>
+          <content src="main/list.xhtml#head" />  
+        </navPoint>
+        <navPoint id="navPoint258" playOrder="251">
+          <navLabel>
+            <text>tail@</text>
+          </navLabel>
+          <content src="main/list.xhtml#tail" />  
+        </navPoint>
+        <navPoint id="navPoint259" playOrder="252">
+          <navLabel>
+            <text>head!</text>
+          </navLabel>
+          <content src="main/list.xhtml#id1" />  
+        </navPoint>
+        <navPoint id="navPoint260" playOrder="253">
+          <navLabel>
+            <text>tail!</text>
+          </navLabel>
+          <content src="main/list.xhtml#id2" />  
+        </navPoint>
+        <navPoint id="navPoint261" playOrder="254">
+          <navLabel>
+            <text>empty?</text>
+          </navLabel>
+          <content src="main/list.xhtml#id3" />  
+        </navPoint>
+        <navPoint id="navPoint262" playOrder="255">
+          <navLabel>
+            <text>list&gt;len</text>
+          </navLabel>
+          <content src="main/list.xhtml#list-len" />  
+        </navPoint>
+        <navPoint id="navPoint263" playOrder="256">
+          <navLabel>
+            <text>list&gt;cells</text>
+          </navLabel>
+          <content src="main/list.xhtml#list-cells" />  
+        </navPoint>
+        <navPoint id="navPoint264" playOrder="257">
+          <navLabel>
+            <text>list&gt;bytes</text>
+          </navLabel>
+          <content src="main/list.xhtml#list-bytes" />  
+        </navPoint>
+        <navPoint id="navPoint265" playOrder="258">
+          <navLabel>
+            <text>seq&gt;list</text>
+          </navLabel>
+          <content src="main/list.xhtml#seq-list" />  
+        </navPoint>
+        <navPoint id="navPoint266" playOrder="259">
+          <navLabel>
+            <text>iter-list</text>
+          </navLabel>
+          <content src="main/list.xhtml#iter-list" />  
+        </navPoint>
+        <navPoint id="navPoint267" playOrder="260">
+          <navLabel>
+            <text>iteri-list</text>
+          </navLabel>
+          <content src="main/list.xhtml#iteri-list" />  
+        </navPoint>
+        <navPoint id="navPoint268" playOrder="261">
+          <navLabel>
+            <text>rev-map-list</text>
+          </navLabel>
+          <content src="main/list.xhtml#rev-map-list" />  
+        </navPoint>
+        <navPoint id="navPoint269" playOrder="262">
+          <navLabel>
+            <text>rev-mapi-list</text>
+          </navLabel>
+          <content src="main/list.xhtml#rev-mapi-list" />  
+        </navPoint>
+        <navPoint id="navPoint270" playOrder="263">
+          <navLabel>
+            <text>rev-filter-list</text>
+          </navLabel>
+          <content src="main/list.xhtml#rev-filter-list" />  
+        </navPoint>
+        <navPoint id="navPoint271" playOrder="264">
+          <navLabel>
+            <text>rev-filteri-list</text>
+          </navLabel>
+          <content src="main/list.xhtml#rev-filteri-list" />  
+        </navPoint>
+        <navPoint id="navPoint272" playOrder="265">
+          <navLabel>
+            <text>rev-list&gt;cells</text>
+          </navLabel>
+          <content src="main/list.xhtml#rev-list-cells" />  
+        </navPoint>
+        <navPoint id="navPoint273" playOrder="266">
+          <navLabel>
+            <text>rev-list&gt;bytes</text>
+          </navLabel>
+          <content src="main/list.xhtml#rev-list-bytes" />  
+        </navPoint>
+        <navPoint id="navPoint274" playOrder="267">
+          <navLabel>
+            <text>rev-list</text>
+          </navLabel>
+          <content src="main/list.xhtml#rev-list" />  
+        </navPoint>
+        <navPoint id="navPoint275" playOrder="268">
+          <navLabel>
+            <text>map-list</text>
+          </navLabel>
+          <content src="main/list.xhtml#map-list" />  
+        </navPoint>
+        <navPoint id="navPoint276" playOrder="269">
+          <navLabel>
+            <text>mapi-list</text>
+          </navLabel>
+          <content src="main/list.xhtml#mapi-list" />  
+        </navPoint>
+        <navPoint id="navPoint277" playOrder="270">
+          <navLabel>
+            <text>map!-list</text>
+          </navLabel>
+          <content src="main/list.xhtml#id4" />  
+        </navPoint>
+        <navPoint id="navPoint278" playOrder="271">
+          <navLabel>
+            <text>mapi!-list</text>
+          </navLabel>
+          <content src="main/list.xhtml#id5" />  
+        </navPoint>
+        <navPoint id="navPoint279" playOrder="272">
+          <navLabel>
+            <text>filter-list</text>
+          </navLabel>
+          <content src="main/list.xhtml#filter-list" />  
+        </navPoint>
+        <navPoint id="navPoint280" playOrder="273">
+          <navLabel>
+            <text>filteri-list</text>
+          </navLabel>
+          <content src="main/list.xhtml#filteri-list" />  
+        </navPoint>
+        <navPoint id="navPoint281" playOrder="274">
+          <navLabel>
+            <text>foldl-list</text>
+          </navLabel>
+          <content src="main/list.xhtml#foldl-list" />  
+        </navPoint>
+        <navPoint id="navPoint282" playOrder="275">
+          <navLabel>
+            <text>foldli-list</text>
+          </navLabel>
+          <content src="main/list.xhtml#foldli-list" />  
+        </navPoint>
+        <navPoint id="navPoint283" playOrder="276">
+          <navLabel>
+            <text>foldr-list</text>
+          </navLabel>
+          <content src="main/list.xhtml#foldr-list" />  
+        </navPoint>
+        <navPoint id="navPoint284" playOrder="277">
+          <navLabel>
+            <text>foldri-list</text>
+          </navLabel>
+          <content src="main/list.xhtml#foldri-list" />  
+        </navPoint>
+        <navPoint id="navPoint285" playOrder="278">
+          <navLabel>
+            <text>duplicate-list</text>
+          </navLabel>
+          <content src="main/list.xhtml#duplicate-list" />  
+        </navPoint>
+        <navPoint id="navPoint286" playOrder="279">
+          <navLabel>
+            <text>&gt;rev-list</text>
+          </navLabel>
+          <content src="main/list.xhtml#id6" />  
+        </navPoint>
+        <navPoint id="navPoint287" playOrder="280">
+          <navLabel>
+            <text>&gt;list</text>
+          </navLabel>
+          <content src="main/list.xhtml#list" />  
+        </navPoint>
+      </navPoint>
+    </navPoint>
   </navMap>
 </ncx>

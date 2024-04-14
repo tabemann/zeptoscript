@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Lists</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/epub.css" /> 
+  </head><body>
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <section id="lists">
+<h1>Lists</h1>
+<p>zeptoscript has optional support for lists composed of pairs. Internally each pair is a two-element cell sequence; while one can use cell sequence words with these, this is not recommended as it will generally give results different from what one might expect.</p>
+<p>The particular use case of lists is to enable efficient prepending elements without reallocating and copying an entire sequence for each prepended or appended element; if appending is desired, the entire list can be efficiently reversed (and can be efficiently converted into a sequence simultaneously) afterwards.</p>
+<p>It is also efficient in many cases to reverse a list while generating a new list from an existing one due to the nature of lists, or when generating a sequence from a list. However, this is less necessary than in some languages because zeptoscript is not purely functional, and hence can mutate lists as they are being enerated, avoiding the need for a subsequent reversing step to achieve in-order conversions. (Yes, Haskell also does not need a reversing step either, but that is through the magic of lazy evaluation.)</p>
+<p>Note, however, that lists are less efficient memory-wise in static usage than sequences in most use cases (except possibly in use cases where multiple lists share parts of their structures) because each pair takes up three cells in the heap whereas each element of a cell sequence takes up only one cell in the heap in addition to the cell in the heap taken up by the cell sequence’s header. As a result, it is often advisable to convert lists to sequences once one is done constructing them if they are not ephemeral in nature and provided there is enough space available in the heap to keep the list and the sequence in memory simultaneously (which is necessary for converting from one to the other).</p>
+<section id="zscript-list-words">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-list</span></code> Words</h2>
+<section id="cons">
+<h3><code class="docutils literal notranslate"><span class="pre">cons</span></code></h3>
+<p>( x list – list’ )</p>
+<p>Prepend <em>x</em> onto <em>list</em>, giving a new list sharing its tail with the original list.</p>
+</section>
+<section id="empty">
+<h3><code class="docutils literal notranslate"><span class="pre">empty</span></code></h3>
+<p>( – list )</p>
+<p>An empty list. Note that this is equivalent to <code class="docutils literal notranslate"><span class="pre">false</span></code>, and is treated as such.</p>
+</section>
+<section id="head">
+<h3><code class="docutils literal notranslate"><span class="pre">head&#64;</span></code></h3>
+<p>( list – x )</p>
+<p>Get the head of <em>list</em>.</p>
+</section>
+<section id="tail">
+<h3><code class="docutils literal notranslate"><span class="pre">tail&#64;</span></code></h3>
+<p>( list – list’ )</p>
+<p>Get the tail of <em>list</em>.</p>
+</section>
+<section id="id1">
+<h3><code class="docutils literal notranslate"><span class="pre">head!</span></code></h3>
+<p>( x list – )</p>
+<p>Set the head of <em>list</em> to <em>x</em>.</p>
+</section>
+<section id="id2">
+<h3><code class="docutils literal notranslate"><span class="pre">tail!</span></code></h3>
+<p>( tail-list list – )</p>
+<p>Set the tail of <em>list</em> to <em>tail-list</em>.</p>
+</section>
+<section id="id3">
+<h3><code class="docutils literal notranslate"><span class="pre">empty?</span></code></h3>
+<p>( list – empty? )</p>
+<p>Get whether <em>list</em> is empty.</p>
+</section>
+<section id="list-len">
+<h3><code class="docutils literal notranslate"><span class="pre">list&gt;len</span></code></h3>
+<p>( list – len )</p>
+<p>Get the length of <em>list</em>; note that this involves a full traversal of <em>list</em> and hence is O(n).</p>
+</section>
+<section id="list-cells">
+<h3><code class="docutils literal notranslate"><span class="pre">list&gt;cells</span></code></h3>
+<p>( list – cells )</p>
+<p>Convert a list to a cell sequence. Note that this involves traversing <em>list</em> twice, the first time to get the length of <em>list</em>, and the second time to copy over each element.</p>
+</section>
+<section id="list-bytes">
+<h3><code class="docutils literal notranslate"><span class="pre">list&gt;bytes</span></code></h3>
+<p>( list – bytes )</p>
+<p>Convert a list to a byte sequence. Note that this involves traversing <em>list</em> twice, the first time to get the length of <em>list</em>, and the second tiem to copy over each element.</p>
+</section>
+<section id="seq-list">
+<h3><code class="docutils literal notranslate"><span class="pre">seq&gt;list</span></code></h3>
+<p>( seq – list )</p>
+<p>Convert a cell or byte sequence or slice to a list.</p>
+</section>
+<section id="iter-list">
+<h3><code class="docutils literal notranslate"><span class="pre">iter-list</span></code></h3>
+<p>( list xt – ) xt: ( item – )</p>
+<p>Iterate over <em>list</em>, executing <em>xt</em> with each element in order from start to end.</p>
+</section>
+<section id="iteri-list">
+<h3><code class="docutils literal notranslate"><span class="pre">iteri-list</span></code></h3>
+<p>( list xt – ) xt: ( item index – )</p>
+<p>Iterate over <em>list</em>, executing <em>xt</em> with each element and its index (indexed from zero) in order from start to end.</p>
+</section>
+<section id="rev-map-list">
+<h3><code class="docutils literal notranslate"><span class="pre">rev-map-list</span></code></h3>
+<p>( list xt – list’ ) xt: ( item – item’ )</p>
+<p>Map <em>xt</em> over <em>list</em> producing a new list in reverse order, executing <em>xt</em> with each element in order from start to end.</p>
+</section>
+<section id="rev-mapi-list">
+<h3><code class="docutils literal notranslate"><span class="pre">rev-mapi-list</span></code></h3>
+<p>( list xt – list’ ) xt: ( item index – item’ )</p>
+<p>Map <em>xt</em> over <em>list</em> producing a new list in reverse order, executing <em>xt</em> with each element and its index (indexed from zero) in order from start to end.</p>
+</section>
+<section id="rev-filter-list">
+<h3><code class="docutils literal notranslate"><span class="pre">rev-filter-list</span></code></h3>
+<p>( list xt – list’ ) xt: ( item – flag )</p>
+<p>Filter <em>list</em> with <em>xt</em> producing a new list in reverse order, executing <em>xt</em> with each element in order from start to end.</p>
+</section>
+<section id="rev-filteri-list">
+<h3><code class="docutils literal notranslate"><span class="pre">rev-filteri-list</span></code></h3>
+<p>( list xt – list’ ) xt: ( item index – filter )</p>
+<p>Filter <em>list</em> with <em>xt</em> producing a new list in reverse order, executing <em>xt</em> with each element and its index (indexed from zero) in order from start to end.</p>
+</section>
+<section id="rev-list-cells">
+<h3><code class="docutils literal notranslate"><span class="pre">rev-list&gt;cells</span></code></h3>
+<p>( list – cells )</p>
+<p>Convert <em>list</em> into a cell sequence in reverse order.</p>
+</section>
+<section id="rev-list-bytes">
+<h3><code class="docutils literal notranslate"><span class="pre">rev-list&gt;bytes</span></code></h3>
+<p>( list – bytes )</p>
+<p>Convert <em>list</em> into a byte sequence in reverse order.</p>
+</section>
+<section id="rev-list">
+<h3><code class="docutils literal notranslate"><span class="pre">rev-list</span></code></h3>
+<p>( list – list’ )</p>
+<p>Do a shallow copy of <em>list</em> as a list in reverse order.</p>
+</section>
+<section id="map-list">
+<h3><code class="docutils literal notranslate"><span class="pre">map-list</span></code></h3>
+<p>( list xt – list’ ) xt: ( item – item’ )</p>
+<p>Map <em>xt</em> over <em>list</em> producing a new list, executing <em>xt</em> with each element in order from start to end.</p>
+</section>
+<section id="mapi-list">
+<h3><code class="docutils literal notranslate"><span class="pre">mapi-list</span></code></h3>
+<p>( list xt – list’ ) xt: ( item index – item’ )</p>
+<p>Map <em>xt</em> over <em>list</em> producing a new list, executing <em>xt</em> with each element and its index (indexed from zero) in order from start to end.</p>
+</section>
+<section id="id4">
+<h3><code class="docutils literal notranslate"><span class="pre">map!-list</span></code></h3>
+<p>( list xt – ) xt: ( item – item’ )</p>
+<p>Map <em>xt</em> over <em>list</em> mutating <em>list</em> in place, executing <em>xt</em> with each element in order from start to end.</p>
+</section>
+<section id="id5">
+<h3><code class="docutils literal notranslate"><span class="pre">mapi!-list</span></code></h3>
+<p>( list xt – ) xt: ( item index – item’ )</p>
+<p>Map <em>xt</em> over <em>list</em> mutating <em>list</em> in place, executing <em>xt</em> with each element and its index (indexed from zero) in order from start to end.</p>
+</section>
+<section id="filter-list">
+<h3><code class="docutils literal notranslate"><span class="pre">filter-list</span></code></h3>
+<p>( list xt – list’ ) xt: ( item – flag )</p>
+<p>Filter <em>list</em> with <em>xt</em> producing a new list, executing <em>xt</em> with each element in order from start to end.</p>
+</section>
+<section id="filteri-list">
+<h3><code class="docutils literal notranslate"><span class="pre">filteri-list</span></code></h3>
+<p>( list xt – list’ ) xt: ( item index – filter )</p>
+<p>Filter <em>list</em> with <em>xt</em> producing a new list, executing <em>xt</em> with each element and its index (indexed from zero) in order from start to end.</p>
+</section>
+<section id="foldl-list">
+<h3><code class="docutils literal notranslate"><span class="pre">foldl-list</span></code></h3>
+<p>( x list xt – x’ ) xt: ( x item – x’ )</p>
+<p>Fold left <em>xt</em> over <em>list</em> with <em>x</em> as an initial value, executing <em>xt</em> with each element along with the current value in order from start to end.</p>
+</section>
+<section id="foldli-list">
+<h3><code class="docutils literal notranslate"><span class="pre">foldli-list</span></code></h3>
+<p>( x list xt – x’ ) xt: ( x item index – x’ )</p>
+<p>Fold left <em>xt</em> over <em>list</em> with <em>x</em> as an initial value, executing <em>xt</em> with each element along with the current value and its index (indexed from zero) in order from start to end.</p>
+</section>
+<section id="foldr-list">
+<h3><code class="docutils literal notranslate"><span class="pre">foldr-list</span></code></h3>
+<p>( x list xt – x’ ) xt: ( item x – x’ )</p>
+<p>Fold right <em>xt</em> over <em>list</em> with <em>x</em> as an initial value, executing <em>xt</em> with each element along with the current value in roder from end to start. Note that this involves converting <em>list</em> to a cell sequence internally, so is less efficient than <code class="docutils literal notranslate"><span class="pre">foldl-list</span></code>.</p>
+</section>
+<section id="foldri-list">
+<h3><code class="docutils literal notranslate"><span class="pre">foldri-list</span></code></h3>
+<p>( x list xt – x’ ) xt: ( item x – x’ )</p>
+<p>Fold right <em>xt</em> over <em>list</em> with <em>x</em> as an initial value, executing <em>xt</em> with each element along with the current value and its index (indexed from zero) in roder from end to start. Note that this involves converting <em>list</em> to a cell sequence internally, so is less efficient than <code class="docutils literal notranslate"><span class="pre">foldli-list</span></code>.</p>
+</section>
+<section id="duplicate-list">
+<h3><code class="docutils literal notranslate"><span class="pre">duplicate-list</span></code></h3>
+<p>( list – list’ )</p>
+<p>Do a shallow copy of a list.</p>
+</section>
+<section id="id6">
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;rev-list</span></code></h3>
+<p>( xn … x0 count – list )</p>
+<p>Create a list with <em>count</em> elements taken off the top of the stack, in reverse order.</p>
+</section>
+<section id="list">
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;list</span></code></h3>
+<p>( xn …  x0 count – list )</p>
+<p>Create a list with <em>count</em> elements taken off the top of the stack, in order.</p>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

@@ -189,7 +189,7 @@ begin-module zscript-list
     empty { list' }
     empty { list'-last }
     begin list while
-      list head@ xt execute 0 cons { new-list }
+      list head@ xt execute empty cons { new-list }
       list' if
         new-list list'-last tail!
       else
@@ -207,7 +207,7 @@ begin-module zscript-list
     empty { list'-last }
     0 { index }
     begin list while
-      list head@ index xt execute 0 cons { new-list }
+      list head@ index xt execute empty cons { new-list }
       list' if
         new-list list'-last tail!
       else
@@ -244,7 +244,7 @@ begin-module zscript-list
     empty { list'-last }
     begin list while
       list head@ dup { head } xt execute if
-        head 0 cons { new-list }
+        head empty cons { new-list }
         list' if
           new-list list'-last tail!
         else
@@ -264,7 +264,7 @@ begin-module zscript-list
     0 { index }
     begin list while
       list head@ dup { head } index xt execute if
-        head 0 cons { new-list }
+        head empty cons { new-list }
         list' if
           new-list list'-last tail!
         else
@@ -308,15 +308,45 @@ begin-module zscript-list
     list list>cells dup xt sort! seq>list
   ;
 
+  \ Duplicate a list
+  : duplicate-list { list -- list' }
+    empty { list' }
+    empty { list'-last }
+    begin list while
+      list head@ empty cons { new-list }
+      list' if
+        new-list list'-last tail!
+      else
+        new-list to list'
+      then
+      new-list to list'-last
+      list tail@ to list
+    repeat
+    list'
+  ;
+  
   \ Create a reverse list from the stack
   : >rev-list ( xn ... x0 count -- list )
     { count }
-    empty begin count 0> while cons -1 +to count repeat
+    empty { list }
+    empty { list-last }
+    begin count 0> while
+      empty cons { new-list }
+      list if
+        new-list list-last tail!
+      else
+        new-list to list
+      then
+      new-list to list-last
+      -1 +to count
+    repeat
+    list
   ;
 
-  \ Create a list from the stack (note that it first creates a sequence)
+  \ Create a list from the stack
   : >list ( xn ... x0 count -- list )
-    >cells seq>list
+    { count }
+    empty begin count 0> while cons -1 +to count repeat
   ;
 
 end-module
