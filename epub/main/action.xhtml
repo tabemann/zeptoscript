@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Actions</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/epub.css" /> 
+  </head><body>
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <section id="actions">
+<h1>Actions</h1>
+<p>zeptoscript does not support multitasking itself (non-zeptoscript tasks can execute, but only one zeptoscript environment can exist, in only one task), so in its place zeptoscript has <em>actions</em>, like zeptoforth actions, to provide asynchronous execution with a single task.</p>
+<p>Actions belong to <em>schedules</em>, one of which may execute in a given task at a time. Within a schedule actions execute in a cooperative, round-robin fashion. They may also send messages to and receive messages from each other. An action may only send a single message to or receive a single message from one another at a time. Messaging is strictly synchronous; an action will not continue executing after sending a message until the message is received, sending the message times out, or sending the message otherwise fails (e.g. the target action terminates).</p>
+<p>Actions all share the same stack as one another; persistent state belonging to an action is achieved through binding values (e.g. a record or object) to the states as closures or through globals. Also note that operations set for actions only occur after the handler for the current operation state completes, and that <code class="docutils literal notranslate"><span class="pre">x-operation-set</span></code> will be raised if the user attempts to set another operation after having already set an operation for the current state.</p>
+<p>Messages allocated on the heap are not copied when being set from one action to another. This avoids the expense of having to copy data from one buffer to another and the complexity of having to manage space to store messages to send or receive. In this way actions in zeptoscript differ from actions in zeptoforth. This also means that messages can be modified after they are sent or received, which in most cases will be undesirable; to avoid this use <code class="docutils literal notranslate"><span class="pre">zscript::duplicate</span></code> or <code class="docutils literal notranslate"><span class="pre">zscript-list::duplicate-list</span></code> if this would turn out to be an issue.</p>
+<section id="zscript-action-words">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-action</span></code> words</h2>
+<section id="make-schedule">
+<h3><code class="docutils literal notranslate"><span class="pre">make-schedule</span></code></h3>
+<p>( – schedule )</p>
+<p>Create an empty schedule.</p>
+</section>
+<section id="make-action">
+<h3><code class="docutils literal notranslate"><span class="pre">make-action</span></code></h3>
+<p>( init-xt – action )</p>
+<p>Create an action with an initial state of <em>init-xt</em>.</p>
+</section>
+<section id="add-action">
+<h3><code class="docutils literal notranslate"><span class="pre">add-action</span></code></h3>
+<p>( schedule action – )</p>
+<p>Add <em>action</em> to <em>schedule</em>.</p>
+</section>
+<section id="remove-action">
+<h3><code class="docutils literal notranslate"><span class="pre">remove-action</span></code></h3>
+<p>( action – )</p>
+<p>Remove <em>action</em> from its current schedule.</p>
+</section>
+<section id="send-action-fail">
+<h3><code class="docutils literal notranslate"><span class="pre">send-action-fail</span></code></h3>
+<p>( send-xt fail-xt data dest-action – ) send-xt: ( – ) fail-xt: ( – )</p>
+<p>Set the current action to send a message <em>data</em> to <em>dest-action</em>, and call <em>send-xt</em> on success or <em>fail-xt</em> on failure.</p>
+</section>
+<section id="send-action">
+<h3><code class="docutils literal notranslate"><span class="pre">send-action</span></code></h3>
+<p>( resume-xt data dest-action – ) resume-xt: ( – )</p>
+<p>Set the current action to send a message <em>data</em> to <em>dest-action</em>, and call <em>resume-xt</em> afterwards regardless of success or failure.</p>
+</section>
+<section id="send-action-timeout">
+<h3><code class="docutils literal notranslate"><span class="pre">send-action-timeout</span></code></h3>
+<p>( timeout-ticks send-xt fail-xt data dest-action – ) send-xt: ( – ) fail-xt: ( – )</p>
+<p>Set the current action to send a message <em>data</em> to <em>dest-action</em> with a timeout of <em>timeout-ticks</em>, and call <em>send-xt</em> on success or <em>fail-xt</em> on failure.</p>
+</section>
+<section id="recv-action">
+<h3><code class="docutils literal notranslate"><span class="pre">recv-action</span></code></h3>
+<p>( recv-xt – ) recv-xt: ( data src-action – )</p>
+<p>Set the current action to receive a message, and call <em>recv-xt</em> with received <em>data</em> from <em>src-action</em> on message receipt.</p>
+</section>
+<section id="recv-action-timeout">
+<h3><code class="docutils literal notranslate"><span class="pre">recv-action-timeout</span></code></h3>
+<p>( timeout-ticks recv-xt timeout-xt – ) recv-xt: ( data src-action – ) timeout-xt: ( – )</p>
+<p>Set the current action to receive a message with a timeout of <em>timeout-ticks</em>, and call <em>recv-xt</em> with received <em>data</em> from <em>src-action</em> on message receipt, or <em>timeout-xt</em> on timeout.</p>
+</section>
+<section id="delay-action">
+<h3><code class="docutils literal notranslate"><span class="pre">delay-action</span></code></h3>
+<p>( ticks resume-xt – ) resume-xt: ( – )</p>
+<p>Set the current action to wait <em>ticks</em> and then call <em>resume-xt</em>.</p>
+</section>
+<section id="delay-action-from-time">
+<h3><code class="docutils literal notranslate"><span class="pre">delay-action-from-time</span></code></h3>
+<p>( systick-start systick-delay resume-xt – ) resume-xt: ( – )</p>
+<p>Set the current action to wait <em>systick-delay</em> ticks from <em>systick-start</em> ticks and th en call <em>resume-xt</em>.</p>
+</section>
+<section id="yield-action">
+<h3><code class="docutils literal notranslate"><span class="pre">yield-action</span></code></h3>
+<p>( resume-xt – ) resume-xt: ( – )</p>
+<p>Set the current action to give up control and then call <em>resume-xt</em> when it regains control.</p>
+</section>
+<section id="run-schedule">
+<h3><code class="docutils literal notranslate"><span class="pre">run-schedule</span></code></h3>
+<p>( schedule – )</p>
+<p>Run the schedule and its actions.</p>
+</section>
+<section id="stop-schedule">
+<h3><code class="docutils literal notranslate"><span class="pre">stop-schedule</span></code></h3>
+<p>( schedule – )</p>
+<p>Set the schedule to cleanly stop.</p>
+</section>
+<section id="action-schedule">
+<h3><code class="docutils literal notranslate"><span class="pre">action-schedule&#64;</span></code></h3>
+<p>( action – schedule )</p>
+<p>Get the schedule of <em>action</em>.</p>
+</section>
+<section id="in-schedule">
+<h3><code class="docutils literal notranslate"><span class="pre">in-schedule?</span></code></h3>
+<p>( action – flag )</p>
+<p>Get whether an action is in a schedule.</p>
+</section>
+<section id="current-schedule">
+<h3><code class="docutils literal notranslate"><span class="pre">current-schedule</span></code></h3>
+<p>( – schedule )</p>
+<p>Get the current schedule.</p>
+</section>
+<section id="current-action">
+<h3><code class="docutils literal notranslate"><span class="pre">current-action</span></code></h3>
+<p>( – action )</p>
+<p>Get the current action.</p>
+</section>
+<section id="x-already-in-schedule">
+<h3><code class="docutils literal notranslate"><span class="pre">x-already-in-schedule</span></code></h3>
+<p>( – )</p>
+<p>Action already in schedule exception.</p>
+</section>
+<section id="x-not-in-schedule">
+<h3><code class="docutils literal notranslate"><span class="pre">x-not-in-schedule</span></code></h3>
+<p>( – )</p>
+<p>Action not in schedule exception.</p>
+</section>
+<section id="x-schedule-already-running">
+<h3><code class="docutils literal notranslate"><span class="pre">x-schedule-already-running</span></code></h3>
+<p>( – )</p>
+<p>Schedule already running exception.</p>
+</section>
+<section id="x-operation-set">
+<h3><code class="docutils literal notranslate"><span class="pre">x-operation-set</span></code></h3>
+<p>( – )</p>
+<p>Action already has an operation set exception.</p>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>
