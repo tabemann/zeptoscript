@@ -22,13 +22,17 @@ begin-module zscript-map
 
   zscript import
 
-  \ Not a valid key
-  : x-not-valid-key ( -- ) ." not a valid key" cr ;
-
   begin-module zscript-map-internal
 
-    \ Validate a key
-    : validate-key ( key -- ) 0<> averts x-not-valid-key ;
+    \ Empty cells
+    \
+    \ This is not garbage collected so does not need to be in the heap.
+    forth::here
+    cells-type zscript-internal::integral>
+    2 zscript-internal::integral> forth::-
+    zscript-internal::type-shift forth::lshift
+    forth::cell 1 zscript-internal::integral> forth::lshift forth::or forth::,
+    forth::constant empty-key
     
     \ Map minimum size
     4 constant map-min-size
@@ -56,7 +60,7 @@ begin-module zscript-map
       hash len umod { index }
       begin
         index 1 lshift { current }
-        current inner @+ 0= if
+        current inner @+ empty-key forth::= if
           key current inner !+ val current 1+ inner !+ true
         else
           1 +to index
@@ -73,11 +77,14 @@ begin-module zscript-map
       old-len 3 * make-cells { new-inner }
       0 { index }
       map map-hash-xt@ { hash-xt }
+      old-len 3 * 1 rshift 0 ?do empty-key i 1 lshift new-inner !+ loop
       begin index old-len < while
         index 1 lshift { current }
-        current old-inner @+ ?dup if { current-key }
+        current old-inner @+ dup empty-key forth::<> if { current-key }
           current 1+ old-inner @+ current-key dup hash-xt execute
           new-inner prim-insert-map
+        else
+          drop
         then
         1 +to index
       repeat
@@ -93,7 +100,7 @@ begin-module zscript-map
       begin
         index 1 lshift { current }
         current inner @+ { current-key }
-        current-key if
+        current-key empty-key forth::<> if
           key current-key equal execute if
             index true true
           else
@@ -115,7 +122,9 @@ begin-module zscript-map
   \ size
   : make-map { size hash-xt equal-xt -- map }
     size map-min-size max
-    1+ 1 lshift make-cells 0 hash-xt equal-xt >map-outer
+    1+ dup to size 1 lshift make-cells dup { inner } 0
+    hash-xt equal-xt >map-outer
+    size 0 ?do empty-key i 1 lshift inner !+ loop
   ;
 
   \ Duplicate a map
@@ -134,7 +143,7 @@ begin-module zscript-map
     begin found-count count < while
       index 1 lshift { current }
       current inner @+ { current-key }
-      current-key if
+      current-key empty-key forth::<> if
         current 1+ inner @+ current-key xt execute
         1 +to found-count
       then
@@ -153,7 +162,7 @@ begin-module zscript-map
     begin found-count count < while
       index 1 lshift { current }
       current inner @+ { current-key }
-      current-key if
+      current-key empty-key forth::<> if
         current-key current inner' !+
         current 1+ inner @+ current-key xt execute current 1+ inner' !+
         1 +to found-count
@@ -171,7 +180,7 @@ begin-module zscript-map
     begin found-count count < while
       index 1 lshift { current }
       current inner @+ { current-key }
-      current-key if
+      current-key empty-key forth::<> if
         current 1+ inner @+ current-key xt execute current 1+ inner !+
         1 +to found-count
       then
@@ -187,7 +196,7 @@ begin-module zscript-map
     begin found-count count < while
       index 1 lshift { current }
       current inner @+ { current-key }
-      current-key if
+      current-key empty-key forth::<> if
         current 1+ inner @+ current-key xt execute if true exit then
         1 +to found-count
       then
@@ -204,7 +213,7 @@ begin-module zscript-map
     begin found-count count < while
       index 1 lshift { current }
       current inner @+ { current-key }
-      current-key if
+      current-key empty-key forth::<> if
         current 1+ inner @+ current-key xt execute not if false exit then
         1 +to found-count
       then
@@ -221,7 +230,9 @@ begin-module zscript-map
     0 0 { src-index dest-index }
     begin dest-index count < while
       src-index 1 lshift inner @+ { current-key }
-      current-key if current-key dest-index keys !+ 1 +to dest-index then
+      current-key empty-key forth::<> if
+        current-key dest-index keys !+ 1 +to dest-index
+      then
       1 +to src-index
     repeat
     keys
@@ -235,7 +246,7 @@ begin-module zscript-map
     0 0 { src-index dest-index }
     begin dest-index count < while
       src-index 1 lshift { current }
-      current inner @+ if
+      current inner @+ empty-key forth::<> if
         current 1+ inner @+ dest-index values !+ 1 +to dest-index
       then
       1 +to src-index
@@ -252,7 +263,7 @@ begin-module zscript-map
     begin dest-index count < while
       src-index 1 lshift { current }
       current inner @+ { current-key }
-      current-key if
+      current-key empty-key forth::<> if
         current-key current 1+ inner @+ >pair dest-index key-values !+
         1 +to dest-index
       then
@@ -263,7 +274,6 @@ begin-module zscript-map
 
   \ Insert an entry in a map
   : insert-map { val key map -- }
-    key validate-key
     key map map-index if
       1 lshift { current }
       map map-inner@ { inner }
@@ -292,11 +302,10 @@ begin-module zscript-map
 
   \ Remove an entry from a map
   : remove-map { key map -- }
-    key validate-key
     key map map-index if
       1 lshift { current }
       map map-inner@ { inner }
-      0 current inner !+
+      empty-key current inner !+
       0 current 1+ inner !+
       map map-entry-count@ 1- map map-entry-count!
     else
@@ -306,7 +315,6 @@ begin-module zscript-map
   
   \ Find an entry in a map
   : find-map { key map -- val found? }
-    key validate-key
     map map-inner@ { inner }
     inner >len 1 rshift { len }
     map map-equal-xt@ { equal }
@@ -314,7 +322,7 @@ begin-module zscript-map
     begin
       index 1 lshift { current }
       current inner @+ { current-key }
-      current-key if
+      current-key empty-key forth::<> if
         key current-key equal execute if
           current 1+ inner @+ true true
         else
@@ -330,7 +338,6 @@ begin-module zscript-map
 
   \ Test for membership in a map
   : in-map? { key map -- found? }
-    key validate-key
     map map-inner@ { inner }
     inner >len 1 rshift { len }
     map map-equal-xt@ { equal }
@@ -338,7 +345,7 @@ begin-module zscript-map
     begin
       index 1 lshift { current }
       current inner @+ { current-key }
-      current-key if
+      current-key empty-key forth::<> if
         key current-key equal execute if
           true true
         else

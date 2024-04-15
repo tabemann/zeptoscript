@@ -146,7 +146,7 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bar</span> <span class="mi">20</span> <span class="n">baz</span> <span class="mi">30</span> <span class="n">foo</span> <span class="mi">10</span>  <span class="n">ok</span>
 </pre></div>
 </div>
-<p>Note that keys may never be 0, because 0 is used internally to mark the lack of an entry. Also, while keys may be mutable values, undefined results will occur if the keys are mutated; if this may be an issue, it would be prudent to use <code class="docutils literal notranslate"><span class="pre">duplicate</span></code> (or its like) to duplicate the keys before inserting them and/or after retrieving the keys if they may be mutated afterward.</p>
+<p>While keys may be mutable values, undefined results will occur if the keys are mutated; if this may be an issue, it would be prudent to use <code class="docutils literal notranslate"><span class="pre">duplicate</span></code> (or its like) to duplicate the keys before inserting them and/or after retrieving the keys if they may be mutated afterward.</p>
 <section id="map-words">
 <h2><code class="docutils literal notranslate"><span class="pre">map</span></code> words<a class="headerlink" href="#map-words" title="Permalink to this heading">¶</a></h2>
 <section id="make-map">

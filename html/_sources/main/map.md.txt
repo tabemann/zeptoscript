@@ -164,7 +164,7 @@ This outputs:
 bar 20 baz 30 foo 10  ok
 ```
 
-Note that keys may never be 0, because 0 is used internally to mark the lack of an entry. Also, while keys may be mutable values, undefined results will occur if the keys are mutated; if this may be an issue, it would be prudent to use `duplicate` (or its like) to duplicate the keys before inserting them and/or after retrieving the keys if they may be mutated afterward.
+While keys may be mutable values, undefined results will occur if the keys are mutated; if this may be an issue, it would be prudent to use `duplicate` (or its like) to duplicate the keys before inserting them and/or after retrieving the keys if they may be mutated afterward.
 
 ## `map` words
 
