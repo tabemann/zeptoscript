@@ -110,9 +110,12 @@ begin-module zscript-map
   end-module> import
 
   \ Make a map (a size of 0 indicates a default size)
+  \
+  \ Note that the real size of the map is one entry larger than the specified
+  \ size
   : make-map { size hash-xt equal-xt -- map }
-    size map-min-size max to size
-    size 1 lshift make-cells 0 hash-xt equal-xt >map-outer
+    size map-min-size max
+    1+ 1 lshift make-cells 0 hash-xt equal-xt >map-outer
   ;
 
   \ Duplicate a map
