@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Maps</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/epub.css" /> 
+  </head><body>
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <section id="maps">
+<h1>Maps</h1>
+<p>Maps (not to be confused with <code class="docutils literal notranslate"><span class="pre">map</span></code> words) are data structures for associating keys with values. Values can be inserted into maps at keys, values can be removed from maps at keys, and values at keys can be removed from maps.</p>
+<p>A very common sort of map is a string-map. The easiest way to implement a string-map is to create a map with the <code class="docutils literal notranslate"><span class="pre">hash-bytes</span></code> hash word and the <code class="docutils literal notranslate"><span class="pre">equal-bytes?</span></code> equality word, and shown below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>global my-map
+0 &#39; hash-bytes &#39; equal-bytes? make-map my-map!
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">hash-bytes</span></code> and <code class="docutils literal notranslate"><span class="pre">equal-bytes?</span></code> are provided by <code class="docutils literal notranslate"><span class="pre">zscript</span></code>; <code class="docutils literal notranslate"><span class="pre">hash-bytes</span></code> is a 32-bit FNV-1 hash function.</p>
+<p>To insert a value <code class="docutils literal notranslate"><span class="pre">256</span></code> at the key <code class="docutils literal notranslate"><span class="pre">foo</span></code>, one can do the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">256</span> <span class="n">s</span><span class="s2">&quot; foo&quot;</span> <span class="n">my</span><span class="o">-</span><span class="nb">map</span><span class="o">@</span> <span class="n">insert</span><span class="o">-</span><span class="nb">map</span>
+</pre></div>
+</div>
+<p>To get the value of the key <code class="docutils literal notranslate"><span class="pre">foo</span></code>, one can do the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">s</span><span class="s2">&quot; foo&quot;</span> <span class="n">my</span><span class="o">-</span><span class="nb">map</span><span class="o">@</span> <span class="n">find</span><span class="o">-</span><span class="nb">map</span> <span class="o">.</span> <span class="o">.</span>
+</pre></div>
+</div>
+<p>This outputs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="mi">1</span> <span class="mi">256</span>  <span class="n">ok</span>
+</pre></div>
+</div>
+<p>This indicates that the key existed and had the value <code class="docutils literal notranslate"><span class="pre">256</span></code>.</p>
+<p>To attempt to get the value of a non-existent key <code class="docutils literal notranslate"><span class="pre">bar</span></code>, one can do the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">s</span><span class="s2">&quot; bar&quot;</span> <span class="n">my</span><span class="o">-</span><span class="nb">map</span><span class="o">@</span> <span class="n">find</span><span class="o">-</span><span class="nb">map</span> <span class="o">.</span> <span class="o">.</span>
+</pre></div>
+</div>
+<p>This outputs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span> <span class="mi">0</span>  <span class="n">ok</span>
+</pre></div>
+</div>
+<p>This indicates that the key did not exist.</p>
+<p>To simply test for the existence of the key <code class="docutils literal notranslate"><span class="pre">foo</span></code>, without getting its value, one can do the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>s&quot; foo&quot; my-map@ in-map? .
+</pre></div>
+</div>
+<p>This outputs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="mi">1</span>  <span class="n">ok</span>
+</pre></div>
+</div>
+<p>This indicates that the key did exist.</p>
+<p>For another test, to iterate through each of the key/value pairs in a map, one can do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>0 &#39; hash-bytes &#39; equal-bytes? make-map my-map!
+10 s&quot; foo&quot; my-map@ insert-map
+20 s&quot; bar&quot; my-map@ insert-map
+30 s&quot; baz&quot; my-map@ insert-map
+</pre></div>
+</div>
+<p>followed by:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">my</span><span class="o">-</span><span class="nb">map</span><span class="o">@</span> <span class="p">[:</span> <span class="nb">type</span> <span class="n">space</span> <span class="o">.</span> <span class="p">;]</span> <span class="nb">iter</span><span class="o">-</span><span class="nb">map</span>
+</pre></div>
+</div>
+<p>This outputs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bar</span> <span class="mi">20</span> <span class="n">baz</span> <span class="mi">30</span> <span class="n">foo</span> <span class="mi">10</span>  <span class="n">ok</span>
+</pre></div>
+</div>
+<p>To test any of the elements of the map, one can do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">my</span><span class="o">-</span><span class="nb">map</span><span class="o">@</span> <span class="p">[:</span> <span class="n">drop</span> <span class="mi">20</span> <span class="o">&lt;</span> <span class="p">;]</span> <span class="nb">any</span><span class="o">-</span><span class="nb">map</span> <span class="o">.</span>
+</pre></div>
+</div>
+<p>This outputs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="mi">1</span>  <span class="n">ok</span>
+</pre></div>
+</div>
+<p>Or one can do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">my</span><span class="o">-</span><span class="nb">map</span><span class="o">@</span> <span class="p">[:</span> <span class="n">drop</span> <span class="mi">50</span> <span class="o">&gt;=</span> <span class="p">;]</span> <span class="nb">any</span><span class="o">-</span><span class="nb">map</span> <span class="o">.</span>
+</pre></div>
+</div>
+<p>This outputs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span>  <span class="n">ok</span>
+</pre></div>
+</div>
+<p>To test all of the elements of the map, one can do</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">my</span><span class="o">-</span><span class="nb">map</span><span class="o">@</span> <span class="p">[:</span> <span class="n">drop</span> <span class="mi">0</span><span class="o">&gt;</span> <span class="p">;]</span> <span class="nb">all</span><span class="o">-</span><span class="nb">map</span> <span class="o">.</span>
+</pre></div>
+</div>
+<p>This outputs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="mi">1</span>  <span class="n">ok</span>
+</pre></div>
+</div>
+<p>Or one can do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">my</span><span class="o">-</span><span class="nb">map</span><span class="o">@</span> <span class="p">[:</span> <span class="n">drop</span> <span class="mi">20</span> <span class="o">=</span> <span class="p">;]</span> <span class="nb">all</span><span class="o">-</span><span class="nb">map</span> <span class="o">.</span>
+</pre></div>
+</div>
+<p>This outputs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span>  <span class="n">ok</span>
+</pre></div>
+</div>
+<p>One can get and display all the keys in the map with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">my</span><span class="o">-</span><span class="nb">map</span><span class="o">@</span> <span class="nb">map</span><span class="o">-</span><span class="n">keys</span> <span class="p">[:</span> <span class="nb">type</span> <span class="n">space</span> <span class="p">;]</span> <span class="nb">iter</span>
+</pre></div>
+</div>
+<p>This outputs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bar</span> <span class="n">baz</span> <span class="n">foo</span>  <span class="n">ok</span>
+</pre></div>
+</div>
+<p>One can also get and display all the values in the map with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">my</span><span class="o">-</span><span class="nb">map</span><span class="o">@</span> <span class="nb">map</span><span class="o">-</span><span class="n">values</span> <span class="s1">&#39; . iter</span>
+</pre></div>
+</div>
+<p>This outputs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">20</span> <span class="mi">30</span> <span class="mi">10</span>  <span class="n">ok</span>
+</pre></div>
+</div>
+<p>One can also get and display all the key-value pairs in the map with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">my</span><span class="o">-</span><span class="nb">map</span><span class="o">@</span> <span class="nb">map</span><span class="o">-</span><span class="n">key</span><span class="o">-</span><span class="n">values</span> <span class="p">[:</span> <span class="n">pair</span><span class="o">&gt;</span> <span class="n">swap</span> <span class="nb">type</span> <span class="n">space</span> <span class="o">.</span> <span class="p">;]</span> <span class="nb">iter</span>
+</pre></div>
+</div>
+<p>This outputs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">bar</span> <span class="mi">20</span> <span class="n">baz</span> <span class="mi">30</span> <span class="n">foo</span> <span class="mi">10</span>  <span class="n">ok</span>
+</pre></div>
+</div>
+<p>Note that keys may never be 0, because 0 is used internally to mark the lack of an entry. Also, while keys may be mutable values, undefined results will occur if the keys are mutated; if this may be an issue, it would be prudent to use <code class="docutils literal notranslate"><span class="pre">duplicate</span></code> (or its like) to duplicate the keys before inserting them and/or after retrieving the keys if they may be mutated afterward.</p>
+<section id="map-words">
+<h2><code class="docutils literal notranslate"><span class="pre">map</span></code> words</h2>
+<section id="make-map">
+<h3><code class="docutils literal notranslate"><span class="pre">make-map</span></code></h3>
+<p>( size hash-xt equal-xt – map ) hash-xt: ( key – hash ) equal-xt: { key0 key1 – equal? )</p>
+<p>Make a map (a size of 0 indicates a default size). <em>hash-xt</em> is a hash function applied to each key for the map. <em>equal-xt</em> is a function to test the equality of two keys for the map.</p>
+</section>
+<section id="duplicate-map">
+<h3><code class="docutils literal notranslate"><span class="pre">duplicate-map</span></code></h3>
+<p>( map – map’ )</p>
+<p>Duplicate a map. This generates a shallow copy of the map; the keys and values themselves are not duplicated.</p>
+</section>
+<section id="iter-map">
+<h3><code class="docutils literal notranslate"><span class="pre">iter-map</span></code></h3>
+<p>( map xt – ) xt: ( value key – )</p>
+<p>Iterate over the elements of a map.</p>
+</section>
+<section id="any-map">
+<h3><code class="docutils literal notranslate"><span class="pre">any-map</span></code></h3>
+<p>( map xt – ) xt: ( value key – flag )</p>
+<p>Get whether any element of a map meet a predicate.</p>
+</section>
+<section id="all-map">
+<h3><code class="docutils literal notranslate"><span class="pre">all-map</span></code></h3>
+<p>( map xt – ) xt: ( value key – flag )</p>
+<p>Get whether all elements of a map meet a predicate.</p>
+</section>
+<section id="map-keys">
+<h3><code class="docutils literal notranslate"><span class="pre">map-keys</span></code></h3>
+<p>( map – keys )</p>
+<p>Get the keys of a map.</p>
+</section>
+<section id="map-values">
+<h3><code class="docutils literal notranslate"><span class="pre">map-values</span></code></h3>
+<p>( map – values )</p>
+<p>Get the values of a map.</p>
+</section>
+<section id="map-key-values">
+<h3><code class="docutils literal notranslate"><span class="pre">map-key-values</span></code></h3>
+<p>( map – pairs )</p>
+<p>Get the keys and values of a map as pairs.</p>
+</section>
+<section id="insert-map">
+<h3><code class="docutils literal notranslate"><span class="pre">insert-map</span></code></h3>
+<p>( val key map – )</p>
+<p>Insert an entry in a map.</p>
+</section>
+<section id="remove-map">
+<h3><code class="docutils literal notranslate"><span class="pre">remove-map</span></code></h3>
+<p>( key map – )</p>
+<p>Remove an entry from a map.</p>
+</section>
+<section id="find-map">
+<h3><code class="docutils literal notranslate"><span class="pre">find-map</span></code></h3>
+<p>( key map – val found? )</p>
+<p>Find an entry in a map.</p>
+</section>
+<section id="in-map">
+<h3><code class="docutils literal notranslate"><span class="pre">in-map?</span></code></h3>
+<p>( key map – found? )</p>
+<p>Test for membership in a map.</p>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

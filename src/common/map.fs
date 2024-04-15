@@ -22,8 +22,14 @@ begin-module zscript-map
 
   zscript import
 
+  \ Not a valid key
+  : x-not-valid-key ( -- ) ." not a valid key" cr ;
+
   begin-module zscript-map-internal
 
+    \ Validate a key
+    : validate-key ( key -- ) 0<> averts x-not-valid-key ;
+    
     \ Map minimum size
     4 constant map-min-size
     
@@ -117,21 +123,110 @@ begin-module zscript-map
     map'
   ;
 
-  \ Iterate over the contents of a map
+  \ Iterate over the elements of a map
   : iter-map { map xt -- } \ xt ( value key -- )
     map map-inner@ { inner }
+    map map-entry-count@ { count }
     inner >len 1 rshift { len }
-    0 { index }
-    begin index len < while
+    0 0 { index found-count }
+    begin found-count count < while
       index 1 lshift { current }
       current inner @+ { current-key }
-      current-key if current 1+ inner @+ current-key xt execute then
+      current-key if
+        current 1+ inner @+ current-key xt execute
+        1 +to found-count
+      then
       1 +to index
     repeat
   ;
 
+  \ Get whether any element of a map meet a predicate
+  : any-map { map xt -- } \ xt ( value key -- flag )
+    map map-inner@ { inner }
+    map map-entry-count@ { count }
+    inner >len 1 rshift { len }
+    0 0 { index found-count }
+    begin found-count count < while
+      index 1 lshift { current }
+      current inner @+ { current-key }
+      current-key if
+        current 1+ inner @+ current-key xt execute if true exit then
+        1 +to found-count
+      then
+      1 +to index
+    repeat
+    false
+  ;
+
+  \ Get whether all elements of a map meet a predicate
+  : all-map { map xt -- } \ xt ( value key -- flag )
+    map map-inner@ { inner }
+    map map-entry-count@ { count }
+    inner >len 1 rshift { len }
+    0 0 { index found-count }
+    begin found-count count < while
+      index 1 lshift { current }
+      current inner @+ { current-key }
+      current-key if
+        current 1+ inner @+ current-key xt execute not if false exit then
+        1 +to found-count
+      then
+      1 +to index
+    repeat
+    true
+  ;
+
+  \ Get the keys of a map
+  : map-keys { map -- keys }
+    map map-inner@ { inner }
+    map map-entry-count@ { count }
+    count make-cells { keys }
+    0 0 { src-index dest-index }
+    begin dest-index count < while
+      src-index 1 lshift inner @+ { current-key }
+      current-key if current-key dest-index keys !+ 1 +to dest-index then
+      1 +to src-index
+    repeat
+    keys
+  ;
+
+  \ Get the values of a map
+  : map-values { map -- values }
+    map map-inner@ { inner }
+    map map-entry-count@ { count }
+    count make-cells { values }
+    0 0 { src-index dest-index }
+    begin dest-index count < while
+      src-index 1 lshift { current }
+      current inner @+ if
+        current 1+ inner @+ dest-index values !+ 1 +to dest-index
+      then
+      1 +to src-index
+    repeat
+    values
+  ;
+
+  \ Get the keys and values of a map as pairs
+  : map-key-values { map -- pairs }
+    map map-inner@ { inner }
+    map map-entry-count@ { count }
+    count make-cells { key-values }
+    0 0 { src-index dest-index }
+    begin dest-index count < while
+      src-index 1 lshift { current }
+      current inner @+ { current-key }
+      current-key if
+        current-key current 1+ inner @+ >pair dest-index key-values !+
+        1 +to dest-index
+      then
+      1 +to src-index
+    repeat
+    key-values
+  ;
+
   \ Insert an entry in a map
   : insert-map { val key map -- }
+    key validate-key
     key map map-index if
       1 lshift { current }
       map map-inner@ { inner }
@@ -160,6 +255,7 @@ begin-module zscript-map
 
   \ Remove an entry from a map
   : remove-map { key map -- }
+    key validate-key
     key map map-index if
       1 lshift { current }
       map map-inner@ { inner }
@@ -172,7 +268,8 @@ begin-module zscript-map
   ;
   
   \ Find an entry in a map
-  : find-map { key map -- val success? }
+  : find-map { key map -- val found? }
+    key validate-key
     map map-inner@ { inner }
     inner >len 1 rshift { len }
     map map-equal-xt@ { equal }
@@ -195,7 +292,8 @@ begin-module zscript-map
   ;
 
   \ Test for membership in a map
-  : in-map? { key map -- success? }
+  : in-map? { key map -- found? }
+    key validate-key
     map map-inner@ { inner }
     inner >len 1 rshift { len }
     map map-equal-xt@ { equal }

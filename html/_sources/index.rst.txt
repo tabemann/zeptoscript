@@ -8,5 +8,6 @@ zeptoscript Documentation
    main/core
    main/oo
    main/list
+   main/map
    main/action
    
