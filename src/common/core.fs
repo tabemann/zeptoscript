@@ -3473,7 +3473,7 @@ begin-module zscript
   : sort ( seq xt -- )
     swap duplicate tuck swap sort!
   ;
-  
+
   \ Get whether a predicate applies to all elements of a sequence; note that
   \ not all elements will be iterated over if an element returns false, and
   \ true will be returned if the sequence is empty
@@ -3586,6 +3586,96 @@ begin-module zscript
     dup 0< averts x-incorrect-type
     1+ negate - 0 max >bytes
   ;
+
+  continue-module zscript-internal
+    
+    \ Our 32-bit FNV-1 prime
+    $01000193 forth::constant FNV-prime
+    
+    \ Our 32-bit FNV-1 offset basis
+    $811C9DC5 forth::constant FNV-offset-basis
+
+  end-module
+
+  \ Comparse two strings
+  : equal-bytes? { bytes0 bytes1 -- flag }
+    bytes0 >raw { raw0 }
+    bytes1 >raw { raw1 }
+    raw0 bytes? averts x-incorrect-type
+    raw1 bytes? averts x-incorrect-type
+    bytes0 >len { len }
+    bytes1 >len len = if
+      bytes0 >raw-offset { offset0 }
+      bytes1 >raw-offset { offset1 }
+      raw0 >type { type0 }
+      raw1 >type { type1 }
+      type0 const-bytes-type = if
+        raw0 forth::cell+ @
+      else
+        raw0 forth::cell+
+      then offset0 integral> forth::+ { addr0 }
+      type1 const-bytes-type = if
+        raw1 forth::cell+ @
+      else
+        raw1 forth::cell+
+      then offset1 integral> forth::+ { addr1 }
+      addr0 len integral> addr1 over forth::equal-strings? >integral
+    else
+      false
+    then
+  ;
+
+  \ Comparse two strings case-insensitively
+  : equal-case-bytes? { bytes0 bytes1 -- flag }
+    bytes0 >raw { raw0 }
+    bytes1 >raw { raw1 }
+    raw0 bytes? averts x-incorrect-type
+    raw1 bytes? averts x-incorrect-type
+    bytes0 >len { len }
+    bytes1 >len len = if
+      bytes0 >raw-offset { offset0 }
+      bytes1 >raw-offset { offset1 }
+      raw0 >type { type0 }
+      raw1 >type { type1 }
+      type0 const-bytes-type = if
+        raw0 forth::cell+ @
+      else
+        raw0 forth::cell+
+      then offset0 integral> forth::+ { addr0 }
+      type1 const-bytes-type = if
+        raw1 forth::cell+ @
+      else
+        raw1 forth::cell+
+      then offset1 integral> forth::+ { addr1 }
+      addr0 len integral> addr1 over forth::equal-case-strings? >integral
+    else
+      false
+    then
+  ;
+
+  \ A 32-bit FNV-1 hash function for byte sequences
+  : hash-bytes ( bytes -- hash )
+    unsafe::bytes>addr-len unsafe::2integral>
+    FNV-prime
+    FNV-offset-basis
+    code[
+    r0 1 dp ldm \ r0: prime
+    r1 1 dp ldm \ r1: bytes
+    r2 1 dp ldm \ r2: c-addr
+    mark<
+    0 r1 cmp_,#_
+    eq bc> 2swap
+    r0 tos muls_,_
+    0 r2 r3 ldrb_,[_,#_]
+    r3 tos eors_,_
+    1 r2 adds_,#_
+    1 r1 subs_,#_
+    b<
+    >mark
+    ]code
+    unsafe::>integral
+  ;
+
   
   \ Unsafe operations raising exceptions outside of UNSAFE module
   : @ raise x-unsafe-op ;

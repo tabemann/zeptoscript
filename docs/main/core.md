@@ -1026,6 +1026,21 @@ Get whether a predicate applies to any element of a sequence; note that not all 
 
 Join a cell sequence of cell or byte sequences.
 
+### `equal-bytes?`
+( bytes0 bytes1 -- equal? )
+
+Get whether two byte sequences or slices have equal contents.
+
+### `equal-case-bytes?`
+( bytes0 bytes1 -- equal? )
+
+Get whether two byte sequences or slices have equal contents case-insensitively.
+
+### `hash-bytes`
+( bytes -- hash )
+
+Compute a 32-bit FNV-1 hash for a byte sequence or slice.
+
 ### `depth`
 ( -- depth )
 
