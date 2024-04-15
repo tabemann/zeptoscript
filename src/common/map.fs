@@ -118,7 +118,7 @@ begin-module zscript-map
   ;
 
   \ Iterate over the contents of a map
-  : iter-map { map xt -- }
+  : iter-map { map xt -- } \ xt ( value key -- )
     map map-inner@ { inner }
     inner >len 1 rshift { len }
     0 { index }
