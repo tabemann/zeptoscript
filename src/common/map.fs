@@ -127,7 +127,6 @@ begin-module zscript-map
   : iter-map { map xt -- } \ xt ( value key -- )
     map map-inner@ { inner }
     map map-entry-count@ { count }
-    inner >len 1 rshift { len }
     0 0 { index found-count }
     begin found-count count < while
       index 1 lshift { current }
@@ -140,11 +139,47 @@ begin-module zscript-map
     repeat
   ;
 
+  \ Map over a map and create a new map with identical keys but new values
+  : map-map { map xt -- map' } \ xt ( value key -- value' )
+    map map-inner@ { inner }
+    map map-entry-count@ { count }
+    map duplicate { map' }
+    inner >len make-cells { inner' }
+    inner' map' map-inner!
+    0 0 { index found-count }
+    begin found-count count < while
+      index 1 lshift { current }
+      current inner @+ { current-key }
+      current-key if
+        current-key current inner' !+
+        current 1+ inner @+ current-key xt execute current 1+ inner' !+
+        1 +to found-count
+      then
+      1 +to index
+    repeat
+    map'
+  ;
+
+  \ Map over a map and mutate its values in place
+  : map!-map { map xt -- } \ xt ( value key -- value' )
+    map map-inner@ { inner }
+    map map-entry-count@ { count }
+    0 0 { index found-count }
+    begin found-count count < while
+      index 1 lshift { current }
+      current inner @+ { current-key }
+      current-key if
+        current 1+ inner @+ current-key xt execute current 1+ inner !+
+        1 +to found-count
+      then
+      1 +to index
+    repeat
+  ;
+
   \ Get whether any element of a map meet a predicate
   : any-map { map xt -- } \ xt ( value key -- flag )
     map map-inner@ { inner }
     map map-entry-count@ { count }
-    inner >len 1 rshift { len }
     0 0 { index found-count }
     begin found-count count < while
       index 1 lshift { current }
@@ -162,7 +197,6 @@ begin-module zscript-map
   : all-map { map xt -- } \ xt ( value key -- flag )
     map map-inner@ { inner }
     map map-entry-count@ { count }
-    inner >len 1 rshift { len }
     0 0 { index found-count }
     begin found-count count < while
       index 1 lshift { current }

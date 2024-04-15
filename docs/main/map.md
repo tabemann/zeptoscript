@@ -183,6 +183,16 @@ Duplicate a map. This generates a shallow copy of the map; the keys and values t
 
 Iterate over the elements of a map.
 
+### `map-map`
+( map xt -- map' ) xt: ( value key -- value' )
+
+Map over a map and create a new map with identical keys but new values.
+
+### `map!-map`
+( map xt -- ) xt: ( value key -- value' )
+
+Map over a map and mutate its values in place.
+
 ### `any-map`
 ( map xt -- ) xt: ( value key -- flag )
 
