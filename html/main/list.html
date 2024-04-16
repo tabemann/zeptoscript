@@ -17,6 +17,7 @@
     <script src="../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Maps" href="map.html" />
     <link rel="prev" title="zeptoscript Object-Orientation" href="oo.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -76,6 +77,21 @@
 <h3><code class="docutils literal notranslate"><span class="pre">empty?</span></code><a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h3>
 <p>( list – empty? )</p>
 <p>Get whether <em>list</em> is empty.</p>
+</section>
+<section id="last">
+<h3><code class="docutils literal notranslate"><span class="pre">last</span></code><a class="headerlink" href="#last" title="Permalink to this heading">¶</a></h3>
+<p>( list – x )</p>
+<p>Get the last element of <em>list</em>, or <code class="docutils literal notranslate"><span class="pre">empty</span></code> if the list is empty.</p>
+</section>
+<section id="nth">
+<h3><code class="docutils literal notranslate"><span class="pre">nth</span></code><a class="headerlink" href="#nth" title="Permalink to this heading">¶</a></h3>
+<p>( index list – x )</p>
+<p>Get the the element of <em>list</em> at <em>index</em>, zero indexed, or <code class="docutils literal notranslate"><span class="pre">empty</span></code> if the list does not contain <em>index</em> + 1 elements.</p>
+</section>
+<section id="nth-tail">
+<h3><code class="docutils literal notranslate"><span class="pre">nth-tail</span></code><a class="headerlink" href="#nth-tail" title="Permalink to this heading">¶</a></h3>
+<p>( index list – list’ )</p>
+<p>Get the <em>index</em>-th tail of <em>list</em>, with zero returning all of <em>list</em>, or <code class="docutils literal notranslate"><span class="pre">empty</span></code> if there is no <em>index</em>-th tail of <em>list</em>.</p>
 </section>
 <section id="list-len">
 <h3><code class="docutils literal notranslate"><span class="pre">list&gt;len</span></code><a class="headerlink" href="#list-len" title="Permalink to this heading">¶</a></h3>
@@ -232,6 +248,9 @@
 <li class="toctree-l1"><a class="reference internal" href="core.html">zeptoscript Core Functionality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="oo.html">zeptoscript Object-Orientation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Lists</a></li>
+<li class="toctree-l1"><a class="reference internal" href="map.html">Maps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="set.html">Sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="action.html">Actions</a></li>
 </ul>
 
 <div class="relations">
@@ -239,6 +258,7 @@
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
       <li>Previous: <a href="oo.html" title="previous chapter">zeptoscript Object-Orientation</a></li>
+      <li>Next: <a href="map.html" title="next chapter">Maps</a></li>
   </ul></li>
 </ul>
 </div>

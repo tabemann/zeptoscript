@@ -45,6 +45,21 @@ Set the tail of *list* to *tail-list*.
 
 Get whether *list* is empty.
 
+### `last`
+( list -- x )
+
+Get the last element of *list*, or `empty` if the list is empty.
+
+### `nth`
+( index list -- x )
+
+Get the the element of *list* at *index*, zero indexed, or `empty` if the list does not contain *index* + 1 elements.
+
+### `nth-tail`
+( index list -- list' )
+
+Get the *index*-th tail of *list*, with zero returning all of *list*, or `empty` if there is no *index*-th tail of *list*.
+
 ### `list>len`
 ( list -- len )
 

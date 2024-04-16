@@ -43,6 +43,28 @@ begin-module zscript-list
   \ Is a list empty
   : empty? ( list -- flag ) 0= ;
 
+  \ Get the last element of a list
+  : last ( list -- x )
+    dup if begin dup tail@ ?dup if nip false else head@ true then until then
+  ;
+
+  \ Get the nth element of a list, indexed from zero
+  : nth { index list -- x }
+    begin index 0> while
+      list if list tail@ to list -1 +to index else 0 to index then
+    repeat
+    list if list head@ else empty then
+  ;
+
+  \ Get the tail of a list starting at the nth element of a list, indexed from
+  \ zero; 0 returns the entire list
+  : nth-tail { index list -- x }
+    begin index 0> while
+      list if list tail@ to list -1 +to index else 0 to index then
+    repeat
+    list
+  ;
+    
   \ Get the length of a list
   : list>len { list -- len }
     0 begin list while 1+ list tail@ to list repeat
