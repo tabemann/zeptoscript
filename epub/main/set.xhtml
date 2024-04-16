@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Sets</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/epub.css" /> 
+  </head><body>
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <section id="sets">
+<h1>Sets</h1>
+<p>Sets are data structures for containing unique values in an unordered fashion. Values can be arbitrarily added to, removed from, and tested for presence in a set.</p>
+<p>A very common sort of set is a string-set. The easiest way to implement a string-set is to create a set with the <code class="docutils literal notranslate"><span class="pre">hash-bytes</span></code> hash word and the <code class="docutils literal notranslate"><span class="pre">equal-bytes?</span></code> equality word, and shown below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>global my-set
+0 &#39; hash-bytes &#39; equal-bytes? make-set my-set!
+</pre></div>
+</div>
+<p>Values can be added to a set as shown below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">s</span><span class="s2">&quot; foo&quot;</span> <span class="n">my</span><span class="o">-</span><span class="nb">set</span><span class="o">@</span> <span class="n">insert</span><span class="o">-</span><span class="nb">set</span>
+<span class="n">s</span><span class="s2">&quot; bar&quot;</span> <span class="n">my</span><span class="o">-</span><span class="nb">set</span><span class="o">@</span> <span class="n">insert</span><span class="o">-</span><span class="nb">set</span>
+<span class="n">s</span><span class="s2">&quot; baz&quot;</span> <span class="n">my</span><span class="o">-</span><span class="nb">set</span><span class="o">@</span> <span class="n">insert</span><span class="o">-</span><span class="nb">set</span>
+<span class="n">s</span><span class="s2">&quot; qux&quot;</span> <span class="n">my</span><span class="o">-</span><span class="nb">set</span><span class="o">@</span> <span class="n">insert</span><span class="o">-</span><span class="nb">set</span>
+<span class="n">s</span><span class="s2">&quot; quux&quot;</span> <span class="n">my</span><span class="o">-</span><span class="nb">set</span><span class="o">@</span> <span class="n">insert</span><span class="o">-</span><span class="nb">set</span>
+</pre></div>
+</div>
+<p>Values can be removed from a set as shown below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">s</span><span class="s2">&quot; qux&quot;</span> <span class="n">my</span><span class="o">-</span><span class="nb">set</span><span class="o">@</span> <span class="n">remove</span><span class="o">-</span><span class="nb">set</span>
+</pre></div>
+</div>
+<p>Values can be tested for membership in a set as shown below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>s&quot; foo&quot; my-set@ in-set? .
+</pre></div>
+</div>
+<p>This will output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="mi">1</span>  <span class="n">ok</span>
+</pre></div>
+</div>
+<p>Non-membership (in this case after removing the value “qux”) is shown by:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>s&quot; qux&quot; my-set@ in-set? .
+</pre></div>
+</div>
+<p>This will output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span>  <span class="n">ok</span>
+</pre></div>
+</div>
+<p>A set can be iterated over as shown below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">my</span><span class="o">-</span><span class="nb">set</span><span class="o">@</span> <span class="p">[:</span> <span class="nb">type</span> <span class="n">space</span> <span class="p">;]</span> <span class="nb">iter</span><span class="o">-</span><span class="nb">set</span>
+</pre></div>
+</div>
+<p>This will output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">quux</span> <span class="n">foo</span> <span class="n">bar</span> <span class="n">baz</span>  <span class="n">ok</span>
+</pre></div>
+</div>
+<p>A set can be tested for any element matching a predicate as shown below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>my-set@ [: s&quot; foo&quot; equal-bytes? ;] any-set .
+</pre></div>
+</div>
+<p>This will output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="mi">1</span>  <span class="n">ok</span>
+</pre></div>
+</div>
+<p>No element matching a predicate is shown below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>my-set@ [: s&quot; foobar&quot; equal-bytes? ;] any-set .
+</pre></div>
+</div>
+<p>This will output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span>  <span class="n">ok</span>
+</pre></div>
+</div>
+<p>A set can be tested for all elements matching a predicate as shown below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">my</span><span class="o">-</span><span class="nb">set</span><span class="o">@</span> <span class="p">[:</span> <span class="o">&gt;</span><span class="nb">len</span> <span class="mi">5</span> <span class="o">&lt;</span> <span class="p">;]</span> <span class="nb">any</span><span class="o">-</span><span class="nb">set</span> <span class="o">.</span>
+</pre></div>
+</div>
+<p>This will output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="mi">1</span>  <span class="n">ok</span>
+</pre></div>
+</div>
+<p>Not all elements matching a predicate is shown below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">my</span><span class="o">-</span><span class="nb">set</span><span class="o">@</span> <span class="p">[:</span> <span class="o">&gt;</span><span class="nb">len</span> <span class="mi">4</span> <span class="o">&lt;</span> <span class="p">;]</span> <span class="nb">any</span><span class="o">-</span><span class="nb">set</span> <span class="o">.</span>
+</pre></div>
+</div>
+<p>This will output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span>  <span class="n">ok</span>
+</pre></div>
+</div>
+<p>While values may be mutable values, undefined results will occur if the values are mutated; if this may be an issue, it would be prudent to use <code class="docutils literal notranslate"><span class="pre">duplicate</span></code> (or its like) to duplicate the values before inserting them and/or after retrieving the values if they may be mutated afterward.</p>
+<section id="zscript-set-words">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-set</span></code> words</h2>
+<section id="make-set">
+<h3><code class="docutils literal notranslate"><span class="pre">make-set</span></code></h3>
+<p>( size hash-xt equal-xt – set ) hash-xt: ( value – hash ) equal-xt: { value0 value1 – equal? )</p>
+<p>Make a set (a size of 0 indicates a default size). <em>hash-xt</em> is a hash function applied to each value for the set. <em>equal-xt</em> is a function to test the equality of two values for the set.</p>
+</section>
+<section id="duplicate-set">
+<h3><code class="docutils literal notranslate"><span class="pre">duplicate-set</span></code></h3>
+<p>( set – set’ )</p>
+<p>Duplicate a set. This generates a shallow copy of the set; the values themselves are not duplicated.</p>
+</section>
+<section id="iter-set">
+<h3><code class="docutils literal notranslate"><span class="pre">iter-set</span></code></h3>
+<p>( set xt – ) xt: ( value – )</p>
+<p>Iterate over the elements of a set.</p>
+</section>
+<section id="any-set">
+<h3><code class="docutils literal notranslate"><span class="pre">any-set</span></code></h3>
+<p>( set xt – ) xt: ( value – flag )</p>
+<p>Get whether any element of a set meet a predicate.</p>
+</section>
+<section id="all-set">
+<h3><code class="docutils literal notranslate"><span class="pre">all-set</span></code></h3>
+<p>( set xt – ) xt: ( value – flag )</p>
+<p>Get whether all elements of a set meet a predicate.</p>
+</section>
+<section id="set-values">
+<h3><code class="docutils literal notranslate"><span class="pre">set-values</span></code></h3>
+<p>( set – values )</p>
+<p>Get the values of a set as a cell sequence.</p>
+</section>
+<section id="insert-set">
+<h3><code class="docutils literal notranslate"><span class="pre">insert-set</span></code></h3>
+<p>( value set – )</p>
+<p>Insert an entry in a set.</p>
+</section>
+<section id="remove-set">
+<h3><code class="docutils literal notranslate"><span class="pre">remove-set</span></code></h3>
+<p>( value set – )</p>
+<p>Remove an entry from a set.</p>
+</section>
+<section id="in-set">
+<h3><code class="docutils literal notranslate"><span class="pre">in-set?</span></code></h3>
+<p>( value set – found? )</p>
+<p>Test for membership in a set.</p>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

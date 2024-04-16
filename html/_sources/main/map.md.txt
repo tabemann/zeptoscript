@@ -166,7 +166,7 @@ bar 20 baz 30 foo 10  ok
 
 While keys may be mutable values, undefined results will occur if the keys are mutated; if this may be an issue, it would be prudent to use `duplicate` (or its like) to duplicate the keys before inserting them and/or after retrieving the keys if they may be mutated afterward.
 
-## `map` words
+## `zscript-map` words
 
 ### `make-map`
 ( size hash-xt equal-xt -- map ) hash-xt: ( key -- hash ) equal-xt: { key0 key1 -- equal? )
@@ -206,17 +206,17 @@ Get whether all elements of a map meet a predicate.
 ### `map-keys`
 ( map -- keys )
 
-Get the keys of a map.
+Get the keys of a map as a cell sequence.
 
 ### `map-values`
 ( map -- values )
 
-Get the values of a map.
+Get the values of a map as a cell sequence.
 
 ### `map-key-values`
 ( map -- pairs )
 
-Get the keys and values of a map as pairs.
+Get the keys and values of a map as pairs as a cell sequence.
 
 ### `insert-map`
 ( val key map -- )

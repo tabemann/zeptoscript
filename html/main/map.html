@@ -17,7 +17,7 @@
     <script src="../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Actions" href="action.html" />
+    <link rel="next" title="Sets" href="set.html" />
     <link rel="prev" title="Lists" href="list.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -147,8 +147,8 @@
 </pre></div>
 </div>
 <p>While keys may be mutable values, undefined results will occur if the keys are mutated; if this may be an issue, it would be prudent to use <code class="docutils literal notranslate"><span class="pre">duplicate</span></code> (or its like) to duplicate the keys before inserting them and/or after retrieving the keys if they may be mutated afterward.</p>
-<section id="map-words">
-<h2><code class="docutils literal notranslate"><span class="pre">map</span></code> words<a class="headerlink" href="#map-words" title="Permalink to this heading">¶</a></h2>
+<section id="zscript-map-words">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-map</span></code> words<a class="headerlink" href="#zscript-map-words" title="Permalink to this heading">¶</a></h2>
 <section id="make-map">
 <h3><code class="docutils literal notranslate"><span class="pre">make-map</span></code><a class="headerlink" href="#make-map" title="Permalink to this heading">¶</a></h3>
 <p>( size hash-xt equal-xt – map ) hash-xt: ( key – hash ) equal-xt: { key0 key1 – equal? )</p>
@@ -187,17 +187,17 @@
 <section id="map-keys">
 <h3><code class="docutils literal notranslate"><span class="pre">map-keys</span></code><a class="headerlink" href="#map-keys" title="Permalink to this heading">¶</a></h3>
 <p>( map – keys )</p>
-<p>Get the keys of a map.</p>
+<p>Get the keys of a map as a cell sequence.</p>
 </section>
 <section id="map-values">
 <h3><code class="docutils literal notranslate"><span class="pre">map-values</span></code><a class="headerlink" href="#map-values" title="Permalink to this heading">¶</a></h3>
 <p>( map – values )</p>
-<p>Get the values of a map.</p>
+<p>Get the values of a map as a cell sequence.</p>
 </section>
 <section id="map-key-values">
 <h3><code class="docutils literal notranslate"><span class="pre">map-key-values</span></code><a class="headerlink" href="#map-key-values" title="Permalink to this heading">¶</a></h3>
 <p>( map – pairs )</p>
-<p>Get the keys and values of a map as pairs.</p>
+<p>Get the keys and values of a map as pairs as a cell sequence.</p>
 </section>
 <section id="insert-map">
 <h3><code class="docutils literal notranslate"><span class="pre">insert-map</span></code><a class="headerlink" href="#insert-map" title="Permalink to this heading">¶</a></h3>
@@ -245,6 +245,7 @@
 <li class="toctree-l1"><a class="reference internal" href="oo.html">zeptoscript Object-Orientation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="list.html">Lists</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Maps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="set.html">Sets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="action.html">Actions</a></li>
 </ul>
 
@@ -253,7 +254,7 @@
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
       <li>Previous: <a href="list.html" title="previous chapter">Lists</a></li>
-      <li>Next: <a href="action.html" title="next chapter">Actions</a></li>
+      <li>Next: <a href="set.html" title="next chapter">Sets</a></li>
   </ul></li>
 </ul>
 </div>

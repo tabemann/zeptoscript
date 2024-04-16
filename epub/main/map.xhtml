@@ -126,8 +126,8 @@
 </pre></div>
 </div>
 <p>While keys may be mutable values, undefined results will occur if the keys are mutated; if this may be an issue, it would be prudent to use <code class="docutils literal notranslate"><span class="pre">duplicate</span></code> (or its like) to duplicate the keys before inserting them and/or after retrieving the keys if they may be mutated afterward.</p>
-<section id="map-words">
-<h2><code class="docutils literal notranslate"><span class="pre">map</span></code> words</h2>
+<section id="zscript-map-words">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-map</span></code> words</h2>
 <section id="make-map">
 <h3><code class="docutils literal notranslate"><span class="pre">make-map</span></code></h3>
 <p>( size hash-xt equal-xt – map ) hash-xt: ( key – hash ) equal-xt: { key0 key1 – equal? )</p>
@@ -166,17 +166,17 @@
 <section id="map-keys">
 <h3><code class="docutils literal notranslate"><span class="pre">map-keys</span></code></h3>
 <p>( map – keys )</p>
-<p>Get the keys of a map.</p>
+<p>Get the keys of a map as a cell sequence.</p>
 </section>
 <section id="map-values">
 <h3><code class="docutils literal notranslate"><span class="pre">map-values</span></code></h3>
 <p>( map – values )</p>
-<p>Get the values of a map.</p>
+<p>Get the values of a map as a cell sequence.</p>
 </section>
 <section id="map-key-values">
 <h3><code class="docutils literal notranslate"><span class="pre">map-key-values</span></code></h3>
 <p>( map – pairs )</p>
-<p>Get the keys and values of a map as pairs.</p>
+<p>Get the keys and values of a map as pairs as a cell sequence.</p>
 </section>
 <section id="insert-map">
 <h3><code class="docutils literal notranslate"><span class="pre">insert-map</span></code></h3>

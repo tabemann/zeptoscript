@@ -9,5 +9,6 @@ zeptoscript Documentation
    main/oo
    main/list
    main/map
+   main/set
    main/action
    
