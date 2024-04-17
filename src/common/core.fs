@@ -1444,7 +1444,48 @@ begin-module zscript
         nip false true rot
       endcase
     until
-  ;  
+  ;
+
+  continue-module zscript-internal
+    
+    \ Are we using old-style modules?
+    1 value old-style-modules
+
+    \ New style flag
+    $FF000000 constant new-style-flag
+    
+    \ Is a module new-style
+    : new-style? ( module -- flag ) 1 arshift new-style-flag and 0<> ;
+    
+    \ Filter out the new-style flag
+    : filter-new-style-flag ( module -- module' ) integral> new-style-flag bic ;
+
+    \ Make new-style module id
+    : make-new-style ( module -- module' ) new-style-flag or >small-int ;
+
+    \ Find a particular word in a provided module
+    : do-find-with-module ( c-addr u -- word|0 )
+      2dup internal::find-path-sep dup -1 <> if
+        2 pick over internal::old-find-hook @ execute ?dup if
+          >r 2 + tuck - -rot + swap r> -rot 2>r
+          >r get-order r> >xt execute
+          dup new-style? if
+            filter-new-style-flag
+            1 set-order 2r> find >r set-order r>
+          else
+            old-style-modules 1+ to old-style-modules
+            1 set-order 2r> find >r set-order r>
+            old-style-modules 1- to old-style-modules
+          then
+        else
+          2drop drop 0
+        then
+      else
+        drop internal::old-find-hook @ execute
+      then
+    ;
+
+  end-module
   
   \ Initialize zeptoscript
   defer init-zscript
@@ -1481,6 +1522,12 @@ begin-module zscript
     get-current-flash-global-id
     cells-type allocate-cells flash-globals-array!
     ['] do-handle-number handle-number-hook !
+    zscript 1 set-order
+    0 internal::module-stack-index !
+    zscript internal::push-stack
+    zscript internal::add
+    ['] do-find-with-module find-hook !
+    0 to old-style-modules
     true to inited?
   ; is init-zscript
 
@@ -2262,6 +2309,14 @@ begin-module zscript
       dup 3 forth::and triggers x-unaligned-dereference
       @ >integral
     ;
+
+    \ Redefine BIT@
+    : bit@ ( bits addr -- flag )
+      2integral>
+      dup averts x-null-dereference
+      dup 3 forth::and triggers x-unaligned-dereference
+      bit@ >integral
+    ;
   
     \ Redefine !
     : ! ( x addr -- )
@@ -2311,6 +2366,14 @@ begin-module zscript
       h@ >integral
     ;
   
+    \ Redefine HBIT@
+    : hbit@ ( bits addr -- flag )
+      2integral>
+      dup averts x-null-dereference
+      dup 1 forth::and triggers x-unaligned-dereference
+      hbit@ >integral
+    ;
+
     \ Redefine H!
     : h! ( h addr -- )
       integral>
@@ -2357,7 +2420,14 @@ begin-module zscript
       dup averts x-null-dereference
       c@ >integral
     ;
-  
+
+    \ Redefine CBIT@
+    : cbit@ ( bits addr -- flag )
+      2integral>
+      dup averts x-null-dereference
+      cbit@ >integral
+    ;
+
     \ Redefine C!
     : c! ( c addr -- )
       integral>
@@ -2444,7 +2514,7 @@ begin-module zscript
 
     \ ALLOT space
     : allot ( x -- ) integral> allot ;
-    
+
   end-module
 
   \ Type a string
@@ -2649,11 +2719,43 @@ begin-module zscript
     postpone forth::!
     end-compile,
   ;
+
+  \ Get a word's name
+  : >name { word -- name }
+    word >type tagged-type = averts x-incorrect-type
+    word >tag word-tag = averts x-incorrect-type
+    0 word t@+ integral> forth::>name forth::count addr-len>bytes
+  ;
+
+  \ Get the flags for a word
+  : word-flags { word -- flags }
+    word >type tagged-type = averts x-incorrect-type
+    word >tag word-tag = averts x-incorrect-type
+    0 word t@+ integral> internal::word-flags h@ >integral
+  ;
+  
+  \ Compile a word
+  : compile, ( xt -- )
+    xt>integral integral> forth::compile,
+  ;
+
+  \ Inline a word
+  : inline, ( xt -- )
+    xt>integral integral> internal::inline,
+  ;
+
+  \ Word flags
+  forth::visible-flag >small-int constant visible-flag
+  forth::immediate-flag >small-int constant immediate-flag
+  forth::compiled-flag >small-int constant compiled-flag
+  forth::inlined-flag >small-int constant inlined-flag
+  forth::fold-flag >small-int constant fold-flag
+  forth::init-value-flag >small-int constant init-value-flag
   
   \ Make a foreign word usable
   : foreign ( in-count out-count "foreign-name" "new-name" -- )
     { in-count out-count }
-    token-word word>xt { xt }
+    token-word { word }
     token dup 0<> averts x-token-expected
     start-compile visible
     in-count 0 > if
@@ -2668,7 +2770,14 @@ begin-module zscript
         then
       then
     then
-    xt xt>integral raw-lit, postpone forth::execute
+    word word-flags
+    dup immediate-flag and if immediate then
+    dup compiled-flag and if compile-only then
+    inlined-flag fold-flag or and if
+      word word>xt inline,
+    else
+      word word>xt compile,
+    then
     out-count 0 > if
       out-count [ 1 >small-int ] literal = if
         postpone >integral
@@ -3676,7 +3785,75 @@ begin-module zscript
     unsafe::>integral
   ;
 
+  \ Begin a module definition
+  : begin-module ( "name" -- )
+    forth::token dup forth::0<> forth::averts forth::x-token-expected
+    2dup forth::find forth::?dup forth::if
+    forth::['] forth::x-already-defined forth::?raise
+    else
+      forth::wordlist
+      dup >r make-new-style -rot internal::constant-with-name r>
+    then
+    dup internal::push-stack
+    internal::add
+  ;
   
+  \ Continue an existing module definition
+  : continue-module ( "name" -- )
+    forth::token dup forth::0<> forth::averts forth::x-token-expected
+    2dup forth::find forth::?dup forth::if
+      nip nip forth::>xt forth::execute dup new-style? if
+        filter-new-style-flag
+      then
+    else
+      forth::['] forth::x-not-found forth::?raise
+    then
+    dup internal::push-stack
+    internal::add
+  ;
+  
+  \ Start a private module definition
+  : private-module [inlined] forth::private-module ;
+
+  \ End a module definition
+  : end-module [inlined] forth::end-module ;
+  
+  \ End a module definition and place the module on the stack
+  : end-module> ( -- module )
+    forth::end-module> make-new-style
+  ;
+
+  \ Import a module
+  : import ( module -- )
+    dup new-style? if filter-new-style-flag then internal::add
+  ;
+  
+  \ Una module import
+  : unimport ( module -- )
+    dup new-style? if filter-new-style-flag then internal::remove
+  ;
+  
+  \ Immediate
+  : immediate [inlined] forth::immediate ;
+  : [immediate]
+    [inlined] [immediate] [compile-only] postpone forth::[immediate]
+  ;
+  
+  \ Compile-only
+  : compile-only [inlined] forth::compile-only ;
+  : [compile-only]
+    [inlined] [immediate] [compile-only] postpone forth::[compile-only]
+  ;
+
+  \ Inlined
+  : inlined [inlined] forth::inlined ;
+  : [inlined]
+    [inlined] [immediate] [compile-only] postpone forth::[inlined]
+  ;
+
+  \ Visible
+  : visible [inlined] forth::visible ;
+
   \ Unsafe operations raising exceptions outside of UNSAFE module
   : @ raise x-unsafe-op ;
   : ! raise x-unsafe-op ;
@@ -3700,7 +3877,7 @@ begin-module zscript
   : fill raise x-unsafe-op ;
   : here raise x-unsafe-op ;
   : allot raise x-unsafe-op ;
-
+  
   \ Empty cells
   \
   \ This is not garbage collected so does not need to be in the heap.
@@ -3718,5 +3895,73 @@ begin-module zscript
   type-shift forth::lshift
   forth::cell 1 forth::lshift forth::or ,
   forth::constant 0bytes
+
+  \ Redefine ?DUP
+  : ?dup dup if else drop then ;
+
+  true >small-int constant true
+  false >small-int constant false
+  : [: [immediate] postpone [: ;
+  : \ [immediate] postpone \ ;
+  : ( [immediate] postpone ( ;
+  : { [immediate] postpone { ;
+  : to [immediate] postpone to ;
+  : exit [immediate] [compile-only] postpone exit ;
+  : else [immediate] [compile-only] postpone forth::else ;
+  : then [immediate] [compile-only] postpone forth::then ;
+  : begin [immediate] postpone forth::begin ;
+  : repeat [immediate] [compile-only] postpone forth::repeat ;
+  : again [immediate] [compile-only] postpone forth::again ;
+  : end [immediate] [compile-only] postpone forth::end ;
+  : endof [immediate] [compile-only] postpone forth::endof ;
+  : endcase [immediate] [compile-only] postpone forth::endcase ;
+  : goto [immediate] [compile-only] postpone forth::goto ;
+  : drop [inlined] forth::drop ;
+  : dup [inlined] forth::dup ;
+  : swap [inlined] forth::swap ;
+  : over [inlined] forth::over ;
+  : rot [inlined] forth::rot ;
+  : pick [inlined] forth::pick ;
+  : roll [inlined] forth::roll ;
+  : nip [inlined] forth::nip ;
+  : tuck [inlined] forth::tuck ;
+  : 2drop [inlined] forth::2drop ;
+  : 2swap [inlined] forth::2swap ;
+  : 2over [inlined] forth::2over ;
+  : 2dup [inlined] forth::2dup ;
+  : 2nip [inlined] forth::2nip ;
+  : 2tuck [inlined] forth::2tuck ;
+  : emit integral> forth::emit ;
+  : emit? forth::emit? >integral ;
+  : space forth::space ;
+  : cr forth::cr ;
+  : key forth::key integral> ;
+  : key? forth::key? integral> ;
+  : enable-int forth::enable-int ;
+  : disable-int forth::disable-int ;
+  : sleep forth::sleep ;
+  : [ [immediate] postpone forth::[ ;
+  : ] forth::] ;
+  : compile-to-ram forth::compile-to-ram ;
+  : compile-to-flash forth::compile-to-flash ;
+  : compiling-to-flash? forth::compiling-to-flash? ;
+  : postpone [immediate] [compile-only] postpone forth::postpone ;
+  : literal [immediate] [compile-only] forth::postpone forth::literal ;
+  : recurse [immediate] [compile-only] forth::postpone forth::recurse ;
+  : reboot forth::reboot ;
+  : pause forth::pause ;
+  : i [immediate] [compile-only] postpone i ;
+  : j [immediate] [compile-only] postpone j ;
+  : : : ;
+  : ; [immediate] [compile-only] postpone ; ;
+  : ." [immediate] postpone ." ;
+  : .( [immediate] postpone .( ;
+  : x-token-expected x-token-expected ;
+
+  \ Forth module
+  forth make-new-style constant forth
+
+  \ Internal module
+  internal make-new-style constant internal
   
 end-module

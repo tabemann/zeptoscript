@@ -19,8 +19,6 @@
 \ SOFTWARE.
 
 begin-module zscript-fixed32
-
-  zscript import
   
   \ The saved handle-number-nook
   global saved-handle-number-hook

@@ -20,8 +20,6 @@
 
 begin-module zscript-map
 
-  zscript import
-
   begin-module zscript-map-internal
 
     \ Empty cells

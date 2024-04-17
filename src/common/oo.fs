@@ -20,8 +20,7 @@
 
 begin-module zscript-oo
 
-  zscript import
-  armv6m import
+  forth::armv6m import
 
   \ Types
   8 constant class-type
@@ -381,7 +380,7 @@ begin-module zscript-oo
     { class-rec }
     syntax-class verify-syntax
     token-word word>xt { method-xt }
-    :noname
+    forth:::noname
     unsafe::>integral { code }
     class-rec class-methods@ { methods }
     methods method-xt unsafe::xt>integral get-method-id
@@ -395,16 +394,16 @@ begin-module zscript-oo
     syntax-class verify-syntax internal::drop-syntax
     class-rec generate-methods
     class-rec class-addr@ unsafe::integral> { our-class }
-    :noname unsafe::>integral
+    forth:::noname unsafe::>integral
     1 or class-rec class-construct@ current!
     class-rec class-member-count@ lit,
     our-class unsafe::>integral raw-lit,
     postpone make-object
     ['] new our-class class-has-method? if
       postpone dup
-      postpone >r
+      postpone forth::>r
       postpone new
-      postpone r>
+      postpone forth::r>
     then
     postpone ;
   ;

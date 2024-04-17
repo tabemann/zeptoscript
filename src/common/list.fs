@@ -19,8 +19,6 @@
 \ SOFTWARE.
 
 begin-module zscript-list
-  
-  zscript import
 
   \ Cons a value onto the head of a list
   : cons ( x list -- list' ) >pair ;

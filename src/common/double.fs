@@ -20,8 +20,6 @@
 
 begin-module zscript-double
 
-  zscript import
-
   \ The saved handle-number-hook
   global saved-handle-number-hook
 

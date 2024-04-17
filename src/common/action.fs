@@ -18,9 +18,7 @@
 \ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 \ SOFTWARE.
 
-begin-module zscript-action
-
-  zscript import
+begin-module action
 
   \ zeptoscript must be initialized with ZSCRIPT::INIT-ZSCRIPT (whether since
   \ the last boot for if ZSCRIPT::INIT-ZSCRIPT was executed while compiling to
@@ -39,7 +37,7 @@ begin-module zscript-action
   \ Operation already set exception
   : x-operation-set ( -- ) ." operation already set" cr ;
 
-  begin-module zscript-action-internal
+  begin-module action-internal
     
     \ The current schedule
     global current-schedule
@@ -48,10 +46,19 @@ begin-module zscript-action
     global current-action
 
     \ Make the systick counter available
-    0 1 foreign systick::systick-counter systick-counter
+    0 1 foreign forth::systick::systick-counter systick-counter
 
     \ Make the error console available
     1 0 foreign forth::with-error-console with-error-console
+
+    \ Display red
+    0 0 foreign forth::display-red display-red
+
+    \ Display normal
+    0 0 foreign forth::display-normal display-normal
+
+    \ Ring a bell
+    0 0 foreign forth::bel bel
 
     \ Schedule records
     begin-record schedule
@@ -401,12 +408,12 @@ begin-module zscript-action
     resume-xt current-action@ action-resume-xt!
   ;
 
-  continue-module zscript-action-internal
+  continue-module action-internal
     
     \ Execute a word and handle exceptions while continuing
     : execute-handle ( xt -- )
       try ?dup if
-        [: display-red try drop display-normal bel ;] xt>integral
+        [: display-red try drop display-normal bel ;] unsafe::xt>integral
         with-error-console
         current-action@ remove-action
       then

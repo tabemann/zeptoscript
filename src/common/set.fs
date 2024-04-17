@@ -20,8 +20,6 @@
 
 begin-module zscript-set
 
-  zscript import
-
   begin-module zscript-set-internal
 
     \ Empty cells
