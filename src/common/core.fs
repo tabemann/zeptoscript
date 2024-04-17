@@ -3921,6 +3921,7 @@ begin-module zscript
   : swap [inlined] forth::swap ;
   : over [inlined] forth::over ;
   : rot [inlined] forth::rot ;
+  : -rot [inlined] forth::-rot ;
   : pick [inlined] forth::pick ;
   : roll [inlined] forth::roll ;
   : nip [inlined] forth::nip ;
@@ -3957,6 +3958,7 @@ begin-module zscript
   : ." [immediate] postpone ." ;
   : .( [immediate] postpone .( ;
   : x-token-expected x-token-expected ;
+  : initializer initializer ;
 
   \ Forth module
   forth make-new-style constant forth

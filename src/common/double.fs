@@ -43,130 +43,130 @@ begin-module zscript-double
   
   \ Test for the quality of two doubles
   : d= ( dvalue0 dvalue1 -- equal? )
-    zscript-internal::2double> d= zscript-internal::>integral
+    zscript-internal::2double> forth::d= zscript-internal::>integral
   ;
 
   \ Test for the inequality of two doubles
   : d<> ( dvalue0 dvalue1 -- not-equal? )
-    zscript-internal::2double> d<> zscript-internal::>integral
+    zscript-internal::2double> forth::d<> zscript-internal::>integral
   ;
 
   \ Unsigned double less than
   : du< ( dvalue0 dvalue1 -- flag? )
-    zscript-internal::2double> du< zscript-internal::>integral
+    zscript-internal::2double> forth::du< zscript-internal::>integral
   ;
 
   \ Unsigned double greater than
   : du> ( dvalue0 dvalue1 -- flag? )
-    zscript-internal::2double> du> zscript-internal::>integral
+    zscript-internal::2double> forth::du> zscript-internal::>integral
   ;
 
   \ Unsigned double greater than or equal
   : du>= ( dvalue0 dvalue1 -- flag? )
-    zscript-internal::2double> du>= zscript-internal::>integral
+    zscript-internal::2double> forth::du>= zscript-internal::>integral
   ;
 
   \ Unsigned double less than or equal
   : du<= ( dvalue0 dvalue1 -- flag? )
-    zscript-internal::2double> du<= zscript-internal::>integral
+    zscript-internal::2double> forth::du<= zscript-internal::>integral
   ;
 
   \ Signed double less than
   : d< ( dvalue0 dvalue1 -- flag? )
-    zscript-internal::2double> d< zscript-internal::>integral
+    zscript-internal::2double> forth::d< zscript-internal::>integral
   ;
 
   \ Signed double greater than
   : d> ( dvalue0 dvalue1 -- flag? )
-    zscript-internal::2double> d> zscript-internal::>integral
+    zscript-internal::2double> forth::d> zscript-internal::>integral
   ;
 
   \ Signed double greater than or equal than
   : d>= ( dvalue0 dvalue1 -- flag? )
-    zscript-internal::2double> d>= zscript-internal::>integral
+    zscript-internal::2double> forth::d>= zscript-internal::>integral
   ;
 
   \ Signed double less than or equal than
   : d<= ( dvalue0 dvalue1 -- flag? )
-    zscript-internal::2double> d<= zscript-internal::>integral
+    zscript-internal::2double> forth::d<= zscript-internal::>integral
   ;
 
   \ Double equals zero
   : d0= ( dvalue -- flag? )
-    zscript-internal::double> d0= zscript-internal::>integral
+    zscript-internal::double> forth::d0= zscript-internal::>integral
   ;
 
   \ Double not equals zero
   : d0<> ( dvalue -- flag? )
-    zscript-internal::double> d0<> zscript-internal::>integral
+    zscript-internal::double> forth::d0<> zscript-internal::>integral
   ;
 
   \ Double less than zero
   : d0< ( dvalue -- flag? )
-    zscript-internal::double> d0< zscript-internal::>integral
+    zscript-internal::double> forth::d0< zscript-internal::>integral
   ;
 
   \ Double greater than zero
   : d0> ( dvalue -- flag? )
-    zscript-internal::double> d0> zscript-internal::>integral
+    zscript-internal::double> forth::d0> zscript-internal::>integral
   ;
 	
   \ Double less than or equal to zero
   : d0<= ( dvalue -- flag? )
-    zscript-internal::double> d0<= zscript-internal::>integral
+    zscript-internal::double> forth::d0<= zscript-internal::>integral
   ;
 
   \ Double greater than or equal to zero
   : d0>= ( dvalue -- flag? )
-    zscript-internal::double> d0>= zscript-internal::>integral
+    zscript-internal::double> forth::d0>= zscript-internal::>integral
   ;
 
   \ Double left shift
   : 2lshift ( dvalue0 x -- dvalue2 )
-    zscript-internal::integral> swap zscript-internal::double> rot 2lshift
-    zscript-internal::>double
+    zscript-internal::integral> swap zscript-internal::double> rot
+    forth::2lshift zscript-internal::>double
   ;
 
   \ Double right shift
   : 2rshift ( dvalue0 x -- dvalue2 )
-    zscript-internal::integral> swap zscript-internal::double> rot 2rshift
-    zscript-internal::>double
+    zscript-internal::integral> swap zscript-internal::double> rot
+    forth::2rshift zscript-internal::>double
   ;
 
   \ Double arithmetic right shift
   : 2arshift ( dvalue0 x -- dvalue2 )
-    zscript-internal::integral> swap zscript-internal::double> rot 2arshift
-    zscript-internal::>double
+    zscript-internal::integral> swap zscript-internal::double> rot
+    forth::2arshift zscript-internal::>double
   ;
 	
   \ Negate a double word
   : dnegate ( dvalue0 -- dvalue1 )
-    zscript-internal::double> dnegate zscript-internal::>double
+    zscript-internal::double> forth::dnegate zscript-internal::>double
   ;
 
   \ Add two double words
   : d+ ( dvalue0 dvalue1 -- dvalue2 )
-    zscript-internal::2double> d+ zscript-internal::>double
+    zscript-internal::2double> forth::d+ zscript-internal::>double
   ;
 
   \ Subtract two double words
   : d- ( dvalue0 dvalue1 -- dvalue2 )
-    zscript-internal::2double> d- zscript-internal::>double
+    zscript-internal::2double> forth::d- zscript-internal::>double
   ;
 
   \ Signed multiply 64 * 64 = 64
   : d* ( ndvalue0 ndvalue1 -- dvalue2 )
-    zscript-internal::2double> d* zscript-internal::>double
+    zscript-internal::2double> forth::d* zscript-internal::>double
   ;
   
   \ Unsigned multiply 64 * 64 = 64
   : ud* ( udvalue0 udvalue1 -- dvalue2 )
-    zscript-internal::2double> ud* zscript-internal::>double
+    zscript-internal::2double> forth::ud* zscript-internal::>double
   ;
 
   \ Unsigned multiply 64 * 64 = 128
   : udm* ( udvalue0 udvalue1 -- dvaluel dvalueh )
-    zscript-internal::2double> udm* zscript-internal::2>double
+    zscript-internal::2double> forth::udm* zscript-internal::2>double
   ;
 
   \ Signed 32*32/32
@@ -183,234 +183,234 @@ begin-module zscript-double
 
   \ Signed 64/32 = 32 remainder 32 division
   : m/mod ( ndvalue nvalue -- rem div )
-    zscript-internal::integral> -rot zscript-internal::double> rot m/mod
+    zscript-internal::integral> -rot zscript-internal::double> rot forth::m/mod
     zscript-internal::2>integral
   ;
 
   \ Unsigned 64/32 = 32 remainder 32 division
   : um/mod ( udvalue uvalue -- rem div )
-    zscript-internal::integral> -rot zscript-internal::double> rot um/mod
+    zscript-internal::integral> -rot zscript-internal::double> rot forth::um/mod
     zscript-internal::2>integral
   ;
 
   \ Signed divide 64/64 = 64 remainder 64 division
   : d/mod ( ndvalue0 ndvalue1 -- drem ddiv )
-    zscript-internal::2double> d/mod zscript-internal::2>double
+    zscript-internal::2double> forth::d/mod zscript-internal::2>double
   ;
 
   \ Unsigned divide 64/64 = 64 remainder 64 division
   : ud/mod ( udvalue0 udvalue1 -- drem ddiv )
-    zscript-internal::2double> ud/mod zscript-internal::2>double
+    zscript-internal::2double> forth::ud/mod zscript-internal::2>double
   ;
 
   \ Signed divide 64/64 = 64 division
   : d/ ( ndvalue0 ndvalue1 -- ddiv )
-    zscript-internal::2double> d/ zscript-internal::>double
+    zscript-internal::2double> forth::d/ zscript-internal::>double
   ;
 
   \ Unsigned divide 64/64 = 64 division
   : ud/ ( udvalue0 udvalue1 -- ddiv )
-    zscript-internal::2double> ud/ zscript-internal::>double
+    zscript-internal::2double> forth::ud/ zscript-internal::>double
   ;
 
   \ S31.32 multiplication
   : f* ( fvalue0 fvalue1 -- fvalue2 )
-    zscript-internal::2double> f* zscript-internal::>double
+    zscript-internal::2double> forth::f* zscript-internal::>double
   ;
 
   \ S31.32 division
   : f/ ( fvalue0 fvalue1 -- fvalue2 )
-    zscript-internal::2double> f/ zscript-internal::>double
+    zscript-internal::2double> forth::f/ zscript-internal::>double
   ;
 
   \ Get the absolute value of a double-cell number
   : dabs ( ndvalue -- udvalue )
-    zscript-internal::double> dabs zscript-internal::>double
+    zscript-internal::double> forth::dabs zscript-internal::>double
   ;
   
   \ Get the minimum of two double-cell numbers
   : dmin ( ndvalue0 ndvalue1 -- dvalue2 )
-    zscript-internal::2double> dmin zscript-internal::>double
+    zscript-internal::2double> forth::dmin zscript-internal::>double
   ;
 
   \ Get the maximum of two double-cell numbers
   : dmax ( ndvalue0 ndvalue1 -- dvalue2 )
-    zscript-internal::2double> dmax zscript-internal::>double
+    zscript-internal::2double> forth::dmax zscript-internal::>double
   ;
 
   \ Get the value of pi
-  : pi ( -- fvalue ) pi zscript-internal::>double ;
+  : pi ( -- fvalue ) forth::pi zscript-internal::>double ;
 
   \ Get the ceiling of a fixed-point number as a single-cell number
   : ceil ( fvalue -- nvalue )
-    zscript-internal::double> ceil zscript-internal::>integral
+    zscript-internal::double> forth::ceil zscript-internal::>integral
   ;
 
   \ Get the floor of a fixed-point number as a single-cell number
   : floor ( fvalue -- nvalue )
-    zscript-internal::double> floor zscript-internal::>integral
+    zscript-internal::double> forth::floor zscript-internal::>integral
   ;
 
   \ Round a fixed-point number to the nearest integer with half rounding up
   : round-half-up ( fvalue -- nvalue )
-    zscript-internal::double> round-half-up zscript-internal::>integral
+    zscript-internal::double> forth::round-half-up zscript-internal::>integral
   ;
 
   \ Round a fixed-point number to the nearest integer with half rounding down
   : round-half-down ( fvalue -- nvalue )
-    zscript-internal::double> round-half-down zscript-internal::>integral
+    zscript-internal::double> forth::round-half-down zscript-internal::>integral
   ;
 
   \ Round a fixed-point number to the nearest integer with half rounding towards
   \ zero
   : round-half-zero ( fvalue -- nvalue )
-    zscript-internal::double> round-half-zero zscript-internal::>integral
+    zscript-internal::double> forth::round-half-zero zscript-internal::>integral
   ;
 
   \ Round a fixed-point number to the nearest integer with half rounding away
   \ from zero
   : round-half-away-zero ( fvalue -- nvalue )
-    zscript-internal::double> round-half-away-zero zscript-internal::>integral
+    zscript-internal::double> forth::round-half-away-zero zscript-internal::>integral
   ;
 
   \ Round a fixed-point number to the nearest integer with half rounding towards
   \ even
   : round-half-even ( fvalue -- nvalue )
-    zscript-internal::double> round-half-even zscript-internal::>integral
+    zscript-internal::double> forth::round-half-even zscript-internal::>integral
   ;
 
   \ Round a fixed-point number to the nearest integer with half rounding towards
   \ even
   : round-half-odd ( fvalue -- nvalue )
-    zscript-internal::double> round-half-odd zscript-internal::>integral
+    zscript-internal::double> forth::round-half-odd zscript-internal::>integral
   ;
 
   \ Round a fixed-point number towards zero
   : round-zero ( fvalue -- nvalue )
-    zscript-internal::double> round-zero zscript-internal::>integral
+    zscript-internal::double> forth::round-zero zscript-internal::>integral
   ;
 
   \ Round a fixed-point number away from zero
   : round-away-zero ( fvalue -- nvalue )
-    zscript-internal::double> round-away-zero zscript-internal::>integral
+    zscript-internal::double> forth::round-away-zero zscript-internal::>integral
   ;
 
   \ Exponentation of a fixed point number by an unsigned integer
   : fi** ( fvalue0 uvalue -- fvalue1 )
     zscript-internal::integral> swap zscript-internal::double> rot
-    fi** zscript-internal::>double
+    forth::fi** zscript-internal::>double
   ;
 
   \ Compute the symmetric modulus of two S13.32 fixed point numbers
   : fmod ( fvalue0 fvalue1 -- fvalue2 )
-    zscript-internal::2double> fmod zscript-internal::>double
+    zscript-internal::2double> forth::fmod zscript-internal::>double
   ;
 
   \ Calculate a square root
   : sqrt ( fvalue0 -- fvalue1 )
-    zscript-internal::double> sqrt zscript-internal::>double
+    zscript-internal::double> forth::sqrt zscript-internal::>double
   ;
 
   \ Calculate a factorial
   : factorial ( uvalue -- udvalue )
-    zscript-internal::integral> factorial zscript-internal::>double
+    zscript-internal::integral> forth::factorial zscript-internal::>double
   ;
 
   \ Calculate (e^x)-1
   : expm1 ( fvalue0 -- fvalue1 )
-    zscript-internal::double> expm1 zscript-internal::>double
+    zscript-internal::double> forth::expm1 zscript-internal::>double
   ;
 
   \ Calculate e^x
   : exp ( fvalue0 -- fvalue1 )
-    zscript-internal::double> exp zscript-internal::>double
+    zscript-internal::double> forth::exp zscript-internal::>double
   ;
 
   \ Calculate ln(x + 1)
   : lnp1 ( fvalue0 -- fvalue1 )
-    zscript-internal::double> lnp1 zscript-internal::>double
+    zscript-internal::double> forth::lnp1 zscript-internal::>double
   ;
 
   \ Calculate ln(x)
   : ln ( fvalue0 -- fvalue1 )
-    zscript-internal::double> ln zscript-internal::>double
+    zscript-internal::double> forth::ln zscript-internal::>double
   ;
 
   \ Calculate sin(x)
   : sin ( fvalue0 -- fvalue1 )
-    zscript-internal::double> sin zscript-internal::>double
+    zscript-internal::double> forth::sin zscript-internal::>double
   ;
 
   \ Calculate cos(x)
   : cos ( fvalue0 -- fvalue1 )
-    zscript-internal::double> cos zscript-internal::>double
+    zscript-internal::double> forth::cos zscript-internal::>double
   ;
 
   \ Calculate atan(x)
   : atan ( fvalue0 -- fvalue1 )
-    zscript-internal::double> atan zscript-internal::>double
+    zscript-internal::double> forth::atan zscript-internal::>double
   ;
 
   \ Calculate a angle for any pair of x and y coordinates
   : atan2 ( fy fx -- fangle )
-    zscript-internal::2double> atan2 zscript-internal::>double
+    zscript-internal::2double> forth::atan2 zscript-internal::>double
   ;
 
   \ Calculate asin(x)
   : asin ( fvalue0 -- fvalue1 )
-    zscript-internal::double> asin zscript-internal::>double
+    zscript-internal::double> forth::asin zscript-internal::>double
   ;
   
   \ Calculate acos(x)
   : acos ( fvalue0 -- fvalue1 )
-    zscript-internal::double> acos zscript-internal::>double
+    zscript-internal::double> forth::acos zscript-internal::>double
   ;
   
   \ Calculate a fixed point power b^x
   : f** ( fb fx -- fb^x )
-    zscript-internal::2double> f** zscript-internal::>double
+    zscript-internal::2double> forth::f** zscript-internal::>double
   ;
   
   \ Calculate sinh(x)
   : sinh ( fvalue0 -- fvalue1 )
-    zscript-internal::double> sinh zscript-internal::>double
+    zscript-internal::double> forth::sinh zscript-internal::>double
   ;
 
   \ Calculate cosh(x)
   : cosh ( fvalue0 -- fvalue1 )
-    zscript-internal::double> cosh zscript-internal::>double
+    zscript-internal::double> forth::cosh zscript-internal::>double
   ;
 
   \ Calculate tanh(x)
   : tanh ( fvalue0 -- fvalue1 )
-    zscript-internal::double> tanh zscript-internal::>double
+    zscript-internal::double> forth::tanh zscript-internal::>double
   ;
 
   \ Calculate asinh(x)
   : asinh ( fvalue0 -- fvalue1 )
-    zscript-internal::double> asinh zscript-internal::>double
+    zscript-internal::double> forth::asinh zscript-internal::>double
   ;
 
   \ Calculate acosh(x)
   : acosh ( fvalue0 -- fvalue1 )
-    zscript-internal::double> acosh zscript-internal::>double
+    zscript-internal::double> forth::acosh zscript-internal::>double
   ;
 
   \ Calculate atanh(x)
   : atanh ( fvalue0 -- fvalue1 )
-    zscript-internal::double> atanh zscript-internal::>double
+    zscript-internal::double> forth::atanh zscript-internal::>double
   ;
 
   \ Parse an S31.32 fixed-point number
   : parse-fixed ( bytes -- f64 success? )
-    unsafe::bytes>addr-len zscript-internal::2integral> parse-fixed
+    unsafe::bytes>addr-len zscript-internal::2integral> forth::parse-fixed
     5 cells zscript-internal::ensure
     zscript-internal::>integral -rot zscript-internal::>double swap
   ;
 
   \ Parse a double number
   : parse-double ( bytes -- dvalue success? )
-    unsafe::bytes>addr-len zscript-internal::2integral> parse-double
+    unsafe::bytes>addr-len zscript-internal::2integral> forth::parse-double
     5 cells zscript-internal::ensure
     zscript-internal::>integral -rot zscript-internal::>double swap
   ;
@@ -419,7 +419,8 @@ begin-module zscript-double
   : format-fixed { f64 -- bytes }
     65 make-bytes { bytes }
     bytes unsafe::bytes>addr-len drop zscript-internal::integral>
-    f64 zscript-internal::double> format-fixed nip zscript-internal::>integral
+    f64 zscript-internal::double> forth::format-fixed
+    nip zscript-internal::>integral
     0 swap bytes >slice
   ;
 
@@ -428,7 +429,7 @@ begin-module zscript-double
     33 places + make-bytes { bytes }
     bytes unsafe::bytes>addr-len drop zscript-internal::integral>
     f64 zscript-internal::double> places zscript-internal::integral>
-    format-fixed-truncate nip zscript-internal::>integral
+    forth::format-fixed-truncate nip zscript-internal::>integral
     0 swap bytes >slice
   ;
 
@@ -436,30 +437,31 @@ begin-module zscript-double
   : format-double { d64 -- bytes }
     64 make-bytes { bytes }
     bytes unsafe::bytes>addr-len drop zscript-internal::integral>
-    d64 zscript-internal::double> format-double nip zscript-internal::>integral
+    d64 zscript-internal::double> forth::format-double nip
+    zscript-internal::>integral
     0 swap bytes >slice
   ;
 
   \ Type a double number without a following space
-  : (d.) ( dvalue -- ) zscript-internal::double> (d.) ;
+  : (d.) ( dvalue -- ) zscript-internal::double> forth::(d.) ;
 
   \ Type a double number with a following space
-  : d. ( dvalue -- ) zscript-internal::double> d. ;
+  : d. ( dvalue -- ) zscript-internal::double> forth::d. ;
 
   \ Type an S31.32 fixed-point number without a following space
-  : (f.) ( fvalue -- ) zscript-internal::double> (f.) ;
+  : (f.) ( fvalue -- ) zscript-internal::double> forth::(f.) ;
 
   \ Type an S31.32 fixed-point number with a following space
-  : f. ( fvalue -- ) zscript-internal::double> f. ;
+  : f. ( fvalue -- ) zscript-internal::double> forth::f. ;
 
   \ Type a truncated S31.32 fixed-point number without a following space
   : (f.n) ( fvalue fplaces -- )
-    zscript-internal::integral> swap zscript-internal::double> rot (f.n)
+    zscript-internal::integral> swap zscript-internal::double> rot forth::(f.n)
   ;
 
   \ Type a truncated S31.32 fixed-point number with a following space
   : f.n ( fvalue fplaces -- )
-    zscript-internal::integral> swap zscript-internal::double> rot f.n
+    zscript-internal::integral> swap zscript-internal::double> rot forth::f.n
   ;
 
   begin-module zscript-double-internal
