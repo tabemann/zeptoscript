@@ -3192,6 +3192,32 @@ begin-module zscript
       seq >len 0 ?do i seq c@+ i xt execute loop
     then
   ;
+  
+  \ Get the index of an element that meets a predicate; note that the lowest
+  \ matching index is returned, and xt will not necessarily be called against
+  \ all items
+  : find-index { seq xt -- index found? } \ xt ( item -- flag )
+    seq cells? if
+      seq >len 0 ?do i seq @+ xt execute if i true unloop exit then loop
+    else
+      seq bytes? averts x-incorrect-type
+      seq >len 0 ?do i seq c@+ xt execute if i true unloop exit then loop
+    then
+    0 false
+  ;
+
+  \ Get the index of an element that meets a predicate with an index; note that
+  \ the lowest matching index is returned, and xt will not necessarily be
+  \ called against all items
+  : find-indexi { seq xt -- index found? } \ xt ( item index -- flag )
+    seq cells? if
+      seq >len 0 ?do i seq @+ i xt execute if i true unloop exit then loop
+    else
+      seq bytes? averts x-incorrect-type
+      seq >len 0 ?do i seq c@+ i xt execute if i true unloop exit then loop
+    then
+    0 false
+  ;
 
   \ Map a cell or byte sequence into a new cell sequence
   : map { seq xt -- seq' } \ xt ( item -- item' )
@@ -3897,7 +3923,7 @@ begin-module zscript
   forth::constant 0bytes
 
   \ Redefine ?DUP
-  : ?dup dup if else drop then ;
+  : ?dup dup if dup else then ;
 
   true >small-int constant true
   false >small-int constant false

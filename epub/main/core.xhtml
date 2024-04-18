@@ -891,37 +891,47 @@
 <section id="concat">
 <h3><code class="docutils literal notranslate"><span class="pre">concat</span></code></h3>
 <p>( seq0 seq1 – seq2 )</p>
-<p>Concatenate two cell or byte sequences.</p>
+<p>Concatenate two cell or byte sequences or slices.</p>
 </section>
 <section id="iter">
 <h3><code class="docutils literal notranslate"><span class="pre">iter</span></code></h3>
 <p>( seq xt – )</p>
-<p>Iterate over a cell sequence.</p>
+<p>Iterate over a sequence or slice.</p>
 </section>
 <section id="iteri">
 <h3><code class="docutils literal notranslate"><span class="pre">iteri</span></code></h3>
 <p>( seq xt – )</p>
-<p>Iterate over a cell sequence with an index.</p>
+<p>Iterate over a sequence or slice with an index.</p>
+</section>
+<section id="find-index">
+<h3><code class="docutils literal notranslate"><span class="pre">find-index</span></code></h3>
+<p>( seq xt – index found? ) xt: ( item – flag )</p>
+<p>Get the index of an element of a sequence or slice that meets a predicate; note that the lowest matching index is returned, and xt will not necessarily be called against all items.</p>
+</section>
+<section id="find-indexi">
+<h3><code class="docutils literal notranslate"><span class="pre">find-indexi</span></code></h3>
+<p>( seq xt – index found? ) xt: ( item index – flag )</p>
+<p>Get the index of an element of a sequence or slice that meets a predicate with an index; note that the lowest matching index is returned, and xt will not necessarily be called against all items.</p>
 </section>
 <section id="map">
 <h3><code class="docutils literal notranslate"><span class="pre">map</span></code></h3>
 <p>( seq xt – seq’ )</p>
-<p>Map a cell or byte sequence into a new cell sequence.</p>
+<p>Map a sequence or slice into a new sequence.</p>
 </section>
 <section id="mapi">
 <h3><code class="docutils literal notranslate"><span class="pre">mapi</span></code></h3>
 <p>( seq xt – seq’ )</p>
-<p>Map a cell or byte sequence into a new cell sequence with an index.</p>
+<p>Map a sequence or slice into a new sequence with an index.</p>
 </section>
 <section id="id61">
 <h3><code class="docutils literal notranslate"><span class="pre">map!</span></code></h3>
 <p>( seq xt – )</p>
-<p>Map a cell or byte sequence in place.</p>
+<p>Map a sequence or slice in place.</p>
 </section>
 <section id="id62">
 <h3><code class="docutils literal notranslate"><span class="pre">mapi!</span></code></h3>
 <p>( seq xt – )</p>
-<p>Map a cell or byte sequence in place with an index.</p>
+<p>Map a sequence or slicein place with an index.</p>
 </section>
 <section id="make-bits">
 <h3><code class="docutils literal notranslate"><span class="pre">make-bits</span></code></h3>
@@ -946,32 +956,32 @@
 <section id="filter">
 <h3><code class="docutils literal notranslate"><span class="pre">filter</span></code></h3>
 <p>( seq xt – seq’ )</p>
-<p>Filter a cell or byte sequence.</p>
+<p>Filter a sequence or slice.</p>
 </section>
 <section id="filteri">
 <h3><code class="docutils literal notranslate"><span class="pre">filteri</span></code></h3>
 <p>( seq xt – seq’ )</p>
-<p>Filter a cell or byte sequence with an index.</p>
+<p>Filter a sequence or slice with an index.</p>
 </section>
 <section id="foldl">
 <h3><code class="docutils literal notranslate"><span class="pre">foldl</span></code></h3>
 <p>( x seq xt – x’ ) xt: ( x item – x’ )</p>
-<p>Fold left over a cell or byte sequence.</p>
+<p>Fold left over a sequence or slice.</p>
 </section>
 <section id="foldli">
 <h3><code class="docutils literal notranslate"><span class="pre">foldli</span></code></h3>
 <p>( x seq xt – x’ ) xt: ( x item index – x’ )</p>
-<p>Fold left over a cell or byte sequence with an index.</p>
+<p>Fold left over a sequence or slice with an index.</p>
 </section>
 <section id="foldr">
 <h3><code class="docutils literal notranslate"><span class="pre">foldr</span></code></h3>
 <p>( x seq xt – x’ ) xt: ( item x – x’ )</p>
-<p>Fold right over a cell or byte sequence.</p>
+<p>Fold right over a sequence or slice.</p>
 </section>
 <section id="foldri">
 <h3><code class="docutils literal notranslate"><span class="pre">foldri</span></code></h3>
 <p>( x seq xt – x’ ) xt: ( item x index – x’ )</p>
-<p>Fold right over a cell or byte sequence with an index.</p>
+<p>Fold right over a sequence or slice with an index.</p>
 </section>
 <section id="reverse">
 <h3><code class="docutils literal notranslate"><span class="pre">reverse</span></code></h3>
@@ -1006,12 +1016,12 @@
 <section id="sort">
 <h3><code class="docutils literal notranslate"><span class="pre">sort!</span></code></h3>
 <p>( seq xt – )</p>
-<p>Heapsort a cell or byte sequence in place.</p>
+<p>Heapsort a sequence or slice in place.</p>
 </section>
 <section id="id67">
 <h3><code class="docutils literal notranslate"><span class="pre">sort</span></code></h3>
 <p>( seq xt – )</p>
-<p>Heapsort a cell or byte sequence, copying it.</p>
+<p>Heapsort a sequence or slice, copying it.</p>
 </section>
 <section id="all">
 <h3><code class="docutils literal notranslate"><span class="pre">all</span></code></h3>
@@ -1026,7 +1036,7 @@
 <section id="join">
 <h3><code class="docutils literal notranslate"><span class="pre">join</span></code></h3>
 <p>( list-seq join-seq – seq’ )</p>
-<p>Join a cell sequence of cell or byte sequences.</p>
+<p>Join a cell sequence of sequences or slices.</p>
 </section>
 <section id="equal-bytes">
 <h3><code class="docutils literal notranslate"><span class="pre">equal-bytes?</span></code></h3>

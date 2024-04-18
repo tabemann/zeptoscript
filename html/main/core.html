@@ -912,37 +912,47 @@
 <section id="concat">
 <h3><code class="docutils literal notranslate"><span class="pre">concat</span></code><a class="headerlink" href="#concat" title="Permalink to this heading">¶</a></h3>
 <p>( seq0 seq1 – seq2 )</p>
-<p>Concatenate two cell or byte sequences.</p>
+<p>Concatenate two cell or byte sequences or slices.</p>
 </section>
 <section id="iter">
 <h3><code class="docutils literal notranslate"><span class="pre">iter</span></code><a class="headerlink" href="#iter" title="Permalink to this heading">¶</a></h3>
 <p>( seq xt – )</p>
-<p>Iterate over a cell sequence.</p>
+<p>Iterate over a sequence or slice.</p>
 </section>
 <section id="iteri">
 <h3><code class="docutils literal notranslate"><span class="pre">iteri</span></code><a class="headerlink" href="#iteri" title="Permalink to this heading">¶</a></h3>
 <p>( seq xt – )</p>
-<p>Iterate over a cell sequence with an index.</p>
+<p>Iterate over a sequence or slice with an index.</p>
+</section>
+<section id="find-index">
+<h3><code class="docutils literal notranslate"><span class="pre">find-index</span></code><a class="headerlink" href="#find-index" title="Permalink to this heading">¶</a></h3>
+<p>( seq xt – index found? ) xt: ( item – flag )</p>
+<p>Get the index of an element of a sequence or slice that meets a predicate; note that the lowest matching index is returned, and xt will not necessarily be called against all items.</p>
+</section>
+<section id="find-indexi">
+<h3><code class="docutils literal notranslate"><span class="pre">find-indexi</span></code><a class="headerlink" href="#find-indexi" title="Permalink to this heading">¶</a></h3>
+<p>( seq xt – index found? ) xt: ( item index – flag )</p>
+<p>Get the index of an element of a sequence or slice that meets a predicate with an index; note that the lowest matching index is returned, and xt will not necessarily be called against all items.</p>
 </section>
 <section id="map">
 <h3><code class="docutils literal notranslate"><span class="pre">map</span></code><a class="headerlink" href="#map" title="Permalink to this heading">¶</a></h3>
 <p>( seq xt – seq’ )</p>
-<p>Map a cell or byte sequence into a new cell sequence.</p>
+<p>Map a sequence or slice into a new sequence.</p>
 </section>
 <section id="mapi">
 <h3><code class="docutils literal notranslate"><span class="pre">mapi</span></code><a class="headerlink" href="#mapi" title="Permalink to this heading">¶</a></h3>
 <p>( seq xt – seq’ )</p>
-<p>Map a cell or byte sequence into a new cell sequence with an index.</p>
+<p>Map a sequence or slice into a new sequence with an index.</p>
 </section>
 <section id="id61">
 <h3><code class="docutils literal notranslate"><span class="pre">map!</span></code><a class="headerlink" href="#id61" title="Permalink to this heading">¶</a></h3>
 <p>( seq xt – )</p>
-<p>Map a cell or byte sequence in place.</p>
+<p>Map a sequence or slice in place.</p>
 </section>
 <section id="id62">
 <h3><code class="docutils literal notranslate"><span class="pre">mapi!</span></code><a class="headerlink" href="#id62" title="Permalink to this heading">¶</a></h3>
 <p>( seq xt – )</p>
-<p>Map a cell or byte sequence in place with an index.</p>
+<p>Map a sequence or slicein place with an index.</p>
 </section>
 <section id="make-bits">
 <h3><code class="docutils literal notranslate"><span class="pre">make-bits</span></code><a class="headerlink" href="#make-bits" title="Permalink to this heading">¶</a></h3>
@@ -967,32 +977,32 @@
 <section id="filter">
 <h3><code class="docutils literal notranslate"><span class="pre">filter</span></code><a class="headerlink" href="#filter" title="Permalink to this heading">¶</a></h3>
 <p>( seq xt – seq’ )</p>
-<p>Filter a cell or byte sequence.</p>
+<p>Filter a sequence or slice.</p>
 </section>
 <section id="filteri">
 <h3><code class="docutils literal notranslate"><span class="pre">filteri</span></code><a class="headerlink" href="#filteri" title="Permalink to this heading">¶</a></h3>
 <p>( seq xt – seq’ )</p>
-<p>Filter a cell or byte sequence with an index.</p>
+<p>Filter a sequence or slice with an index.</p>
 </section>
 <section id="foldl">
 <h3><code class="docutils literal notranslate"><span class="pre">foldl</span></code><a class="headerlink" href="#foldl" title="Permalink to this heading">¶</a></h3>
 <p>( x seq xt – x’ ) xt: ( x item – x’ )</p>
-<p>Fold left over a cell or byte sequence.</p>
+<p>Fold left over a sequence or slice.</p>
 </section>
 <section id="foldli">
 <h3><code class="docutils literal notranslate"><span class="pre">foldli</span></code><a class="headerlink" href="#foldli" title="Permalink to this heading">¶</a></h3>
 <p>( x seq xt – x’ ) xt: ( x item index – x’ )</p>
-<p>Fold left over a cell or byte sequence with an index.</p>
+<p>Fold left over a sequence or slice with an index.</p>
 </section>
 <section id="foldr">
 <h3><code class="docutils literal notranslate"><span class="pre">foldr</span></code><a class="headerlink" href="#foldr" title="Permalink to this heading">¶</a></h3>
 <p>( x seq xt – x’ ) xt: ( item x – x’ )</p>
-<p>Fold right over a cell or byte sequence.</p>
+<p>Fold right over a sequence or slice.</p>
 </section>
 <section id="foldri">
 <h3><code class="docutils literal notranslate"><span class="pre">foldri</span></code><a class="headerlink" href="#foldri" title="Permalink to this heading">¶</a></h3>
 <p>( x seq xt – x’ ) xt: ( item x index – x’ )</p>
-<p>Fold right over a cell or byte sequence with an index.</p>
+<p>Fold right over a sequence or slice with an index.</p>
 </section>
 <section id="reverse">
 <h3><code class="docutils literal notranslate"><span class="pre">reverse</span></code><a class="headerlink" href="#reverse" title="Permalink to this heading">¶</a></h3>
@@ -1027,12 +1037,12 @@
 <section id="sort">
 <h3><code class="docutils literal notranslate"><span class="pre">sort!</span></code><a class="headerlink" href="#sort" title="Permalink to this heading">¶</a></h3>
 <p>( seq xt – )</p>
-<p>Heapsort a cell or byte sequence in place.</p>
+<p>Heapsort a sequence or slice in place.</p>
 </section>
 <section id="id67">
 <h3><code class="docutils literal notranslate"><span class="pre">sort</span></code><a class="headerlink" href="#id67" title="Permalink to this heading">¶</a></h3>
 <p>( seq xt – )</p>
-<p>Heapsort a cell or byte sequence, copying it.</p>
+<p>Heapsort a sequence or slice, copying it.</p>
 </section>
 <section id="all">
 <h3><code class="docutils literal notranslate"><span class="pre">all</span></code><a class="headerlink" href="#all" title="Permalink to this heading">¶</a></h3>
@@ -1047,7 +1057,7 @@
 <section id="join">
 <h3><code class="docutils literal notranslate"><span class="pre">join</span></code><a class="headerlink" href="#join" title="Permalink to this heading">¶</a></h3>
 <p>( list-seq join-seq – seq’ )</p>
-<p>Join a cell sequence of cell or byte sequences.</p>
+<p>Join a cell sequence of sequences or slices.</p>
 </section>
 <section id="equal-bytes">
 <h3><code class="docutils literal notranslate"><span class="pre">equal-bytes?</span></code><a class="headerlink" href="#equal-bytes" title="Permalink to this heading">¶</a></h3>
@@ -1278,6 +1288,7 @@
 <li class="toctree-l1"><a class="reference internal" href="oo.html">zeptoscript Object-Orientation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="list.html">Lists</a></li>
 <li class="toctree-l1"><a class="reference internal" href="map.html">Maps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="set.html">Sets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="action.html">Actions</a></li>
 </ul>
 

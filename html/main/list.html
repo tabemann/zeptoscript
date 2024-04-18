@@ -123,6 +123,16 @@
 <p>( list xt – ) xt: ( item index – )</p>
 <p>Iterate over <em>list</em>, executing <em>xt</em> with each element and its index (indexed from zero) in order from start to end.</p>
 </section>
+<section id="find-index-list">
+<h3><code class="docutils literal notranslate"><span class="pre">find-index-list</span></code><a class="headerlink" href="#find-index-list" title="Permalink to this heading">¶</a></h3>
+<p>( list xt – index found? ) xt: ( item – flag )</p>
+<p>Get the index of an element of a list that meets a predicate; note that the lowest matching index is returned, and xt will not necessarily be called against all items.</p>
+</section>
+<section id="find-indexi-list">
+<h3><code class="docutils literal notranslate"><span class="pre">find-indexi-list</span></code><a class="headerlink" href="#find-indexi-list" title="Permalink to this heading">¶</a></h3>
+<p>( list xt – index found? ) xt: ( item index – flag )</p>
+<p>Get the index of an element of a list that meets a predicate with an index; note that the lowest matching index is returned, and xt will not necessarily be called against all items.</p>
+</section>
 <section id="rev-map-list">
 <h3><code class="docutils literal notranslate"><span class="pre">rev-map-list</span></code><a class="headerlink" href="#rev-map-list" title="Permalink to this heading">¶</a></h3>
 <p>( list xt – list’ ) xt: ( item – item’ )</p>

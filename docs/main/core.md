@@ -889,37 +889,47 @@ Duplicate a cell or byte sequence; this converts slices to non-slices and consta
 ### `concat`
 ( seq0 seq1 -- seq2 )
 
-Concatenate two cell or byte sequences.
+Concatenate two cell or byte sequences or slices.
 
 ### `iter`
 ( seq xt -- )
 
-Iterate over a cell sequence.
+Iterate over a sequence or slice.
 
 ### `iteri`
 ( seq xt -- )
 
-Iterate over a cell sequence with an index.
+Iterate over a sequence or slice with an index.
+
+### `find-index`
+( seq xt -- index found? ) xt: ( item -- flag )
+
+Get the index of an element of a sequence or slice that meets a predicate; note that the lowest matching index is returned, and xt will not necessarily be called against all items.
+
+### `find-indexi`
+( seq xt -- index found? ) xt: ( item index -- flag )
+
+Get the index of an element of a sequence or slice that meets a predicate with an index; note that the lowest matching index is returned, and xt will not necessarily be called against all items.
 
 ### `map`
 ( seq xt -- seq' )
 
-Map a cell or byte sequence into a new cell sequence.
+Map a sequence or slice into a new sequence.
 
 ### `mapi`
 ( seq xt -- seq' )
 
-Map a cell or byte sequence into a new cell sequence with an index.
+Map a sequence or slice into a new sequence with an index.
 
 ### `map!`
 ( seq xt -- )
 
-Map a cell or byte sequence in place.
+Map a sequence or slice in place.
 
 ### `mapi!`
 ( seq xt -- )
 
-Map a cell or byte sequence in place with an index.
+Map a sequence or slicein place with an index.
 
 ### `make-bits`
 ( len -- bits )
@@ -944,32 +954,32 @@ Get a bit in a bit sequence.
 ### `filter`
 ( seq xt -- seq' )
 
-Filter a cell or byte sequence.
+Filter a sequence or slice.
 
 ### `filteri`
 ( seq xt -- seq' )
 
-Filter a cell or byte sequence with an index.
+Filter a sequence or slice with an index.
 
 ### `foldl`
 ( x seq xt -- x' ) xt: ( x item -- x' )
 
-Fold left over a cell or byte sequence.
+Fold left over a sequence or slice.
 
 ### `foldli`
 ( x seq xt -- x' ) xt: ( x item index -- x' )
 
-Fold left over a cell or byte sequence with an index.
+Fold left over a sequence or slice with an index.
 
 ### `foldr`
 ( x seq xt -- x' ) xt: ( item x -- x' )
 
-Fold right over a cell or byte sequence.
+Fold right over a sequence or slice.
 
 ### `foldri`
 ( x seq xt -- x' ) xt: ( item x index -- x' )
 
-Fold right over a cell or byte sequence with an index.
+Fold right over a sequence or slice with an index.
 
 ### `reverse`
 ( seq -- seq' )
@@ -1004,12 +1014,12 @@ Zip three sequences into the first sequence in-place; note that if the ranges do
 ### `sort!`
 ( seq xt -- )
 
-Heapsort a cell or byte sequence in place.
+Heapsort a sequence or slice in place.
 
 ### `sort`
 ( seq xt -- )
 
-Heapsort a cell or byte sequence, copying it.
+Heapsort a sequence or slice, copying it.
 
 ### `all`
 ( seq xt -- all? )
@@ -1024,7 +1034,7 @@ Get whether a predicate applies to any element of a sequence; note that not all 
 ### `join`
 ( list-seq join-seq -- seq' )
 
-Join a cell sequence of cell or byte sequences.
+Join a cell sequence of sequences or slices.
 
 ### `equal-bytes?`
 ( bytes0 bytes1 -- equal? )

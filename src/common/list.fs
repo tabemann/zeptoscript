@@ -124,7 +124,37 @@ begin-module zscript-list
       list head@ index xt execute list tail@ to list 1 +to index
     repeat
   ;
-  
+
+  \ Get the index of an element of a list that meets a predicate; note that the
+  \ lowest matching index is returned, and xt will not necessarily be called
+  \ against all items
+  : find-index-list { list xt -- index found? } \ xt ( item -- flag )
+    0 { index }
+    begin list while
+      list head@ xt execute if
+        index true exit
+      else
+        list tail@ to list 1 +to index
+      then
+    repeat
+    0 false
+  ;
+
+  \ Get the index of an element of a list that meets a predicate with an index;
+  \ note that the lowest matching index is returned, and xt will not
+  \ necessarily be called against all items
+  : find-indexi-list { list xt -- index found? } \ xt ( item index -- flag )
+    0 { index }
+    begin list while
+      list head@ index xt execute if
+        index true exit
+      else
+        list tail@ to list 1 +to index
+      then
+    repeat
+    0 false
+  ;
+
   \ Map a list in reverse
   : rev-map-list { list xt -- list' } \ xt ( item -- item' )
     empty { list' }

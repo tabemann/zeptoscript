@@ -90,6 +90,16 @@ Iterate over *list*, executing *xt* with each element in order from start to end
 
 Iterate over *list*, executing *xt* with each element and its index (indexed from zero) in order from start to end.
 
+### `find-index-list`
+( list xt -- index found? ) xt: ( item -- flag )
+
+Get the index of an element of a list that meets a predicate; note that the lowest matching index is returned, and xt will not necessarily be called against all items.
+
+### `find-indexi-list`
+( list xt -- index found? ) xt: ( item index -- flag )
+
+Get the index of an element of a list that meets a predicate with an index; note that the lowest matching index is returned, and xt will not necessarily be called against all items.
+
 ### `rev-map-list`
 ( list xt -- list' ) xt: ( item -- item' )
 
