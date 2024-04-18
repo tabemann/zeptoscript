@@ -3985,7 +3985,9 @@ begin-module zscript
   : : : ;
   : ; [immediate] [compile-only] postpone ; ;
   : ." [immediate] postpone ." ;
+  : .\" [immediate] postpone .\" ;
   : .( [immediate] postpone .( ;
+  : .\( [immediate] postpone .\( ;
   : x-token-expected x-token-expected ;
   : initializer initializer ;
   : defined? defined? >small-int ;
