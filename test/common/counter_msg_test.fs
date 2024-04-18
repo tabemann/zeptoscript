@@ -20,7 +20,6 @@
 
 begin-module test
 
-  zscript import
   zscript-action import
   
   begin-record counter

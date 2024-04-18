@@ -20,7 +20,6 @@
 
 begin-module test
   
-  zscript import
   zscript-oo import
 
   method next-value ( self -- value )
