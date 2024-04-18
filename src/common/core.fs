@@ -3936,6 +3936,9 @@ begin-module zscript
   : emit? forth::emit? >integral ;
   : space forth::space ;
   : cr forth::cr ;
+  : space forth::space ;
+  : spaces integral> forth::spaces ;
+  : .s forth::.s ;
   : key forth::key integral> ;
   : key? forth::key? integral> ;
   : enable-int forth::enable-int ;
@@ -3959,6 +3962,10 @@ begin-module zscript
   : .( [immediate] postpone .( ;
   : x-token-expected x-token-expected ;
   : initializer initializer ;
+  : defined? defined? >small-int ;
+  : [if] [immediate] integral> postpone [if] ;
+  : [else] [immediate] postpone [else] ;
+  : [then] [immediate] postpone [then] ;
 
   \ Forth module
   forth make-new-style constant forth

@@ -27,16 +27,16 @@ begin-module zscript-fixed32
   foreign-variable forth::handle-number-hook handle-number-hook
 
   \ Multiply two S15.16 fixed-point numbers
-  2 1 foreign fixed32::f32* f32* ( x y -- z )
+  2 1 foreign forth::fixed32::f32* f32* ( x y -- z )
 
   \ Divide an S15.16 fixed-point number by another
-  2 1 foreign fixed32::f32/ f32/ ( x y -- z )
+  2 1 foreign forth::fixed32::f32/ f32/ ( x y -- z )
 
   \ Convert an S15.16 fixed-point number to a 16-bit integer
-  1 1 foreign fixed32::f32>s f32>s ( x -- y )
+  1 1 foreign forth::fixed32::f32>s f32>s ( x -- y )
 
   \ Convert a 16-bit integer to an S15.16 fixed-point number
-  1 1 foreign fixed32::s>f32 s>f32 ( x -- y )
+  1 1 foreign forth::fixed32::s>f32 s>f32 ( x -- y )
 
   defined? zscript-double [if]
     
@@ -53,124 +53,124 @@ begin-module zscript-fixed32
   [then]
 
   \ Calculate the modulus of two S15.16 fixed-point numbers
-  2 1 foreign fixed32::f32mod f32mod ( x y -- z )
+  2 1 foreign forth::fixed32::f32mod f32mod ( x y -- z )
 
   \ Get the ceiling of an S15.16 fixed-point number
-  1 1 foreign fixed32::f32ceil f32ceil ( f32 -- n )
+  1 1 foreign forth::fixed32::f32ceil f32ceil ( f32 -- n )
 
   \ Get the floor of an S15.16 fixed-point number
-  1 1 foreign fixed32::f32floor f32floor ( f32 -- n )
+  1 1 foreign forth::fixed32::f32floor f32floor ( f32 -- n )
 
   \ Round an S15.16 fixed-point number to the nearest integer with half
   \ rounding up
-  1 1 foreign fixed32::f32round-half-up f32round-half-up ( f32 -- n )
+  1 1 foreign forth::fixed32::f32round-half-up f32round-half-up ( f32 -- n )
 
   \ Round an S15.16 fixed-point number to the nearest integer with half
   \ rounding down
-  1 1 foreign fixed32::f32round-half-down f32round-half-down
+  1 1 foreign forth::fixed32::f32round-half-down f32round-half-down
   ( f32 -- n )
 
   \ Round a S15.16 fixed-point number to the nearest integer with half
   \ rounding towards zero
-  1 1 foreign fixed32::f32round-half-zero f32round-half-zero
+  1 1 foreign forth::fixed32::f32round-half-zero f32round-half-zero
   ( f32 -- n )
   
   \ Round a S15.16 fixed-point number to the nearest integer with half
   \ rounding away from zero
-  1 1 foreign fixed32::f32round-half-away-zero f32round-half-away-zero
+  1 1 foreign forth::fixed32::f32round-half-away-zero f32round-half-away-zero
   ( f32 -- n )
   
   \ Round a S15.16 fixed-point number to the nearest integer with half
   \ rounding towards even
-  1 1 foreign fixed32::f32round-half-even f32round-half-even
+  1 1 foreign forth::fixed32::f32round-half-even f32round-half-even
   ( f32 -- n )
   
   \ Round a S15.16 fixed-point number to the nearest integer with half
   \ rounding towards even
-  1 1 foreign fixed32::f32round-half-odd f32round-half-odd ( f32 -- n )
+  1 1 foreign forth::fixed32::f32round-half-odd f32round-half-odd ( f32 -- n )
   
   \ Round a S15.16 fixed-point number towards zero
-  1 1 foreign fixed32::f32round-zero f32round-zero ( f32 -- n )
+  1 1 foreign forth::fixed32::f32round-zero f32round-zero ( f32 -- n )
   
   \ Round a S15.16 fixed-point number away from zero
-  1 1 foreign fixed32::f32round-away-zero f32round-away-zero
+  1 1 foreign forth::fixed32::f32round-away-zero f32round-away-zero
   ( f32 -- n )
 
   \ Pi as a S15.16 fixed-point number
-  foreign-constant fixed32::f32pi f32pi
+  foreign-constant forth::fixed32::f32pi f32pi
 
   \ Get the square root of an S15.16 fixed-point number
-  1 1 foreign fixed32::f32sqrt f32sqrt ( x -- y )
+  1 1 foreign forth::fixed32::f32sqrt f32sqrt ( x -- y )
   
   \ Exponentiate an S15.16 fixed-point number by an integer
-  2 1 foreign fixed32::f32i** f32i** ( f32 exponent -- f32' )
+  2 1 foreign forth::fixed32::f32i** f32i** ( f32 exponent -- f32' )
 
   \ Get the (e^x)-1 of an S15.16 fixed-point number
-  1 1 foreign fixed32::f32expm1 f32expm1 ( f32 -- f32' )
+  1 1 foreign forth::fixed32::f32expm1 f32expm1 ( f32 -- f32' )
   
   \ Get the e^x of an S15.16 fixed-point number
-  1 1 foreign fixed32::f32exp f32exp ( f32 -- f32' )
+  1 1 foreign forth::fixed32::f32exp f32exp ( f32 -- f32' )
   
   \ Get the ln(x+1) of an S15.16 fixed-point number
-  1 1 foreign fixed32::f32lnp1 f32lnp1 ( f32 -- f32' )
+  1 1 foreign forth::fixed32::f32lnp1 f32lnp1 ( f32 -- f32' )
   
   \ Get the ln(x) of an S15.16 fixed-point number
-  1 1 foreign fixed32::f32ln f32ln ( f32 -- f32' )
+  1 1 foreign forth::fixed32::f32ln f32ln ( f32 -- f32' )
   
   \ Get the sine of an S15.16 fixed-point number
-  1 1 foreign fixed32::f32sin f32sin ( f32 -- f32' )
+  1 1 foreign forth::fixed32::f32sin f32sin ( f32 -- f32' )
   
   \ Get the cosine of an S15.16 fixed-point number
-  1 1 foreign fixed32::f32cos f32cos ( f32 -- f32' )
+  1 1 foreign forth::fixed32::f32cos f32cos ( f32 -- f32' )
   
   \ Get the tangent of an S15.16 fixed-point number
-  1 1 foreign fixed32::f32tan f32tan ( f32 -- f32' )
+  1 1 foreign forth::fixed32::f32tan f32tan ( f32 -- f32' )
   
   \ Get the arctangent of an S15.16 fixed-point number
-  1 1 foreign fixed32::f32atan f32atan ( f32 -- f32' )
+  1 1 foreign forth::fixed32::f32atan f32atan ( f32 -- f32' )
   
   \ Get the angle of an x and an y S15.16 fixed-point numbers
-  2 1 foreign fixed32::f32atan2 f32atan2 ( f32x f32y -- f32angle )
+  2 1 foreign forth::fixed32::f32atan2 f32atan2 ( f32x f32y -- f32angle )
   
   \ Get the arcsine of an S15.16 fixed-point number
-  1 1 foreign fixed32::f32asin f32asin ( f32 -- f32' )
+  1 1 foreign forth::fixed32::f32asin f32asin ( f32 -- f32' )
   
   \ Get the arccosine of an S15.16 fixed-point number
-  1 1 foreign fixed32::f32acos f32acos ( f32 -- f32' )
+  1 1 foreign forth::fixed32::f32acos f32acos ( f32 -- f32' )
   
   \ Exponentiate two S15.16 fixed-point numbers
-  2 1 foreign fixed32::f32** f32** ( f32b f32x -- f32b^f32x )
+  2 1 foreign forth::fixed32::f32** f32** ( f32b f32x -- f32b^f32x )
 
   \ Get the hyperbolic sine of an S15.16 fixed-point number
-  1 1 foreign fixed32::f32sinh f32sinh ( f32 -- f32' )
+  1 1 foreign forth::fixed32::f32sinh f32sinh ( f32 -- f32' )
   
   \ Get the hyperbolic cosine of an S15.16 fixed-point number
-  1 1 foreign fixed32::f32cosh f32cosh ( f32 -- f32' )
+  1 1 foreign forth::fixed32::f32cosh f32cosh ( f32 -- f32' )
 
   \ Get the hyperbolic tangent of an S15.16 fixed-point number
-  1 1 foreign fixed32::f32tanh f32tanh ( f32 -- f32' )
+  1 1 foreign forth::fixed32::f32tanh f32tanh ( f32 -- f32' )
 
   \ Get the hyperbolic arcsine of an S15.16 fixed-point number
-  1 1 foreign fixed32::f32asinh f32asinh ( f32 -- f32' )
+  1 1 foreign forth::fixed32::f32asinh f32asinh ( f32 -- f32' )
 
   \ Get the hyperbolic arccosine of an S15.16 fixed-point number
-  1 1 foreign fixed32::f32acosh f32acosh ( f32 -- f32' )
+  1 1 foreign forth::fixed32::f32acosh f32acosh ( f32 -- f32' )
 
   \ Get the hyperbolic arctangent of an S15.16 fixed-point number
-  1 1 foreign fixed32::f32atanh f32atanh ( f32 -- f32' )
+  1 1 foreign forth::fixed32::f32atanh f32atanh ( f32 -- f32' )
 
   begin-module zscript-fixed32-internal
 
     \ Parse an S15.16 fixed-point number
-    2 2 foreign fixed32::parse-f32 parse-f32
+    2 2 foreign forth::fixed32::parse-f32 parse-f32
     ( c-addr bytes -- f32 success? )
 
     \ Format an S15.16 fixed-point number
-    2 2 foreign fixed32::format-f32 format-f32
+    2 2 foreign forth::fixed32::format-f32 format-f32
     ( c-addr f32 -- c-addr bytes )
 
     \ Format a truncated S15.16 fixed-point number
-    3 2 foreign fixed32::format-f32-truncate format-f32-truncate
+    3 2 foreign forth::fixed32::format-f32-truncate format-f32-truncate
     ( c-addr f32 places -- c-addr bytes )
     
   end-module
@@ -198,16 +198,16 @@ begin-module zscript-fixed32
   ;
 
   \ Type an S15.16 fixed-point number without a following space
-  1 0 foreign fixed32::(f32.) (f32.) ( f32 -- )
+  1 0 foreign forth::fixed32::(f32.) (f32.) ( f32 -- )
 
   \ Type a truncated S15.16 fixed-point number without a following space
-  2 0 foreign fixed32::(f32.n) (f32.n) ( f32 places -- )
+  2 0 foreign forth::fixed32::(f32.n) (f32.n) ( f32 places -- )
 
   \ Type an S15.16 fixed-point number with a following space
-  1 0 foreign fixed32::f32. f32. ( f32 -- )
+  1 0 foreign forth::fixed32::f32. f32. ( f32 -- )
 
   \ Type a truncated S15.16 fixed-point number with a following space
-  2 0 foreign fixed32::f32.n f32.n ( f32 places -- )
+  2 0 foreign forth::fixed32::f32.n f32.n ( f32 places -- )
 
   continue-module zscript-fixed32-internal
 
