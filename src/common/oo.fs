@@ -37,6 +37,9 @@ begin-module zscript-oo
   
   begin-module zscript-oo-internal
 
+    \ The class wordlist stack
+    global class-wordlist-stack
+
     \ Class syntax
     254 constant syntax-class
 
@@ -263,6 +266,9 @@ begin-module zscript-oo
 
     \ Generate a member
     : generate-member { member-name class-rec -- }
+      forth::get-current zscript-internal::make-new-style { old-current }
+      0 class-wordlist-stack@ @+
+      zscript-internal::filter-new-style-flag forth::set-current
       class-rec class-id@ { id }
       class-rec class-member-count@ { member-count }
       member-name s" @" concat start-compile visible
@@ -276,6 +282,7 @@ begin-module zscript-oo
       postpone forth::!
       end-compile,
       member-count 1+ class-rec class-member-count!
+      old-current zscript-internal::filter-new-style-flag forth::set-current
     ;
 
     \ Round up to the next power of two
@@ -364,6 +371,9 @@ begin-module zscript-oo
     end-compile,
     0 get-next-class-id 0cells 0 0 >class-record
     syntax-class push-syntax
+    forth::wordlist zscript-internal::make-new-style
+    dup class-wordlist-stack@ >pair class-wordlist-stack!
+    import
   ;
 
   \ Define a member
@@ -381,17 +391,28 @@ begin-module zscript-oo
     syntax-class verify-syntax
     token-word word>xt { method-xt }
     forth:::noname
-    unsafe::>integral { code }
+    unsafe::>integral { code-xt }
     class-rec class-methods@ { methods }
     methods method-xt unsafe::xt>integral get-method-id
-    code >method-record 1 >cells concat
+    code-xt >method-record 1 >cells concat
     class-rec class-methods!
     class-rec
   ;
 
+  \ Implement a private word
+  : :private ( "name" -- )
+    syntax-class verify-syntax
+    forth::get-current zscript-internal::make-new-style { old-current }
+    0 class-wordlist-stack@ @+
+    zscript-internal::filter-new-style-flag forth::set-current
+    :
+    old-current zscript-internal::filter-new-style-flag forth::set-current
+  ;
+  
   \ Finish defining a class
   : end-class { class-rec -- }
     syntax-class verify-syntax internal::drop-syntax
+    class-wordlist-stack@ pair> swap unimport class-wordlist-stack!
     class-rec generate-methods
     class-rec class-addr@ unsafe::integral> { our-class }
     forth:::noname unsafe::>integral
