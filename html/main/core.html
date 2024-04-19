@@ -81,10 +81,12 @@
 <li><p>The words <code class="docutils literal notranslate"><span class="pre">foo-x!</span></code> ( <em>foo-x</em> <em>foo</em> – ), <code class="docutils literal notranslate"><span class="pre">foo-y!</span></code> ( <em>foo-y</em> <em>foo</em> – ), and <code class="docutils literal notranslate"><span class="pre">foo-z!</span></code> ( <em>foo-z</em> <em>foo</em> – ) for setting named elements of <em>foo</em>.</p></li>
 </ul>
 <p>Before zeptoscript can be used it must be initialized with <code class="docutils literal notranslate"><span class="pre">zscript::init-zscript</span></code> ( <em>compile-size</em> <em>runtime-size</em> – ). If this is done during compilation to flash <em>compile-size</em> is used for the heap size, otherwise <em>runtime-size</em> is used. Also, if this is done during compilation to flash an <code class="docutils literal notranslate"><span class="pre">init</span></code> routine is compiled to flash which initializes the heap to <em>runtime-size</em> next time the system is booted. Note that <em>compile-size</em> and <em>runtime-size</em> are rounded up to the nearest full multiple of eight bytes. All code to be compiled which is not zeptoscript code must be compiled before this point, as <code class="docutils literal notranslate"><span class="pre">zscript::init-zscript</span></code> overrides the numeric parser and thus will break non-zeptoscript code. Also, all code to be compiled which is zeptoscript code must be compiled after this point, as it will break otherwise (as compiling zeptoscript code outside of <code class="docutils literal notranslate"><span class="pre">src/common/core.fs</span></code> requires an initialized zeptoscript heap and numeric parser).</p>
+<p>zeptoforth can be re-entered with <code class="docutils literal notranslate"><span class="pre">enter-zforth</span></code>; if called as <code class="docutils literal notranslate"><span class="pre">zscript::enter-zforth&quot;</span> <span class="pre">from</span> <span class="pre">within</span> <span class="pre">zeptoscript</span> <span class="pre">this</span> <span class="pre">has</span> <span class="pre">no</span> <span class="pre">effect.</span> <span class="pre">Likewise,</span> <span class="pre">zeptoscript</span> <span class="pre">can</span> <span class="pre">be</span> <span class="pre">re-entered</span> <span class="pre">from</span> <span class="pre">zeptoforth</span> <span class="pre">with</span> </code>zscript::enter-zscript<code class="docutils literal notranslate"><span class="pre">;</span> <span class="pre">if</span> <span class="pre">zeptoscript</span> <span class="pre">has</span> <span class="pre">not</span> <span class="pre">been</span> <span class="pre">initialized,</span> <span class="pre">this</span> <span class="pre">is</span> <span class="pre">equivalent</span> <span class="pre">to</span> <span class="pre">calling</span> </code>65536 65536 zscript::init-zscript<code class="docutils literal notranslate"><span class="pre">,</span> <span class="pre">and</span> <span class="pre">calling</span> </code>enter-zscript` from within zeptoscript has no effect.</p>
 <p>zeptoscript code may only execute in one task, because the zeptoscript garbage collector is only aware of the current task, and the synchronization necessary to achieve execution across tasks would prove problematic. However, for asynchronous programming, an <em>action scheduler</em> mechanism is provided by <code class="docutils literal notranslate"><span class="pre">src/common/action.fs</span></code>. This is similar to the zeptoforth action scheduler, but has a few minor differences (e.g. data transferred between actions is not copied aside from the copying of integral messages and references to allocated messages). The action scheduler is “stackless” in that every action shares the same underlying data and return stacks, and storing state information between states is accomplished through providing closures for each state, and in said closures referencing outside data.</p>
 <p>S15.16 fixed-point numerics are provided by <code class="docutils literal notranslate"><span class="pre">src/common/fixed32.fs</span></code>. These fixed-point numbers are cell-sized so they fit in the space of normal integrals. Note that operations for addition, subtraction, and negation are not included in <code class="docutils literal notranslate"><span class="pre">src/common/fixed32.fs</span></code>. This is because normal integral <code class="docutils literal notranslate"><span class="pre">+</span></code>, <code class="docutils literal notranslate"><span class="pre">-</span></code>, and <code class="docutils literal notranslate"><span class="pre">negate</span></code> fits these roles. Note that loading <code class="docutils literal notranslate"><span class="pre">src/common/fixed32.fs</span></code> overrides the numeric parser to enable parsing S15.16 literals, which have the form <code class="docutils literal notranslate"><span class="pre">x;y</span></code> where <code class="docutils literal notranslate"><span class="pre">;</span></code> is the decimal point.</p>
 <section id="zscript-words">
-<h2><code class="docutils literal notranslate"><span class="pre">zscript</span></code> Words<a class="headerlink" href="#zscript-words" title="Permalink to this heading">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">zscript</span></code> words<a class="headerlink" href="#zscript-words" title="Permalink to this heading">¶</a></h2>
+<p>Note that the <code class="docutils literal notranslate"><span class="pre">zscript</span></code> module is the default module within zeptoscript.</p>
 <section id="null-type">
 <h3><code class="docutils literal notranslate"><span class="pre">null-type</span></code><a class="headerlink" href="#null-type" title="Permalink to this heading">¶</a></h3>
 <p>( – type )</p>
@@ -124,6 +126,11 @@
 <h3><code class="docutils literal notranslate"><span class="pre">tagged-type</span></code><a class="headerlink" href="#tagged-type" title="Permalink to this heading">¶</a></h3>
 <p>( – type )</p>
 <p>A type for auxiliary types, such as words.</p>
+</section>
+<section id="symbol-type">
+<h3><code class="docutils literal notranslate"><span class="pre">symbol-type</span></code><a class="headerlink" href="#symbol-type" title="Permalink to this heading">¶</a></h3>
+<p>( – type )</p>
+<p>The symbol type.</p>
 </section>
 <section id="cells-type">
 <h3><code class="docutils literal notranslate"><span class="pre">cells-type</span></code><a class="headerlink" href="#cells-type" title="Permalink to this heading">¶</a></h3>
@@ -295,10 +302,30 @@
 <p>( x – bytes? )</p>
 <p>Get whether a value is a byte sequence or slice.</p>
 </section>
+<section id="symbol">
+<h3><code class="docutils literal notranslate"><span class="pre">symbol</span></code><a class="headerlink" href="#symbol" title="Permalink to this heading">¶</a></h3>
+<p>( “name” – )</p>
+<p>Define a symbol with the given name.</p>
+</section>
+<section id="symbol-name">
+<h3><code class="docutils literal notranslate"><span class="pre">symbol&gt;name</span></code><a class="headerlink" href="#symbol-name" title="Permalink to this heading">¶</a></h3>
+<p>( symbol – bytes )</p>
+<p>Get the name of a symbol.</p>
+</section>
 <section id="init-zscript">
 <h3><code class="docutils literal notranslate"><span class="pre">init-zscript</span></code><a class="headerlink" href="#init-zscript" title="Permalink to this heading">¶</a></h3>
 <p>( compile-size runtime-size – )</p>
 <p>Initialize zeptoscript. All non-zeptoscript code must be compiled before this word is called, and all zeptoscript code must be compiled after this word is called. If called during compilation to flash, a call to this word will be compiled into the initialization process on bootup, so zeptoscript will automatically be initialized after the previous definition of <code class="docutils literal notranslate"><span class="pre">init</span></code> (or declaration of an <code class="docutils literal notranslate"><span class="pre">initializer</span></code>) and before any subsequent definitions of <code class="docutils literal notranslate"><span class="pre">init</span></code> (or declarations of <code class="docutils literal notranslate"><span class="pre">initializer</span></code>). Note that when compiling to flash the zeptoscript heap size will be initialized to <em>compile-size</em>, but when compiling to RAM or on any subsequent boot the zeptoscript heap size will be initialized to <em>runtime-size</em>. Note that the heap size is rounded up to the nearest eight bytes.</p>
+</section>
+<section id="enter-zforth">
+<h3><code class="docutils literal notranslate"><span class="pre">enter-zforth</span></code><a class="headerlink" href="#enter-zforth" title="Permalink to this heading">¶</a></h3>
+<p>( – )</p>
+<p>Re-enter zeptoforth from within zeptoscript. This has no effect when called from within zeptoforth.</p>
+</section>
+<section id="enter-zscript">
+<h3><code class="docutils literal notranslate"><span class="pre">enter-zscript</span></code><a class="headerlink" href="#enter-zscript" title="Permalink to this heading">¶</a></h3>
+<p>( – )</p>
+<p>Re-enter zeptoscript from within zeptoforth. This has no effect when called from within zeptoscript. Note that if this is called and <code class="docutils literal notranslate"><span class="pre">init-zscript</span></code> has not been called it is equivalent to calling <code class="docutils literal notranslate"><span class="pre">65536</span> <span class="pre">65536</span> <span class="pre">zscript::init-zscript</span></code>.</p>
 </section>
 <section id="copy">
 <h3><code class="docutils literal notranslate"><span class="pre">copy</span></code><a class="headerlink" href="#copy" title="Permalink to this heading">¶</a></h3>
@@ -818,6 +845,26 @@
 <h3><code class="docutils literal notranslate"><span class="pre">execute-foreign</span></code><a class="headerlink" href="#execute-foreign" title="Permalink to this heading">¶</a></h3>
 <p>( in-count out-count xt – )</p>
 <p>Execute a foreign word.</p>
+</section>
+<section id="word-name">
+<h3><code class="docutils literal notranslate"><span class="pre">word-name</span></code><a class="headerlink" href="#word-name" title="Permalink to this heading">¶</a></h3>
+<p>( word – name )</p>
+<p>Get the name of a word.</p>
+</section>
+<section id="word-flags">
+<h3><code class="docutils literal notranslate"><span class="pre">word-flags</span></code><a class="headerlink" href="#word-flags" title="Permalink to this heading">¶</a></h3>
+<p>( word – flags )</p>
+<p>Get the flags of a word.</p>
+</section>
+<section id="compile">
+<h3><code class="docutils literal notranslate"><span class="pre">compile,</span></code><a class="headerlink" href="#compile" title="Permalink to this heading">¶</a></h3>
+<p>( xt – )</p>
+<p>Compile an xt to the current definition.</p>
+</section>
+<section id="inline">
+<h3><code class="docutils literal notranslate"><span class="pre">inline,</span></code><a class="headerlink" href="#inline" title="Permalink to this heading">¶</a></h3>
+<p>( xt – )</p>
+<p>Inline an xt to the current definition.</p>
 </section>
 <section id="find">
 <h3><code class="docutils literal notranslate"><span class="pre">find</span></code><a class="headerlink" href="#find" title="Permalink to this heading">¶</a></h3>

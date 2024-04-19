@@ -57,11 +57,15 @@ This creates the following words:
 
 Before zeptoscript can be used it must be initialized with `zscript::init-zscript` ( *compile-size* *runtime-size* -- ). If this is done during compilation to flash *compile-size* is used for the heap size, otherwise *runtime-size* is used. Also, if this is done during compilation to flash an `init` routine is compiled to flash which initializes the heap to *runtime-size* next time the system is booted. Note that *compile-size* and *runtime-size* are rounded up to the nearest full multiple of eight bytes. All code to be compiled which is not zeptoscript code must be compiled before this point, as `zscript::init-zscript` overrides the numeric parser and thus will break non-zeptoscript code. Also, all code to be compiled which is zeptoscript code must be compiled after this point, as it will break otherwise (as compiling zeptoscript code outside of `src/common/core.fs` requires an initialized zeptoscript heap and numeric parser).
 
+zeptoforth can be re-entered with `enter-zforth`; if called as `zscript::enter-zforth" from within zeptoscript this has no effect. Likewise, zeptoscript can be re-entered from zeptoforth with `zscript::enter-zscript`; if zeptoscript has not been initialized, this is equivalent to calling `65536 65536 zscript::init-zscript`, and calling `enter-zscript` from within zeptoscript has no effect.
+
 zeptoscript code may only execute in one task, because the zeptoscript garbage collector is only aware of the current task, and the synchronization necessary to achieve execution across tasks would prove problematic. However, for asynchronous programming, an *action scheduler* mechanism is provided by `src/common/action.fs`. This is similar to the zeptoforth action scheduler, but has a few minor differences (e.g. data transferred between actions is not copied aside from the copying of integral messages and references to allocated messages). The action scheduler is "stackless" in that every action shares the same underlying data and return stacks, and storing state information between states is accomplished through providing closures for each state, and in said closures referencing outside data.
 
 S15.16 fixed-point numerics are provided by `src/common/fixed32.fs`. These fixed-point numbers are cell-sized so they fit in the space of normal integrals. Note that operations for addition, subtraction, and negation are not included in `src/common/fixed32.fs`. This is because normal integral `+`, `-`, and `negate` fits these roles. Note that loading `src/common/fixed32.fs` overrides the numeric parser to enable parsing S15.16 literals, which have the form `x;y` where `;` is the decimal point.
 
-## `zscript` Words
+## `zscript` words
+
+Note that the `zscript` module is the default module within zeptoscript.
 
 ### `null-type`
 ( -- type )
@@ -102,6 +106,11 @@ The execution token type.
 ( -- type )
 
 A type for auxiliary types, such as words.
+
+### `symbol-type`
+( -- type )
+
+The symbol type.
 
 ### `cells-type`
 ( -- type )
@@ -272,10 +281,30 @@ Get whether a value is a cell sequence or slice.
 
 Get whether a value is a byte sequence or slice.
 
+### `symbol`
+( "name" -- )
+
+Define a symbol with the given name.
+
+### `symbol>name`
+( symbol -- bytes )
+
+Get the name of a symbol.
+
 ### `init-zscript`
 ( compile-size runtime-size -- )
 
 Initialize zeptoscript. All non-zeptoscript code must be compiled before this word is called, and all zeptoscript code must be compiled after this word is called. If called during compilation to flash, a call to this word will be compiled into the initialization process on bootup, so zeptoscript will automatically be initialized after the previous definition of `init` (or declaration of an `initializer`) and before any subsequent definitions of `init` (or declarations of `initializer`). Note that when compiling to flash the zeptoscript heap size will be initialized to *compile-size*, but when compiling to RAM or on any subsequent boot the zeptoscript heap size will be initialized to *runtime-size*. Note that the heap size is rounded up to the nearest eight bytes.
+
+### `enter-zforth`
+( -- )
+
+Re-enter zeptoforth from within zeptoscript. This has no effect when called from within zeptoforth.
+
+### `enter-zscript`
+( -- )
+
+Re-enter zeptoscript from within zeptoforth. This has no effect when called from within zeptoscript. Note that if this is called and `init-zscript` has not been called it is equivalent to calling `65536 65536 zscript::init-zscript`.
 
 ### `copy`
 ( value0 offset0 value1 offset1 count -- )
@@ -795,6 +824,26 @@ Make a foreign word usable.
 ( in-count out-count xt -- )
 
 Execute a foreign word.
+
+### `word-name`
+( word -- name )
+
+Get the name of a word.
+
+### `word-flags`
+( word -- flags )
+
+Get the flags of a word.
+
+### `compile,`
+( xt -- )
+
+Compile an xt to the current definition.
+
+### `inline,`
+( xt -- )
+
+Inline an xt to the current definition.
 
 ### `find`
 ( seq -- word|0 )

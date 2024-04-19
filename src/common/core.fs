@@ -50,6 +50,21 @@ begin-module zscript
 
     \ Are we initialized
     false value inited?
+
+    \ Are we in zeptoscript
+    false value in-zscript?
+
+    \ Default compile-time heap size
+    65536 constant default-compile-size
+
+    \ Default runtime heap size
+    65536 constant default-runtime-size
+    
+    \ Saved handle-number-hook
+    0 value saved-handle-number-hook
+
+    \ Saved find-hook
+    0 value saved-find-hook
     
     \ Record syntax
     255 constant syntax-record
@@ -135,9 +150,6 @@ begin-module zscript
     
     \ Set the top of the to semi-space
     : to-space-top! zscript-state @ to-space-top ! ;
-
-    \ Tags
-    1 constant word-tag
 
     \ Bit in the type indicating whether a value contains cells to GC
     \ Note that this is after subtracting two from the type
@@ -342,9 +354,13 @@ begin-module zscript
     5 >small-int constant const-bytes-type
     6 >small-int constant xt-type
     7 >small-int constant tagged-type
+    8 >small-int constant symbol-type
     10 >small-int constant cells-type
     11 >small-int constant closure-type
     12 >small-int constant slice-type
+
+    \ Tags
+    1 >small-int constant word-tag
 
     \ Cast nulls, integers, and words to cells, validating them
     : integral> ( 0 | int | addr -- x' )
@@ -823,6 +839,7 @@ begin-module zscript
   const-bytes-type constant const-bytes-type
   xt-type constant xt-type
   tagged-type constant tagged-type
+  symbol-type constant symbol-type
   cells-type constant cells-type
   closure-type constant closure-type
   slice-type constant slice-type
@@ -1521,16 +1538,57 @@ begin-module zscript
     ram-globals new-ram-globals-array!
     get-current-flash-global-id
     cells-type allocate-cells flash-globals-array!
+    handle-number-hook @ to saved-handle-number-hook
     ['] do-handle-number handle-number-hook !
     zscript 1 set-order
     0 internal::module-stack-index !
     zscript internal::push-stack
     zscript internal::add
+    find-hook @ to saved-find-hook
     ['] do-find-with-module find-hook !
     0 to old-style-modules
     true to inited?
+    true to in-zscript?
   ; is init-zscript
 
+  \ Re-enter zeptoforth
+  : enter-zforth
+    inited? not in-zscript? not or if exit then
+    handle-number-hook @
+    saved-handle-number-hook handle-number-hook !
+    to saved-handle-number-hook
+    forth 1 set-order
+    0 internal::module-stack-index !
+    forth internal::push-stack
+    forth internal::add
+    find-hook @
+    saved-find-hook find-hook !
+    to saved-find-hook
+    false to in-zscript?
+  ;
+
+  \ Re-enter zscript
+  : enter-zscript
+    inited? not if
+      default-compile-size default-runtime-size init-zscript
+    else
+      in-zscript? not if
+        handle-number-hook @
+        saved-handle-number-hook handle-number-hook !
+        to saved-handle-number-hook
+        zscript 1 set-order
+        0 internal::module-stack-index !
+        zscript internal::push-stack
+        zscript internal::add
+        find-hook @
+        saved-find-hook find-hook !
+        to saved-find-hook
+        0 to old-style-modules
+        true to in-zscript?
+      then
+    then
+  ;
+    
   \ Copy from one value to another in a type-safe fashion
   : copy { value0 offset0 value1 offset1 count -- }
     count integral> to count
@@ -2721,10 +2779,11 @@ begin-module zscript
   ;
 
   \ Get a word's name
-  : >name { word -- name }
+  : word-name { word -- name }
     word >type tagged-type = averts x-incorrect-type
     word >tag word-tag = averts x-incorrect-type
-    0 word t@+ integral> forth::>name forth::count addr-len>bytes
+    0 word t@+ integral> internal::word-name forth::count
+    2>integral addr-len>const-bytes
   ;
 
   \ Get the flags for a word
@@ -3921,7 +3980,25 @@ begin-module zscript
   type-shift forth::lshift
   forth::cell 1 forth::lshift forth::or ,
   forth::constant 0bytes
+  
+  \ Create a symbol
+  : symbol ( "name" -- )
+    forth::here
+    symbol-type integral> 2 forth::-
+    type-shift forth::lshift
+    2 forth::cells 1 forth::lshift forth::or ,
+    forth::reserve
+    swap forth::constant
+    forth::latest swap forth::current!
+  ;
 
+  \ Get the name of a symbol
+  : symbol>name ( symbol -- bytes )
+    dup >type symbol-type = averts x-incorrect-type
+    forth::cell+ forth::@ internal::word-name forth::count
+    2>integral addr-len>const-bytes
+  ;
+  
   \ Redefine ?DUP
   : ?dup dup if dup else then ;
 
@@ -4000,5 +4077,8 @@ begin-module zscript
 
   \ Internal module
   internal make-new-style constant internal
+
+  \ Zeptoscript module
+  zscript make-new-style constant zscript
   
 end-module
