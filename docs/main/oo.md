@@ -15,9 +15,6 @@ Implementing a method with `:method` ( "method-name" -- ) followed by its code a
 Here is a simple example of object-orientation in use:
 
 ```
-private-module
-
-zscript import
 zscript-oo import
 
 \ Declare our methods
@@ -91,7 +88,7 @@ With these definitions in place, one will get the following:
 1 2 make-barbaz baz barbaz-z: 2  ok
 ```
 
-## `zscript-oo` Words
+## `zscript-oo` words
 
 ### `method`
 ( "name" -- )
@@ -111,12 +108,17 @@ Finish the definition of a class.
 ### `member:`
 ( "name" -- )
 
-Define a member with a given name in the context of the definition of a class to which it will belong. Note that the member will be get and set with two methods *name*`@` ( *object* -- *x* ), its getter, and *name*`!` ( *x* *object* --- ), its setter. These accessors may only be used to access the class for which they are defined; otherwise `x-member-not-for-class` will be raised.
+Define a member with a given name in the context of the definition of a class to which it will belong. Note that the member will be get and set with two methods *name*`@` ( *object* -- *x* ), its getter, and *name*`!` ( *x* *object* --- ), its setter. These accessors may only be used to access the class for which they are defined; otherwise `x-member-not-for-class` will be raised. Also, it is not accessible from outside the class definition.
 
 ### `:method`
 ( "name" -- )
 
 Implement a method with a given name in the context of the definition of a class to which it will belong. The method must already be declared with `method`. If a name of a word that is not a method is provided `x-not-a-method` will be raised. The method implementation will be finished with `;`.
+
+### `:private`
+( "name" -- )
+
+Define a private word that is not accessible outside the class definition.
 
 ### `has-method?`
 ( method object -- has-method? )

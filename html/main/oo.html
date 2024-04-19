@@ -17,6 +17,7 @@
     <script src="../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Lists" href="list.html" />
     <link rel="prev" title="zeptoscript Core Functionality" href="core.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -43,10 +44,7 @@
 <p>Creating a member with <code class="docutils literal notranslate"><span class="pre">member:</span></code> ( “member-name” – ) within a class definition creates two accessor words, consisting of the member name followed by <code class="docutils literal notranslate"><span class="pre">&#64;</span></code>, for the getter<code class="docutils literal notranslate"><span class="pre">,</span> <span class="pre">and</span> </code>!`, for the setter, which have the signatures ( <em>object</em> – <em>x</em> ) and ( <em>x</em> <em>object</em> – ) respectively. Note that these words must be defined before they may be referenced.</p>
 <p>Implementing a method with <code class="docutils literal notranslate"><span class="pre">:method</span></code> ( “method-name” – ) followed by its code and completed with <code class="docutils literal notranslate"><span class="pre">;</span></code> ( – ) within a class definition implements the already-declared method with the specified name (which may include <code class="docutils literal notranslate"><span class="pre">::</span></code>) for that class. Note that the method must be declared ahead of time. When the method is called, the object for which it was called remains on the stack, so it can be used by the method. (Make sure to drop it off the stack.)</p>
 <p>Here is a simple example of object-orientation in use:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>private-module
-
-zscript import
-zscript-oo import
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>zscript-oo import
 
 \ Declare our methods
 method foo ( self -- )
@@ -118,7 +116,7 @@ end-class
 </pre></div>
 </div>
 <section id="zscript-oo-words">
-<h2><code class="docutils literal notranslate"><span class="pre">zscript-oo</span></code> Words<a class="headerlink" href="#zscript-oo-words" title="Permalink to this heading">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-oo</span></code> words<a class="headerlink" href="#zscript-oo-words" title="Permalink to this heading">¶</a></h2>
 <section id="method">
 <h3><code class="docutils literal notranslate"><span class="pre">method</span></code><a class="headerlink" href="#method" title="Permalink to this heading">¶</a></h3>
 <p>( “name” – )</p>
@@ -137,12 +135,17 @@ end-class
 <section id="member">
 <h3><code class="docutils literal notranslate"><span class="pre">member:</span></code><a class="headerlink" href="#member" title="Permalink to this heading">¶</a></h3>
 <p>( “name” – )</p>
-<p>Define a member with a given name in the context of the definition of a class to which it will belong. Note that the member will be get and set with two methods <em>name</em><code class="docutils literal notranslate"><span class="pre">&#64;</span></code> ( <em>object</em> – <em>x</em> ), its getter, and <em>name</em><code class="docutils literal notranslate"><span class="pre">!</span></code> ( <em>x</em> <em>object</em> — ), its setter. These accessors may only be used to access the class for which they are defined; otherwise <code class="docutils literal notranslate"><span class="pre">x-member-not-for-class</span></code> will be raised.</p>
+<p>Define a member with a given name in the context of the definition of a class to which it will belong. Note that the member will be get and set with two methods <em>name</em><code class="docutils literal notranslate"><span class="pre">&#64;</span></code> ( <em>object</em> – <em>x</em> ), its getter, and <em>name</em><code class="docutils literal notranslate"><span class="pre">!</span></code> ( <em>x</em> <em>object</em> — ), its setter. These accessors may only be used to access the class for which they are defined; otherwise <code class="docutils literal notranslate"><span class="pre">x-member-not-for-class</span></code> will be raised. Also, it is not accessible from outside the class definition.</p>
 </section>
 <section id="id1">
 <h3><code class="docutils literal notranslate"><span class="pre">:method</span></code><a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h3>
 <p>( “name” – )</p>
 <p>Implement a method with a given name in the context of the definition of a class to which it will belong. The method must already be declared with <code class="docutils literal notranslate"><span class="pre">method</span></code>. If a name of a word that is not a method is provided <code class="docutils literal notranslate"><span class="pre">x-not-a-method</span></code> will be raised. The method implementation will be finished with <code class="docutils literal notranslate"><span class="pre">;</span></code>.</p>
+</section>
+<section id="private">
+<h3><code class="docutils literal notranslate"><span class="pre">:private</span></code><a class="headerlink" href="#private" title="Permalink to this heading">¶</a></h3>
+<p>( “name” – )</p>
+<p>Define a private word that is not accessible outside the class definition.</p>
 </section>
 <section id="has-method">
 <h3><code class="docutils literal notranslate"><span class="pre">has-method?</span></code><a class="headerlink" href="#has-method" title="Permalink to this heading">¶</a></h3>
@@ -188,6 +191,10 @@ end-class
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="core.html">zeptoscript Core Functionality</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">zeptoscript Object-Orientation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="list.html">Lists</a></li>
+<li class="toctree-l1"><a class="reference internal" href="map.html">Maps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="set.html">Sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="action.html">Actions</a></li>
 </ul>
 
 <div class="relations">
@@ -195,6 +202,7 @@ end-class
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
       <li>Previous: <a href="core.html" title="previous chapter">zeptoscript Core Functionality</a></li>
+      <li>Next: <a href="list.html" title="next chapter">Lists</a></li>
   </ul></li>
 </ul>
 </div>
