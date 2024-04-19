@@ -291,6 +291,11 @@ Define a symbol with the given name.
 
 Get the name of a symbol.
 
+### `symbol>integral`
+( symbol -- integral )
+
+Convert a symbol to a unique integral.
+
 ### `init-zscript`
 ( compile-size runtime-size -- )
 

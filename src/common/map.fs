@@ -25,12 +25,7 @@ begin-module zscript-map
     \ Empty cells
     \
     \ This is not garbage collected so does not need to be in the heap.
-    forth::here
-    cells-type zscript-internal::integral>
-    2 zscript-internal::integral> forth::-
-    zscript-internal::type-shift forth::lshift
-    forth::cell 1 zscript-internal::integral> forth::lshift forth::or forth::,
-    forth::constant empty-key
+    symbol empty-key
     
     \ Map minimum size
     4 constant map-min-size
@@ -221,7 +216,7 @@ begin-module zscript-map
   ;
 
   \ Get the keys of a map
-  : map-keys { map -- keys }
+  : map>keys { map -- keys }
     map map-inner@ { inner }
     map map-entry-count@ { count }
     count make-cells { keys }
@@ -237,7 +232,7 @@ begin-module zscript-map
   ;
 
   \ Get the values of a map
-  : map-values { map -- values }
+  : map>values { map -- values }
     map map-inner@ { inner }
     map map-entry-count@ { count }
     count make-cells { values }
@@ -253,7 +248,7 @@ begin-module zscript-map
   ;
 
   \ Get the keys and values of a map as pairs
-  : map-key-values { map -- pairs }
+  : map>key-values { map -- pairs }
     map map-inner@ { inner }
     map map-entry-count@ { count }
     count make-cells { key-values }

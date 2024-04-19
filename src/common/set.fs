@@ -25,12 +25,7 @@ begin-module zscript-set
     \ Empty cells
     \
     \ This is not garbage collected so does not need to be in the heap.
-    forth::here
-    cells-type zscript-internal::integral>
-    2 zscript-internal::integral> forth::-
-    zscript-internal::type-shift forth::lshift
-    forth::cell 1 zscript-internal::integral> forth::lshift forth::or forth::,
-    forth::constant empty-value
+    symbol empty-value
     
     \ Set minimum size
     4 constant set-min-size
@@ -176,7 +171,7 @@ begin-module zscript-set
   ;
 
   \ Get the values of a set
-  : set-values { set -- values }
+  : set>values { set -- values }
     set set-inner@ { inner }
     set set-entry-count@ { count }
     count make-cells { values }

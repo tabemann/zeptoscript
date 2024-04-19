@@ -138,7 +138,7 @@ Get whether any element of a set meet a predicate.
 
 Get whether all elements of a set meet a predicate.
 
-### `set-values`
+### `set>values`
 ( set -- values )
 
 Get the values of a set as a cell sequence.

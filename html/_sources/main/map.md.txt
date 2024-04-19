@@ -203,17 +203,17 @@ Get whether any element of a map meet a predicate.
 
 Get whether all elements of a map meet a predicate.
 
-### `map-keys`
+### `map>keys`
 ( map -- keys )
 
 Get the keys of a map as a cell sequence.
 
-### `map-values`
+### `map>values`
 ( map -- values )
 
 Get the values of a map as a cell sequence.
 
-### `map-key-values`
+### `map>key-values`
 ( map -- pairs )
 
 Get the keys and values of a map as pairs as a cell sequence.

@@ -3998,6 +3998,12 @@ begin-module zscript
     forth::cell+ forth::@ internal::word-name forth::count
     2>integral addr-len>const-bytes
   ;
+
+  \ Convert a symbol to an integral
+  : symbol>integral ( symbol -- integral )
+    dup >type symbol-type = averts x-incorrect-type
+    >integral
+  ;
   
   \ Redefine ?DUP
   : ?dup dup if dup else then ;
