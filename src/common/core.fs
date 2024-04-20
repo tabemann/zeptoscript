@@ -2835,7 +2835,7 @@ begin-module zscript
   ;
 
   \ Get a word's name
-  : word-name { word -- name }
+  : word>name { word -- name }
     word >type tagged-type = averts x-incorrect-type
     word >tag word-tag = averts x-incorrect-type
     0 word t@+ integral> internal::word-name forth::count
@@ -2843,7 +2843,7 @@ begin-module zscript
   ;
 
   \ Get the flags for a word
-  : word-flags { word -- flags }
+  : word>flags { word -- flags }
     word >type tagged-type = averts x-incorrect-type
     word >tag word-tag = averts x-incorrect-type
     0 word t@+ integral> internal::word-flags h@ >integral
@@ -2885,7 +2885,7 @@ begin-module zscript
         then
       then
     then
-    word word-flags
+    word word>flags
     dup immediate-flag and if immediate then
     dup compiled-flag and if compile-only then
     inlined-flag fold-flag or and if

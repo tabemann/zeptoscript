@@ -850,12 +850,12 @@ Make a foreign word usable.
 
 Execute a foreign word.
 
-### `word-name`
+### `word>name`
 ( word -- name )
 
 Get the name of a word.
 
-### `word-flags`
+### `word>flags`
 ( word -- flags )
 
 Get the flags of a word.
