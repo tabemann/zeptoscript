@@ -408,7 +408,17 @@ begin-module zscript-oo
     :
     old-current zscript-internal::filter-new-style-flag forth::set-current
   ;
-  
+
+  \ Implement a class member
+  : class-member: ( "name" -- )
+    syntax-class verify-syntax
+    forth::get-current zscript-internal::make-new-style { old-current }
+    0 class-wordlist-stack@ @+
+    zscript-internal::filter-new-style-flag forth::set-current
+    global
+    old-current zscript-internal::filter-new-style-flag forth::set-current
+  ;
+
   \ Finish defining a class
   : end-class { class-rec -- }
     syntax-class verify-syntax internal::drop-syntax
