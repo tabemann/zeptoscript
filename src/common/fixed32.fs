@@ -24,7 +24,7 @@ begin-module zscript-fixed32
   global saved-handle-number-hook
 
   \ The handle-number-hook foreign variable
-  foreign-variable forth::handle-number-hook handle-number-hook
+  foreign-hook-variable forth::handle-number-hook handle-number-hook
 
   \ Multiply two S15.16 fixed-point numbers
   2 1 foreign forth::fixed32::f32* f32* ( x y -- z )
@@ -213,7 +213,7 @@ begin-module zscript-fixed32
 
     \ Handle a number
     : do-handle-number { addr bytes -- flag }
-      addr bytes saved-handle-number-hook@ unsafe::integral>xt execute not if
+      addr bytes saved-handle-number-hook@ execute not if
         addr bytes unsafe::2>integral addr-len>bytes
         zscript-fixed32::parse-f32 if
           state? if lit, then true
@@ -230,8 +230,7 @@ begin-module zscript-fixed32
   \ Initialize zscript-fixed32
   : init-zscript-f32 ( -- )
     handle-number-hook@ saved-handle-number-hook!
-    ['] zscript-fixed32-internal::do-handle-number
-    unsafe::xt>integral handle-number-hook!
+    ['] zscript-fixed32-internal::do-handle-number handle-number-hook!
   ;
 
   initializer init-zscript-f32

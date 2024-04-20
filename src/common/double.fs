@@ -24,7 +24,7 @@ begin-module zscript-double
   global saved-handle-number-hook
 
   \ The handle-number-hook foreign variable
-  foreign-variable forth::handle-number-hook handle-number-hook
+  foreign-hook-variable forth::handle-number-hook handle-number-hook
 
   \ Convert a 32-bit integer to a double cell
   : s>d ( x -- dvalue )
@@ -468,7 +468,7 @@ begin-module zscript-double
 
     \ Handle a number
     : do-handle-number { addr bytes -- flag }
-      addr bytes saved-handle-number-hook@ unsafe::integral>xt execute not if
+      addr bytes saved-handle-number-hook@ execute not if
         addr bytes unsafe::2>integral addr-len>bytes
         dup [: [char] . = ;] any if
           zscript-double::parse-double if
@@ -493,8 +493,7 @@ begin-module zscript-double
   \ Initialize zscript-double
   : init-zscript-double ( -- )
     handle-number-hook@ saved-handle-number-hook!
-    ['] zscript-double-internal::do-handle-number
-    unsafe::xt>integral handle-number-hook!
+    ['] zscript-double-internal::do-handle-number handle-number-hook!
   ;
 
   initializer init-zscript-double

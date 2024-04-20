@@ -825,6 +825,11 @@ Make a foreign double constant.
 
 Make a foreign variable.
 
+### `foreign-hook-variable`
+( "foreign-name" "new-name" -- )
+
+Make a foreign hook variable; this differs from normal foreign variables in that its getter returns an execution token and its setter takes an execution token.
+
 ### `foreign`
 ( in-count out-count "foreign-name" "new-name" -- )
 

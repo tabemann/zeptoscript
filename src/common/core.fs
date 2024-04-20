@@ -2811,6 +2811,29 @@ begin-module zscript
     end-compile,
   ;
 
+  \ Make a foreign hook variable
+  : foreign-hook-variable ( "foreign-name" "new-name" -- )
+    token-word word>xt { xt }
+    token dup 0<> averts x-token-expected { name }
+    name >len { len }
+    len 1+ make-bytes { accessor-name }
+    name 0 accessor-name 0 len copy
+    [char] @ len accessor-name c!+
+    accessor-name start-compile visible
+    xt execute >integral raw-lit,
+    postpone forth::@
+    postpone >integral
+    postpone integral>xt
+    end-compile,
+    [char] ! len accessor-name c!+
+    accessor-name start-compile visible
+    postpone xt>integral
+    postpone integral>
+    xt execute >integral raw-lit,
+    postpone forth::!
+    end-compile,
+  ;
+
   \ Get a word's name
   : word-name { word -- name }
     word >type tagged-type = averts x-incorrect-type
