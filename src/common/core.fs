@@ -849,7 +849,19 @@ begin-module zscript
   
   \ Redefine LIT,
   : lit, ( x -- )
-    dup small-int? if lit, else integral> lit, postpone >integral then
+    dup small-int? if
+      lit,
+    else
+      dup >type case
+        big-int-type of
+          integral> lit, postpone >integral
+        endof
+        double-type of
+          double> swap lit, lit, postpone >double
+        endof
+        ['] x-incorrect-type ?raise
+      endcase
+    then
   ;
 
   \ Redefine LIT,
@@ -2664,10 +2676,12 @@ begin-module zscript
 
   \ Define a constant with a name
   : constant-with-name ( x name -- )
-    swap dup small-int? if
-      swap unsafe::bytes>addr-len 2integral> internal::constant-with-name
+    over small-int? if
+      unsafe::bytes>addr-len 2integral> internal::constant-with-name
     else
-      swap start-compile visible lit, end-compile,
+      over >type dup big-int-type = swap double-type = or
+      averts x-incorrect-type
+      start-compile visible lit, end-compile,
     then
   ;
 
@@ -2755,6 +2769,13 @@ begin-module zscript
     token-word word>xt { xt }
     token dup 0<> averts x-token-expected
     xt execute >integral swap constant-with-name
+  ;
+
+  \ Make a foreign double constant
+  : foreign-double-constant ( "foreign-name" "new-name" -- )
+    token-word word>xt { xt }
+    token dup 0<> averts x-token-expected
+    xt execute >double swap constant-with-name
   ;
 
   \ Make a foreign variable

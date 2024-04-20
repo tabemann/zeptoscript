@@ -239,7 +239,7 @@ begin-module zscript-double
   ;
 
   \ Get the value of pi
-  : pi ( -- fvalue ) forth::pi zscript-internal::>double ;
+  foreign-double-constant forth::pi pi
 
   \ Get the ceiling of a fixed-point number as a single-cell number
   : ceil ( fvalue -- nvalue )

@@ -815,6 +815,11 @@ Create a field in a record.
 
 Make a foreign constant.
 
+### `foreign-double-constant`
+( "foreign-name" "new-name" -- )
+
+Make a foreign double constant.
+
 ### `foreign-variable`
 ( "foreign-name" "new-name" -- )
 
