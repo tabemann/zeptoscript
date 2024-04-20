@@ -4065,6 +4065,12 @@ begin-module zscript
     dup >type symbol-type = averts x-incorrect-type
     >integral
   ;
+
+  \ Convert a double to an integral pair
+  : double>2integral ( d -- x0 x1 ) double> 2>integral ;
+
+  \ Convert an integral pair to a double
+  : 2integral>double ( x0 x1 -- double ) 2integral> >double ;
   
   \ Redefine ?DUP
   : ?dup dup if dup else then ;

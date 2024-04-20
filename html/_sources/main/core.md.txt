@@ -296,6 +296,16 @@ Get the name of a symbol.
 
 Convert a symbol to a unique integral.
 
+### `double>2integral`
+( d -- x0 x1 )
+
+Convert a double to an integral pair.
+
+### `2integral>double`
+( x0 x1 -- d )
+
+Convert an integral pair to a double.
+
 ### `init-zscript`
 ( compile-size runtime-size -- )
 
