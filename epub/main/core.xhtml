@@ -778,7 +778,7 @@
 <section id="constant-with-name">
 <h3><code class="docutils literal notranslate"><span class="pre">constant-with-name</span></code></h3>
 <p>( x name – )</p>
-<p>Define a constant with a name.</p>
+<p>Define a constant with a name; note that this may be a null, a small int, a big int, a double, or a byte sequence (in the latter case, a constant byte sequence will be compiled).</p>
 </section>
 <section id="raw-constant-with-name">
 <h3><code class="docutils literal notranslate"><span class="pre">raw-constant-with-name</span></code></h3>
@@ -893,12 +893,7 @@
 <section id="constant">
 <h3><code class="docutils literal notranslate"><span class="pre">constant</span></code></h3>
 <p>( x “name” – )</p>
-<p>Define a CONSTANT.</p>
-</section>
-<section id="id59">
-<h3><code class="docutils literal notranslate"><span class="pre">2constant</span></code></h3>
-<p>( x0 x1 “name” – )</p>
-<p>Define a 2CONSTANT.</p>
+<p>Define a constant; note that this may be a null, a small int, a big int, a double, or a byte sequence (in the latter case, a constant byte sequence will be compiled).</p>
 </section>
 <section id="global">
 <h3><code class="docutils literal notranslate"><span class="pre">global</span></code></h3>
@@ -925,7 +920,7 @@
 <p>( base – )</p>
 <p>Set BASE.</p>
 </section>
-<section id="id60">
+<section id="id59">
 <h3><code class="docutils literal notranslate"><span class="pre">base&#64;</span></code></h3>
 <p>( – base )</p>
 <p>Get BASE.</p>
@@ -980,12 +975,12 @@
 <p>( seq xt – seq’ )</p>
 <p>Map a sequence or slice into a new sequence with an index.</p>
 </section>
-<section id="id61">
+<section id="id60">
 <h3><code class="docutils literal notranslate"><span class="pre">map!</span></code></h3>
 <p>( seq xt – )</p>
 <p>Map a sequence or slice in place.</p>
 </section>
-<section id="id62">
+<section id="id61">
 <h3><code class="docutils literal notranslate"><span class="pre">mapi!</span></code></h3>
 <p>( seq xt – )</p>
 <p>Map a sequence or slicein place with an index.</p>
@@ -1005,7 +1000,7 @@
 <p>( bit index bits – )</p>
 <p>Set a bit in a bit sequence.</p>
 </section>
-<section id="id63">
+<section id="id62">
 <h3><code class="docutils literal notranslate"><span class="pre">bit&#64;</span></code></h3>
 <p>( index bits – )</p>
 <p>Get a bit in a bit sequence.</p>
@@ -1045,7 +1040,7 @@
 <p>( seq – seq’ )</p>
 <p>Reverse a sequence producing a new sequence.</p>
 </section>
-<section id="id64">
+<section id="id63">
 <h3><code class="docutils literal notranslate"><span class="pre">reverse!</span></code></h3>
 <p>( seq – )</p>
 <p>Reverse a sequence in place.</p>
@@ -1060,12 +1055,12 @@
 <p>( seq0 seq1 seq2 – seq3 )</p>
 <p>Zip three sequences into a new sequence, using the length of the shorter sequence.</p>
 </section>
-<section id="id65">
+<section id="id64">
 <h3><code class="docutils literal notranslate"><span class="pre">zip!</span></code></h3>
 <p>( seq0 seq1 – )</p>
 <p>Zip two sequences into the first sequence in-place; note that if the ranges do not match an exception is raised, and the first sequence must be a cell sequence.</p>
 </section>
-<section id="id66">
+<section id="id65">
 <h3><code class="docutils literal notranslate"><span class="pre">zip3!</span></code></h3>
 <p>( seq0 seq1 seq2 – )</p>
 <p>Zip three sequences into the first sequence in-place; note that if the ranges do not match an exception is raised, and the first sequence must be a cell sequence.</p>
@@ -1075,7 +1070,7 @@
 <p>( seq xt – )</p>
 <p>Heapsort a sequence or slice in place.</p>
 </section>
-<section id="id67">
+<section id="id66">
 <h3><code class="docutils literal notranslate"><span class="pre">sort</span></code></h3>
 <p>( seq xt – )</p>
 <p>Heapsort a sequence or slice, copying it.</p>
@@ -1115,32 +1110,32 @@
 <p>( – depth )</p>
 <p>Get the current depth.</p>
 </section>
-<section id="id68">
+<section id="id67">
 <h3><code class="docutils literal notranslate"><span class="pre">#(</span></code></h3>
 <p>( – )</p>
 <p>Start defining a cell sequence.</p>
 </section>
-<section id="id69">
+<section id="id68">
 <h3><code class="docutils literal notranslate"><span class="pre">#&lt;</span></code></h3>
 <p>( – )</p>
 <p>Start defining a byte sequence.</p>
 </section>
-<section id="id70">
+<section id="id69">
 <h3><code class="docutils literal notranslate"><span class="pre">)#</span></code></h3>
 <p>( xn … x0 – cells )</p>
 <p>Finish definining a cell sequence.</p>
 </section>
-<section id="id71">
+<section id="id70">
 <h3><code class="docutils literal notranslate"><span class="pre">&gt;#</span></code></h3>
 <p>( cn … c0 – bytes )</p>
 <p>Finish defining a byte sequence.</p>
 </section>
-<section id="id72">
+<section id="id71">
 <h3><code class="docutils literal notranslate"><span class="pre">0cells</span></code></h3>
 <p>( – cells )</p>
 <p>Empty cell sequence.</p>
 </section>
-<section id="id73">
+<section id="id72">
 <h3><code class="docutils literal notranslate"><span class="pre">0bytes</span></code></h3>
 <p>( – bytes )</p>
 <p>Empty byte sequence.</p>
@@ -1153,17 +1148,17 @@
 <p>( bytes – addr len )</p>
 <p>Get the starting address and length of a byte sequence or slice. Note that these are not guaranteed to remain constant with any subsequent allocations that may trigger the garbage collector.</p>
 </section>
-<section id="id74">
+<section id="id73">
 <h3><code class="docutils literal notranslate"><span class="pre">&#64;</span></code></h3>
 <p>( addr – x )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">&#64;</span></code>.</p>
 </section>
-<section id="id75">
+<section id="id74">
 <h3><code class="docutils literal notranslate"><span class="pre">!</span></code></h3>
 <p>( x addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">!</span></code>.</p>
 </section>
-<section id="id76">
+<section id="id75">
 <h3><code class="docutils literal notranslate"><span class="pre">+!</span></code></h3>
 <p>( x addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">+!</span></code>.</p>
@@ -1173,27 +1168,27 @@
 <p>( x addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">BIS!</span></code>.</p>
 </section>
-<section id="id77">
+<section id="id76">
 <h3><code class="docutils literal notranslate"><span class="pre">bic!</span></code></h3>
 <p>( x addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">BIC!</span></code>.</p>
 </section>
-<section id="id78">
+<section id="id77">
 <h3><code class="docutils literal notranslate"><span class="pre">xor!</span></code></h3>
 <p>( x addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">XOR!</span></code>.</p>
 </section>
-<section id="id79">
+<section id="id78">
 <h3><code class="docutils literal notranslate"><span class="pre">h&#64;</span></code></h3>
 <p>( addr – h )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">H&#64;</span></code>.</p>
 </section>
-<section id="id80">
+<section id="id79">
 <h3><code class="docutils literal notranslate"><span class="pre">h!</span></code></h3>
 <p>( h addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">H!</span></code>.</p>
 </section>
-<section id="id81">
+<section id="id80">
 <h3><code class="docutils literal notranslate"><span class="pre">h+!</span></code></h3>
 <p>( h addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">H+!</span></code>.</p>
@@ -1213,17 +1208,17 @@
 <p>( x addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">HXOR!</span></code>.</p>
 </section>
-<section id="id82">
+<section id="id81">
 <h3><code class="docutils literal notranslate"><span class="pre">c&#64;</span></code></h3>
 <p>( addr – c )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">C&#64;</span></code>.</p>
 </section>
-<section id="id83">
+<section id="id82">
 <h3><code class="docutils literal notranslate"><span class="pre">c!</span></code></h3>
 <p>( c addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">C!</span></code>.</p>
 </section>
-<section id="id84">
+<section id="id83">
 <h3><code class="docutils literal notranslate"><span class="pre">c+!</span></code></h3>
 <p>( c addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">C+!</span></code>.</p>
@@ -1238,22 +1233,22 @@
 <p>( addr bytes val – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">FILL</span></code>.</p>
 </section>
-<section id="id85">
+<section id="id84">
 <h3><code class="docutils literal notranslate"><span class="pre">&gt;integral</span></code></h3>
 <p>( x – value )</p>
 <p>Cast a value to an integer.</p>
 </section>
-<section id="id86">
+<section id="id85">
 <h3><code class="docutils literal notranslate"><span class="pre">integral&gt;</span></code></h3>
 <p>( value – x )</p>
 <p>Cast a value from an integer.</p>
 </section>
-<section id="id87">
+<section id="id86">
 <h3><code class="docutils literal notranslate"><span class="pre">2&gt;integral</span></code></h3>
 <p>( x0 x1 – value0 value1 )</p>
 <p>Cast two values to integers.</p>
 </section>
-<section id="id88">
+<section id="id87">
 <h3><code class="docutils literal notranslate"><span class="pre">2integral&gt;</span></code></h3>
 <p>( value0 value1 – x0 x1 )</p>
 <p>Cast two values from integers.</p>
@@ -1263,17 +1258,17 @@
 <p>( x – dvalue )</p>
 <p>Cast a value to an double.</p>
 </section>
-<section id="id89">
+<section id="id88">
 <h3><code class="docutils literal notranslate"><span class="pre">double&gt;</span></code></h3>
 <p>( dvalue – x )</p>
 <p>Cast a value from an double.</p>
 </section>
-<section id="id90">
+<section id="id89">
 <h3><code class="docutils literal notranslate"><span class="pre">2&gt;double</span></code></h3>
 <p>( x0 x1 – dvalue0 dvalue1 )</p>
 <p>Cast two values to doubles.</p>
 </section>
-<section id="id91">
+<section id="id90">
 <h3><code class="docutils literal notranslate"><span class="pre">2double&gt;</span></code></h3>
 <p>( dvalue0 dvalue1 – x0 x1 )</p>
 <p>Cast two values from doubles.</p>

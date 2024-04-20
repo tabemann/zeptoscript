@@ -778,7 +778,7 @@ End compiling, exported to match start-compile.
 ### `constant-with-name`
 ( x name -- )
 
-Define a constant with a name.
+Define a constant with a name; note that this may be a null, a small int, a big int, a double, or a byte sequence (in the latter case, a constant byte sequence will be compiled).
 
 ### `raw-constant-with-name`
 ( x name -- )
@@ -893,12 +893,7 @@ Add to a local or a VALUE.
 ### `constant`
 ( x "name" -- )
 
-Define a CONSTANT.
-
-### `2constant`
-( x0 x1 "name" -- )
-
-Define a 2CONSTANT.
+Define a constant; note that this may be a null, a small int, a big int, a double, or a byte sequence (in the latter case, a constant byte sequence will be compiled).
 
 ### `global`
 ( "name" -- )

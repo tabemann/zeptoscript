@@ -2674,9 +2674,26 @@ begin-module zscript
     over small-int? if
       unsafe::bytes>addr-len 2integral> internal::constant-with-name
     else
-      over >type dup big-int-type = swap double-type = or
-      averts x-incorrect-type
-      start-compile visible lit, end-compile,
+      over >type dup big-int-type = over double-type = or if
+        drop start-compile visible lit, end-compile,
+      else
+        dup bytes-type = swap const-bytes-type = or if
+          swap unsafe::bytes>addr-len { current len }
+          len { count }
+          unsafe::here { start }
+          begin count while
+            current unsafe::c@ integral> forth::c,
+            current 1+ to current
+            count 1- to count
+          repeat
+          forth::cell forth::align,
+          start-compile visible
+          start lit, len lit, postpone addr-len>const-bytes
+          end-compile,
+        else
+          raise x-incorrect-type
+        then
+      then
     then
   ;
 
@@ -3045,21 +3062,26 @@ begin-module zscript
       constant
     else
       token dup 0<> averts x-token-expected
-      start-compile visible
-      lit,
-      end-compile,
-    then
-  ;
-
-  \ Define a 2CONSTANT
-  : 2constant ( x0 x1 "name" -- )
-    dup small-int? over small-int? and if
-      2constant
-    else
-      token dup 0<> averts x-token-expected
-      start-compile visible
-      swap lit, lit,
-      end-compile,
+      over >type dup big-int-type = over double-type = or if
+        drop start-compile visible lit, end-compile,
+      else
+        dup bytes-type = swap const-bytes-type = or if
+          swap unsafe::bytes>addr-len { current len }
+          len { count }
+          unsafe::here { start }
+          begin count while
+            current unsafe::c@ integral> forth::c,
+            current 1+ to current
+            count 1- to count
+          repeat
+          forth::cell forth::align,
+          start-compile visible
+          start lit, len lit, postpone addr-len>const-bytes
+          end-compile,
+        else
+          raise x-incorrect-type
+        then
+      then
     then
   ;
   
