@@ -23,7 +23,7 @@ begin-module zscript-oo
   forth::armv6m import
 
   \ Types
-  8 constant class-type
+  9 constant class-type
   13 constant object-type
 
   \ Member not for class exception
