@@ -472,13 +472,13 @@ begin-module zscript-double
         addr bytes unsafe::2>integral addr-len>bytes
         dup [: [char] . = ;] any if
           zscript-double::parse-double if
-            state? if double-lit, then true
+            state? if lit, then true
           else
             drop false
           then
         else
           zscript-double::parse-fixed if
-            state? if double-lit, then true
+            state? if lit, then true
           else
             drop false
           then

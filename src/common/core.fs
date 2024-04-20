@@ -864,11 +864,6 @@ begin-module zscript
     then
   ;
 
-  \ Redefine LIT,
-  : double-lit, ( dvalue -- )
-    double> swap forth::lit, forth::lit, postpone >double
-  ;
-
   \ Convert an address/length pair into constant bytes
   : addr-len>const-bytes ( c-addr u -- const-bytes )
     2integral> const-bytes-type allocate-2cell
