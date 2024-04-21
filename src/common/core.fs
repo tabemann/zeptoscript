@@ -1771,8 +1771,7 @@ begin-module zscript
 
   \ Clear bits in an integer
   : bic ( x0 x1 -- x2 )
-    integral>
-    swap integral> bic >integral
+    2integral> bic >integral
   ;    
 
   \ Not an integer
