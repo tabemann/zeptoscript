@@ -394,9 +394,16 @@ begin-module zscript-list
   ;
 
   \ Create a list from the stack
-  : >list ( xn ... x0 count -- list )
+  : >list ( x0 ... xn count -- list )
     { count }
     empty begin count 0> while cons -1 +to count repeat
+  ;
+
+  \ Explode a list onto the stack
+  : list> ( list -- x0 ... xn count )
+    0 { list count }
+    begin list while list head@ list tail@ to list 1 +to count repeat
+    count
   ;
 
 end-module

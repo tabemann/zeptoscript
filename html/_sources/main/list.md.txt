@@ -196,6 +196,11 @@ Do a shallow copy of a list.
 Create a list with *count* elements taken off the top of the stack, in reverse order.
 
 ### `>list`
-( xn ...  x0 count -- list )
+( x0 ...  xn count -- list )
 
 Create a list with *count* elements taken off the top of the stack, in order.
+
+### `list>`
+( list -- x0 ... xn count )
+
+Explode a list onto the stack.
