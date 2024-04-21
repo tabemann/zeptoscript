@@ -3248,9 +3248,14 @@ begin-module zscript
     swap base! execute old-base base!
   ;
 
-  \ Parse an integer
-  : parse-integer ( seq -- n success )
+  \ Parse an integral
+  : parse-integral ( seq -- n success )
     unsafe::bytes>addr-len 2integral> parse-integer 2>integral
+  ;
+
+  \ Parse an unsigned integral
+  : parse-integral-unsigned ( seq -- u success )
+    unsafe::bytes>addr-len 2integral> parse-unsigned 2>integral
   ;
 
   \ Duplicate a cell or byte sequence; this converts slices to non-slices and
@@ -3964,6 +3969,24 @@ begin-module zscript
     unsafe::>integral
   ;
 
+  \ Format an signed integral
+  : format-integral { n -- bytes }
+    [ 33 >small-int ] literal make-bytes { bytes }
+    bytes unsafe::bytes>addr-len drop zscript-internal::integral>
+    n integral> forth::format-integer nip
+    zscript-internal::>integral
+    0 swap bytes >slice duplicate
+  ;
+
+  \ Format an signed integral
+  : format-integral-unsigned { u -- bytes }
+    [ 32 >small-int ] literal make-bytes { bytes }
+    bytes unsafe::bytes>addr-len drop zscript-internal::integral>
+    u integral> forth::format-unsigned nip
+    zscript-internal::>integral
+    0 swap bytes >slice duplicate
+  ;
+
   \ Begin a module definition
   : begin-module ( "name" -- )
     forth::token dup forth::0<> forth::averts forth::x-token-expected
@@ -4163,6 +4186,7 @@ begin-module zscript
   : recurse [immediate] [compile-only] forth::postpone forth::recurse ;
   : reboot forth::reboot ;
   : pause forth::pause ;
+  : unused forth::unused ;
   : i [immediate] [compile-only] postpone i ;
   : j [immediate] [compile-only] postpone j ;
   : : : ;

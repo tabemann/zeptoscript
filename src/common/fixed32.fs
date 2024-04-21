@@ -185,7 +185,7 @@ begin-module zscript-fixed32
     33 make-bytes { bytes }
     bytes unsafe::bytes>addr-len drop f32
     zscript-fixed32-internal::format-f32 nip { len }
-    0 len bytes >slice
+    0 len bytes >slice duplicate
   ;
 
   \ Format truncated S15.16 fixed-point number
@@ -194,7 +194,7 @@ begin-module zscript-fixed32
     bytes unsafe::bytes>addr-len drop f32 places
     zscript-fixed32-internal::format-f32-truncate nip
     { len }
-    0 len bytes >slice
+    0 len bytes >slice duplicate
   ;
 
   \ Type an S15.16 fixed-point number without a following space

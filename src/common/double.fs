@@ -421,7 +421,7 @@ begin-module zscript-double
     bytes unsafe::bytes>addr-len drop zscript-internal::integral>
     f64 zscript-internal::double> forth::format-fixed
     nip zscript-internal::>integral
-    0 swap bytes >slice
+    0 swap bytes >slice duplicate
   ;
 
   \ Format a truncated S31.32 fixed-point number
@@ -430,14 +430,23 @@ begin-module zscript-double
     bytes unsafe::bytes>addr-len drop zscript-internal::integral>
     f64 zscript-internal::double> places zscript-internal::integral>
     forth::format-fixed-truncate nip zscript-internal::>integral
-    0 swap bytes >slice
+    0 swap bytes >slice duplicate
   ;
 
-  \ Format a double number
-  : format-double { d64 -- bytes }
+  \ Format an signed double number
+  : format-double { nd64 -- bytes }
+    65 make-bytes { bytes }
+    bytes unsafe::bytes>addr-len drop zscript-internal::integral>
+    nd64 zscript-internal::double> forth::format-double nip
+    zscript-internal::>integral
+    0 swap bytes >slice duplicate
+  ;
+
+  \ Format an unsigned double number
+  : format-double-unsigned { ud64 -- bytes }
     64 make-bytes { bytes }
     bytes unsafe::bytes>addr-len drop zscript-internal::integral>
-    d64 zscript-internal::double> forth::format-double nip
+    ud64 zscript-internal::double> forth::format-double-unsigned nip
     zscript-internal::>integral
     0 swap bytes >slice
   ;

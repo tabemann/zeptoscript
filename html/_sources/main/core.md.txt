@@ -945,10 +945,25 @@ Get BASE.
 
 Execute an xt with a BASE.
 
-### `parse-integer`
+### `parse-integral`
 ( seq -- n success )
 
-Parse an integer.
+Parse a signed integral.
+
+### `parse-integral-unsigned`
+( seq -- u success )
+
+Parse an unsigned integral.
+
+### `format-integral`
+( n -- bytes )
+
+Format a signed integral.
+
+### `format-integral-unsigned
+( u -- bytes )
+
+Format an unsigned integral.
 
 ### `duplicate`
 ( seq0 -- seq1 )
