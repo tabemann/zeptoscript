@@ -3732,7 +3732,7 @@ begin-module zscript
   \ Get whether a predicate applies to all elements of a sequence; note that
   \ not all elements will be iterated over if an element returns false, and
   \ true will be returned if the sequence is empty
-  : all { seq xt -- all? }
+  : all { seq xt -- all? } \ xt ( element -- match? )
     seq cells? if
       seq >len 0 ?do
         i seq @+ xt execute not if false exit then
@@ -3745,11 +3745,28 @@ begin-module zscript
     then
     true
   ;
+  
+  \ Get whether a predicate applies to all elements of a sequence; note that
+  \ not all elements will be iterated over if an element returns false, and
+  \ true will be returned if the sequence is empty
+  : alli { seq xt -- all? } \ xt ( element index -- match? )
+    seq cells? if
+      seq >len 0 ?do
+        i seq @+ i xt execute not if false exit then
+      loop
+    else
+      seq bytes? averts x-incorrect-type
+      seq >len 0 ?do
+        i seq c@+ i xt execute not if false exit then
+      loop
+    then
+    true
+  ;
 
   \ Get whether a predicate applies to any element of a sequence; note that
   \ not all elements will be iterated over if an element returns true, and
   \ false will be returned if the sequence is empty
-  : any { seq xt -- any? }
+  : any { seq xt -- any? } \ xt ( element -- match? )
     seq cells? if
       seq >len 0 ?do
         i seq @+ xt execute if true exit then
@@ -3762,7 +3779,24 @@ begin-module zscript
     then
     false
   ;
-  
+
+  \ Get whether a predicate applies to any element of a sequence; note that
+  \ not all elements will be iterated over if an element returns true, and
+  \ false will be returned if the sequence is empty
+  : anyi { seq xt -- any? } \ xt ( element index -- match? )
+    seq cells? if
+      seq >len 0 ?do
+        i seq @+ i xt execute if true exit then
+      loop
+    else
+      seq bytes? averts x-incorrect-type
+      seq >len 0 ?do
+        i seq c@+ i xt execute if true exit then
+      loop
+    then
+    false
+  ;
+
   \ Join a cell sequence of cell or byte sequences
   : join { list-seq join-seq -- seq' }
     list-seq cells? averts x-incorrect-type

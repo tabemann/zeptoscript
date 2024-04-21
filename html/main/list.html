@@ -200,13 +200,23 @@
 </section>
 <section id="all-list">
 <h3><code class="docutils literal notranslate"><span class="pre">all-list</span></code><a class="headerlink" href="#all-list" title="Permalink to this heading">¶</a></h3>
-<p>( list xt – all? )</p>
+<p>( list xt – all? ) xt: ( element – match? )</p>
 <p>Get whether a predicate applies to all elements of a list; note that not all elements will be iterated over if an element returns false, and true will be returned if the list is empty.</p>
+</section>
+<section id="alli-list">
+<h3><code class="docutils literal notranslate"><span class="pre">alli-list</span></code><a class="headerlink" href="#alli-list" title="Permalink to this heading">¶</a></h3>
+<p>( list xt – all? ) xt: ( element index – match? )</p>
+<p>Get whether a predicate applies to all elements of a list with an index; note that not all elements will be iterated over if an element returns false, and true will be returned if the list is empty.</p>
 </section>
 <section id="any-list">
 <h3><code class="docutils literal notranslate"><span class="pre">any-list</span></code><a class="headerlink" href="#any-list" title="Permalink to this heading">¶</a></h3>
-<p>( list xt – any? )</p>
+<p>( list xt – any? ) xt: ( element – match? )</p>
 <p>Get whether a predicate applies to any element of a list; note that not all elements will be iterated over if an element returns true, and false will be returned if the list is empty.</p>
+</section>
+<section id="anyi-list">
+<h3><code class="docutils literal notranslate"><span class="pre">anyi-list</span></code><a class="headerlink" href="#anyi-list" title="Permalink to this heading">¶</a></h3>
+<p>( list xt – any? ) xt: ( element index – match? )</p>
+<p>Get whether a predicate applies to any element of a list with an index; note that not all elements will be iterated over if an element returns true, and false will be returned if the list is empty.</p>
 </section>
 <section id="foldl-list">
 <h3><code class="docutils literal notranslate"><span class="pre">foldl-list</span></code><a class="headerlink" href="#foldl-list" title="Permalink to this heading">¶</a></h3>

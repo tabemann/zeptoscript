@@ -331,9 +331,21 @@ begin-module zscript-list
   \ Test whether a predicate applies to all elements of a list; note that not
   \ all elements will be iterated over if an element returns false, and true
   \ with be returned if the list is empty
-  : all-list { list xt -- all? }
+  : all-list { list xt -- all? } \ xt ( element -- match? )
     begin list while
       list head@ xt execute not if false exit then list tail@ to list
+    repeat
+    true
+  ;
+
+  \ Test whether a predicate applies to all elements of a list; note that not
+  \ all elements will be iterated over if an element returns false, and true
+  \ with be returned if the list is empty
+  : alli-list { list xt -- all? } \ xt ( element index -- match? )
+    0 { index }
+    begin list while
+      list head@ index xt execute not if false exit then list tail@ to list
+      1 +to index
     repeat
     true
   ;
@@ -341,9 +353,21 @@ begin-module zscript-list
   \ Test whether a predicate applies to any element of a list; note that not
   \ all elements will be iterated over if an element returns true, and false
   \ will be returned if the list is empty
-  : any-list { list xt -- any? }
+  : any-list { list xt -- any? } \ xt ( element -- match? )
     begin list while
       list head@ xt execute if true exit then list tail@ to list
+    repeat
+    false
+  ;
+
+  \ Test whether a predicate applies to any element of a list; note that not
+  \ all elements will be iterated over if an element returns true, and false
+  \ will be returned if the list is empty
+  : anyi-list { list xt -- any? } \ xt ( element index -- match? )
+    0 { index }
+    begin list while
+      list head@ index xt execute if true exit then list tail@ to list
+      1 +to index
     repeat
     false
   ;

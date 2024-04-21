@@ -166,14 +166,24 @@ Filter *list* with *xt* producing a new list, executing *xt* with each element i
 Filter *list* with *xt* producing a new list, executing *xt* with each element and its index (indexed from zero) in order from start to end.
 
 ### `all-list`
-( list xt -- all? )
+( list xt -- all? ) xt: ( element -- match? )
 
 Get whether a predicate applies to all elements of a list; note that not all elements will be iterated over if an element returns false, and true will be returned if the list is empty.
 
+### `alli-list`
+( list xt -- all? ) xt: ( element index -- match? )
+
+Get whether a predicate applies to all elements of a list with an index; note that not all elements will be iterated over if an element returns false, and true will be returned if the list is empty.
+
 ### `any-list`
-( list xt -- any? )
+( list xt -- any? ) xt: ( element -- match? )
 
 Get whether a predicate applies to any element of a list; note that not all elements will be iterated over if an element returns true, and false will be returned if the list is empty.
+
+### `anyi-list`
+( list xt -- any? ) xt: ( element index -- match? )
+
+Get whether a predicate applies to any element of a list with an index; note that not all elements will be iterated over if an element returns true, and false will be returned if the list is empty.
 
 ### `foldl-list`
 ( x list xt -- x' ) xt: ( x item -- x' )

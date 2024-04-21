@@ -1091,14 +1091,24 @@ Heapsort a sequence or slice in place.
 Heapsort a sequence or slice, copying it.
 
 ### `all`
-( seq xt -- all? )
+( seq xt -- all? ) xt: ( element -- match? )
 
 Get whether a predicate applies to all elements of a sequence; note that not all elements will be iterated over if an element returns false, and true will be returned if the sequence is empty.
 
+### `alli`
+( seq xt -- all? ) xt: ( element index -- match? )
+
+Get whether a predicate applies to all elements of a sequence with an index; note that not all elements will be iterated over if an element returns false, and true will be returned if the sequence is empty.
+
 ### `any`
-( seq xt -- any? )
+( seq xt -- any? ) xt: ( element -- match? )
 
 Get whether a predicate applies to any element of a sequence; note that not all elements will be iterated over if an element returns true, and false will be returned if the sequence is empty.
+
+### `anyi`
+( seq xt -- any? ) xt: ( element index -- match? )
+
+Get whether a predicate applies to any element of a sequence with an index; note that not all elements will be iterated over if an element returns true, and false will be returned if the sequence is empty.
 
 ### `join`
 ( list-seq join-seq -- seq' )

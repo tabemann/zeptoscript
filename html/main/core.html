@@ -1113,13 +1113,23 @@
 </section>
 <section id="all">
 <h3><code class="docutils literal notranslate"><span class="pre">all</span></code><a class="headerlink" href="#all" title="Permalink to this heading">¶</a></h3>
-<p>( seq xt – all? )</p>
+<p>( seq xt – all? ) xt: ( element – match? )</p>
 <p>Get whether a predicate applies to all elements of a sequence; note that not all elements will be iterated over if an element returns false, and true will be returned if the sequence is empty.</p>
+</section>
+<section id="alli">
+<h3><code class="docutils literal notranslate"><span class="pre">alli</span></code><a class="headerlink" href="#alli" title="Permalink to this heading">¶</a></h3>
+<p>( seq xt – all? ) xt: ( element index – match? )</p>
+<p>Get whether a predicate applies to all elements of a sequence with an index; note that not all elements will be iterated over if an element returns false, and true will be returned if the sequence is empty.</p>
 </section>
 <section id="any">
 <h3><code class="docutils literal notranslate"><span class="pre">any</span></code><a class="headerlink" href="#any" title="Permalink to this heading">¶</a></h3>
-<p>( seq xt – any? )</p>
+<p>( seq xt – any? ) xt: ( element – match? )</p>
 <p>Get whether a predicate applies to any element of a sequence; note that not all elements will be iterated over if an element returns true, and false will be returned if the sequence is empty.</p>
+</section>
+<section id="anyi">
+<h3><code class="docutils literal notranslate"><span class="pre">anyi</span></code><a class="headerlink" href="#anyi" title="Permalink to this heading">¶</a></h3>
+<p>( seq xt – any? ) xt: ( element index – match? )</p>
+<p>Get whether a predicate applies to any element of a sequence with an index; note that not all elements will be iterated over if an element returns true, and false will be returned if the sequence is empty.</p>
 </section>
 <section id="join">
 <h3><code class="docutils literal notranslate"><span class="pre">join</span></code><a class="headerlink" href="#join" title="Permalink to this heading">¶</a></h3>
