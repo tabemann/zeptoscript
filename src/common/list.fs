@@ -328,6 +328,26 @@ begin-module zscript-list
     list'
   ;
 
+  \ Test whether a predicate applies to all elements of a list; note that not
+  \ all elements will be iterated over if an element returns false, and true
+  \ with be returned if the list is empty
+  : all-list { list xt -- all? }
+    begin list while
+      list head@ xt execute not if false exit then list tail@ to list
+    repeat
+    true
+  ;
+
+  \ Test whether a predicate applies to any element of a list; note that not
+  \ all elements will be iterated over if an element returns true, and false
+  \ will be returned if the list is empty
+  : any-list { list xt -- any? }
+    begin list while
+      list head@ xt execute if true exit then list tail@ to list
+    repeat
+    false
+  ;
+
   \ Fold left over a list
   : foldl-list ( x ) { list xt -- x' } \ xt ( x item -- x' )
     begin list while list head@ xt execute list tail@ to list repeat

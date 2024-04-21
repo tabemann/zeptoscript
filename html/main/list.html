@@ -198,6 +198,16 @@
 <p>( list xt – list’ ) xt: ( item index – filter )</p>
 <p>Filter <em>list</em> with <em>xt</em> producing a new list, executing <em>xt</em> with each element and its index (indexed from zero) in order from start to end.</p>
 </section>
+<section id="all-list">
+<h3><code class="docutils literal notranslate"><span class="pre">all-list</span></code><a class="headerlink" href="#all-list" title="Permalink to this heading">¶</a></h3>
+<p>( list xt – all? )</p>
+<p>Get whether a predicate applies to all elements of a list; note that not all elements will be iterated over if an element returns false, and true will be returned if the list is empty.</p>
+</section>
+<section id="any-list">
+<h3><code class="docutils literal notranslate"><span class="pre">any-list</span></code><a class="headerlink" href="#any-list" title="Permalink to this heading">¶</a></h3>
+<p>( list xt – any? )</p>
+<p>Get whether a predicate applies to any element of a list; note that not all elements will be iterated over if an element returns true, and false will be returned if the list is empty.</p>
+</section>
 <section id="foldl-list">
 <h3><code class="docutils literal notranslate"><span class="pre">foldl-list</span></code><a class="headerlink" href="#foldl-list" title="Permalink to this heading">¶</a></h3>
 <p>( x list xt – x’ ) xt: ( x item – x’ )</p>
