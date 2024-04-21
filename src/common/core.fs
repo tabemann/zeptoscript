@@ -2507,21 +2507,21 @@ begin-module zscript
     ;
 
     \ Redefine CBIS!
-    : cbis! ( x addr -- )
+    : cbis! ( c addr -- )
       integral>
       dup averts x-null-dereference
       swap integral> swap cbis!
     ;
     
     \ Redefine CBIC!
-    : cbic! ( x addr -- )
+    : cbic! ( c addr -- )
       integral>
       dup averts x-null-dereference
       swap integral> swap cbic!
     ;
 
     \ Redefine CXOR!
-    : cxor! ( x addr -- )
+    : cxor! ( c addr -- )
       integral>
       dup averts x-null-dereference
       swap integral> swap hxor!

@@ -1263,10 +1263,20 @@ Redefine `C!`.
 Redefine `C+!`.
 
 ### `cbis!`
-( x addr -- )
+( c addr -- )
 
 Redefine `CBIS!`.
     
+### `cbic!`
+( c addr -- )
+
+Redefine `CBIC!`.
+
+### `cxor!`
+( c addr -- )
+
+Redefine `CXOR!`.
+
 ### `fill`
 ( addr bytes val -- )
 
