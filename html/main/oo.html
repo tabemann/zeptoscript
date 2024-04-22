@@ -152,6 +152,11 @@ end-class
 <p>( method object – has-method? )</p>
 <p>Get whether an object has a method.</p>
 </section>
+<section id="begin-type-class">
+<h3><code class="docutils literal notranslate"><span class="pre">begin-type-class</span></code><a class="headerlink" href="#begin-type-class" title="Permalink to this heading">¶</a></h3>
+<p>( type – )</p>
+<p>Begin the definition of a class for a given type. Note that objects of these classes lack an instantiation word, and are generated through other means. Additionally, members cannot be defined for the classes’ instances.</p>
+</section>
 <section id="x-member-not-for-class">
 <h3><code class="docutils literal notranslate"><span class="pre">x-member-not-for-class</span></code><a class="headerlink" href="#x-member-not-for-class" title="Permalink to this heading">¶</a></h3>
 <p>( – )</p>
@@ -166,6 +171,11 @@ end-class
 <h3><code class="docutils literal notranslate"><span class="pre">x-not-a-method</span></code><a class="headerlink" href="#x-not-a-method" title="Permalink to this heading">¶</a></h3>
 <p>( – )</p>
 <p>Method is attempted to be implemented for a word which is not a method exception.</p>
+</section>
+<section id="x-type-classes-have-no-members">
+<h3><code class="docutils literal notranslate"><span class="pre">x-type-classes-have-no-members</span></code><a class="headerlink" href="#x-type-classes-have-no-members" title="Permalink to this heading">¶</a></h3>
+<p>( – )</p>
+<p>Defining a member for a class for a type was attempted exception.</p>
 </section>
 </section>
 </section>

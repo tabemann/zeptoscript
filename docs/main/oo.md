@@ -125,6 +125,11 @@ Define a private word that is not accessible outside the class definition.
 
 Get whether an object has a method.
 
+### `begin-type-class`
+( type -- )
+
+Begin the definition of a class for a given type. Note that objects of these classes lack an instantiation word, and are generated through other means. Additionally, members cannot be defined for the classes' instances.
+
 ### `x-member-not-for-class`
 ( -- )
 
@@ -139,3 +144,8 @@ Method is called on an object of a class for which it is not implemented excepti
 ( -- )
 
 Method is attempted to be implemented for a word which is not a method exception.
+
+### `x-type-classes-have-no-members`
+( -- )
+
+Defining a member for a class for a type was attempted exception.
