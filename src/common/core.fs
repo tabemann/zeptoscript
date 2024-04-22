@@ -2368,163 +2368,142 @@ begin-module zscript
     
     \ Redefine @
     : @ ( addr -- x )
-      integral>
       dup averts x-null-dereference
-      dup 3 forth::and triggers x-unaligned-dereference
-      @ >integral
+      dup 3 and triggers x-unaligned-dereference
+      integral> @ >integral
     ;
 
     \ Redefine BIT@
     : bit@ ( bits addr -- flag )
-      2integral>
       dup averts x-null-dereference
-      dup 3 forth::and triggers x-unaligned-dereference
-      bit@ >integral
+      dup 3 and triggers x-unaligned-dereference
+      2integral> forth::bit@ >integral
     ;
   
     \ Redefine !
     : ! ( x addr -- )
-      integral>
       dup averts x-null-dereference
-      dup 3 forth::and triggers x-unaligned-dereference
-      swap integral> swap !
+      dup 3 and triggers x-unaligned-dereference
+      2integral> !
     ;
 
     \ Redefine +!
     : +! ( x addr -- )
-      integral>
       dup averts x-null-dereference
-      dup 3 forth::and triggers x-unaligned-dereference
-      swap integral> swap +!
+      dup 3 and triggers x-unaligned-dereference
+      2integral> +!
     ;
 
     \ Redefine BIS!
-    : bis! ( x addr -- )
-      integral>
+    : bis! ( x addr -- ) 
       dup averts x-null-dereference
-      dup 3 forth::and triggers x-unaligned-dereference
-      swap integral> swap bis!
+      dup 3 and triggers x-unaligned-dereference
+      2integral> bis!
     ;
     
     \ Redefine BIC!
     : bic! ( x addr -- )
-      integral>
       dup averts x-null-dereference
-      dup 3 forth::and triggers x-unaligned-dereference
-      swap integral> swap bic!
+      dup 3 and triggers x-unaligned-dereference
+      2integral> bic!
     ;
 
     \ Redefine XOR!
     : xor! ( x addr -- )
-      integral>
       dup averts x-null-dereference
-      dup 3 forth::and triggers x-unaligned-dereference
-      swap integral> swap xor!
+      dup 3 and triggers x-unaligned-dereference
+      2integral> xor!
     ;
 
     \ Redefine H@
     : h@ ( addr -- h )
-      integral>
       dup averts x-null-dereference
-      dup 1 forth::and triggers x-unaligned-dereference
-      h@ >integral
+      dup 1 and triggers x-unaligned-dereference
+      integral> h@ >integral
     ;
   
     \ Redefine HBIT@
     : hbit@ ( bits addr -- flag )
-      2integral>
       dup averts x-null-dereference
-      dup 1 forth::and triggers x-unaligned-dereference
-      hbit@ >integral
+      dup 1 and triggers x-unaligned-dereference
+      2integral> hbit@ >integral
     ;
 
     \ Redefine H!
     : h! ( h addr -- )
-      integral>
       dup averts x-null-dereference
-      dup 1 forth::and triggers x-unaligned-dereference
-      swap integral> swap h!
+      dup 1 and triggers x-unaligned-dereference
+      2integral> h!
     ;
   
     \ Redefine H+!
     : h+! ( h addr -- )
-      integral>
       dup averts x-null-dereference
-      dup 1 forth::and triggers x-unaligned-dereference
-      swap integral> swap h+!
+      dup 1 and triggers x-unaligned-dereference
+      2integral> h+!
     ;
 
     \ Redefine HBIS!
     : hbis! ( x addr -- )
-      integral>
       dup averts x-null-dereference
-      dup 1 forth::and triggers x-unaligned-dereference
-      swap integral> swap hbis!
+      dup 1 and triggers x-unaligned-dereference
+      2integral> hbis!
     ;
     
     \ Redefine HBIC!
     : hbic! ( x addr -- )
-      integral>
       dup averts x-null-dereference
-      dup 1 forth::and triggers x-unaligned-dereference
-      swap integral> swap hbic!
+      dup 1 and triggers x-unaligned-dereference
+      2integral> hbic!
     ;
 
     \ Redefine HXOR!
     : hxor! ( x addr -- )
-      integral>
       dup averts x-null-dereference
-      dup 1 forth::and triggers x-unaligned-dereference
-      swap integral> swap hxor!
+      dup 1 and triggers x-unaligned-dereference
+      2integral> hxor!
     ;
 
     \ Redefine C@
     : c@ ( addr -- c )
-      integral>
       dup averts x-null-dereference
-      c@ >integral
+      integral> c@ >integral
     ;
 
     \ Redefine CBIT@
     : cbit@ ( bits addr -- flag )
-      2integral>
       dup averts x-null-dereference
-      cbit@ >integral
+      2integral> cbit@ >integral
     ;
 
     \ Redefine C!
     : c! ( c addr -- )
-      integral>
       dup averts x-null-dereference
-      swap integral> swap c!
+      2integral> c!
     ;
 
     \ Redefine C+!
     : c+! ( c addr -- )
-      integral>
       dup averts x-null-dereference
-      swap integral> swap c+!
+      2integral> c+!
     ;
 
     \ Redefine CBIS!
     : cbis! ( c addr -- )
-      integral>
       dup averts x-null-dereference
-      swap integral> swap cbis!
+      2integral> cbis!
     ;
     
     \ Redefine CBIC!
     : cbic! ( c addr -- )
-      integral>
       dup averts x-null-dereference
-      swap integral> swap cbic!
+      2integral> cbic!
     ;
 
     \ Redefine CXOR!
     : cxor! ( c addr -- )
-      integral>
       dup averts x-null-dereference
-      swap integral> swap hxor!
+      2integral> cxor!
     ;
 
     \ Redefine MOVE

@@ -26,6 +26,9 @@ begin-module zscript-oo
   9 constant class-type
   13 constant object-type
 
+  \ Cannot define a member for a type class
+  : x-type-classes-have-no-members ( -- ) ." type classe have no members" cr ;
+  
   \ Member not for class exception
   : x-member-not-for-class ( -- ) ." member not for class" cr ;
 
@@ -73,6 +76,9 @@ begin-module zscript-oo
     \ The type shift
     foreign-constant zscript-internal::type-shift type-shift
     
+    \ The type class table for non-objects
+    global type-classes
+    
     \ Method record
     begin-record method-record
 
@@ -104,6 +110,9 @@ begin-module zscript-oo
 
       \ Class address
       item: class-addr
+
+      \ Class type
+      item: class-type
       
     end-record
 
@@ -154,7 +163,17 @@ begin-module zscript-oo
       >mark
       >mark
       ]code
-      ['] x-incorrect-type ?raise
+      type-classes@ { classes }
+      classes 0= if
+        ['] x-incorrect-type ?raise
+      else
+        >type { type }
+        classes >len type > if
+          type classes @+
+        else
+          ['] x-incorrect-type ?raise
+        then
+      then
     ;
 
     \ Look up and execute a method
@@ -369,7 +388,17 @@ begin-module zscript-oo
     reserve
     [ armv6m-instr unimport ]
     end-compile,
-    0 get-next-class-id 0cells 0 0 >class-record
+    0 get-next-class-id 0cells 0 0 -1 >class-record
+    syntax-class push-syntax
+    forth::wordlist zscript-internal::make-new-style
+    dup class-wordlist-stack@ >pair class-wordlist-stack!
+    import
+  ;
+
+  \ Define a class for a type
+  : begin-type-class ( type -- class-rec )
+    { type }
+    0 0 get-next-class-id 0cells 0 0 type >class-record
     syntax-class push-syntax
     forth::wordlist zscript-internal::make-new-style
     dup class-wordlist-stack@ >pair class-wordlist-stack!
@@ -379,6 +408,7 @@ begin-module zscript-oo
   \ Define a member
   : member: ( class-rec "name" -- class-rec )
     { class-rec }
+    class-rec class-type@ -1 = averts x-type-classes-have-no-members
     syntax-class verify-syntax
     token dup 0<> averts x-token-expected
     class-rec generate-member
@@ -425,25 +455,48 @@ begin-module zscript-oo
     class-wordlist-stack@ pair> swap unimport class-wordlist-stack!
     class-rec generate-methods
     class-rec class-addr@ unsafe::integral> { our-class }
-    forth:::noname unsafe::>integral
-    1 or class-rec class-construct@ current!
-    class-rec class-member-count@ lit,
-    our-class unsafe::>integral raw-lit,
-    postpone make-object
-    ['] new our-class class-has-method? if
-      postpone dup
-      postpone forth::>r
-      postpone new
-      postpone forth::r>
+    class-rec class-type@ dup { type } -1 = if
+      forth:::noname unsafe::>integral
+      1 or class-rec class-construct@ current!
+      class-rec class-member-count@ lit,
+      our-class unsafe::>integral raw-lit,
+      postpone make-object
+      ['] new our-class class-has-method? if
+        postpone dup
+        postpone forth::>r
+        postpone new
+        postpone forth::r>
+      then
+      postpone ;
+    else
+      type-classes@ dup { classes } 0= if
+        type 1+ make-cells dup type-classes! to classes
+      else
+        classes >len { len }
+        type len >= if
+          type 1+ make-cells type-classes!
+          classes 0 type-classes@ 0 len copy
+          type-classes@ to classes
+        then
+      then
+      our-class type classes !+
     then
-    postpone ;
   ;
 
   \ Get whether an object has a method
-  : has-method? { xt object -- }
-    object >type object-type = averts x-incorrect-type
-    xt object unsafe::>integral cell+ unsafe::@
-    unsafe::integral> class-has-method?
+  : has-method? { xt object -- has-method? }
+    object >type { type }
+    type object-type = if
+      xt object unsafe::>integral cell+ unsafe::@
+      unsafe::integral> class-has-method?
+    else
+      type-classes@ { classes }
+      type classes >len < if
+        xt type classes @+ class-has-method?
+      else
+        false
+      then
+    then
   ;
   
 end-module
