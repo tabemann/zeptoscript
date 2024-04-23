@@ -469,5 +469,27 @@ begin-module zscript-special-oo
     ;
     
   end-class
+
+  \ Type class for classes
+  class-type begin-type-class
+
+    \ Show a null
+    :method show { self -- }
+      s" class:" self unsafe::>integral format-integral concat
+    ;
+
+    \ Hash a null
+    :method hash { self -- } self unsafe::>integral ;
+
+    \ Test a null for equality
+    :method equal? { other self -- equal? }
+      other >type class-type = if
+        other self =
+      else
+        false
+      then
+    ;
+    
+  end-class
   
 end-module

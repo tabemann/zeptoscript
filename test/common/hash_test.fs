@@ -44,6 +44,7 @@ begin-module test
     0 ['] + bind do-test
     0 1 2 ['] + bind do-test
     s" +" find do-test
+    0 @class do-test
   ;
   
 end-module

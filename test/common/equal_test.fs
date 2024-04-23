@@ -197,7 +197,35 @@ begin-module test
     s" +" find 1 2 s" foo" >slice false do-test
     s" +" find ['] + false do-test
     s" +" find 0 1 2 ['] + bind false do-test
-  ;
+    0 class@ 0 class@ true do-test
+    0 class@ 1 class@ false do-test
+    0 class@ s" +" find false do-test
+    s" +" find 0 class@ false do-test
+    0 0 class@ false do-test
+    1 0 class@ false do-test
+    $BFFF_FFFF 0 class@ false do-test
+    1. 0 class@ false do-test
+    #( 0 1 2 )# 0 class@ false do-test
+    #< 0 1 2 ># 0 class@ false do-test
+    s" foo" 0 class@ false do-test
+    1 2 #( 0 1 2 )# >slice 0 class@ false do-test
+    1 2 #< 0 1 2 ># >slice 0 class@ false do-test
+    1 2 s" foo" >slice 0 class@ false do-test
+    ['] + 0 class@ false do-test
+    0 1 2 ['] + bind 0 class@ false do-test
+    0 class@ 0 false do-test
+    0 class@ 1 false do-test
+    0 class@ $BFFF_FFFF false do-test
+    0 class@ 1. false do-test
+    0 class@ #( 0 1 2 )# false do-test
+    0 class@ #< 0 1 2 ># false do-test
+    0 class@ s" foo" false do-test
+    0 class@ 1 2 #( 0 1 2 )# >slice false do-test
+    0 class@ 1 2 #< 0 1 2 ># >slice false do-test
+    0 class@ 1 2 s" foo" >slice false do-test
+    0 class@ ['] + false do-test
+    0 class@ 0 1 2 ['] + bind false do-test
+;
   
 end-module
   
