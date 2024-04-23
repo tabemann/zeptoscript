@@ -44,7 +44,7 @@ begin-module zscript-special-oo
     ['] hash over has-method? if
       hash
     else
-      unsafe::>integral
+      0
     then
   ;
 
