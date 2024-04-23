@@ -30,7 +30,9 @@ begin-module zscript-special-oo
     ['] show over has-method? if
       show
     else
-      drop s" <object>"
+      s" unknown:"
+      swap 16 [: unsafe::>integral format-integral-unsigned ;] with-base
+      concat
     then
   ;
 

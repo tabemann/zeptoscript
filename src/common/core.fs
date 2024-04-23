@@ -4180,7 +4180,13 @@ begin-module zscript
   : [if] [immediate] integral> postpone [if] ;
   : [else] [immediate] postpone [else] ;
   : [then] [immediate] postpone [then] ;
-
+  : defer
+    defer
+  ;
+  : is xt>integral integral>
+    is
+  ;
+    
   \ Forth module
   forth make-new-style constant forth
 
