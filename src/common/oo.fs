@@ -498,5 +498,17 @@ begin-module zscript-oo
       then
     then
   ;
-  
+
+  \ Get an object's class
+  : class@ { object -- class }
+    object >type { type }
+    type object-type = if
+      object unsafe::>integral cell+ unsafe::@ unsafe::integral>
+    else
+      type-classes@ { classes }
+      type classes >len < averts x-incorrect-type
+      type classes @+
+    then
+  ;
+
 end-module
