@@ -130,6 +130,11 @@ Get whether an object has a method.
 
 Begin the definition of a class for a given type. Note that objects of these classes lack an instantiation word, and are generated through other means. Additionally, members cannot be defined for the classes' instances.
 
+### `class@`
+( object -- class )
+
+Get the class of an object. This is primarily useful for testing if two objects have the same class.
+
 ### `x-member-not-for-class`
 ( -- )
 
