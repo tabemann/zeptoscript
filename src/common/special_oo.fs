@@ -122,7 +122,7 @@ begin-module zscript-special-oo
     double-type begin-type-class
       
       \ Show a double
-      :method show { self -- } self zscript-double::format-double ;
+      :method show { self -- } self zscript-double::format-double s" ." concat ;
 
       \ Hash a double
       :method hash { self -- } self double>2integral xor ;
