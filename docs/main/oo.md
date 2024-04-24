@@ -154,3 +154,35 @@ Method is attempted to be implemented for a word which is not a method exception
 ( -- )
 
 Defining a member for a class for a type was attempted exception.
+
+## `zscript-special-oo` words
+
+### `show`
+( x -- bytes )
+
+Return a representation of a value and its structure as a human-readable byte sequence. This method is implemented for all built-in types, and it is highly recommended that user-defined classes implement it as well. Note that this word is expressed recursively, so deep data structures may (and loops will) cause stack overflow.
+
+### `hash`
+( x -- integral )
+
+Return a hash of a value and its structure. This method is implemented for all built-in types, and it is highly recommended that user-defined classes implement it as well. Note that this word is expressed recursively, so deep data structures may (and loops will) cause stack overflow.
+
+### `equal?`
+( x0 x1 -- equal? )
+
+Get whether two values has equal values. This method is implemented for all built-in types, and it is highly recommended that user-defined classes implement it as well. Note that this word is expressed recursively, so deep data structure and loops may cause stack overflow.
+
+### `try-show`
+( x -- bytes )
+
+This is a wrapper around `show` which returns a default representation if `show` is not implemented for an object.
+
+### `try-hash`
+( x -- hash )
+
+This is a wrapper around `hash` which returns a default representation (specifically 0) if `hash` is not implemented for an object.
+
+### `try-equal?`
+( x0 x1 -- equal? )
+
+This is a wrapper around `equal?` which returns whether two values have identical addresses if `equal?` is not implemented for *x1*.

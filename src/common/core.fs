@@ -80,9 +80,6 @@ begin-module zscript
       \ The RAM globals array
       field: ram-globals-array
 
-      \ The new RAM globals array
-      field: new-ram-globals-array
-
       \ The flash globals array
       field: flash-globals-array
       
@@ -106,9 +103,6 @@ begin-module zscript
     \ Get the RAM globals array
     : ram-globals-array@ zscript-state @ ram-globals-array @ ;
 
-    \ Get the new RAM globals array
-    : new-ram-globals-array@ zscript-state @ new-ram-globals-array @ ;
-
     \ Get the flash globals array
     : flash-globals-array@ zscript-state @ flash-globals-array @ ;
 
@@ -129,9 +123,6 @@ begin-module zscript
 
     \ Set the RAM globals array
     : ram-globals-array! zscript-state @ ram-globals-array ! ;
-
-    \ Set the new RAM globals array
-    : new-ram-globals-array! zscript-state @ new-ram-globals-array ! ;
 
     \ Set the flash globals array
     : flash-globals-array! zscript-state @ flash-globals-array ! ;
@@ -268,7 +259,6 @@ begin-module zscript
       swap-spaces
       relocate-stack
       ram-globals-array@ relocate ram-globals-array!
-      new-ram-globals-array@ relocate new-ram-globals-array!
       flash-globals-array@ relocate flash-globals-array!
       to-space-bottom@ { gc-current }
       begin gc-current to-space-current@ < while
@@ -1537,12 +1527,10 @@ begin-module zscript
     dup from-space-top! dup to-space-current! to-space-bottom!
     heap size + to-space-top!
     0 ram-globals-array!
-    0 new-ram-globals-array!
     0 flash-globals-array!
     init-ram-global-count cells-type allocate-cells { ram-globals }
     init-ram-global-id current-ram-global-id-index ram-globals !+
     ram-globals ram-globals-array!
-    ram-globals new-ram-globals-array!
     get-current-flash-global-id
     cells-type allocate-cells flash-globals-array!
     handle-number-hook @ to saved-handle-number-hook
@@ -3115,9 +3103,8 @@ begin-module zscript
       current-ram-global-id-index ram-global@ { index }
       index 1+ current-ram-global-id-index ram-global!
       index 1+ cells-type allocate-cells { new-globals }
-      new-globals new-ram-globals-array!
-      ram-globals-array@ 0 new-ram-globals-array@ 0 index copy
-      new-ram-globals-array@ ram-globals-array!
+      ram-globals-array@ 0 new-globals 0 index copy
+      new-globals ram-globals-array!
       len 1+ bytes-type allocate-bytes { accessor-name }
       name 0 accessor-name 0 len copy
       forth::[char] @ >integral len accessor-name c!+
@@ -3137,6 +3124,9 @@ begin-module zscript
       token dup 0<> averts x-token-expected { name }
       name >len { len }
       get-current-flash-global-id { index }
+      index 1+ cells-type allocate-cells { new-globals }
+      flash-globals-array@ 0 new-globals 0 index copy
+      new-globals flash-globals-array!
       len 1+ bytes-type allocate-bytes { accessor-name }
       name 0 accessor-name 0 len copy
       forth::[char] @ >integral len accessor-name c!+
@@ -4166,6 +4156,14 @@ begin-module zscript
   : reboot forth::reboot ;
   : pause forth::pause ;
   : unused forth::unused ;
+  : words forth::words ;
+  : lookup forth::lookup ;
+  : words-in
+    dup new-style? if filter-new-style-flag then forth::words-in
+  ;
+  : lookup-in
+    dup new-style? if filter-new-style-flag then forth::lookup-in
+  ;
   : i [immediate] [compile-only] postpone i ;
   : j [immediate] [compile-only] postpone j ;
   : : : ;

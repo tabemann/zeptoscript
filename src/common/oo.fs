@@ -241,7 +241,7 @@ begin-module zscript-oo
     \ Get a method ID
     : get-next-method-id ( -- id )
       compiling-to-flash? if
-        s" *METHOD*" flash-latest find-all-dict dup if
+        s" *METHOD*" flash-latest find-all-dict ?dup if
           word>xt execute
         else
           0
@@ -265,7 +265,7 @@ begin-module zscript-oo
     \ Get a class ID
     : get-next-class-id ( -- id )
       compiling-to-flash? if
-        s" *CLASS*" flash-latest find-all-dict dup if
+        s" *CLASS*" flash-latest find-all-dict ?dup if
           word>xt execute
         else
           0
@@ -373,6 +373,21 @@ begin-module zscript-oo
       our-class unsafe::>integral over unsafe::>integral cell+ unsafe::!
     ;
 
+    \ Add a type class
+    : add-type-class { our-class type -- }
+      type-classes@ dup { classes } 0= if
+        type 1+ make-cells dup type-classes! to classes
+      else
+        classes >len { len }
+        type len >= if
+          type 1+ make-cells type-classes!
+          classes 0 type-classes@ 0 len copy
+          type-classes@ to classes
+        then
+      then
+      our-class type classes !+
+    ;
+
   end-module
   
   \ Define a class
@@ -396,8 +411,7 @@ begin-module zscript-oo
   ;
 
   \ Define a class for a type
-  : begin-type-class ( type -- class-rec )
-    { type }
+  : begin-type-class { type -- class-rec }
     0 0 get-next-class-id 0cells 0 0 type >class-record
     syntax-class push-syntax
     forth::wordlist zscript-internal::make-new-style
@@ -469,17 +483,18 @@ begin-module zscript-oo
       then
       postpone ;
     else
-      type-classes@ dup { classes } 0= if
-        type 1+ make-cells dup type-classes! to classes
-      else
-        classes >len { len }
-        type len >= if
-          type 1+ make-cells type-classes!
-          classes 0 type-classes@ 0 len copy
-          type-classes@ to classes
-        then
+      compiling-to-flash? if
+        s" init" flash-latest find-all-dict
+        get-current swap
+        forth::forth unsafe::>integral set-current
+        s" init" start-compile visible
+        ?dup if word>xt compile, then
+        our-class unsafe::>integral lit, postpone unsafe::integral>
+        type lit, postpone add-type-class
+        end-compile,
+        set-current
       then
-      our-class type classes !+
+      our-class type add-type-class
     then
   ;
 

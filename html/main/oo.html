@@ -183,6 +183,39 @@ end-class
 <p>Defining a member for a class for a type was attempted exception.</p>
 </section>
 </section>
+<section id="zscript-special-oo-words">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-special-oo</span></code> words<a class="headerlink" href="#zscript-special-oo-words" title="Permalink to this heading">¶</a></h2>
+<section id="show">
+<h3><code class="docutils literal notranslate"><span class="pre">show</span></code><a class="headerlink" href="#show" title="Permalink to this heading">¶</a></h3>
+<p>( x – bytes )</p>
+<p>Return a representation of a value and its structure as a human-readable byte sequence. This method is implemented for all built-in types, and it is highly recommended that user-defined classes implement it as well. Note that this word is expressed recursively, so deep data structures may (and loops will) cause stack overflow.</p>
+</section>
+<section id="hash">
+<h3><code class="docutils literal notranslate"><span class="pre">hash</span></code><a class="headerlink" href="#hash" title="Permalink to this heading">¶</a></h3>
+<p>( x – integral )</p>
+<p>Return a hash of a value and its structure. This method is implemented for all built-in types, and it is highly recommended that user-defined classes implement it as well. Note that this word is expressed recursively, so deep data structures may (and loops will) cause stack overflow.</p>
+</section>
+<section id="equal">
+<h3><code class="docutils literal notranslate"><span class="pre">equal?</span></code><a class="headerlink" href="#equal" title="Permalink to this heading">¶</a></h3>
+<p>( x0 x1 – equal? )</p>
+<p>Get whether two values has equal values. This method is implemented for all built-in types, and it is highly recommended that user-defined classes implement it as well. Note that this word is expressed recursively, so deep data structure and loops may cause stack overflow.</p>
+</section>
+<section id="try-show">
+<h3><code class="docutils literal notranslate"><span class="pre">try-show</span></code><a class="headerlink" href="#try-show" title="Permalink to this heading">¶</a></h3>
+<p>( x – bytes )</p>
+<p>This is a wrapper around <code class="docutils literal notranslate"><span class="pre">show</span></code> which returns a default representation if <code class="docutils literal notranslate"><span class="pre">show</span></code> is not implemented for an object.</p>
+</section>
+<section id="try-hash">
+<h3><code class="docutils literal notranslate"><span class="pre">try-hash</span></code><a class="headerlink" href="#try-hash" title="Permalink to this heading">¶</a></h3>
+<p>( x – hash )</p>
+<p>This is a wrapper around <code class="docutils literal notranslate"><span class="pre">hash</span></code> which returns a default representation (specifically 0) if <code class="docutils literal notranslate"><span class="pre">hash</span></code> is not implemented for an object.</p>
+</section>
+<section id="try-equal">
+<h3><code class="docutils literal notranslate"><span class="pre">try-equal?</span></code><a class="headerlink" href="#try-equal" title="Permalink to this heading">¶</a></h3>
+<p>( x0 x1 – equal? )</p>
+<p>This is a wrapper around <code class="docutils literal notranslate"><span class="pre">equal?</span></code> which returns whether two values have identical addresses if <code class="docutils literal notranslate"><span class="pre">equal?</span></code> is not implemented for <em>x1</em>.</p>
+</section>
+</section>
 </section>
 
 
