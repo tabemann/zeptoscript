@@ -56,7 +56,7 @@ begin-module zscript-list
 
   \ Get the tail of a list starting at the nth element of a list, indexed from
   \ zero; 0 returns the entire list
-  : nth-tail { index list -- x }
+  : nth-tail { index list -- tail }
     begin index 0> while
       list if list tail@ to list -1 +to index else 0 to index then
     repeat

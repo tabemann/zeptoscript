@@ -22,10 +22,15 @@ begin-module zscript-set
 
   begin-module zscript-set-internal
 
-    \ Empty cells
+    \ Empty values
     \
     \ This is not garbage collected so does not need to be in the heap.
     symbol empty-value
+
+    \ Removed values
+    \
+    \ This is not garbage collected so does not need to be in the heap.
+    symbol removed-value
     
     \ Set minimum size
     4 constant set-min-size
@@ -71,7 +76,8 @@ begin-module zscript-set
       set set-hash-xt@ { hash-xt }
       old-len 3 * 1 rshift 0 ?do empty-value i new-inner !+ loop
       begin index old-len < while
-        index old-inner @+ dup empty-value forth::<> if { current-val }
+        index old-inner @+ dup empty-value <> over removed-value <> and if
+          { current-val }
           current-val dup hash-xt execute new-inner prim-insert-set
         else
           drop
@@ -82,14 +88,42 @@ begin-module zscript-set
     ;
     
     \ Get the index of an entry in a set
-    : set-index { val set -- index success? }
+    : set-index { hash val set -- index success? }
       set set-inner@ { inner }
       inner >len { len }
       set set-equal-xt@ { equal }
-      val set set-hash-xt@ execute len umod { index }
+      hash len umod { index }
       begin
         index inner @+ { current-val }
         current-val empty-value forth::<> if
+          current-val removed-value forth::<> if
+            val current-val equal execute if
+              index true true
+            else
+              1 +to index
+              index len = if 0 to index then
+              false
+            then
+          else
+            1 +to index
+            index len = if 0 to index then
+            false
+          then
+        else
+          index false true
+        then
+      until
+    ;
+    
+    \ Get the index of an entry in a set to insert
+    : insert-set-index { hash val set -- index success? }
+      set set-inner@ { inner }
+      inner >len { len }
+      set set-equal-xt@ { equal }
+      hash len umod { index }
+      begin
+        index inner @+ { current-val }
+        current-val dup empty-value <> swap removed-value <> and if
           val current-val equal execute if
             index true true
           else
@@ -130,7 +164,7 @@ begin-module zscript-set
     0 0 { index found-count }
     begin found-count count < while
       index inner @+ { current-val }
-      current-val empty-value forth::<> if
+      current-val dup empty-value <> swap removed-value <> and if
         current-val xt execute
         1 +to found-count
       then
@@ -145,7 +179,7 @@ begin-module zscript-set
     0 0 { index found-count }
     begin found-count count < while
       index inner @+ { current-val }
-      current-val empty-value forth::<> if
+      current-val dup empty-value <> swap removed-value <> and if
         current-val xt execute if true exit then
         1 +to found-count
       then
@@ -161,7 +195,7 @@ begin-module zscript-set
     0 0 { index found-count }
     begin found-count count < while
       index inner @+ { current-val }
-      current-val empty-value forth::<> if
+      current-val dup empty-value <> swap removed-value <> and if
         current-val xt execute not if false exit then
         1 +to found-count
       then
@@ -178,7 +212,7 @@ begin-module zscript-set
     0 0 { src-index dest-index }
     begin dest-index count < while
       src-index inner @+ { current-val }
-      current-val empty-value forth::<> if
+      current-val dup empty-value <> swap removed-value <> and if
         current-val dest-index values !+ 1 +to dest-index
       then
       1 +to src-index
@@ -188,18 +222,23 @@ begin-module zscript-set
 
   \ Insert an entry in a set
   : insert-set { val set -- }
-    val set set-index if
+    val set set-hash-xt@ execute { hash }
+    hash val set set-index if
       val swap set set-inner@ !+
     else
-      { index } set set-entry-count@ set set-inner@ >len 1- = if
+      drop set set-entry-count@ set set-inner@ >len 1- = if
         set expand-set
-        val set set-index not if
+        hash val set insert-set-index not if
           val swap set set-inner@ !+
         else
           [: ." should not happen!" cr ;] ?raise
         then
       else
-        val index set set-inner@ !+
+        hash val set insert-set-index not if
+          val swap set set-inner@ !+
+        else
+          [: ." should not happen!" cr ;] ?raise
+        then
       then
       set set-entry-count@ 1+ set set-entry-count!
     then
@@ -207,8 +246,8 @@ begin-module zscript-set
 
   \ Remove an entry from a set
   : remove-set { val set -- }
-    val set set-index if
-      empty-value swap set set-inner@ !+
+    val set set-hash-xt@ execute val set set-index if
+      removed-value swap set set-inner@ !+
       set set-entry-count@ 1- set set-entry-count!
     else
       drop
@@ -224,8 +263,14 @@ begin-module zscript-set
     begin
       index inner @+ { current-val }
       current-val empty-value forth::<> if
-        val current-val equal execute if
-          true true
+        current-val removed-value forth::<> if
+          val current-val equal execute if
+            true true
+          else
+            1 +to index
+            index len = if 0 to index then
+            false
+          then
         else
           1 +to index
           index len = if 0 to index then

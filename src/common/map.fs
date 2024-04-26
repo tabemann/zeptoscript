@@ -22,10 +22,15 @@ begin-module zscript-map
 
   begin-module zscript-map-internal
 
-    \ Empty cells
+    \ Empty keys
     \
     \ This is not garbage collected so does not need to be in the heap.
     symbol empty-key
+
+    \ Removed keys
+    \
+    \ This is not garbage collected so does not need to be in the heap.
+    symbol removed-key
     
     \ Map minimum size
     4 constant map-min-size
@@ -73,7 +78,8 @@ begin-module zscript-map
       old-len 3 * 1 rshift 0 ?do empty-key i 1 lshift new-inner !+ loop
       begin index old-len < while
         index 1 lshift { current }
-        current old-inner @+ dup empty-key forth::<> if { current-key }
+        current old-inner @+ dup empty-key <> over removed-key <> and if
+          { current-key }
           current 1+ old-inner @+ current-key dup hash-xt execute
           new-inner prim-insert-map
         else
@@ -85,15 +91,44 @@ begin-module zscript-map
     ;
     
     \ Get the index of an entry in a map
-    : map-index { key map -- index success? }
+    : map-index { hash key map -- index success? }
       map map-inner@ { inner }
       inner >len 1 rshift { len }
       map map-equal-xt@ { equal }
-      key map map-hash-xt@ execute len umod { index }
+      hash len umod { index }
       begin
         index 1 lshift { current }
         current inner @+ { current-key }
         current-key empty-key forth::<> if
+          current-key removed-key forth::<> if
+            key current-key equal execute if
+              index true true
+            else
+              1 +to index
+              index len = if 0 to index then
+              false
+            then
+          else
+            1 +to index
+            index len = if 0 to index then
+            false
+          then
+        else
+          index false true
+        then
+      until
+    ;
+
+    \ Get the index of an entry in a map to insert
+    : insert-map-index { hash key map -- index success? }
+      map map-inner@ { inner }
+      inner >len 1 rshift { len }
+      map map-equal-xt@ { equal }
+      hash len umod { index }
+      begin
+        index 1 lshift { current }
+        current inner @+ { current-key }
+        current-key dup empty-key <> swap removed-key <> and if
           key current-key equal execute if
             index true true
           else
@@ -136,7 +171,7 @@ begin-module zscript-map
     begin found-count count < while
       index 1 lshift { current }
       current inner @+ { current-key }
-      current-key empty-key forth::<> if
+      current-key dup empty-key <> swap removed-key <> and if
         current 1+ inner @+ current-key xt execute
         1 +to found-count
       then
@@ -155,7 +190,7 @@ begin-module zscript-map
     begin found-count count < while
       index 1 lshift { current }
       current inner @+ { current-key }
-      current-key empty-key forth::<> if
+      current-key dup empty-key <> swap removed-key <> and if
         current-key current inner' !+
         current 1+ inner @+ current-key xt execute current 1+ inner' !+
         1 +to found-count
@@ -173,7 +208,7 @@ begin-module zscript-map
     begin found-count count < while
       index 1 lshift { current }
       current inner @+ { current-key }
-      current-key empty-key forth::<> if
+      current-key dup empty-key <> swap removed-key <> and if
         current 1+ inner @+ current-key xt execute current 1+ inner !+
         1 +to found-count
       then
@@ -189,7 +224,7 @@ begin-module zscript-map
     begin found-count count < while
       index 1 lshift { current }
       current inner @+ { current-key }
-      current-key empty-key forth::<> if
+      current-key dup empty-key <> swap removed-key <> and if
         current 1+ inner @+ current-key xt execute if true exit then
         1 +to found-count
       then
@@ -206,7 +241,7 @@ begin-module zscript-map
     begin found-count count < while
       index 1 lshift { current }
       current inner @+ { current-key }
-      current-key empty-key forth::<> if
+      current-key dup empty-key <> swap removed-key <> and if
         current 1+ inner @+ current-key xt execute not if false exit then
         1 +to found-count
       then
@@ -223,7 +258,7 @@ begin-module zscript-map
     0 0 { src-index dest-index }
     begin dest-index count < while
       src-index 1 lshift inner @+ { current-key }
-      current-key empty-key forth::<> if
+      current-key dup empty-key <> swap removed-key <> and if
         current-key dest-index keys !+ 1 +to dest-index
       then
       1 +to src-index
@@ -256,7 +291,7 @@ begin-module zscript-map
     begin dest-index count < while
       src-index 1 lshift { current }
       current inner @+ { current-key }
-      current-key empty-key forth::<> if
+      current-key dup empty-key <> swap removed-key <> and if
         current-key current 1+ inner @+ >pair dest-index key-values !+
         1 +to dest-index
       then
@@ -267,15 +302,16 @@ begin-module zscript-map
 
   \ Insert an entry in a map
   : insert-map { val key map -- }
-    key map map-index if
+    key map map-hash-xt@ execute { hash }
+    hash key map map-index if
       1 lshift { current }
       map map-inner@ { inner }
       key current inner !+
       val current 1+ inner !+
     else
-      { index } map map-entry-count@ map map-inner@ >len 1 rshift 1- = if
+      drop map map-entry-count@ map map-inner@ >len 1 rshift 1- = if
         map expand-map
-        key map map-index not if
+        hash key map insert-map-index not if
           1 lshift { current }
           map map-inner@ { inner }
           key current inner !+
@@ -284,10 +320,14 @@ begin-module zscript-map
           [: ." should not happen!" cr ;] ?raise
         then
       else
-        index 1 lshift { current }
-        map map-inner@ { inner }
-        key current inner !+
-        val current 1+ inner !+
+        hash key map insert-map-index not if
+          1 lshift { current }
+          map map-inner@ { inner }
+          key current inner !+
+          val current 1+ inner !+
+        else
+          [: ." should not happen!" cr ;] ?raise
+        then
       then
       map map-entry-count@ 1+ map map-entry-count!
     then
@@ -295,10 +335,10 @@ begin-module zscript-map
 
   \ Remove an entry from a map
   : remove-map { key map -- }
-    key map map-index if
+    key map map-hash-xt@ execute key map map-index if
       1 lshift { current }
       map map-inner@ { inner }
-      empty-key current inner !+
+      removed-key current inner !+
       0 current 1+ inner !+
       map map-entry-count@ 1- map map-entry-count!
     else
@@ -316,8 +356,14 @@ begin-module zscript-map
       index 1 lshift { current }
       current inner @+ { current-key }
       current-key empty-key forth::<> if
-        key current-key equal execute if
-          current 1+ inner @+ true true
+        current-key removed-key forth::<> if
+          key current-key equal execute if
+            current 1+ inner @+ true true
+          else
+            1 +to index
+            index len = if 0 to index then
+            false
+          then
         else
           1 +to index
           index len = if 0 to index then
@@ -339,8 +385,14 @@ begin-module zscript-map
       index 1 lshift { current }
       current inner @+ { current-key }
       current-key empty-key forth::<> if
-        key current-key equal execute if
-          true true
+        current-key removed-key forth::<> if
+          key current-key equal execute if
+            true true
+          else
+            1 +to index
+            index len = if 0 to index then
+            false
+          then
         else
           1 +to index
           index len = if 0 to index then
