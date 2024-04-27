@@ -830,6 +830,11 @@ Finish declaring a record.
 
 Create a field in a record.
 
+### `foreign-buffer`
+( bytes "name" -- )
+
+Make a buffer accessible to foreign words.
+
 ### `foreign-constant`
 ( "foreign-name" "new-name" -- )
 

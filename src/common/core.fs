@@ -2742,6 +2742,15 @@ begin-module zscript
     offset 1+
   ;
 
+  \ Make a foreign buffer; note that this is aligned
+  : foreign-buffer ( bytes "name" -- )
+    token dup 0<> averts x-token-expected
+    forth::cell forth::align,
+    unsafe::here rot unsafe::allot
+    forth::cell forth::align,
+    swap constant-with-name
+  ;
+
   \ Make a foreign constant
   : foreign-constant ( "foreign-name" "new-name" -- )
     token-word word>xt { xt }
