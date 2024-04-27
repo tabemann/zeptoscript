@@ -4100,6 +4100,12 @@ begin-module zscript
   \ Redefine ?DUP
   : ?dup dup if dup else then ;
 
+  \ Trigger the garbage collector
+  : gc gc ;
+
+  \ Print out the amount of space available (execute GC first)
+  : heap-free ( -- space ) to-space-top@ to-space-current@ forth::- >integral ;
+  
   true >small-int constant true
   false >small-int constant false
   : [: [immediate] postpone [: ;

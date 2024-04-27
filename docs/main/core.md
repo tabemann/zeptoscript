@@ -321,6 +321,16 @@ Re-enter zeptoforth from within zeptoscript. This has no effect when called from
 
 Re-enter zeptoscript from within zeptoforth. This has no effect when called from within zeptoscript. Note that if this is called and `init-zscript` has not been called it is equivalent to calling `65536 65536 zscript::init-zscript`.
 
+### `gc`
+( -- )
+
+Trigger the garbage collector.
+
+### `heap-free`
+( -- bytes )
+
+Get the number of bytes free in the heap. Note that this specifically does not run the garbage collector, so to get a good picture of how much space is really available run `gc` first.
+
 ### `copy`
 ( value0 offset0 value1 offset1 count -- )
 

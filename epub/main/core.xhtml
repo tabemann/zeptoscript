@@ -321,6 +321,16 @@
 <p>( – )</p>
 <p>Re-enter zeptoscript from within zeptoforth. This has no effect when called from within zeptoscript. Note that if this is called and <code class="docutils literal notranslate"><span class="pre">init-zscript</span></code> has not been called it is equivalent to calling <code class="docutils literal notranslate"><span class="pre">65536</span> <span class="pre">65536</span> <span class="pre">zscript::init-zscript</span></code>.</p>
 </section>
+<section id="gc">
+<h3><code class="docutils literal notranslate"><span class="pre">gc</span></code></h3>
+<p>( – )</p>
+<p>Trigger the garbage collector.</p>
+</section>
+<section id="heap-free">
+<h3><code class="docutils literal notranslate"><span class="pre">heap-free</span></code></h3>
+<p>( – bytes )</p>
+<p>Get the number of bytes free in the heap. Note that this specifically does not run the garbage collector, so to get a good picture of how much space is really available run <code class="docutils literal notranslate"><span class="pre">gc</span></code> first.</p>
+</section>
 <section id="copy">
 <h3><code class="docutils literal notranslate"><span class="pre">copy</span></code></h3>
 <p>( value0 offset0 value1 offset1 count – )</p>
