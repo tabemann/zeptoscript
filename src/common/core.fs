@@ -38,7 +38,7 @@ begin-module zscript
   : x-null-dereference ." null dereference" cr ;
 
   \ Unaligned dereference
-  : x-unaligned-dereference ." unaligned dereference" cr ;
+  : x-unaligned-access ." unaligned access" cr ;
 
   \ Unsafe operation
   : x-unsafe-op ." unsafe operation" cr ;
@@ -59,6 +59,9 @@ begin-module zscript
 
     \ Default runtime heap size
     65536 constant default-runtime-size
+
+    \ constant bytes syntax
+    254 constant syntax-const-bytes
     
     \ Saved handle-number-hook
     0 value saved-handle-number-hook
@@ -1163,14 +1166,14 @@ begin-module zscript
       bytes-type of
         swap integral> cell+
         over >size over 4 + u>= averts x-offset-out-of-range
-        dup 3 and triggers x-unaligned-dereference
+        dup 3 and triggers x-unaligned-access
         +
       endof
       const-bytes-type of
         dup [ 2 cells ] literal + @ { len }
         swap integral> swap
-        over len 4 + u<= averts x-offset-out-of-range
-        over 3 and triggers x-unaligned-dereference
+        over cell+ len u<= averts x-offset-out-of-range
+        over 3 and triggers x-unaligned-access
         cell+ @ +
       endof
       slice-type of
@@ -1184,12 +1187,12 @@ begin-module zscript
         raw >type case
           bytes-type of
             len index 4 + u>= averts x-offset-out-of-range
-            index 3 and triggers x-unaligned-dereference
+            index 3 and triggers x-unaligned-access
             raw index offset + cell+ +
           endof
           const-bytes-type of
             len index 4 + u>= averts x-offset-out-of-range
-            index 3 and triggers x-unaligned-dereference
+            index 3 and triggers x-unaligned-access
             raw cell+ @ index offset + +
           endof
           ['] x-incorrect-type ?raise
@@ -1206,7 +1209,7 @@ begin-module zscript
       bytes-type of
         swap integral> cell+
         over >size over 4 + u>= averts x-offset-out-of-range
-        dup 3 and triggers x-unaligned-dereference
+        dup 3 and triggers x-unaligned-access
         + 
       endof
       slice-type of
@@ -1220,7 +1223,7 @@ begin-module zscript
         raw >type case
           bytes-type of
             len index 4 + u>= averts x-offset-out-of-range
-            index 3 and triggers x-unaligned-dereference
+            index 3 and triggers x-unaligned-access
             raw index offset + cell+ +
           endof
           ['] x-incorrect-type ?raise
@@ -1237,14 +1240,14 @@ begin-module zscript
       bytes-type of
         swap integral> cell+
         over >size over 2 + u>= averts x-offset-out-of-range
-        dup 1 and triggers x-unaligned-dereference
+        dup 1 and triggers x-unaligned-access
         +
       endof
       const-bytes-type of
         dup [ 2 cells ] literal + @ { len }
         swap integral> swap
-        over len 2 + u<= averts x-offset-out-of-range
-        over 1 and triggers x-unaligned-dereference
+        over 2 + len u<= averts x-offset-out-of-range
+        over 1 and triggers x-unaligned-access
         cell+ @ +
       endof
       slice-type of
@@ -1258,12 +1261,12 @@ begin-module zscript
         raw >type case
           bytes-type of
             len index 2 + u>= averts x-offset-out-of-range
-            index 1 and triggers x-unaligned-dereference
+            index 1 and triggers x-unaligned-access
             raw index offset + cell+ +
           endof
           const-bytes-type of
             len index 2 + u>= averts x-offset-out-of-range
-            index 1 and triggers x-unaligned-dereference
+            index 1 and triggers x-unaligned-access
             raw cell+ @ index offset + +
           endof
           ['] x-incorrect-type ?raise
@@ -1280,7 +1283,7 @@ begin-module zscript
       bytes-type of
         swap integral> cell+
         over >size over 2 + u>= averts x-offset-out-of-range
-        dup 1 and triggers x-unaligned-dereference
+        dup 1 and triggers x-unaligned-access
         + 
       endof
       slice-type of
@@ -1294,7 +1297,7 @@ begin-module zscript
         raw >type case
           bytes-type of
             len index 2 + u>= averts x-offset-out-of-range
-            index 1 and triggers x-unaligned-dereference
+            index 1 and triggers x-unaligned-access
             raw index offset + cell+ +
           endof
           ['] x-incorrect-type ?raise
@@ -2357,98 +2360,98 @@ begin-module zscript
     \ Redefine @
     : @ ( addr -- x )
       dup averts x-null-dereference
-      dup 3 and triggers x-unaligned-dereference
+      dup 3 and triggers x-unaligned-access
       integral> @ >integral
     ;
 
     \ Redefine BIT@
     : bit@ ( bits addr -- flag )
       dup averts x-null-dereference
-      dup 3 and triggers x-unaligned-dereference
+      dup 3 and triggers x-unaligned-access
       2integral> forth::bit@ >integral
     ;
   
     \ Redefine !
     : ! ( x addr -- )
       dup averts x-null-dereference
-      dup 3 and triggers x-unaligned-dereference
+      dup 3 and triggers x-unaligned-access
       2integral> !
     ;
 
     \ Redefine +!
     : +! ( x addr -- )
       dup averts x-null-dereference
-      dup 3 and triggers x-unaligned-dereference
+      dup 3 and triggers x-unaligned-access
       2integral> +!
     ;
 
     \ Redefine BIS!
     : bis! ( x addr -- ) 
       dup averts x-null-dereference
-      dup 3 and triggers x-unaligned-dereference
+      dup 3 and triggers x-unaligned-access
       2integral> bis!
     ;
     
     \ Redefine BIC!
     : bic! ( x addr -- )
       dup averts x-null-dereference
-      dup 3 and triggers x-unaligned-dereference
+      dup 3 and triggers x-unaligned-access
       2integral> bic!
     ;
 
     \ Redefine XOR!
     : xor! ( x addr -- )
       dup averts x-null-dereference
-      dup 3 and triggers x-unaligned-dereference
+      dup 3 and triggers x-unaligned-access
       2integral> xor!
     ;
 
     \ Redefine H@
     : h@ ( addr -- h )
       dup averts x-null-dereference
-      dup 1 and triggers x-unaligned-dereference
+      dup 1 and triggers x-unaligned-access
       integral> h@ >integral
     ;
   
     \ Redefine HBIT@
     : hbit@ ( bits addr -- flag )
       dup averts x-null-dereference
-      dup 1 and triggers x-unaligned-dereference
+      dup 1 and triggers x-unaligned-access
       2integral> hbit@ >integral
     ;
 
     \ Redefine H!
     : h! ( h addr -- )
       dup averts x-null-dereference
-      dup 1 and triggers x-unaligned-dereference
+      dup 1 and triggers x-unaligned-access
       2integral> h!
     ;
   
     \ Redefine H+!
     : h+! ( h addr -- )
       dup averts x-null-dereference
-      dup 1 and triggers x-unaligned-dereference
+      dup 1 and triggers x-unaligned-access
       2integral> h+!
     ;
 
     \ Redefine HBIS!
     : hbis! ( x addr -- )
       dup averts x-null-dereference
-      dup 1 and triggers x-unaligned-dereference
+      dup 1 and triggers x-unaligned-access
       2integral> hbis!
     ;
     
     \ Redefine HBIC!
     : hbic! ( x addr -- )
       dup averts x-null-dereference
-      dup 1 and triggers x-unaligned-dereference
+      dup 1 and triggers x-unaligned-access
       2integral> hbic!
     ;
 
     \ Redefine HXOR!
     : hxor! ( x addr -- )
       dup averts x-null-dereference
-      dup 1 and triggers x-unaligned-dereference
+      dup 1 and triggers x-unaligned-access
       2integral> hxor!
     ;
 
@@ -4075,6 +4078,53 @@ begin-module zscript
   type-shift forth::lshift
   forth::cell 1 forth::lshift forth::or ,
   forth::constant 0bytes
+
+  \ Start a constant byte sequence
+  : begin-const-bytes ( "name" -- start-addr name )
+    token dup 0<> averts x-token-expected
+    forth::cell forth::align,
+    unsafe::here swap
+    syntax-const-bytes internal::push-syntax
+  ;
+
+  \ End a constant byte sequence
+  : end-const-bytes ( start-addr name -- )
+    syntax-const-bytes internal::verify-syntax internal::drop-syntax
+    unsafe::here cell align { const-bytes }
+    swap integral> forth::here
+    forth::cell forth::align,
+    [ const-bytes-type integral> 2 forth::- type-shift forth::lshift
+    3 forth::cells 1 forth::lshift forth::or ] forth::literal forth::,
+    swap dup forth::, forth::- forth::,
+    const-bytes integral> swap
+    unsafe::bytes>addr-len 2integral> internal::constant-with-name
+  ;
+
+  \ Write a cell to a constant byte sequence
+  : , ( x -- )
+    syntax-const-bytes internal::verify-syntax
+    unsafe::here 3 and triggers x-unaligned-access
+    integral> forth::,
+  ;
+
+  \ Write a halfword to a constant byte sequence
+  : h, ( h -- )
+    syntax-const-bytes internal::verify-syntax
+    unsafe::here 1 and triggers x-unaligned-access
+    integral> forth::h,
+  ;
+
+  \ Write a byte to a constant byte sequence
+  : c, ( c -- )
+    syntax-const-bytes internal::verify-syntax
+    integral> forth::c,
+  ;
+
+  \ Align space in a constant byte sequence
+  : align, ( size -- )
+    syntax-const-bytes internal::verify-syntax
+    integral> forth::align,
+  ;
   
   \ Create a symbol
   : symbol ( "name" -- )

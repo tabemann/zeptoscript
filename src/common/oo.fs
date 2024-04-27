@@ -44,7 +44,7 @@ begin-module zscript-oo
     global class-wordlist-stack
 
     \ Class syntax
-    254 constant syntax-class
+    253 constant syntax-class
 
     \ Push syntax
     1 0 foreign internal::push-syntax push-syntax

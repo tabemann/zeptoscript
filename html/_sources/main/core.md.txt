@@ -865,6 +865,36 @@ Make a foreign word usable.
 
 Execute a foreign word.
 
+### `begin-const-bytes`
+( "name" -- start-addr name )
+
+Start defining a constant byte sequence. Note that the defined constant byte sequence will be a constant byte sequence.
+
+### `end-const-bytes`
+( start-addr name -- )
+
+Finish defining a constant byte sequence.
+
+### `,`
+( x -- )
+
+Write a cell to a constant byte sequence; note that it must be aligned.
+
+### `h,`
+( h -- )
+
+Write a halfword to a constant byte sequence; note that it must be aligned.
+
+### `c,`
+( c -- )
+
+Write a byte to a constant byte sequence.
+
+### `align,`
+( size -- )
+
+Align the `here` pointer when defining a constant byte sequence to a *size* power of two.
+
 ### `word>name`
 ( word -- name )
 
