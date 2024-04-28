@@ -45,6 +45,12 @@ begin-module zscript
 
   \ Value not small integer
   : x-not-small-int ." not small int" cr ;
+
+  \ No sequence being defined
+  : x-no-seq-being-defined ." no sequence being defined" cr ;
+
+  \ Wrong sequence type
+  : x-wrong-seq-type ." wrong sequence type" cr ;
   
   begin-module zscript-internal
 
@@ -821,6 +827,12 @@ begin-module zscript
     \ Initial RAM globals count
     2 >small-int constant init-ram-global-count
 
+    \ Cell sequence definition type
+    0 >small-int constant define-cells
+
+    \ Byte sequence definition type
+    1 >small-int constant define-bytes
+    
   end-module> import
 
   \ Types
@@ -3836,30 +3848,36 @@ begin-module zscript
     depth >integral
   ;
 
+  continue-module zscript-internal
+
+    \ Start sequence definition
+    : begin-seq-define { define-type -- }
+      depth define-type seq-define-index ram-global@
+      >triple seq-define-index ram-global!
+    ;
+
+    \ End sequence definition
+    : end-seq-define { define-type -- count }
+      depth seq-define-index ram-global@
+      dup 0<> averts x-no-seq-being-defined
+      triple> seq-define-index ram-global!
+      define-type = averts x-wrong-seq-type
+      - 0 max
+    ;
+    
+  end-module
+
   \ Start defining a cell sequence
-  : #( ( -- )
-    depth seq-define-index ram-global@ >pair seq-define-index ram-global!
-  ;
+  : #( ( -- ) define-cells begin-seq-define ;
 
   \ Start defining a byte sequence
-  : #< ( -- )
-    depth negate 1-
-    seq-define-index ram-global@ >pair seq-define-index ram-global!
-  ;
+  : #< ( -- ) define-bytes begin-seq-define ;
 
   \ Finish definining a cell sequence
-  : )# ( xn ... x0 -- cells )
-    depth seq-define-index ram-global@ pair> seq-define-index ram-global!
-    dup 0>= averts x-incorrect-type
-    - 0 max >cells
-  ;
+  : )# ( xn ... x0 -- cells ) define-cells end-seq-define >cells ;
 
   \ Finish defining a byte sequence
-  : ># ( cn ... c0 -- bytes )
-    depth seq-define-index ram-global@ pair> seq-define-index ram-global!
-    dup 0< averts x-incorrect-type
-    1+ negate - 0 max >bytes
-  ;
+  : ># ( cn ... c0 -- bytes ) define-bytes end-seq-define >bytes ;
 
   continue-module zscript-internal
     
@@ -4215,6 +4233,8 @@ begin-module zscript
   : compile-to-ram forth::compile-to-ram ;
   : compile-to-flash forth::compile-to-flash ;
   : compiling-to-flash? forth::compiling-to-flash? ;
+  : cornerstone forth::cornerstone ;
+  : marker forth::marker ;
   : postpone [immediate] [compile-only] postpone forth::postpone ;
   : literal [immediate] [compile-only] forth::postpone forth::literal ;
   : recurse [immediate] [compile-only] forth::postpone forth::recurse ;

@@ -20,6 +20,13 @@
 
 begin-module zscript-list
 
+  begin-module zscript-list-internal
+
+    \ List definition type
+    2 constant define-list
+
+  end-module> import
+
   \ Cons a value onto the head of a list
   : cons ( x list -- list' ) >pair ;
 
@@ -449,5 +456,11 @@ begin-module zscript-list
     begin list while list head@ list tail@ to list 1 +to count repeat
     count
   ;
+
+  \ Begin defining a list
+  : #[ ( -- ) define-list zscript-internal::begin-seq-define ;
+
+  \ End defining a list
+  : ]# ( -- list ) define-list zscript-internal::end-seq-define >list ;
 
 end-module

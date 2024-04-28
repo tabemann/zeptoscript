@@ -224,3 +224,13 @@ Create a list with *count* elements taken off the top of the stack, in order.
 ( list -- x0 ... xn count )
 
 Explode a list onto the stack.
+
+### `#[`
+( -- )
+
+Begin defining a list with elements on the stack.
+
+### `]#
+( -- list )
+
+End defining a list with elements on the stack.
