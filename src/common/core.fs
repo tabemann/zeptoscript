@@ -3546,6 +3546,62 @@ begin-module zscript
     then
   ;
 
+  \ Collect elements of a cell sequence from left to right
+  : collectl-cells { x len xt -- cells } \ xt ( x -- x item )
+    len make-cells { seq }
+    len 0 ?do x xt execute i seq !+ to x loop
+    seq
+  ;
+
+  \ Collect elements of a cell sequence from left to right with an index
+  : collectli-cells { x len xt -- cells } \ xt ( x index -- x item )
+    len make-cells { seq }
+    len 0 ?do x i xt execute i seq !+ to x loop
+    seq
+  ;
+
+  \ Collect elements of a cell sequence from right to left
+  : collectr-cells { x len xt -- cells } \ xt ( x -- x item )
+    len make-cells { seq }
+    len 0 ?do x xt execute len i - 1- seq !+ to x loop
+    seq
+  ;
+
+  \ Collect elements of a cell sequence from right to left with an index
+  : collectri-cells { x len xt -- cells } \ xt ( x -- x item )
+    len make-cells { seq }
+    len 0 ?do len i - 1- { index } x index xt execute index seq !+ to x loop   
+    seq
+  ;
+
+  \ Collect elements of a byte sequence from left to right
+  : collectl-bytes { x len xt -- bytes } \ xt ( x -- x item )
+    len make-bytes { seq }
+    len 0 ?do x xt execute i seq c!+ to x loop
+    seq
+  ;
+
+  \ Collect elements of a byte sequence from left to right with an index
+  : collectli-bytes { x len xt -- bytes } \ xt ( x index -- x item )
+    len make-bytes { seq }
+    len 0 ?do x i xt execute i seq c!+ to x loop
+    seq
+  ;
+
+  \ Collect elements of a byte sequence from right to left
+  : collectr-bytes { x len xt -- bytes } \ xt ( x -- x item )
+    len make-bytes { seq }
+    len 0 ?do x xt execute len i - 1- seq c!+ to x loop
+    seq
+  ;
+
+  \ Collect elements of a byte sequence from right to left with an index
+  : collectri-bytes { x len xt -- bytes } \ xt ( x -- x item )
+    len make-bytes { seq }
+    len 0 ?do len i - 1- { index } x index xt execute index seq c!+ to x loop
+    seq
+  ;
+
   \ Reverse a sequence producing a new sequence
   : reverse { seq -- seq' }
     seq >len { len }

@@ -404,6 +404,52 @@ begin-module zscript-list
     x list list>cells xt foldri
   ;
 
+  \ Collect elements of a list from left to right
+  : collectl-list { x len xt -- list } \ xt ( x -- x item )
+    empty { list }
+    empty { list-last }
+    len 0 ?do
+      x xt execute empty cons { new-list } to x
+      list if
+        new-list list-last tail!
+      else
+        new-list to list
+      then
+      new-list to list-last
+    loop
+    list
+  ;
+
+  \ Collect elements of a list from left to right with an index
+  : collectli-list { x len xt -- list } \ xt ( x index -- x item )
+    empty { list }
+    empty { list-last }
+    len 0 ?do
+      x i xt execute empty cons { new-list } to x
+      list if
+        new-list list-last tail!
+      else
+        new-list to list
+      then
+      new-list to list-last
+    loop
+    list
+  ;
+
+  \ Collect elements of a list from right to left
+  : collectr-list { x len xt -- list } \ xt ( x -- x item )
+    empty { list }
+    len 0 ?do x xt execute list cons to list to x loop
+    list
+  ;
+
+  \ Collect elements of a list from right to left with an index
+  : collectri-list { x len xt -- list } \ xt ( x -- x item )
+    empty { list }
+    len 0 ?do x len i - 1- xt execute list cons to list to x loop
+    list
+  ;
+
   \ Sort a list
   : sort-list { list xt -- list' } \ xt ( item0 item1 -- lt? )
     list list>cells dup xt sort! seq>list

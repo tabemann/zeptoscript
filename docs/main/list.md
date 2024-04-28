@@ -205,6 +205,26 @@ Fold right *xt* over *list* with *x* as an initial value, executing *xt* with ea
 
 Fold right *xt* over *list* with *x* as an initial value, executing *xt* with each element along with the current value and its index (indexed from zero) in roder from end to start. Note that this involves converting *list* to a cell sequence internally, so is less efficient than `foldli-list`.
 
+### `collectl-list`
+(x len xt -- list ) xt: ( x -- x item )
+
+Collect elements of a list from left to right.
+
+### `collectli-list`
+(x len xt -- list ) xt: ( x index -- x item )
+
+Collect elements of a list from left to right with an index.
+
+### `collectr-list`
+(x len xt -- list ) xt: ( x -- x item )
+
+Collect elements of a list from right to left.
+
+### `collectri-list`
+(x len xt -- list ) xt: ( x -- x item )
+
+Collect elements of a list from right to left with an index.
+
 ### `duplicate-list`
 ( list -- list' )
 

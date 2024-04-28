@@ -1110,6 +1110,46 @@ Fold right over a sequence or slice.
 
 Fold right over a sequence or slice with an index.
 
+### `collectl-cells`
+( x len xt -- cells ) xt: ( x -- x item )
+
+Collect elements of a cell sequence from left to right.
+
+### `collectli-cells`
+( x len xt -- cells ) xt: ( x index -- x item )
+
+Collect elements of a cell sequence from left to right with an index.
+
+### `collectr-cells`
+( x len xt -- cells ) xt: ( x -- x item )
+
+Collect elements of a cell sequence from right to left.
+
+### `collectri-cells`
+( x len xt -- cells ) xt: ( x -- x item )
+
+Collect elements of a cell sequence from right to left with an index.
+
+### `collectl-bytes`
+( x len xt -- bytes ) xt: ( x -- x item )
+
+Collect elements of a byte sequence from left to right.
+
+### `collectli-bytes`
+( x len xt -- bytes ) xt: ( x index -- x item )
+
+Collect elements of a byte sequence from left to right with an index.
+
+### `collectr-bytes`
+( x len xt -- bytes ) xt: ( x -- x item )
+
+Collect elements of a byte sequence from right to left.
+
+### `collectri-bytes`
+( x len xt -- bytes ) xt: ( x -- x item )
+
+Collect elements of a byte sequence from right to left with an index.
+
 ### `reverse`
 ( seq -- seq' )
 

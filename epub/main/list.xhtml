@@ -217,6 +217,26 @@
 <p>( x list xt – x’ ) xt: ( item x – x’ )</p>
 <p>Fold right <em>xt</em> over <em>list</em> with <em>x</em> as an initial value, executing <em>xt</em> with each element along with the current value and its index (indexed from zero) in roder from end to start. Note that this involves converting <em>list</em> to a cell sequence internally, so is less efficient than <code class="docutils literal notranslate"><span class="pre">foldli-list</span></code>.</p>
 </section>
+<section id="collectl-list">
+<h3><code class="docutils literal notranslate"><span class="pre">collectl-list</span></code></h3>
+<p>(x len xt – list ) xt: ( x – x item )</p>
+<p>Collect elements of a list from left to right.</p>
+</section>
+<section id="collectli-list">
+<h3><code class="docutils literal notranslate"><span class="pre">collectli-list</span></code></h3>
+<p>(x len xt – list ) xt: ( x index – x item )</p>
+<p>Collect elements of a list from left to right with an index.</p>
+</section>
+<section id="collectr-list">
+<h3><code class="docutils literal notranslate"><span class="pre">collectr-list</span></code></h3>
+<p>(x len xt – list ) xt: ( x – x item )</p>
+<p>Collect elements of a list from right to left.</p>
+</section>
+<section id="collectri-list">
+<h3><code class="docutils literal notranslate"><span class="pre">collectri-list</span></code></h3>
+<p>(x len xt – list ) xt: ( x – x item )</p>
+<p>Collect elements of a list from right to left with an index.</p>
+</section>
 <section id="duplicate-list">
 <h3><code class="docutils literal notranslate"><span class="pre">duplicate-list</span></code></h3>
 <p>( list – list’ )</p>
