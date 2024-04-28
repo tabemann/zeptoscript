@@ -169,7 +169,7 @@ begin-module zscript
 
     \ Value to address
     : >addr ( value -- addr ) [inlined] 1 bic ;
-    
+
     \ Relocate a block of memory
     : relocate ( orig -- new )
       code[
@@ -213,16 +213,6 @@ begin-module zscript
       size-mask and 1 rshift cell align { size }
       to-space-current@ { current }
       current size + { next-current }
-
-      \ display-red
-      \ ." [ "
-      \ current h.8 space
-      \ next-current h.8 space
-      \ to-space-top@ h.8 space
-      \ size .
-      \ ." ] "
-      \ display-normal
-      
       to-space-top@ next-current >= averts x-out-of-memory
       dup current size move
       current 1 or swap !
@@ -232,22 +222,16 @@ begin-module zscript
 
     \ Relocate the stack
     : relocate-stack ( -- )
-\       display-red
-\       ."  Garbage collecting the stack... "
       sp@ stack-base @ swap begin 2dup > while
-\         dup @ h.8 space
         dup @ relocate over !
         cell+
       repeat
       2drop
-\       ."  Garbage collecting the return stack... "
       rp@ rstack-base @ swap begin 2dup > while
-\         dup @ h.8 space
         dup @ relocate over !
         cell+
       repeat
       2drop
-\       display-normal 
     ;
 
     \ Swap spaces
@@ -357,6 +341,7 @@ begin-module zscript
     10 >small-int constant cells-type
     11 >small-int constant closure-type
     12 >small-int constant slice-type
+    13 >small-int constant cont-type
 
     \ Tags
     1 >small-int constant word-tag
@@ -499,6 +484,37 @@ begin-module zscript
       current
       dup cell+ bytes cell - 0 fill
       bytes 1 lshift type integral> 2 - type-shift lshift or over !
+    ;
+    
+    \ Construct a continuation
+    : allocate-cont { stack-ignore rstack-ignore -- cont }
+      sp@ stack-base @ swap - stack-ignore integral> cells -
+      rp@ rstack-base @ swap - rstack-ignore integral> 3 + cells -
+      2dup >small-int swap >small-int { rstack-count stack-count }
+      + [ 3 cells ] literal + >small-int { bytes }
+      bytes integral> to-space-current@ + to-space-top@ > if
+        gc
+        bytes to-space-current@ +
+        to-space-top@ <= averts x-out-of-memory
+      then
+      to-space-current@ { current }
+      bytes integral> to bytes
+      bytes current + to-space-current!
+      current
+      bytes 1 lshift cont-type integral> 2 - type-shift lshift or over !
+      stack-count over cell+ !
+      rstack-count over [ 2 cells ] literal + !
+      stack-count integral> to stack-count
+      rstack-count integral> to rstack-count
+
+      ." stack-count: " stack-count .
+      ." rstack-count: " rstack-count .
+      
+      sp@ stack-ignore integral> forth::cells +
+      cell+ over [ 3 cells ] literal + stack-count move
+      rp@ rstack-ignore integral> forth::cells +
+      [ 7 cells ] literal + over [ 3 cells ] literal + stack-count +
+      rstack-count move
     ;
 
     \ Allocate memory as bytes
@@ -2310,17 +2326,53 @@ begin-module zscript
   \ Execute a closure
   : execute ( xt | closure -- )
     dup >type case
-      xt-type of forth::cell+ @ endof
+      xt-type of forth::cell+ @ execute exit endof
       closure-type of
         dup >size over forth::+ swap forth::cell+ { xt-addr }
         begin
           forth::cell forth::- dup @ swap dup xt-addr forth::=
         forth::until drop
-        integral>
       endof
+      cont-type of endof  
       ['] x-incorrect-type ?raise
     endcase
-    execute
+    dup integral? if integral> execute exit then
+    dup >type cont-type = averts x-incorrect-type
+    dup forth::cell+ forth::@ integral>
+    over [ 2 forth::cells ] literal forth::+ forth::@ integral>
+    forth::rstack-base forth::@ forth::stack-base forth::@
+    code[
+    \ tos: forth::stack-base forth::@
+    r0 1 dp ldm \ r0: forth::rstack-base forth::@
+    r0 sp mov4_,4_
+    r0 1 dp ldm \ r0: rstack-count
+    0 dp r1 ldr_,[_,#_] \ r1: stack-count
+    4 dp r2 ldr_,[_,#_] \ r2: continuation
+    3 forth::cells r2 adds_,#_
+    r1 r2 r2 adds_,_,_
+    mark>
+    0 r0 cmp_,#_
+    eq bc>
+    forth::cell r0 subs_,#_
+    r0 r2 r3 ldr_,[_,_]
+    r3 1 push
+    2swap b<
+    >mark
+    4 dp r2 ldr_,[_,#_] \ r2: continuation
+    8 dp r0 ldr_,[_,#_] \ r0: return value
+    3 forth::cells r2 adds_,#_
+    tos dp movs_,_
+    r0 tos movs_,_
+    mark>
+    0 r1 cmp_,#_
+    eq bc>
+    forth::cell r1 subs_,#_
+    r1 r2 r3 ldr_,[_,_]
+    forth::cell dp subs_,#_
+    0 dp r3 str_,[_,#_]
+    2swap b<
+    >mark
+    ]code
   ;
   
   \ Try a closure
@@ -2339,7 +2391,6 @@ begin-module zscript
     try >integral
   ;
 
-  
   \ Execute a non-null closure
   : ?execute ( xt | closure | 0  -- )
     dup integral? not if
@@ -2347,6 +2398,11 @@ begin-module zscript
     else
       integral> forth::0= averts x-incorrect-type
     then
+  ;
+
+  \ Call with the current continuation
+  : call/cc ( xt -- ? )
+    [ 1 >small-int ] literal 0 allocate-cont swap execute
   ;
   
   begin-module unsafe
@@ -3210,6 +3266,18 @@ begin-module zscript
           new-current forth::cell+ to new-current
         repeat
         new-closure
+      endof
+      cont-type of
+        swap { arg-count }
+        arg-count 1+ closure-type allocate-cells { closure }
+        closure forth::cell+
+        swap over ! forth::cell+
+        begin arg-count 0> while
+          tuck ! forth::cell+
+          arg-count 1- to arg-count
+        repeat
+        drop
+        closure
       endof
       raise x-incorrect-type
     endcase

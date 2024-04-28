@@ -10,6 +10,8 @@ zeptoscript has the following basic data types:
 * Byte sequences, with normal and constant subtypes
 * Byte slices
 * Execution tokens, with normal and closure subtypes
+* Words
+* Continuations
 
 All three subtypes of integrals are handled transparently to the user, and can only be told apart when the user applies the word `>type` to them. However, in most cases the number 0 will be a null, all integers that can be unambiguously represented as two's-complement numbers with 31 bits will be a small integer, and all integers that require a full 32 bits to be unambiguously represented will be a big integer. A key difference between nulls and small integers on one hand and bit integers on the other is that nulls and small integers are not allocated in the heap while big integers are; note that big integers require two cells to be stored for their heap allocation (in addition to any cells taken for references to them) while nulls and small integers only require one cell each.
 
@@ -20,6 +22,10 @@ The difference between sequences and slices is that sequences comprise a *backin
 Many of the operations work on all of cell sequences, cell slices, byte sequences (both normal and constant), and byte slices. However, there are exceptions; e.g. `@+`, `!+`, and `cells>` are only for cell sequences and slices while `c@+`, `c!+`, `h@+`, `h!+`, `w@+`, `w!+`, `bytes>`, and `type` are only for byte sequences and slices.
 
 Execution tokens and closures are closely related. Both execution tokens and closures may be executed with the words `execute`, `?execute`, and `try`; however, only execution tokens may be used as exceptions with `?raise`. The words `;]`, `'`, and `[']` create execution tokens, which reference code outside the zeptoscript heap which may be executed. The word `bind` ( *xn* ... *x0* *count* *xt* -- *closure* ) takes an execution token *xt* and binds it to *count* values on the stack, producing a *closure*, which when executed will push values *xn* ... *x0* onto the stack prior to executing *xt*. Both execution tokens and closures live on the heap. Note, though, that there may be cases where one may need to convert between execution tokens and integrals referencing the addresses of their underlying code; these conversions are achieved with `unsafe::integral>xt` ( *integral* -- *xt* ) and `unsafe::xt>integral` ( *xt* -- *integral* ). These conversions may not be made with closures.
+
+Words represent individual words in the dictionary. They may be seasrched for with `find` or `find-all-dict`. They may also be gotten with `latest`, `ram-latest`, or `forth-latest`. They may be converted to execution tokens with `word>xt`. Their names can be gotten with `word>name`. Their flags may be gotten with `word>flags`.
+
+Continuations represent a context to return to, i.e. the state of the data and return stacks. They are gotten through passing an execution token to `call/cc`, which will be passed the continuation of that call to `call/cc`, and they may be returned to through calling the continuation with a single argument, which will be placed on the data stack after the continuation is returned from.
 
 zeptoscript does not make use of standard Forth `variable` and `value`; while these are retained for legacy reasons they may only be used with extreme caution and are best avoided when possible. Rather, zeptoscript provides `global` ( "name" -- ); unlike `variable` and `value`, the garbage collector is aware of `global`s, so potentially garbage-collected values can be stored in them, whereas it is very much unsafe to put allocated values, including big integers, in `variable`s or `value`s. Note that globals may be declared either when compiling to RAM or when compiling to flash.
 
@@ -749,6 +755,11 @@ Execute an execution token or closure like `execute`, but catching any exception
 ( xt | closure | 0 -- )
 
 If a non-zero value is provided it is executed like with `execute`, otherwise it is ignored.
+
+### `call/cc`
+( xt -- x ) xt: ( continuation -- )
+
+Call *xt* with the continuation of the call to `call/cc`. When the continuation is called, the the context of the original call to `call/cc` will be returned to, with the top element of the data stack being preserved.
 
 ### `type`
 ( seq -- )

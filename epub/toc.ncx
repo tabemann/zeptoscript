@@ -862,821 +862,827 @@
         </navPoint>
         <navPoint id="navPoint143" playOrder="141">
           <navLabel>
+            <text>call/cc</text>
+          </navLabel>
+          <content src="main/core.xhtml#call-cc" />  
+        </navPoint>
+        <navPoint id="navPoint144" playOrder="142">
+          <navLabel>
             <text>type</text>
           </navLabel>
           <content src="main/core.xhtml#id54" />  
         </navPoint>
-        <navPoint id="navPoint144" playOrder="142">
+        <navPoint id="navPoint145" playOrder="143">
           <navLabel>
             <text>&#x27;</text>
           </navLabel>
           <content src="main/core.xhtml#id55" />  
         </navPoint>
-        <navPoint id="navPoint145" playOrder="143">
+        <navPoint id="navPoint146" playOrder="144">
           <navLabel>
             <text>[&#x27;]</text>
           </navLabel>
           <content src="main/core.xhtml#id56" />  
         </navPoint>
-        <navPoint id="navPoint146" playOrder="144">
+        <navPoint id="navPoint147" playOrder="145">
           <navLabel>
             <text>?raise</text>
           </navLabel>
           <content src="main/core.xhtml#raise" />  
         </navPoint>
-        <navPoint id="navPoint147" playOrder="145">
+        <navPoint id="navPoint148" playOrder="146">
           <navLabel>
             <text>averts</text>
           </navLabel>
           <content src="main/core.xhtml#averts" />  
         </navPoint>
-        <navPoint id="navPoint148" playOrder="146">
+        <navPoint id="navPoint149" playOrder="147">
           <navLabel>
             <text>triggers</text>
           </navLabel>
           <content src="main/core.xhtml#triggers" />  
         </navPoint>
-        <navPoint id="navPoint149" playOrder="147">
+        <navPoint id="navPoint150" playOrder="148">
           <navLabel>
             <text>raise</text>
           </navLabel>
           <content src="main/core.xhtml#id57" />  
         </navPoint>
-        <navPoint id="navPoint150" playOrder="148">
+        <navPoint id="navPoint151" playOrder="149">
           <navLabel>
             <text>start-compile</text>
           </navLabel>
           <content src="main/core.xhtml#start-compile" />  
         </navPoint>
-        <navPoint id="navPoint151" playOrder="149">
+        <navPoint id="navPoint152" playOrder="150">
           <navLabel>
             <text>end-compile,</text>
           </navLabel>
           <content src="main/core.xhtml#end-compile" />  
         </navPoint>
-        <navPoint id="navPoint152" playOrder="150">
+        <navPoint id="navPoint153" playOrder="151">
           <navLabel>
             <text>constant-with-name</text>
           </navLabel>
           <content src="main/core.xhtml#constant-with-name" />  
         </navPoint>
-        <navPoint id="navPoint153" playOrder="151">
+        <navPoint id="navPoint154" playOrder="152">
           <navLabel>
             <text>raw-constant-with-name</text>
           </navLabel>
           <content src="main/core.xhtml#raw-constant-with-name" />  
         </navPoint>
-        <navPoint id="navPoint154" playOrder="152">
+        <navPoint id="navPoint155" playOrder="153">
           <navLabel>
             <text>[char]</text>
           </navLabel>
           <content src="main/core.xhtml#char" />  
         </navPoint>
-        <navPoint id="navPoint155" playOrder="153">
+        <navPoint id="navPoint156" playOrder="154">
           <navLabel>
             <text>char</text>
           </navLabel>
           <content src="main/core.xhtml#id58" />  
         </navPoint>
-        <navPoint id="navPoint156" playOrder="154">
+        <navPoint id="navPoint157" playOrder="155">
           <navLabel>
             <text>begin-record</text>
           </navLabel>
           <content src="main/core.xhtml#begin-record" />  
         </navPoint>
-        <navPoint id="navPoint157" playOrder="155">
+        <navPoint id="navPoint158" playOrder="156">
           <navLabel>
             <text>end-record</text>
           </navLabel>
           <content src="main/core.xhtml#end-record" />  
         </navPoint>
-        <navPoint id="navPoint158" playOrder="156">
+        <navPoint id="navPoint159" playOrder="157">
           <navLabel>
             <text>item:</text>
           </navLabel>
           <content src="main/core.xhtml#item" />  
         </navPoint>
-        <navPoint id="navPoint159" playOrder="157">
+        <navPoint id="navPoint160" playOrder="158">
           <navLabel>
             <text>foreign-buffer</text>
           </navLabel>
           <content src="main/core.xhtml#foreign-buffer" />  
         </navPoint>
-        <navPoint id="navPoint160" playOrder="158">
+        <navPoint id="navPoint161" playOrder="159">
           <navLabel>
             <text>foreign-constant</text>
           </navLabel>
           <content src="main/core.xhtml#foreign-constant" />  
         </navPoint>
-        <navPoint id="navPoint161" playOrder="159">
+        <navPoint id="navPoint162" playOrder="160">
           <navLabel>
             <text>foreign-double-constant</text>
           </navLabel>
           <content src="main/core.xhtml#foreign-double-constant" />  
         </navPoint>
-        <navPoint id="navPoint162" playOrder="160">
+        <navPoint id="navPoint163" playOrder="161">
           <navLabel>
             <text>foreign-variable</text>
           </navLabel>
           <content src="main/core.xhtml#foreign-variable" />  
         </navPoint>
-        <navPoint id="navPoint163" playOrder="161">
+        <navPoint id="navPoint164" playOrder="162">
           <navLabel>
             <text>foreign-hook-variable</text>
           </navLabel>
           <content src="main/core.xhtml#foreign-hook-variable" />  
         </navPoint>
-        <navPoint id="navPoint164" playOrder="162">
+        <navPoint id="navPoint165" playOrder="163">
           <navLabel>
             <text>foreign</text>
           </navLabel>
           <content src="main/core.xhtml#foreign" />  
         </navPoint>
-        <navPoint id="navPoint165" playOrder="163">
+        <navPoint id="navPoint166" playOrder="164">
           <navLabel>
             <text>execute-foreign</text>
           </navLabel>
           <content src="main/core.xhtml#execute-foreign" />  
         </navPoint>
-        <navPoint id="navPoint166" playOrder="164">
+        <navPoint id="navPoint167" playOrder="165">
           <navLabel>
             <text>begin-const-bytes</text>
           </navLabel>
           <content src="main/core.xhtml#begin-const-bytes" />  
         </navPoint>
-        <navPoint id="navPoint167" playOrder="165">
+        <navPoint id="navPoint168" playOrder="166">
           <navLabel>
             <text>end-const-bytes</text>
           </navLabel>
           <content src="main/core.xhtml#end-const-bytes" />  
         </navPoint>
-        <navPoint id="navPoint168" playOrder="166">
+        <navPoint id="navPoint169" playOrder="167">
           <navLabel>
             <text>,</text>
           </navLabel>
           <content src="main/core.xhtml#id59" />  
         </navPoint>
-        <navPoint id="navPoint169" playOrder="167">
+        <navPoint id="navPoint170" playOrder="168">
           <navLabel>
             <text>h,</text>
           </navLabel>
           <content src="main/core.xhtml#id60" />  
         </navPoint>
-        <navPoint id="navPoint170" playOrder="168">
+        <navPoint id="navPoint171" playOrder="169">
           <navLabel>
             <text>c,</text>
           </navLabel>
           <content src="main/core.xhtml#id61" />  
         </navPoint>
-        <navPoint id="navPoint171" playOrder="169">
+        <navPoint id="navPoint172" playOrder="170">
           <navLabel>
             <text>align,</text>
           </navLabel>
           <content src="main/core.xhtml#id62" />  
         </navPoint>
-        <navPoint id="navPoint172" playOrder="170">
+        <navPoint id="navPoint173" playOrder="171">
           <navLabel>
             <text>word&gt;name</text>
           </navLabel>
           <content src="main/core.xhtml#word-name" />  
         </navPoint>
-        <navPoint id="navPoint173" playOrder="171">
+        <navPoint id="navPoint174" playOrder="172">
           <navLabel>
             <text>word&gt;flags</text>
           </navLabel>
           <content src="main/core.xhtml#word-flags" />  
         </navPoint>
-        <navPoint id="navPoint174" playOrder="172">
+        <navPoint id="navPoint175" playOrder="173">
           <navLabel>
             <text>compile,</text>
           </navLabel>
           <content src="main/core.xhtml#compile" />  
         </navPoint>
-        <navPoint id="navPoint175" playOrder="173">
+        <navPoint id="navPoint176" playOrder="174">
           <navLabel>
             <text>inline,</text>
           </navLabel>
           <content src="main/core.xhtml#inline" />  
         </navPoint>
-        <navPoint id="navPoint176" playOrder="174">
+        <navPoint id="navPoint177" playOrder="175">
           <navLabel>
             <text>find</text>
           </navLabel>
           <content src="main/core.xhtml#find" />  
         </navPoint>
-        <navPoint id="navPoint177" playOrder="175">
+        <navPoint id="navPoint178" playOrder="176">
           <navLabel>
             <text>find-all-dict</text>
           </navLabel>
           <content src="main/core.xhtml#find-all-dict" />  
         </navPoint>
-        <navPoint id="navPoint178" playOrder="176">
+        <navPoint id="navPoint179" playOrder="177">
           <navLabel>
             <text>flash-latest</text>
           </navLabel>
           <content src="main/core.xhtml#flash-latest" />  
         </navPoint>
-        <navPoint id="navPoint179" playOrder="177">
+        <navPoint id="navPoint180" playOrder="178">
           <navLabel>
             <text>ram-latest</text>
           </navLabel>
           <content src="main/core.xhtml#ram-latest" />  
         </navPoint>
-        <navPoint id="navPoint180" playOrder="178">
+        <navPoint id="navPoint181" playOrder="179">
           <navLabel>
             <text>latest</text>
           </navLabel>
           <content src="main/core.xhtml#latest" />  
         </navPoint>
-        <navPoint id="navPoint181" playOrder="179">
+        <navPoint id="navPoint182" playOrder="180">
           <navLabel>
             <text>state?</text>
           </navLabel>
           <content src="main/core.xhtml#state" />  
         </navPoint>
-        <navPoint id="navPoint182" playOrder="180">
+        <navPoint id="navPoint183" playOrder="181">
           <navLabel>
             <text>+to</text>
           </navLabel>
           <content src="main/core.xhtml#to" />  
         </navPoint>
-        <navPoint id="navPoint183" playOrder="181">
+        <navPoint id="navPoint184" playOrder="182">
           <navLabel>
             <text>constant</text>
           </navLabel>
           <content src="main/core.xhtml#constant" />  
         </navPoint>
-        <navPoint id="navPoint184" playOrder="182">
+        <navPoint id="navPoint185" playOrder="183">
           <navLabel>
             <text>global</text>
           </navLabel>
           <content src="main/core.xhtml#global" />  
         </navPoint>
-        <navPoint id="navPoint185" playOrder="183">
+        <navPoint id="navPoint186" playOrder="184">
           <navLabel>
             <text>bind</text>
           </navLabel>
           <content src="main/core.xhtml#bind" />  
         </navPoint>
-        <navPoint id="navPoint186" playOrder="184">
+        <navPoint id="navPoint187" playOrder="185">
           <navLabel>
             <text>pick</text>
           </navLabel>
           <content src="main/core.xhtml#pick" />  
         </navPoint>
-        <navPoint id="navPoint187" playOrder="185">
+        <navPoint id="navPoint188" playOrder="186">
           <navLabel>
             <text>roll</text>
           </navLabel>
           <content src="main/core.xhtml#roll" />  
         </navPoint>
-        <navPoint id="navPoint188" playOrder="186">
+        <navPoint id="navPoint189" playOrder="187">
           <navLabel>
             <text>base!</text>
           </navLabel>
           <content src="main/core.xhtml#base" />  
         </navPoint>
-        <navPoint id="navPoint189" playOrder="187">
+        <navPoint id="navPoint190" playOrder="188">
           <navLabel>
             <text>base@</text>
           </navLabel>
           <content src="main/core.xhtml#id63" />  
         </navPoint>
-        <navPoint id="navPoint190" playOrder="188">
+        <navPoint id="navPoint191" playOrder="189">
           <navLabel>
             <text>with-base</text>
           </navLabel>
           <content src="main/core.xhtml#with-base" />  
         </navPoint>
-        <navPoint id="navPoint191" playOrder="189">
+        <navPoint id="navPoint192" playOrder="190">
           <navLabel>
             <text>parse-integral</text>
           </navLabel>
           <content src="main/core.xhtml#parse-integral" />  
         </navPoint>
-        <navPoint id="navPoint192" playOrder="190">
+        <navPoint id="navPoint193" playOrder="191">
           <navLabel>
             <text>parse-integral-unsigned</text>
           </navLabel>
           <content src="main/core.xhtml#parse-integral-unsigned" />  
         </navPoint>
-        <navPoint id="navPoint193" playOrder="191">
+        <navPoint id="navPoint194" playOrder="192">
           <navLabel>
             <text>format-integral</text>
           </navLabel>
           <content src="main/core.xhtml#format-integral" />  
         </navPoint>
-        <navPoint id="navPoint194" playOrder="192">
+        <navPoint id="navPoint195" playOrder="193">
           <navLabel>
             <text>`format-integral-unsigned</text>
           </navLabel>
           <content src="main/core.xhtml#format-integral-unsigned" />  
         </navPoint>
-        <navPoint id="navPoint195" playOrder="193">
+        <navPoint id="navPoint196" playOrder="194">
           <navLabel>
             <text>duplicate</text>
           </navLabel>
           <content src="main/core.xhtml#duplicate" />  
         </navPoint>
-        <navPoint id="navPoint196" playOrder="194">
+        <navPoint id="navPoint197" playOrder="195">
           <navLabel>
             <text>concat</text>
           </navLabel>
           <content src="main/core.xhtml#concat" />  
         </navPoint>
-        <navPoint id="navPoint197" playOrder="195">
+        <navPoint id="navPoint198" playOrder="196">
           <navLabel>
             <text>iter</text>
           </navLabel>
           <content src="main/core.xhtml#iter" />  
         </navPoint>
-        <navPoint id="navPoint198" playOrder="196">
+        <navPoint id="navPoint199" playOrder="197">
           <navLabel>
             <text>iteri</text>
           </navLabel>
           <content src="main/core.xhtml#iteri" />  
         </navPoint>
-        <navPoint id="navPoint199" playOrder="197">
+        <navPoint id="navPoint200" playOrder="198">
           <navLabel>
             <text>find-index</text>
           </navLabel>
           <content src="main/core.xhtml#find-index" />  
         </navPoint>
-        <navPoint id="navPoint200" playOrder="198">
+        <navPoint id="navPoint201" playOrder="199">
           <navLabel>
             <text>find-indexi</text>
           </navLabel>
           <content src="main/core.xhtml#find-indexi" />  
         </navPoint>
-        <navPoint id="navPoint201" playOrder="199">
+        <navPoint id="navPoint202" playOrder="200">
           <navLabel>
             <text>map</text>
           </navLabel>
           <content src="main/core.xhtml#map" />  
         </navPoint>
-        <navPoint id="navPoint202" playOrder="200">
+        <navPoint id="navPoint203" playOrder="201">
           <navLabel>
             <text>mapi</text>
           </navLabel>
           <content src="main/core.xhtml#mapi" />  
         </navPoint>
-        <navPoint id="navPoint203" playOrder="201">
+        <navPoint id="navPoint204" playOrder="202">
           <navLabel>
             <text>map!</text>
           </navLabel>
           <content src="main/core.xhtml#id64" />  
         </navPoint>
-        <navPoint id="navPoint204" playOrder="202">
+        <navPoint id="navPoint205" playOrder="203">
           <navLabel>
             <text>mapi!</text>
           </navLabel>
           <content src="main/core.xhtml#id65" />  
         </navPoint>
-        <navPoint id="navPoint205" playOrder="203">
+        <navPoint id="navPoint206" playOrder="204">
           <navLabel>
             <text>make-bits</text>
           </navLabel>
           <content src="main/core.xhtml#make-bits" />  
         </navPoint>
-        <navPoint id="navPoint206" playOrder="204">
+        <navPoint id="navPoint207" playOrder="205">
           <navLabel>
             <text>bits&gt;len</text>
           </navLabel>
           <content src="main/core.xhtml#bits-len" />  
         </navPoint>
-        <navPoint id="navPoint207" playOrder="205">
+        <navPoint id="navPoint208" playOrder="206">
           <navLabel>
             <text>bit!</text>
           </navLabel>
           <content src="main/core.xhtml#bit" />  
         </navPoint>
-        <navPoint id="navPoint208" playOrder="206">
+        <navPoint id="navPoint209" playOrder="207">
           <navLabel>
             <text>bit@</text>
           </navLabel>
           <content src="main/core.xhtml#id66" />  
         </navPoint>
-        <navPoint id="navPoint209" playOrder="207">
+        <navPoint id="navPoint210" playOrder="208">
           <navLabel>
             <text>filter</text>
           </navLabel>
           <content src="main/core.xhtml#filter" />  
         </navPoint>
-        <navPoint id="navPoint210" playOrder="208">
+        <navPoint id="navPoint211" playOrder="209">
           <navLabel>
             <text>filteri</text>
           </navLabel>
           <content src="main/core.xhtml#filteri" />  
         </navPoint>
-        <navPoint id="navPoint211" playOrder="209">
+        <navPoint id="navPoint212" playOrder="210">
           <navLabel>
             <text>foldl</text>
           </navLabel>
           <content src="main/core.xhtml#foldl" />  
         </navPoint>
-        <navPoint id="navPoint212" playOrder="210">
+        <navPoint id="navPoint213" playOrder="211">
           <navLabel>
             <text>foldli</text>
           </navLabel>
           <content src="main/core.xhtml#foldli" />  
         </navPoint>
-        <navPoint id="navPoint213" playOrder="211">
+        <navPoint id="navPoint214" playOrder="212">
           <navLabel>
             <text>foldr</text>
           </navLabel>
           <content src="main/core.xhtml#foldr" />  
         </navPoint>
-        <navPoint id="navPoint214" playOrder="212">
+        <navPoint id="navPoint215" playOrder="213">
           <navLabel>
             <text>foldri</text>
           </navLabel>
           <content src="main/core.xhtml#foldri" />  
         </navPoint>
-        <navPoint id="navPoint215" playOrder="213">
+        <navPoint id="navPoint216" playOrder="214">
           <navLabel>
             <text>collectl-cells</text>
           </navLabel>
           <content src="main/core.xhtml#collectl-cells" />  
         </navPoint>
-        <navPoint id="navPoint216" playOrder="214">
+        <navPoint id="navPoint217" playOrder="215">
           <navLabel>
             <text>collectli-cells</text>
           </navLabel>
           <content src="main/core.xhtml#collectli-cells" />  
         </navPoint>
-        <navPoint id="navPoint217" playOrder="215">
+        <navPoint id="navPoint218" playOrder="216">
           <navLabel>
             <text>collectr-cells</text>
           </navLabel>
           <content src="main/core.xhtml#collectr-cells" />  
         </navPoint>
-        <navPoint id="navPoint218" playOrder="216">
+        <navPoint id="navPoint219" playOrder="217">
           <navLabel>
             <text>collectri-cells</text>
           </navLabel>
           <content src="main/core.xhtml#collectri-cells" />  
         </navPoint>
-        <navPoint id="navPoint219" playOrder="217">
+        <navPoint id="navPoint220" playOrder="218">
           <navLabel>
             <text>collectl-bytes</text>
           </navLabel>
           <content src="main/core.xhtml#collectl-bytes" />  
         </navPoint>
-        <navPoint id="navPoint220" playOrder="218">
+        <navPoint id="navPoint221" playOrder="219">
           <navLabel>
             <text>collectli-bytes</text>
           </navLabel>
           <content src="main/core.xhtml#collectli-bytes" />  
         </navPoint>
-        <navPoint id="navPoint221" playOrder="219">
+        <navPoint id="navPoint222" playOrder="220">
           <navLabel>
             <text>collectr-bytes</text>
           </navLabel>
           <content src="main/core.xhtml#collectr-bytes" />  
         </navPoint>
-        <navPoint id="navPoint222" playOrder="220">
+        <navPoint id="navPoint223" playOrder="221">
           <navLabel>
             <text>collectri-bytes</text>
           </navLabel>
           <content src="main/core.xhtml#collectri-bytes" />  
         </navPoint>
-        <navPoint id="navPoint223" playOrder="221">
+        <navPoint id="navPoint224" playOrder="222">
           <navLabel>
             <text>reverse</text>
           </navLabel>
           <content src="main/core.xhtml#reverse" />  
         </navPoint>
-        <navPoint id="navPoint224" playOrder="222">
+        <navPoint id="navPoint225" playOrder="223">
           <navLabel>
             <text>reverse!</text>
           </navLabel>
           <content src="main/core.xhtml#id67" />  
         </navPoint>
-        <navPoint id="navPoint225" playOrder="223">
+        <navPoint id="navPoint226" playOrder="224">
           <navLabel>
             <text>zip</text>
           </navLabel>
           <content src="main/core.xhtml#zip" />  
         </navPoint>
-        <navPoint id="navPoint226" playOrder="224">
+        <navPoint id="navPoint227" playOrder="225">
           <navLabel>
             <text>zip3</text>
           </navLabel>
           <content src="main/core.xhtml#zip3" />  
         </navPoint>
-        <navPoint id="navPoint227" playOrder="225">
+        <navPoint id="navPoint228" playOrder="226">
           <navLabel>
             <text>zip!</text>
           </navLabel>
           <content src="main/core.xhtml#id68" />  
         </navPoint>
-        <navPoint id="navPoint228" playOrder="226">
+        <navPoint id="navPoint229" playOrder="227">
           <navLabel>
             <text>zip3!</text>
           </navLabel>
           <content src="main/core.xhtml#id69" />  
         </navPoint>
-        <navPoint id="navPoint229" playOrder="227">
+        <navPoint id="navPoint230" playOrder="228">
           <navLabel>
             <text>sort!</text>
           </navLabel>
           <content src="main/core.xhtml#sort" />  
         </navPoint>
-        <navPoint id="navPoint230" playOrder="228">
+        <navPoint id="navPoint231" playOrder="229">
           <navLabel>
             <text>sort</text>
           </navLabel>
           <content src="main/core.xhtml#id70" />  
         </navPoint>
-        <navPoint id="navPoint231" playOrder="229">
+        <navPoint id="navPoint232" playOrder="230">
           <navLabel>
             <text>all</text>
           </navLabel>
           <content src="main/core.xhtml#all" />  
         </navPoint>
-        <navPoint id="navPoint232" playOrder="230">
+        <navPoint id="navPoint233" playOrder="231">
           <navLabel>
             <text>alli</text>
           </navLabel>
           <content src="main/core.xhtml#alli" />  
         </navPoint>
-        <navPoint id="navPoint233" playOrder="231">
+        <navPoint id="navPoint234" playOrder="232">
           <navLabel>
             <text>any</text>
           </navLabel>
           <content src="main/core.xhtml#any" />  
         </navPoint>
-        <navPoint id="navPoint234" playOrder="232">
+        <navPoint id="navPoint235" playOrder="233">
           <navLabel>
             <text>anyi</text>
           </navLabel>
           <content src="main/core.xhtml#anyi" />  
         </navPoint>
-        <navPoint id="navPoint235" playOrder="233">
+        <navPoint id="navPoint236" playOrder="234">
           <navLabel>
             <text>join</text>
           </navLabel>
           <content src="main/core.xhtml#join" />  
         </navPoint>
-        <navPoint id="navPoint236" playOrder="234">
+        <navPoint id="navPoint237" playOrder="235">
           <navLabel>
             <text>equal-bytes?</text>
           </navLabel>
           <content src="main/core.xhtml#equal-bytes" />  
         </navPoint>
-        <navPoint id="navPoint237" playOrder="235">
+        <navPoint id="navPoint238" playOrder="236">
           <navLabel>
             <text>equal-case-bytes?</text>
           </navLabel>
           <content src="main/core.xhtml#equal-case-bytes" />  
         </navPoint>
-        <navPoint id="navPoint238" playOrder="236">
+        <navPoint id="navPoint239" playOrder="237">
           <navLabel>
             <text>hash-bytes</text>
           </navLabel>
           <content src="main/core.xhtml#hash-bytes" />  
         </navPoint>
-        <navPoint id="navPoint239" playOrder="237">
+        <navPoint id="navPoint240" playOrder="238">
           <navLabel>
             <text>depth</text>
           </navLabel>
           <content src="main/core.xhtml#depth" />  
         </navPoint>
-        <navPoint id="navPoint240" playOrder="238">
+        <navPoint id="navPoint241" playOrder="239">
           <navLabel>
             <text>#(</text>
           </navLabel>
           <content src="main/core.xhtml#id71" />  
         </navPoint>
-        <navPoint id="navPoint241" playOrder="239">
+        <navPoint id="navPoint242" playOrder="240">
           <navLabel>
             <text>#&lt;</text>
           </navLabel>
           <content src="main/core.xhtml#id72" />  
         </navPoint>
-        <navPoint id="navPoint242" playOrder="240">
+        <navPoint id="navPoint243" playOrder="241">
           <navLabel>
             <text>)#</text>
           </navLabel>
           <content src="main/core.xhtml#id73" />  
         </navPoint>
-        <navPoint id="navPoint243" playOrder="241">
+        <navPoint id="navPoint244" playOrder="242">
           <navLabel>
             <text>&gt;#</text>
           </navLabel>
           <content src="main/core.xhtml#id74" />  
         </navPoint>
-        <navPoint id="navPoint244" playOrder="242">
+        <navPoint id="navPoint245" playOrder="243">
           <navLabel>
             <text>0cells</text>
           </navLabel>
           <content src="main/core.xhtml#id75" />  
         </navPoint>
-        <navPoint id="navPoint245" playOrder="243">
+        <navPoint id="navPoint246" playOrder="244">
           <navLabel>
             <text>0bytes</text>
           </navLabel>
           <content src="main/core.xhtml#id76" />  
         </navPoint>
       </navPoint>
-      <navPoint id="navPoint246" playOrder="244">
+      <navPoint id="navPoint247" playOrder="245">
         <navLabel>
           <text>unsafe words</text>
         </navLabel>
         <content src="main/core.xhtml#unsafe-words" />  
-        <navPoint id="navPoint247" playOrder="244">
+        <navPoint id="navPoint248" playOrder="245">
           <navLabel>
             <text>unsafe words</text>
           </navLabel>
           <content src="main/core.xhtml#unsafe-words" />  
         </navPoint>
-        <navPoint id="navPoint248" playOrder="245">
+        <navPoint id="navPoint249" playOrder="246">
           <navLabel>
             <text>bytes&gt;addr-len</text>
           </navLabel>
           <content src="main/core.xhtml#bytes-addr-len" />  
         </navPoint>
-        <navPoint id="navPoint249" playOrder="246">
+        <navPoint id="navPoint250" playOrder="247">
           <navLabel>
             <text>@</text>
           </navLabel>
           <content src="main/core.xhtml#id77" />  
         </navPoint>
-        <navPoint id="navPoint250" playOrder="247">
+        <navPoint id="navPoint251" playOrder="248">
           <navLabel>
             <text>!</text>
           </navLabel>
           <content src="main/core.xhtml#id78" />  
         </navPoint>
-        <navPoint id="navPoint251" playOrder="248">
+        <navPoint id="navPoint252" playOrder="249">
           <navLabel>
             <text>+!</text>
           </navLabel>
           <content src="main/core.xhtml#id79" />  
         </navPoint>
-        <navPoint id="navPoint252" playOrder="249">
+        <navPoint id="navPoint253" playOrder="250">
           <navLabel>
             <text>bis!</text>
           </navLabel>
           <content src="main/core.xhtml#bis" />  
         </navPoint>
-        <navPoint id="navPoint253" playOrder="250">
+        <navPoint id="navPoint254" playOrder="251">
           <navLabel>
             <text>bic!</text>
           </navLabel>
           <content src="main/core.xhtml#id80" />  
         </navPoint>
-        <navPoint id="navPoint254" playOrder="251">
+        <navPoint id="navPoint255" playOrder="252">
           <navLabel>
             <text>xor!</text>
           </navLabel>
           <content src="main/core.xhtml#id81" />  
         </navPoint>
-        <navPoint id="navPoint255" playOrder="252">
+        <navPoint id="navPoint256" playOrder="253">
           <navLabel>
             <text>h@</text>
           </navLabel>
           <content src="main/core.xhtml#id82" />  
         </navPoint>
-        <navPoint id="navPoint256" playOrder="253">
+        <navPoint id="navPoint257" playOrder="254">
           <navLabel>
             <text>h!</text>
           </navLabel>
           <content src="main/core.xhtml#id83" />  
         </navPoint>
-        <navPoint id="navPoint257" playOrder="254">
+        <navPoint id="navPoint258" playOrder="255">
           <navLabel>
             <text>h+!</text>
           </navLabel>
           <content src="main/core.xhtml#id84" />  
         </navPoint>
-        <navPoint id="navPoint258" playOrder="255">
+        <navPoint id="navPoint259" playOrder="256">
           <navLabel>
             <text>hbis!</text>
           </navLabel>
           <content src="main/core.xhtml#hbis" />  
         </navPoint>
-        <navPoint id="navPoint259" playOrder="256">
+        <navPoint id="navPoint260" playOrder="257">
           <navLabel>
             <text>hbic!</text>
           </navLabel>
           <content src="main/core.xhtml#hbic" />  
         </navPoint>
-        <navPoint id="navPoint260" playOrder="257">
+        <navPoint id="navPoint261" playOrder="258">
           <navLabel>
             <text>hxor!</text>
           </navLabel>
           <content src="main/core.xhtml#hxor" />  
         </navPoint>
-        <navPoint id="navPoint261" playOrder="258">
+        <navPoint id="navPoint262" playOrder="259">
           <navLabel>
             <text>c@</text>
           </navLabel>
           <content src="main/core.xhtml#id85" />  
         </navPoint>
-        <navPoint id="navPoint262" playOrder="259">
+        <navPoint id="navPoint263" playOrder="260">
           <navLabel>
             <text>c!</text>
           </navLabel>
           <content src="main/core.xhtml#id86" />  
         </navPoint>
-        <navPoint id="navPoint263" playOrder="260">
+        <navPoint id="navPoint264" playOrder="261">
           <navLabel>
             <text>c+!</text>
           </navLabel>
           <content src="main/core.xhtml#id87" />  
         </navPoint>
-        <navPoint id="navPoint264" playOrder="261">
+        <navPoint id="navPoint265" playOrder="262">
           <navLabel>
             <text>cbis!</text>
           </navLabel>
           <content src="main/core.xhtml#cbis" />  
         </navPoint>
-        <navPoint id="navPoint265" playOrder="262">
+        <navPoint id="navPoint266" playOrder="263">
           <navLabel>
             <text>cbic!</text>
           </navLabel>
           <content src="main/core.xhtml#cbic" />  
         </navPoint>
-        <navPoint id="navPoint266" playOrder="263">
+        <navPoint id="navPoint267" playOrder="264">
           <navLabel>
             <text>cxor!</text>
           </navLabel>
           <content src="main/core.xhtml#cxor" />  
         </navPoint>
-        <navPoint id="navPoint267" playOrder="264">
+        <navPoint id="navPoint268" playOrder="265">
           <navLabel>
             <text>fill</text>
           </navLabel>
           <content src="main/core.xhtml#fill" />  
         </navPoint>
-        <navPoint id="navPoint268" playOrder="265">
+        <navPoint id="navPoint269" playOrder="266">
           <navLabel>
             <text>&gt;integral</text>
           </navLabel>
           <content src="main/core.xhtml#id88" />  
         </navPoint>
-        <navPoint id="navPoint269" playOrder="266">
+        <navPoint id="navPoint270" playOrder="267">
           <navLabel>
             <text>integral&gt;</text>
           </navLabel>
           <content src="main/core.xhtml#id89" />  
         </navPoint>
-        <navPoint id="navPoint270" playOrder="267">
+        <navPoint id="navPoint271" playOrder="268">
           <navLabel>
             <text>2&gt;integral</text>
           </navLabel>
           <content src="main/core.xhtml#id90" />  
         </navPoint>
-        <navPoint id="navPoint271" playOrder="268">
+        <navPoint id="navPoint272" playOrder="269">
           <navLabel>
             <text>2integral&gt;</text>
           </navLabel>
           <content src="main/core.xhtml#id91" />  
         </navPoint>
-        <navPoint id="navPoint272" playOrder="269">
+        <navPoint id="navPoint273" playOrder="270">
           <navLabel>
             <text>&gt;double</text>
           </navLabel>
           <content src="main/core.xhtml#double" />  
         </navPoint>
-        <navPoint id="navPoint273" playOrder="270">
+        <navPoint id="navPoint274" playOrder="271">
           <navLabel>
             <text>double&gt;</text>
           </navLabel>
           <content src="main/core.xhtml#id92" />  
         </navPoint>
-        <navPoint id="navPoint274" playOrder="271">
+        <navPoint id="navPoint275" playOrder="272">
           <navLabel>
             <text>2&gt;double</text>
           </navLabel>
           <content src="main/core.xhtml#id93" />  
         </navPoint>
-        <navPoint id="navPoint275" playOrder="272">
+        <navPoint id="navPoint276" playOrder="273">
           <navLabel>
             <text>2double&gt;</text>
           </navLabel>
           <content src="main/core.xhtml#id94" />  
         </navPoint>
-        <navPoint id="navPoint276" playOrder="273">
+        <navPoint id="navPoint277" playOrder="274">
           <navLabel>
             <text>xt&gt;integral</text>
           </navLabel>
           <content src="main/core.xhtml#xt-integral" />  
         </navPoint>
-        <navPoint id="navPoint277" playOrder="274">
+        <navPoint id="navPoint278" playOrder="275">
           <navLabel>
             <text>integral&gt;xt</text>
           </navLabel>
           <content src="main/core.xhtml#integral-xt" />  
         </navPoint>
-        <navPoint id="navPoint278" playOrder="275">
+        <navPoint id="navPoint279" playOrder="276">
           <navLabel>
             <text>here</text>
           </navLabel>
           <content src="main/core.xhtml#here" />  
         </navPoint>
-        <navPoint id="navPoint279" playOrder="276">
+        <navPoint id="navPoint280" playOrder="277">
           <navLabel>
             <text>allot</text>
           </navLabel>
@@ -1684,149 +1690,149 @@
         </navPoint>
       </navPoint>
     </navPoint>
-    <navPoint id="navPoint280" playOrder="277">
+    <navPoint id="navPoint281" playOrder="278">
       <navLabel>
         <text>zeptoscript Object-Orientation</text>
       </navLabel>
       <content src="main/oo.xhtml" />  
-      <navPoint id="navPoint281" playOrder="277">
+      <navPoint id="navPoint282" playOrder="278">
         <navLabel>
           <text>zeptoscript Object-Orientation</text>
         </navLabel>
         <content src="main/oo.xhtml" />  
       </navPoint>
-      <navPoint id="navPoint282" playOrder="278">
+      <navPoint id="navPoint283" playOrder="279">
         <navLabel>
           <text>zscript-oo words</text>
         </navLabel>
         <content src="main/oo.xhtml#zscript-oo-words" />  
-        <navPoint id="navPoint283" playOrder="278">
+        <navPoint id="navPoint284" playOrder="279">
           <navLabel>
             <text>zscript-oo words</text>
           </navLabel>
           <content src="main/oo.xhtml#zscript-oo-words" />  
         </navPoint>
-        <navPoint id="navPoint284" playOrder="279">
+        <navPoint id="navPoint285" playOrder="280">
           <navLabel>
             <text>method</text>
           </navLabel>
           <content src="main/oo.xhtml#method" />  
         </navPoint>
-        <navPoint id="navPoint285" playOrder="280">
+        <navPoint id="navPoint286" playOrder="281">
           <navLabel>
             <text>begin-class</text>
           </navLabel>
           <content src="main/oo.xhtml#begin-class" />  
         </navPoint>
-        <navPoint id="navPoint286" playOrder="281">
+        <navPoint id="navPoint287" playOrder="282">
           <navLabel>
             <text>end-class</text>
           </navLabel>
           <content src="main/oo.xhtml#end-class" />  
         </navPoint>
-        <navPoint id="navPoint287" playOrder="282">
+        <navPoint id="navPoint288" playOrder="283">
           <navLabel>
             <text>member:</text>
           </navLabel>
           <content src="main/oo.xhtml#member" />  
         </navPoint>
-        <navPoint id="navPoint288" playOrder="283">
+        <navPoint id="navPoint289" playOrder="284">
           <navLabel>
             <text>:method</text>
           </navLabel>
           <content src="main/oo.xhtml#id1" />  
         </navPoint>
-        <navPoint id="navPoint289" playOrder="284">
+        <navPoint id="navPoint290" playOrder="285">
           <navLabel>
             <text>:private</text>
           </navLabel>
           <content src="main/oo.xhtml#private" />  
         </navPoint>
-        <navPoint id="navPoint290" playOrder="285">
+        <navPoint id="navPoint291" playOrder="286">
           <navLabel>
             <text>has-method?</text>
           </navLabel>
           <content src="main/oo.xhtml#has-method" />  
         </navPoint>
-        <navPoint id="navPoint291" playOrder="286">
+        <navPoint id="navPoint292" playOrder="287">
           <navLabel>
             <text>begin-type-class</text>
           </navLabel>
           <content src="main/oo.xhtml#begin-type-class" />  
         </navPoint>
-        <navPoint id="navPoint292" playOrder="287">
+        <navPoint id="navPoint293" playOrder="288">
           <navLabel>
             <text>class@</text>
           </navLabel>
           <content src="main/oo.xhtml#class" />  
         </navPoint>
-        <navPoint id="navPoint293" playOrder="288">
+        <navPoint id="navPoint294" playOrder="289">
           <navLabel>
             <text>x-member-not-for-class</text>
           </navLabel>
           <content src="main/oo.xhtml#x-member-not-for-class" />  
         </navPoint>
-        <navPoint id="navPoint294" playOrder="289">
+        <navPoint id="navPoint295" playOrder="290">
           <navLabel>
             <text>x-unimplemented-method</text>
           </navLabel>
           <content src="main/oo.xhtml#x-unimplemented-method" />  
         </navPoint>
-        <navPoint id="navPoint295" playOrder="290">
+        <navPoint id="navPoint296" playOrder="291">
           <navLabel>
             <text>x-not-a-method</text>
           </navLabel>
           <content src="main/oo.xhtml#x-not-a-method" />  
         </navPoint>
-        <navPoint id="navPoint296" playOrder="291">
+        <navPoint id="navPoint297" playOrder="292">
           <navLabel>
             <text>x-type-classes-have-no-members</text>
           </navLabel>
           <content src="main/oo.xhtml#x-type-classes-have-no-members" />  
         </navPoint>
       </navPoint>
-      <navPoint id="navPoint297" playOrder="292">
+      <navPoint id="navPoint298" playOrder="293">
         <navLabel>
           <text>zscript-special-oo words</text>
         </navLabel>
         <content src="main/oo.xhtml#zscript-special-oo-words" />  
-        <navPoint id="navPoint298" playOrder="292">
+        <navPoint id="navPoint299" playOrder="293">
           <navLabel>
             <text>zscript-special-oo words</text>
           </navLabel>
           <content src="main/oo.xhtml#zscript-special-oo-words" />  
         </navPoint>
-        <navPoint id="navPoint299" playOrder="293">
+        <navPoint id="navPoint300" playOrder="294">
           <navLabel>
             <text>show</text>
           </navLabel>
           <content src="main/oo.xhtml#show" />  
         </navPoint>
-        <navPoint id="navPoint300" playOrder="294">
+        <navPoint id="navPoint301" playOrder="295">
           <navLabel>
             <text>hash</text>
           </navLabel>
           <content src="main/oo.xhtml#hash" />  
         </navPoint>
-        <navPoint id="navPoint301" playOrder="295">
+        <navPoint id="navPoint302" playOrder="296">
           <navLabel>
             <text>equal?</text>
           </navLabel>
           <content src="main/oo.xhtml#equal" />  
         </navPoint>
-        <navPoint id="navPoint302" playOrder="296">
+        <navPoint id="navPoint303" playOrder="297">
           <navLabel>
             <text>try-show</text>
           </navLabel>
           <content src="main/oo.xhtml#try-show" />  
         </navPoint>
-        <navPoint id="navPoint303" playOrder="297">
+        <navPoint id="navPoint304" playOrder="298">
           <navLabel>
             <text>try-hash</text>
           </navLabel>
           <content src="main/oo.xhtml#try-hash" />  
         </navPoint>
-        <navPoint id="navPoint304" playOrder="298">
+        <navPoint id="navPoint305" playOrder="299">
           <navLabel>
             <text>try-equal?</text>
           </navLabel>
@@ -1834,317 +1840,317 @@
         </navPoint>
       </navPoint>
     </navPoint>
-    <navPoint id="navPoint305" playOrder="299">
+    <navPoint id="navPoint306" playOrder="300">
       <navLabel>
         <text>Lists</text>
       </navLabel>
       <content src="main/list.xhtml" />  
-      <navPoint id="navPoint306" playOrder="299">
+      <navPoint id="navPoint307" playOrder="300">
         <navLabel>
           <text>Lists</text>
         </navLabel>
         <content src="main/list.xhtml" />  
       </navPoint>
-      <navPoint id="navPoint307" playOrder="300">
+      <navPoint id="navPoint308" playOrder="301">
         <navLabel>
           <text>zscript-list Words</text>
         </navLabel>
         <content src="main/list.xhtml#zscript-list-words" />  
-        <navPoint id="navPoint308" playOrder="300">
+        <navPoint id="navPoint309" playOrder="301">
           <navLabel>
             <text>zscript-list Words</text>
           </navLabel>
           <content src="main/list.xhtml#zscript-list-words" />  
         </navPoint>
-        <navPoint id="navPoint309" playOrder="301">
+        <navPoint id="navPoint310" playOrder="302">
           <navLabel>
             <text>cons</text>
           </navLabel>
           <content src="main/list.xhtml#cons" />  
         </navPoint>
-        <navPoint id="navPoint310" playOrder="302">
+        <navPoint id="navPoint311" playOrder="303">
           <navLabel>
             <text>empty</text>
           </navLabel>
           <content src="main/list.xhtml#empty" />  
         </navPoint>
-        <navPoint id="navPoint311" playOrder="303">
+        <navPoint id="navPoint312" playOrder="304">
           <navLabel>
             <text>head@</text>
           </navLabel>
           <content src="main/list.xhtml#head" />  
         </navPoint>
-        <navPoint id="navPoint312" playOrder="304">
+        <navPoint id="navPoint313" playOrder="305">
           <navLabel>
             <text>tail@</text>
           </navLabel>
           <content src="main/list.xhtml#tail" />  
         </navPoint>
-        <navPoint id="navPoint313" playOrder="305">
+        <navPoint id="navPoint314" playOrder="306">
           <navLabel>
             <text>head!</text>
           </navLabel>
           <content src="main/list.xhtml#id1" />  
         </navPoint>
-        <navPoint id="navPoint314" playOrder="306">
+        <navPoint id="navPoint315" playOrder="307">
           <navLabel>
             <text>tail!</text>
           </navLabel>
           <content src="main/list.xhtml#id2" />  
         </navPoint>
-        <navPoint id="navPoint315" playOrder="307">
+        <navPoint id="navPoint316" playOrder="308">
           <navLabel>
             <text>empty?</text>
           </navLabel>
           <content src="main/list.xhtml#id3" />  
         </navPoint>
-        <navPoint id="navPoint316" playOrder="308">
+        <navPoint id="navPoint317" playOrder="309">
           <navLabel>
             <text>last</text>
           </navLabel>
           <content src="main/list.xhtml#last" />  
         </navPoint>
-        <navPoint id="navPoint317" playOrder="309">
+        <navPoint id="navPoint318" playOrder="310">
           <navLabel>
             <text>nth</text>
           </navLabel>
           <content src="main/list.xhtml#nth" />  
         </navPoint>
-        <navPoint id="navPoint318" playOrder="310">
+        <navPoint id="navPoint319" playOrder="311">
           <navLabel>
             <text>nth-tail</text>
           </navLabel>
           <content src="main/list.xhtml#nth-tail" />  
         </navPoint>
-        <navPoint id="navPoint319" playOrder="311">
+        <navPoint id="navPoint320" playOrder="312">
           <navLabel>
             <text>list&gt;len</text>
           </navLabel>
           <content src="main/list.xhtml#list-len" />  
         </navPoint>
-        <navPoint id="navPoint320" playOrder="312">
+        <navPoint id="navPoint321" playOrder="313">
           <navLabel>
             <text>list&gt;cells</text>
           </navLabel>
           <content src="main/list.xhtml#list-cells" />  
         </navPoint>
-        <navPoint id="navPoint321" playOrder="313">
+        <navPoint id="navPoint322" playOrder="314">
           <navLabel>
             <text>list&gt;bytes</text>
           </navLabel>
           <content src="main/list.xhtml#list-bytes" />  
         </navPoint>
-        <navPoint id="navPoint322" playOrder="314">
+        <navPoint id="navPoint323" playOrder="315">
           <navLabel>
             <text>seq&gt;list</text>
           </navLabel>
           <content src="main/list.xhtml#seq-list" />  
         </navPoint>
-        <navPoint id="navPoint323" playOrder="315">
+        <navPoint id="navPoint324" playOrder="316">
           <navLabel>
             <text>iter-list</text>
           </navLabel>
           <content src="main/list.xhtml#iter-list" />  
         </navPoint>
-        <navPoint id="navPoint324" playOrder="316">
+        <navPoint id="navPoint325" playOrder="317">
           <navLabel>
             <text>iteri-list</text>
           </navLabel>
           <content src="main/list.xhtml#iteri-list" />  
         </navPoint>
-        <navPoint id="navPoint325" playOrder="317">
+        <navPoint id="navPoint326" playOrder="318">
           <navLabel>
             <text>find-index-list</text>
           </navLabel>
           <content src="main/list.xhtml#find-index-list" />  
         </navPoint>
-        <navPoint id="navPoint326" playOrder="318">
+        <navPoint id="navPoint327" playOrder="319">
           <navLabel>
             <text>find-indexi-list</text>
           </navLabel>
           <content src="main/list.xhtml#find-indexi-list" />  
         </navPoint>
-        <navPoint id="navPoint327" playOrder="319">
+        <navPoint id="navPoint328" playOrder="320">
           <navLabel>
             <text>rev-map-list</text>
           </navLabel>
           <content src="main/list.xhtml#rev-map-list" />  
         </navPoint>
-        <navPoint id="navPoint328" playOrder="320">
+        <navPoint id="navPoint329" playOrder="321">
           <navLabel>
             <text>rev-mapi-list</text>
           </navLabel>
           <content src="main/list.xhtml#rev-mapi-list" />  
         </navPoint>
-        <navPoint id="navPoint329" playOrder="321">
+        <navPoint id="navPoint330" playOrder="322">
           <navLabel>
             <text>rev-filter-list</text>
           </navLabel>
           <content src="main/list.xhtml#rev-filter-list" />  
         </navPoint>
-        <navPoint id="navPoint330" playOrder="322">
+        <navPoint id="navPoint331" playOrder="323">
           <navLabel>
             <text>rev-filteri-list</text>
           </navLabel>
           <content src="main/list.xhtml#rev-filteri-list" />  
         </navPoint>
-        <navPoint id="navPoint331" playOrder="323">
+        <navPoint id="navPoint332" playOrder="324">
           <navLabel>
             <text>rev-list&gt;cells</text>
           </navLabel>
           <content src="main/list.xhtml#rev-list-cells" />  
         </navPoint>
-        <navPoint id="navPoint332" playOrder="324">
+        <navPoint id="navPoint333" playOrder="325">
           <navLabel>
             <text>rev-list&gt;bytes</text>
           </navLabel>
           <content src="main/list.xhtml#rev-list-bytes" />  
         </navPoint>
-        <navPoint id="navPoint333" playOrder="325">
+        <navPoint id="navPoint334" playOrder="326">
           <navLabel>
             <text>rev-list</text>
           </navLabel>
           <content src="main/list.xhtml#rev-list" />  
         </navPoint>
-        <navPoint id="navPoint334" playOrder="326">
+        <navPoint id="navPoint335" playOrder="327">
           <navLabel>
             <text>map-list</text>
           </navLabel>
           <content src="main/list.xhtml#map-list" />  
         </navPoint>
-        <navPoint id="navPoint335" playOrder="327">
+        <navPoint id="navPoint336" playOrder="328">
           <navLabel>
             <text>mapi-list</text>
           </navLabel>
           <content src="main/list.xhtml#mapi-list" />  
         </navPoint>
-        <navPoint id="navPoint336" playOrder="328">
+        <navPoint id="navPoint337" playOrder="329">
           <navLabel>
             <text>map!-list</text>
           </navLabel>
           <content src="main/list.xhtml#id4" />  
         </navPoint>
-        <navPoint id="navPoint337" playOrder="329">
+        <navPoint id="navPoint338" playOrder="330">
           <navLabel>
             <text>mapi!-list</text>
           </navLabel>
           <content src="main/list.xhtml#id5" />  
         </navPoint>
-        <navPoint id="navPoint338" playOrder="330">
+        <navPoint id="navPoint339" playOrder="331">
           <navLabel>
             <text>filter-list</text>
           </navLabel>
           <content src="main/list.xhtml#filter-list" />  
         </navPoint>
-        <navPoint id="navPoint339" playOrder="331">
+        <navPoint id="navPoint340" playOrder="332">
           <navLabel>
             <text>filteri-list</text>
           </navLabel>
           <content src="main/list.xhtml#filteri-list" />  
         </navPoint>
-        <navPoint id="navPoint340" playOrder="332">
+        <navPoint id="navPoint341" playOrder="333">
           <navLabel>
             <text>all-list</text>
           </navLabel>
           <content src="main/list.xhtml#all-list" />  
         </navPoint>
-        <navPoint id="navPoint341" playOrder="333">
+        <navPoint id="navPoint342" playOrder="334">
           <navLabel>
             <text>alli-list</text>
           </navLabel>
           <content src="main/list.xhtml#alli-list" />  
         </navPoint>
-        <navPoint id="navPoint342" playOrder="334">
+        <navPoint id="navPoint343" playOrder="335">
           <navLabel>
             <text>any-list</text>
           </navLabel>
           <content src="main/list.xhtml#any-list" />  
         </navPoint>
-        <navPoint id="navPoint343" playOrder="335">
+        <navPoint id="navPoint344" playOrder="336">
           <navLabel>
             <text>anyi-list</text>
           </navLabel>
           <content src="main/list.xhtml#anyi-list" />  
         </navPoint>
-        <navPoint id="navPoint344" playOrder="336">
+        <navPoint id="navPoint345" playOrder="337">
           <navLabel>
             <text>foldl-list</text>
           </navLabel>
           <content src="main/list.xhtml#foldl-list" />  
         </navPoint>
-        <navPoint id="navPoint345" playOrder="337">
+        <navPoint id="navPoint346" playOrder="338">
           <navLabel>
             <text>foldli-list</text>
           </navLabel>
           <content src="main/list.xhtml#foldli-list" />  
         </navPoint>
-        <navPoint id="navPoint346" playOrder="338">
+        <navPoint id="navPoint347" playOrder="339">
           <navLabel>
             <text>foldr-list</text>
           </navLabel>
           <content src="main/list.xhtml#foldr-list" />  
         </navPoint>
-        <navPoint id="navPoint347" playOrder="339">
+        <navPoint id="navPoint348" playOrder="340">
           <navLabel>
             <text>foldri-list</text>
           </navLabel>
           <content src="main/list.xhtml#foldri-list" />  
         </navPoint>
-        <navPoint id="navPoint348" playOrder="340">
+        <navPoint id="navPoint349" playOrder="341">
           <navLabel>
             <text>collectl-list</text>
           </navLabel>
           <content src="main/list.xhtml#collectl-list" />  
         </navPoint>
-        <navPoint id="navPoint349" playOrder="341">
+        <navPoint id="navPoint350" playOrder="342">
           <navLabel>
             <text>collectli-list</text>
           </navLabel>
           <content src="main/list.xhtml#collectli-list" />  
         </navPoint>
-        <navPoint id="navPoint350" playOrder="342">
+        <navPoint id="navPoint351" playOrder="343">
           <navLabel>
             <text>collectr-list</text>
           </navLabel>
           <content src="main/list.xhtml#collectr-list" />  
         </navPoint>
-        <navPoint id="navPoint351" playOrder="343">
+        <navPoint id="navPoint352" playOrder="344">
           <navLabel>
             <text>collectri-list</text>
           </navLabel>
           <content src="main/list.xhtml#collectri-list" />  
         </navPoint>
-        <navPoint id="navPoint352" playOrder="344">
+        <navPoint id="navPoint353" playOrder="345">
           <navLabel>
             <text>duplicate-list</text>
           </navLabel>
           <content src="main/list.xhtml#duplicate-list" />  
         </navPoint>
-        <navPoint id="navPoint353" playOrder="345">
+        <navPoint id="navPoint354" playOrder="346">
           <navLabel>
             <text>&gt;rev-list</text>
           </navLabel>
           <content src="main/list.xhtml#id6" />  
         </navPoint>
-        <navPoint id="navPoint354" playOrder="346">
+        <navPoint id="navPoint355" playOrder="347">
           <navLabel>
             <text>&gt;list</text>
           </navLabel>
           <content src="main/list.xhtml#list" />  
         </navPoint>
-        <navPoint id="navPoint355" playOrder="347">
+        <navPoint id="navPoint356" playOrder="348">
           <navLabel>
             <text>list&gt;</text>
           </navLabel>
           <content src="main/list.xhtml#id7" />  
         </navPoint>
-        <navPoint id="navPoint356" playOrder="348">
+        <navPoint id="navPoint357" playOrder="349">
           <navLabel>
             <text>#[</text>
           </navLabel>
           <content src="main/list.xhtml#id8" />  
         </navPoint>
-        <navPoint id="navPoint357" playOrder="349">
+        <navPoint id="navPoint358" playOrder="350">
           <navLabel>
             <text>`]#</text>
           </navLabel>
@@ -2152,107 +2158,107 @@
         </navPoint>
       </navPoint>
     </navPoint>
-    <navPoint id="navPoint358" playOrder="350">
+    <navPoint id="navPoint359" playOrder="351">
       <navLabel>
         <text>Maps</text>
       </navLabel>
       <content src="main/map.xhtml" />  
-      <navPoint id="navPoint359" playOrder="350">
+      <navPoint id="navPoint360" playOrder="351">
         <navLabel>
           <text>Maps</text>
         </navLabel>
         <content src="main/map.xhtml" />  
       </navPoint>
-      <navPoint id="navPoint360" playOrder="351">
+      <navPoint id="navPoint361" playOrder="352">
         <navLabel>
           <text>zscript-map words</text>
         </navLabel>
         <content src="main/map.xhtml#zscript-map-words" />  
-        <navPoint id="navPoint361" playOrder="351">
+        <navPoint id="navPoint362" playOrder="352">
           <navLabel>
             <text>zscript-map words</text>
           </navLabel>
           <content src="main/map.xhtml#zscript-map-words" />  
         </navPoint>
-        <navPoint id="navPoint362" playOrder="352">
+        <navPoint id="navPoint363" playOrder="353">
           <navLabel>
             <text>make-map</text>
           </navLabel>
           <content src="main/map.xhtml#make-map" />  
         </navPoint>
-        <navPoint id="navPoint363" playOrder="353">
+        <navPoint id="navPoint364" playOrder="354">
           <navLabel>
             <text>duplicate-map</text>
           </navLabel>
           <content src="main/map.xhtml#duplicate-map" />  
         </navPoint>
-        <navPoint id="navPoint364" playOrder="354">
+        <navPoint id="navPoint365" playOrder="355">
           <navLabel>
             <text>iter-map</text>
           </navLabel>
           <content src="main/map.xhtml#iter-map" />  
         </navPoint>
-        <navPoint id="navPoint365" playOrder="355">
+        <navPoint id="navPoint366" playOrder="356">
           <navLabel>
             <text>map-map</text>
           </navLabel>
           <content src="main/map.xhtml#map-map" />  
         </navPoint>
-        <navPoint id="navPoint366" playOrder="356">
+        <navPoint id="navPoint367" playOrder="357">
           <navLabel>
             <text>map!-map</text>
           </navLabel>
           <content src="main/map.xhtml#id1" />  
         </navPoint>
-        <navPoint id="navPoint367" playOrder="357">
+        <navPoint id="navPoint368" playOrder="358">
           <navLabel>
             <text>any-map</text>
           </navLabel>
           <content src="main/map.xhtml#any-map" />  
         </navPoint>
-        <navPoint id="navPoint368" playOrder="358">
+        <navPoint id="navPoint369" playOrder="359">
           <navLabel>
             <text>all-map</text>
           </navLabel>
           <content src="main/map.xhtml#all-map" />  
         </navPoint>
-        <navPoint id="navPoint369" playOrder="359">
+        <navPoint id="navPoint370" playOrder="360">
           <navLabel>
             <text>map&gt;keys</text>
           </navLabel>
           <content src="main/map.xhtml#map-keys" />  
         </navPoint>
-        <navPoint id="navPoint370" playOrder="360">
+        <navPoint id="navPoint371" playOrder="361">
           <navLabel>
             <text>map&gt;values</text>
           </navLabel>
           <content src="main/map.xhtml#map-values" />  
         </navPoint>
-        <navPoint id="navPoint371" playOrder="361">
+        <navPoint id="navPoint372" playOrder="362">
           <navLabel>
             <text>map&gt;key-values</text>
           </navLabel>
           <content src="main/map.xhtml#map-key-values" />  
         </navPoint>
-        <navPoint id="navPoint372" playOrder="362">
+        <navPoint id="navPoint373" playOrder="363">
           <navLabel>
             <text>insert-map</text>
           </navLabel>
           <content src="main/map.xhtml#insert-map" />  
         </navPoint>
-        <navPoint id="navPoint373" playOrder="363">
+        <navPoint id="navPoint374" playOrder="364">
           <navLabel>
             <text>remove-map</text>
           </navLabel>
           <content src="main/map.xhtml#remove-map" />  
         </navPoint>
-        <navPoint id="navPoint374" playOrder="364">
+        <navPoint id="navPoint375" playOrder="365">
           <navLabel>
             <text>find-map</text>
           </navLabel>
           <content src="main/map.xhtml#find-map" />  
         </navPoint>
-        <navPoint id="navPoint375" playOrder="365">
+        <navPoint id="navPoint376" playOrder="366">
           <navLabel>
             <text>in-map?</text>
           </navLabel>
@@ -2260,77 +2266,77 @@
         </navPoint>
       </navPoint>
     </navPoint>
-    <navPoint id="navPoint376" playOrder="366">
+    <navPoint id="navPoint377" playOrder="367">
       <navLabel>
         <text>Sets</text>
       </navLabel>
       <content src="main/set.xhtml" />  
-      <navPoint id="navPoint377" playOrder="366">
+      <navPoint id="navPoint378" playOrder="367">
         <navLabel>
           <text>Sets</text>
         </navLabel>
         <content src="main/set.xhtml" />  
       </navPoint>
-      <navPoint id="navPoint378" playOrder="367">
+      <navPoint id="navPoint379" playOrder="368">
         <navLabel>
           <text>zscript-set words</text>
         </navLabel>
         <content src="main/set.xhtml#zscript-set-words" />  
-        <navPoint id="navPoint379" playOrder="367">
+        <navPoint id="navPoint380" playOrder="368">
           <navLabel>
             <text>zscript-set words</text>
           </navLabel>
           <content src="main/set.xhtml#zscript-set-words" />  
         </navPoint>
-        <navPoint id="navPoint380" playOrder="368">
+        <navPoint id="navPoint381" playOrder="369">
           <navLabel>
             <text>make-set</text>
           </navLabel>
           <content src="main/set.xhtml#make-set" />  
         </navPoint>
-        <navPoint id="navPoint381" playOrder="369">
+        <navPoint id="navPoint382" playOrder="370">
           <navLabel>
             <text>duplicate-set</text>
           </navLabel>
           <content src="main/set.xhtml#duplicate-set" />  
         </navPoint>
-        <navPoint id="navPoint382" playOrder="370">
+        <navPoint id="navPoint383" playOrder="371">
           <navLabel>
             <text>iter-set</text>
           </navLabel>
           <content src="main/set.xhtml#iter-set" />  
         </navPoint>
-        <navPoint id="navPoint383" playOrder="371">
+        <navPoint id="navPoint384" playOrder="372">
           <navLabel>
             <text>any-set</text>
           </navLabel>
           <content src="main/set.xhtml#any-set" />  
         </navPoint>
-        <navPoint id="navPoint384" playOrder="372">
+        <navPoint id="navPoint385" playOrder="373">
           <navLabel>
             <text>all-set</text>
           </navLabel>
           <content src="main/set.xhtml#all-set" />  
         </navPoint>
-        <navPoint id="navPoint385" playOrder="373">
+        <navPoint id="navPoint386" playOrder="374">
           <navLabel>
             <text>set&gt;values</text>
           </navLabel>
           <content src="main/set.xhtml#set-values" />  
         </navPoint>
-        <navPoint id="navPoint386" playOrder="374">
+        <navPoint id="navPoint387" playOrder="375">
           <navLabel>
             <text>insert-set</text>
           </navLabel>
           <content src="main/set.xhtml#insert-set" />  
         </navPoint>
-        <navPoint id="navPoint387" playOrder="375">
+        <navPoint id="navPoint388" playOrder="376">
           <navLabel>
             <text>remove-set</text>
           </navLabel>
           <content src="main/set.xhtml#remove-set" />  
         </navPoint>
-        <navPoint id="navPoint388" playOrder="376">
+        <navPoint id="navPoint389" playOrder="377">
           <navLabel>
             <text>in-set?</text>
           </navLabel>
@@ -2338,155 +2344,155 @@
         </navPoint>
       </navPoint>
     </navPoint>
-    <navPoint id="navPoint389" playOrder="377">
+    <navPoint id="navPoint390" playOrder="378">
       <navLabel>
         <text>Actions</text>
       </navLabel>
       <content src="main/action.xhtml" />  
-      <navPoint id="navPoint390" playOrder="377">
+      <navPoint id="navPoint391" playOrder="378">
         <navLabel>
           <text>Actions</text>
         </navLabel>
         <content src="main/action.xhtml" />  
       </navPoint>
-      <navPoint id="navPoint391" playOrder="378">
+      <navPoint id="navPoint392" playOrder="379">
         <navLabel>
           <text>zscript-action words</text>
         </navLabel>
         <content src="main/action.xhtml#zscript-action-words" />  
-        <navPoint id="navPoint392" playOrder="378">
+        <navPoint id="navPoint393" playOrder="379">
           <navLabel>
             <text>zscript-action words</text>
           </navLabel>
           <content src="main/action.xhtml#zscript-action-words" />  
         </navPoint>
-        <navPoint id="navPoint393" playOrder="379">
+        <navPoint id="navPoint394" playOrder="380">
           <navLabel>
             <text>make-schedule</text>
           </navLabel>
           <content src="main/action.xhtml#make-schedule" />  
         </navPoint>
-        <navPoint id="navPoint394" playOrder="380">
+        <navPoint id="navPoint395" playOrder="381">
           <navLabel>
             <text>make-action</text>
           </navLabel>
           <content src="main/action.xhtml#make-action" />  
         </navPoint>
-        <navPoint id="navPoint395" playOrder="381">
+        <navPoint id="navPoint396" playOrder="382">
           <navLabel>
             <text>add-action</text>
           </navLabel>
           <content src="main/action.xhtml#add-action" />  
         </navPoint>
-        <navPoint id="navPoint396" playOrder="382">
+        <navPoint id="navPoint397" playOrder="383">
           <navLabel>
             <text>remove-action</text>
           </navLabel>
           <content src="main/action.xhtml#remove-action" />  
         </navPoint>
-        <navPoint id="navPoint397" playOrder="383">
+        <navPoint id="navPoint398" playOrder="384">
           <navLabel>
             <text>send-action-fail</text>
           </navLabel>
           <content src="main/action.xhtml#send-action-fail" />  
         </navPoint>
-        <navPoint id="navPoint398" playOrder="384">
+        <navPoint id="navPoint399" playOrder="385">
           <navLabel>
             <text>send-action</text>
           </navLabel>
           <content src="main/action.xhtml#send-action" />  
         </navPoint>
-        <navPoint id="navPoint399" playOrder="385">
+        <navPoint id="navPoint400" playOrder="386">
           <navLabel>
             <text>send-action-timeout</text>
           </navLabel>
           <content src="main/action.xhtml#send-action-timeout" />  
         </navPoint>
-        <navPoint id="navPoint400" playOrder="386">
+        <navPoint id="navPoint401" playOrder="387">
           <navLabel>
             <text>recv-action</text>
           </navLabel>
           <content src="main/action.xhtml#recv-action" />  
         </navPoint>
-        <navPoint id="navPoint401" playOrder="387">
+        <navPoint id="navPoint402" playOrder="388">
           <navLabel>
             <text>recv-action-timeout</text>
           </navLabel>
           <content src="main/action.xhtml#recv-action-timeout" />  
         </navPoint>
-        <navPoint id="navPoint402" playOrder="388">
+        <navPoint id="navPoint403" playOrder="389">
           <navLabel>
             <text>delay-action</text>
           </navLabel>
           <content src="main/action.xhtml#delay-action" />  
         </navPoint>
-        <navPoint id="navPoint403" playOrder="389">
+        <navPoint id="navPoint404" playOrder="390">
           <navLabel>
             <text>delay-action-from-time</text>
           </navLabel>
           <content src="main/action.xhtml#delay-action-from-time" />  
         </navPoint>
-        <navPoint id="navPoint404" playOrder="390">
+        <navPoint id="navPoint405" playOrder="391">
           <navLabel>
             <text>yield-action</text>
           </navLabel>
           <content src="main/action.xhtml#yield-action" />  
         </navPoint>
-        <navPoint id="navPoint405" playOrder="391">
+        <navPoint id="navPoint406" playOrder="392">
           <navLabel>
             <text>run-schedule</text>
           </navLabel>
           <content src="main/action.xhtml#run-schedule" />  
         </navPoint>
-        <navPoint id="navPoint406" playOrder="392">
+        <navPoint id="navPoint407" playOrder="393">
           <navLabel>
             <text>stop-schedule</text>
           </navLabel>
           <content src="main/action.xhtml#stop-schedule" />  
         </navPoint>
-        <navPoint id="navPoint407" playOrder="393">
+        <navPoint id="navPoint408" playOrder="394">
           <navLabel>
             <text>action-schedule@</text>
           </navLabel>
           <content src="main/action.xhtml#action-schedule" />  
         </navPoint>
-        <navPoint id="navPoint408" playOrder="394">
+        <navPoint id="navPoint409" playOrder="395">
           <navLabel>
             <text>in-schedule?</text>
           </navLabel>
           <content src="main/action.xhtml#in-schedule" />  
         </navPoint>
-        <navPoint id="navPoint409" playOrder="395">
+        <navPoint id="navPoint410" playOrder="396">
           <navLabel>
             <text>current-schedule</text>
           </navLabel>
           <content src="main/action.xhtml#current-schedule" />  
         </navPoint>
-        <navPoint id="navPoint410" playOrder="396">
+        <navPoint id="navPoint411" playOrder="397">
           <navLabel>
             <text>current-action</text>
           </navLabel>
           <content src="main/action.xhtml#current-action" />  
         </navPoint>
-        <navPoint id="navPoint411" playOrder="397">
+        <navPoint id="navPoint412" playOrder="398">
           <navLabel>
             <text>x-already-in-schedule</text>
           </navLabel>
           <content src="main/action.xhtml#x-already-in-schedule" />  
         </navPoint>
-        <navPoint id="navPoint412" playOrder="398">
+        <navPoint id="navPoint413" playOrder="399">
           <navLabel>
             <text>x-not-in-schedule</text>
           </navLabel>
           <content src="main/action.xhtml#x-not-in-schedule" />  
         </navPoint>
-        <navPoint id="navPoint413" playOrder="399">
+        <navPoint id="navPoint414" playOrder="400">
           <navLabel>
             <text>x-schedule-already-running</text>
           </navLabel>
           <content src="main/action.xhtml#x-schedule-already-running" />  
         </navPoint>
-        <navPoint id="navPoint414" playOrder="400">
+        <navPoint id="navPoint415" playOrder="401">
           <navLabel>
             <text>x-operation-set</text>
           </navLabel>
