@@ -4131,7 +4131,7 @@ begin-module zscript
     forth::here
     symbol-type integral> 2 forth::-
     type-shift forth::lshift
-    2 forth::cells 1 forth::lshift forth::or ,
+    2 forth::cells 1 forth::lshift forth::or forth::,
     forth::reserve
     swap forth::constant
     forth::latest swap forth::current!
