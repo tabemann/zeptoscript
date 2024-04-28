@@ -4103,14 +4103,14 @@ begin-module zscript
   \ Write a cell to a constant byte sequence
   : , ( x -- )
     syntax-const-bytes internal::verify-syntax
-    unsafe::here 3 and triggers x-unaligned-access
+    unsafe::here [ 3 >small-int ] forth::literal and triggers x-unaligned-access
     integral> forth::,
   ;
 
   \ Write a halfword to a constant byte sequence
   : h, ( h -- )
     syntax-const-bytes internal::verify-syntax
-    unsafe::here 1 and triggers x-unaligned-access
+    unsafe::here [ 1 >small-int ] forth::literal and triggers x-unaligned-access
     integral> forth::h,
   ;
 
