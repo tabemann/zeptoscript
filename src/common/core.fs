@@ -491,7 +491,7 @@ begin-module zscript
       sp@ stack-base @ swap - stack-ignore integral> cells -
       rp@ rstack-base @ swap - rstack-ignore integral> 3 + cells -
       2dup >small-int swap >small-int { rstack-count stack-count }
-      + [ 3 cells ] literal + >small-int { bytes }
+      + [ 4 cells ] literal + >small-int { bytes }
       bytes integral> to-space-current@ + to-space-top@ > if
         gc
         bytes to-space-current@ +
@@ -504,16 +504,13 @@ begin-module zscript
       bytes 1 lshift cont-type integral> 2 - type-shift lshift or over !
       stack-count over cell+ !
       rstack-count over [ 2 cells ] literal + !
+      handler @ over [ 3 cells ] literal + !
       stack-count integral> to stack-count
       rstack-count integral> to rstack-count
-
-      ." stack-count: " stack-count .
-      ." rstack-count: " rstack-count .
-      
       sp@ stack-ignore integral> forth::cells +
-      cell+ over [ 3 cells ] literal + stack-count move
+      cell+ over [ 4 cells ] literal + stack-count move
       rp@ rstack-ignore integral> forth::cells +
-      [ 7 cells ] literal + over [ 3 cells ] literal + stack-count +
+      [ 7 cells ] literal + over [ 4 cells ] literal + stack-count +
       rstack-count move
     ;
 
@@ -2338,6 +2335,7 @@ begin-module zscript
     endcase
     dup integral? if integral> execute exit then
     dup >type cont-type = averts x-incorrect-type
+    dup [ 3 forth::cells ] literal forth::+ forth::@ forth::handler forth::!
     dup forth::cell+ forth::@ integral>
     over [ 2 forth::cells ] literal forth::+ forth::@ integral>
     forth::rstack-base forth::@ forth::stack-base forth::@
@@ -2348,7 +2346,7 @@ begin-module zscript
     r0 1 dp ldm \ r0: rstack-count
     0 dp r1 ldr_,[_,#_] \ r1: stack-count
     4 dp r2 ldr_,[_,#_] \ r2: continuation
-    3 forth::cells r2 adds_,#_
+    4 forth::cells r2 adds_,#_
     r1 r2 r2 adds_,_,_
     mark>
     0 r0 cmp_,#_
@@ -2360,7 +2358,7 @@ begin-module zscript
     >mark
     4 dp r2 ldr_,[_,#_] \ r2: continuation
     8 dp r0 ldr_,[_,#_] \ r0: return value
-    3 forth::cells r2 adds_,#_
+    4 forth::cells r2 adds_,#_
     tos dp movs_,_
     r0 tos movs_,_
     mark>
