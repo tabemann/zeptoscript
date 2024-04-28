@@ -209,33 +209,78 @@ begin-module zscript-special-oo
   \ Type class for cell sequences
   cells-type begin-type-class
 
+    \ Detect whether a cell sequence is a list, and if so, get its length
+    :private test-list { self -- len list? }
+      0 { len }
+      begin
+        self 0= if len true exit then
+        self cells? not if 0 false exit then
+        self >len 2 <> if 0 false exit then
+        1 self @+ to self
+        1 +to len
+      again
+    ;
+    
     \ Show a cell sequence
     :method show { self -- }
-      self >len { len }
-      len 2 + make-cells { seq }
-      s" #(" 0 seq !+
-      self seq 1 [: { element index seq } element try-show index 1+ seq !+ ;]
-      bind iteri
-      s" )#" len 1+ seq !+
-      seq s"  " join
+      self test-list if { len }
+        len 2 + make-cells { seq }
+        s" #[" 0 seq !+
+        len 0 ?do
+          0 self @+ try-show i 1+ seq !+ 1 self @+ to self
+        loop
+        s" ]#" len 1+ seq !+
+        seq s"  " join
+      else
+        drop self >len { len }
+        len 2 + make-cells { seq }
+        s" #(" 0 seq !+
+        self seq 1 [: { element index seq } element try-show index 1+ seq !+ ;]
+        bind iteri
+        s" )#" len 1+ seq !+
+        seq s"  " join
+      then
     ;
 
     \ Hash a cell sequence
     :method hash { self -- }
-      0 self [: try-hash xor dup 5 lshift swap 27 rshift or ;] foldl
+      self test-list if { len }
+        0 len 0 ?do
+          0 self @+ try-hash xor dup 5 lshift swap 27 rshift or
+          1 self @+ to self
+        loop
+      else
+        drop 0 self [: try-hash xor dup 5 lshift swap 27 rshift or ;] foldl
+      then
     ;
 
     \ Test a cells equence for equality
     :method equal? { other self -- equal? }
       other cells? if
-        self >len { len }
-        other >len len = if
-          len 0 ?do
-            i other @+ i self @+ try-equal? not if false exit then
-          loop
-          true
+        self test-list if { self-len }
+          other test-list if { other-len }
+            self-len other-len = if
+              self-len 0 ?do
+                0 other @+ 0 self @+ try-equal? not if false exit then
+                1 other @+ to other 1 self @+ to self
+              loop
+              true
+            else
+              false
+            then
+          else
+            drop false
+          then
         else
-          false
+          drop self >len { len }
+          other >len len = if
+            len 0 ?do
+              i other @+ i self @+ try-equal? not if false exit then
+            loop
+            true
+          else
+            false
+          then
         then
       else
         false
