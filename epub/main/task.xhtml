@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Tasks</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/epub.css" /> 
+  </head><body>
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <section id="tasks">
+<h1>Tasks</h1>
+<p>zeptoscript supports cooperative multitasking, distinct from zeptoforth’s preemptive multitasking. zeptoscript tasks all share a single zeptoforth task and a single zeptoscript heap. zeptoscript tasks execute in a round-robin fashion without priorities. Through the use of continuations each task has practically separate data and return stacks, even though they share their parent zeptoforth task’s data and return stack underneath it all.</p>
+<section id="zscript-task-words">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-task</span></code> words</h2>
+<section id="schedule">
+<h3><code class="docutils literal notranslate"><span class="pre">schedule</span></code></h3>
+<p>( task – )</p>
+<p>Add a closure or continuation to the task schedule.</p>
+</section>
+<section id="yield">
+<h3><code class="docutils literal notranslate"><span class="pre">yield</span></code></h3>
+<p>( – )</p>
+<p>Yield the currently running task, adding it to the schedule and executing the next task ready to be executed. Note that if there are no other tasks ready to run this will return immediately.</p>
+</section>
+<section id="fork">
+<h3><code class="docutils literal notranslate"><span class="pre">fork</span></code></h3>
+<p>( – parent? )</p>
+<p>Fork the current task into two tasks, returning <code class="docutils literal notranslate"><span class="pre">true</span></code> for the parent task and <code class="docutils literal notranslate"><span class="pre">false</span></code> for the child task.</p>
+</section>
+<section id="start">
+<h3><code class="docutils literal notranslate"><span class="pre">start</span></code></h3>
+<p>( – )</p>
+<p>Start executing scheduled tasks, if there are any. If there are scheduled tasks, this does not return.</p>
+</section>
+<section id="wake">
+<h3><code class="docutils literal notranslate"><span class="pre">wake</span></code></h3>
+<p>( queue – )</p>
+<p>If there are any tasks in a queue, dequeue the next task from the queue and schedule it.</p>
+</section>
+<section id="block">
+<h3><code class="docutils literal notranslate"><span class="pre">block</span></code></h3>
+<p>( queue – )</p>
+<p>If there are any tasks ready to execute, enqueue the current task into the queue and execute the next ready task.</p>
+</section>
+<section id="wait-delay">
+<h3><code class="docutils literal notranslate"><span class="pre">wait-delay</span></code></h3>
+<p>( start-time delay – )</p>
+<p>Wait for <em>delay</em> ticks after <em>start-time</em> ticks.</p>
+</section>
+<section id="ms">
+<h3><code class="docutils literal notranslate"><span class="pre">ms</span></code> – )</h3>
+<p>( ms – )</p>
+<p>Wait for <em>ms</em> milliseconds</p>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Queues</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/epub.css" /> 
+  </head><body>
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <section id="queues">
+<h1>Queues</h1>
+<p>zeptoscript has support for simple FIFO queues of unlimited size. These queues are made use of by the zeptoscript multitasker and channel implementations.</p>
+<section id="zscript-queue-words">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-queue</span></code> words</h2>
+<section id="make-queue">
+<h3><code class="docutils literal notranslate"><span class="pre">make-queue</span></code></h3>
+<p>( – queue )</p>
+<p>Create a new, empty queue.</p>
+</section>
+<section id="queue-empty">
+<h3><code class="docutils literal notranslate"><span class="pre">queue-empty?</span></code></h3>
+<p>( queue – empty? )</p>
+<p>Get whether a queue is empty.</p>
+</section>
+<section id="enqueue">
+<h3><code class="docutils literal notranslate"><span class="pre">enqueue</span></code></h3>
+<p>( element queue – )</p>
+<p>Add an element to the end of a queue.</p>
+</section>
+<section id="dequeue">
+<h3><code class="docutils literal notranslate"><span class="pre">dequeue</span></code></h3>
+<p>( queue – element success? )</p>
+<p>Remove an element from the start of a queue and return the element and <code class="docutils literal notranslate"><span class="pre">true</span></code> for <em>success?</em> if the queue was not empty, else return 0 for the element and <code class="docutils literal notranslate"><span class="pre">false</span></code> for <em>success?</em>.</p>
+</section>
+<section id="queue-size">
+<h3><code class="docutils literal notranslate"><span class="pre">queue-size</span></code></h3>
+<p>( queue – size )</p>
+<p>Get the number of elements in a queue.</p>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

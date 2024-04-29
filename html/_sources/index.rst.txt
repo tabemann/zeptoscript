@@ -10,5 +10,8 @@ zeptoscript Documentation
    main/list
    main/map
    main/set
+   main/queue
+   main/task
+   main/channel
    main/action
    

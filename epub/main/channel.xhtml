@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Channels</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/epub.css" /> 
+  </head><body>
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <section id="channels">
+<h1>Channels</h1>
+<p>Channels are used by tasks to send each other messages. They consist of queues with fixed maximum numbers of elements.</p>
+<p>If there are fewer elements than the maximum in a queue and a task attempts to send on a channel, the new element will be enqueued, and if a task is waiting to receive an element it will be woken up and will then receive the element; otherwise the sending task will block until another task receives from the queue to free up space for the new element.</p>
+<p>If there are greater than zero elements in a queue and a task attempts to receive from a channel, the next element will be dequeued, and if a task is waiting to send an element it will be woken up and will then send the element; otherwise the receiving task will block until another task sends on the queue.</p>
+<section id="zscript-chan-words">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-chan</span></code> words</h2>
+<section id="make-chan">
+<h3><code class="docutils literal notranslate"><span class="pre">make-chan</span></code></h3>
+<p>( size – channel )</p>
+<p>Create a channel with a maximum number of elements of <em>size</em>.</p>
+</section>
+<section id="send">
+<h3><code class="docutils literal notranslate"><span class="pre">send</span></code></h3>
+<p>( message channel – )</p>
+<p>Send a message to a channel. If the channel is full, block until a receiving task frees up space for the message. Also, if there are blocked receiving tasks, wake up one receiving task.</p>
+</section>
+<section id="recv">
+<h3><code class="docutils literal notranslate"><span class="pre">recv</span></code></h3>
+<p>( channel – message )</p>
+<p>Receive a message from a channel. If the channel is empty, block until a sending task provides a message to receive. Also, if there are blocked sending tasks, wake up one sending task.</p>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>
