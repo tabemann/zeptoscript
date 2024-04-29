@@ -2373,20 +2373,27 @@ begin-module zscript
     ]code
   ;
   
+  \ Call with the current continuation
+  : call/cc ( xt -- ? )
+    [ 1 >small-int ] literal 0 allocate-cont swap execute
+  ;
+
   \ Try a closure
   : try ( xt | closure -- exception | 0 )
-    dup >type case
-      xt-type of forth::cell+ @ endof
-      closure-type of
-        dup >size over forth::+ swap forth::cell+ { xt-addr }
-        begin
-          forth::cell forth::- dup @ swap dup xt-addr forth::=
-        forth::until drop
-        integral>
-      endof
-      ['] x-incorrect-type ?raise
-    endcase
-    try >integral
+    [: { cont }
+      dup >type case
+        xt-type of forth::cell+ @ endof
+        closure-type of
+          dup >size over forth::+ swap forth::cell+ { xt-addr }
+          begin
+            forth::cell forth::- dup @ swap dup xt-addr forth::=
+          forth::until drop
+          integral>
+        endof
+        ['] x-incorrect-type ?raise
+      endcase
+      try >integral dup if cont execute then
+    ;] call/cc dup if nip then
   ;
 
   \ Execute a non-null closure
@@ -2396,11 +2403,6 @@ begin-module zscript
     else
       integral> forth::0= averts x-incorrect-type
     then
-  ;
-
-  \ Call with the current continuation
-  : call/cc ( xt -- ? )
-    [ 1 >small-int ] literal 0 allocate-cont swap execute
   ;
   
   begin-module unsafe
