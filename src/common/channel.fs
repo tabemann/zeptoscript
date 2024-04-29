@@ -119,7 +119,7 @@ begin-module zscript-chan
   end-module> import
 
   \ Make a channel
-  : make-chan { size -- }
+  : make-chan { size -- chan }
     size make-queue make-queue make-queue 0 0 false false >chan
   ;
 

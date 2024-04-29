@@ -46,8 +46,8 @@ begin-module zscript-queue
   ;
 
   \ Get whether a queue is empty
-  : queue-empty? { queue -- empty }
-    queue queue-size@ 0=
+  : queue-empty? ( queue -- empty? )
+    queue-size@ 0=
   ;
   
   \ Push an element onto the queue

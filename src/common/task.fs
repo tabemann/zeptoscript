@@ -68,7 +68,7 @@ begin-module zscript-task
 
   \ Fork the current task, with the new task being enqueued for future
   \ execution
-  : fork ( -- )
+  : fork ( -- parent? )
     [: { cont }
       false 1 cont bind schedule
       true cont execute
@@ -101,14 +101,20 @@ begin-module zscript-task
     then
   ;
 
-  \ Wait until a specified time in ticks
-  : wait-until { end-time -- }
-    begin systick-counter end-time < if yield false else true then until
+  \ Wait for a given delay from a time
+  : wait-delay { start-time delay -- }
+    begin
+      systick-counter start-time - delay < if
+        yield false
+      else
+        true
+      then
+    until
   ;
 
   \ Delay execution of the current task by a specified number of milliseconds
   : ms ( time -- )
-    ticks-per-ms * systick-counter + wait-until
+    ticks-per-ms * systick-counter swap wait-delay
   ;
   
 end-module
