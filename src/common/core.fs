@@ -254,12 +254,12 @@ begin-module zscript
       ram-globals-array@ relocate ram-globals-array!
       flash-globals-array@ relocate flash-globals-array!
       to-space-bottom@ { gc-current }
-      begin gc-current to-space-current@ < while
+      begin gc-current to-space-current@ u< while
         gc-current @ { header }
         header size-mask and 1 rshift cell align { aligned-size }
         header [ has-values type-shift lshift ] literal and if
           gc-current aligned-size + { gc-current-end }
-          gc-current cell+ begin dup gc-current-end < while
+          gc-current cell+ begin dup gc-current-end u< while
             dup @ relocate over ! cell+
           repeat
           drop
