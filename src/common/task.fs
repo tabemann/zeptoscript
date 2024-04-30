@@ -51,6 +51,9 @@ begin-module zscript-task
   \ Schedule a task, which will begin execution with the specified closure or
   \ continuation
   : schedule { task -- }
+    task >type dup xt-type = swap closure-type = or if
+      task 1 [: nip execute ;] bind to task
+    then
     task tasks@ enqueue
   ;
 
