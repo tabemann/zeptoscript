@@ -60,7 +60,7 @@ begin-module zscript-chan
       chan chan-send-wait@ queue-empty? not
       chan chan-send-pending@ not and if
         true chan chan-send-pending!
-        chan chan-send-wait@ wake \ yield
+        chan chan-send-wait@ wake
       then
     ;
 
@@ -69,7 +69,7 @@ begin-module zscript-chan
       chan chan-recv-wait@ queue-empty? not
       chan chan-recv-pending@ not and if
         true chan chan-recv-pending!
-        chan chan-recv-wait@ wake \ yield
+        chan chan-recv-wait@ wake
       then
     ;
 

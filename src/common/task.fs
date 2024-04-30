@@ -106,13 +106,7 @@ begin-module zscript-task
 
   \ Wait for a given delay from a time
   : wait-delay { start-time delay -- }
-    begin
-      systick-counter start-time - delay < if
-        yield false
-      else
-        true
-      then
-    until
+    begin yield systick-counter start-time - delay >= until
   ;
 
   \ Delay execution of the current task by a specified number of milliseconds
