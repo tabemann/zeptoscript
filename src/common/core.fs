@@ -475,7 +475,7 @@ begin-module zscript
       count integral> 1+ cells >small-int { bytes }
       bytes integral> to-space-current@ + to-space-top@ > if
         gc
-        bytes to-space-current@ +
+        bytes integral> to-space-current@ +
         to-space-top@ <= averts x-out-of-memory
       then
       to-space-current@ { current }
@@ -487,14 +487,14 @@ begin-module zscript
     ;
     
     \ Construct a continuation
-    : allocate-cont { stack-ignore rstack-ignore -- cont }
-      sp@ stack-base @ swap - stack-ignore integral> cells -
-      rp@ rstack-base @ swap - rstack-ignore integral> 3 + cells -
+    : allocate-cont ( -- cont )
+      sp@ stack-base @ swap - cell -
+      rp@ rstack-base @ swap - cell -
       2dup >small-int swap >small-int { rstack-count stack-count }
       + [ 4 cells ] literal + >small-int { bytes }
       bytes integral> to-space-current@ + to-space-top@ > if
         gc
-        bytes to-space-current@ +
+        bytes integral> to-space-current@ +
         to-space-top@ <= averts x-out-of-memory
       then
       to-space-current@ { current }
@@ -507,11 +507,10 @@ begin-module zscript
       handler @ over [ 3 cells ] literal + !
       stack-count integral> to stack-count
       rstack-count integral> to rstack-count
-      sp@ stack-ignore integral> forth::cells +
-      cell+ over [ 4 cells ] literal + stack-count move
-      rp@ rstack-ignore integral> forth::cells +
-      [ 7 cells ] literal + over [ 4 cells ] literal + stack-count +
-      rstack-count move
+      sp@ [ 2 cells ] literal +
+      over [ 4 cells ] literal + stack-count move
+      rp@ [ 5 cells ] literal +
+      over [ 4 cells ] literal + stack-count + rstack-count move
     ;
 
     \ Allocate memory as bytes
@@ -519,7 +518,7 @@ begin-module zscript
       count integral> cell+ cell align >small-int { bytes }
       bytes integral> to-space-current@ + to-space-top@ > if
         gc
-        bytes to-space-current@ +
+        bytes integral> to-space-current@ +
         to-space-top@ <= averts x-out-of-memory
       then
       to-space-current@ { current }
@@ -613,9 +612,9 @@ begin-module zscript
     \ Allocate a tagged value
     : allocate-tagged { count tag -- addr }
       count integral> [ 2 cells ] literal + cell align >small-int { bytes }
-      bytes to-space-current@ + to-space-top@ > if
+      bytes integral> to-space-current@ + to-space-top@ > if
         gc
-        bytes to-space-current@ +
+        bytes integral> to-space-current@ +
         to-space-top@ <= averts x-out-of-memory
       then
       to-space-current@ { current }
@@ -2375,7 +2374,7 @@ begin-module zscript
   
   \ Call with the current continuation
   : call/cc ( xt -- ? )
-    [ 1 >small-int ] literal 0 allocate-cont swap execute
+    allocate-cont swap execute
   ;
 
   \ Try a closure
