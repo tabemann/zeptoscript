@@ -69,6 +69,14 @@ begin-module zscript-task
     then
   ;
 
+  \ Terminate the current task
+  : terminate ( -- )
+    tasks@ queue-empty? not if
+      tasks@ dequeue { next-task }
+      0 next-task execute
+    then
+  ;
+
   \ Fork the current task, with the new task being enqueued for future
   \ execution
   : fork ( -- parent? )

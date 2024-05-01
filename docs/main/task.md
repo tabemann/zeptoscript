@@ -14,6 +14,11 @@ Add a closure or continuation to the task schedule.
 
 Yield the currently running task, adding it to the schedule and executing the next task ready to be executed. Note that if there are no other tasks ready to run this will return immediately.
 
+### `terminate`
+( -- )
+
+Execute the next ready task without rescheduling the current task; note that this returns if there is no next ready task.
+
 ### `fork`
 ( -- parent? )
 

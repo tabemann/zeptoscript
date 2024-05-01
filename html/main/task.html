@@ -50,6 +50,11 @@
 <p>( – )</p>
 <p>Yield the currently running task, adding it to the schedule and executing the next task ready to be executed. Note that if there are no other tasks ready to run this will return immediately.</p>
 </section>
+<section id="terminate">
+<h3><code class="docutils literal notranslate"><span class="pre">terminate</span></code><a class="headerlink" href="#terminate" title="Permalink to this heading">¶</a></h3>
+<p>( – )</p>
+<p>Execute the next ready task without rescheduling the current task; note that this returns if there is no next ready task.</p>
+</section>
 <section id="fork">
 <h3><code class="docutils literal notranslate"><span class="pre">fork</span></code><a class="headerlink" href="#fork" title="Permalink to this heading">¶</a></h3>
 <p>( – parent? )</p>
