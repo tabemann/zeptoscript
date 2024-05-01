@@ -551,7 +551,7 @@ begin-module zscript
     \ Allocate a cell
     : allocate-cell { x type -- addr }
       to-space-current@ [ 2 cells ] literal + to-space-top@ > if
-        x dup 1 and { lowest }
+        x 1 and { lowest }
         x 1 or to x
         gc
         x 1 bic lowest or to x
@@ -569,8 +569,8 @@ begin-module zscript
     \ Allocate a double-word
     : >double { x0 x1 -- addr }
       to-space-current@ [ 3 cells ] literal + to-space-top@ > if
-        x0 dup 1 and { lowest0 }
-        x1 dup 1 and { lowest1 }
+        x0 1 and { lowest0 }
+        x1 1 and { lowest1 }
         x0 1 or to x0
         x1 1 or to x1
         gc
@@ -590,8 +590,8 @@ begin-module zscript
     \ Allocate a double-word
     : allocate-2cell { x0 x1 type -- addr }
       to-space-current@ [ 3 cells ] literal + to-space-top@ > if
-        x0 dup 1 and { lowest0 }
-        x1 dup 1 and { lowest1 }
+        x0 1 and { lowest0 }
+        x1 1 and { lowest1 }
         x0 1 or to x0
         x1 1 or to x1
         gc
