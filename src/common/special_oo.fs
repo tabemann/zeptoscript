@@ -536,5 +536,100 @@ begin-module zscript-special-oo
     ;
     
   end-class
+
+  \ Type class for references
+  ref-type begin-type-class
+
+    \ Show a reference
+    :method show { self -- }
+      s" ref:(" self ref@ try-show s" )" 3 >cells 0bytes join
+    ;
+
+    \ Hash a reference
+    :method hash { self -- }
+      self ref@ try-hash 1+
+    ;
+
+    \ Test a reference for equality
+    :method equal? { other self -- equal? }
+      other >type ref-type = if
+        other ref@ self ref@ try-equal?
+      else
+        false
+      then
+    ;
+    
+  end-class
+
+  \ Type class for continuations
+  cont-type begin-type-class
+
+    \ Show a continuation
+    :method show { self -- }
+      self unsafe::>integral cell+ unsafe::@ unsafe::integral> { stack-count }
+      self unsafe::>integral 2 cells + unsafe::@ unsafe::integral>
+      { rstack-count }
+      stack-count rstack-count + 2* 3 + make-cells { seq }
+      s" cont:stack:(" 0 seq !+
+      stack-count 0 ?do
+        self unsafe::>integral 4 i + cells + unsafe::@
+        i 2* 1+ seq 16 [: rot format-integral -rot !+ ;] with-base
+        i stack-count 1- <> if
+          s"  " i 2* 2 + seq !+
+        else
+          s" ),rstack:(" i 2* 2 + seq !+
+        then
+      loop
+      rstack-count 0 ?do
+        self unsafe::>integral 4 stack-count + i + cells + unsafe::@
+        i stack-count + 2* 1+ seq 16 [: rot format-integral -rot !+ ;] with-base
+        i rstack-count 1- <> if
+          s"  " i stack-count + 2* 2 + seq !+
+        else
+          s" ),handler:(" i stack-count + 2* 2 + seq !+
+        then
+      loop
+      self unsafe::>integral 3 cells + unsafe::@ unsafe::integral> { handler }
+      handler stack-count rstack-count + 2* 1+ seq
+      16 [: rot format-integral -rot !+ ;] with-base
+      s" )" stack-count rstack-count + 2* 2 + seq !+
+      seq 0bytes join
+    ;
+
+    \ Hash a continuation - note that continuations cannot actually be hashed
+    \ for reasons, so this just returns a placeholder value
+    : hash { self -- }
+      1
+    ;
+
+    \ Test two continuations for equality
+    : equal? { other self -- }
+      other >type cont-type = averts x-incorrect-type
+      self unsafe::>integral cell+ unsafe::@ unsafe::integral>
+      { self-stack-count }
+      self unsafe::>integral 2 cells + unsafe::@ unsafe::integral>
+      { self-rstack-count }
+      self unsafe::>integral 3 cells + unsafe::@ unsafe::integral>
+      { self-handler }
+      other unsafe::>integral cell+ unsafe::@ unsafe::integral>
+      { other-stack-count }
+      other unsafe::>integral 2 cells + unsafe::@ unsafe::integral>
+      { other-rstack-count }
+      other unsafe::>integral 3 cells + unsafe::@ unsafe::integral>
+      { other-handler }
+      self-stack-count other-stack-count =
+      self-rstack-count other-rstack-count = and
+      self-handler other-handler = and if
+        self-stack-count self-rstack-count + 4 + 4 ?do
+          self unsafe::>integral i cells + unsafe::@
+          other unsafe::>integral i cells + unsafe::@ <> if false exit then
+        loop
+        true
+      else
+        false
+      then
+    ;
+      
+  end-class
   
 end-module

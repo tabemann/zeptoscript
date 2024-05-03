@@ -502,34 +502,6 @@ begin-module zscript
       2 cells 1 lshift or ] literal over !
     ;
 
-    \ Construct a continuation
-    : allocate-cont ( -- cont )
-      sp@ stack-base @ swap - cell -
-      rp@ rstack-base @ swap - cell -
-      2dup >small-int swap >small-int { rstack-count stack-count }
-      + [ 4 cells ] literal + >small-int { bytes }
-      bytes integral> to-space-current@ + to-space-top@ > if
-        gc
-        bytes integral> to-space-current@ +
-        to-space-top@ <= averts x-out-of-memory
-      then
-      to-space-current@ { current }
-      bytes integral> to bytes
-      bytes current + to-space-current!
-      current
-      bytes 1 lshift
-      [ cont-type integral> 2 - type-shift lshift ] literal or over !
-      stack-count over cell+ !
-      rstack-count over [ 2 cells ] literal + !
-      handler @ over [ 3 cells ] literal + !
-      stack-count integral> to stack-count
-      rstack-count integral> to rstack-count
-      sp@ [ 2 cells ] literal +
-      over [ 4 cells ] literal + stack-count move
-      rp@ [ 5 cells ] literal +
-      over [ 4 cells ] literal + stack-count + rstack-count move
-    ;
-
     \ Allocate memory as bytes
     : allocate-bytes { count type -- addr }
       count integral> cell+ cell align >small-int { bytes }
@@ -664,6 +636,35 @@ begin-module zscript
       >mark
       ]code
       >big-int
+    ;
+
+    \ Construct a continuation
+    : allocate-cont ( -- cont )
+      handler @ >integral { handler }
+      sp@ stack-base @ swap - cell -
+      rp@ rstack-base @ swap - [ 2 cells ] literal -
+      2dup >small-int swap >small-int { rstack-count stack-count }
+      + [ 4 cells ] literal + >small-int { bytes }
+      bytes integral> to-space-current@ + to-space-top@ > if
+        gc
+        bytes integral> to-space-current@ +
+        to-space-top@ <= averts x-out-of-memory
+      then
+      to-space-current@ { current }
+      bytes integral> to bytes
+      bytes current + to-space-current!
+      current
+      bytes 1 lshift
+      [ cont-type integral> 2 - type-shift lshift ] literal or over !
+      stack-count over cell+ !
+      rstack-count over [ 2 cells ] literal + !
+      handler over [ 3 cells ] literal + !
+      stack-count integral> to stack-count
+      rstack-count integral> to rstack-count
+      sp@ [ 2 cells ] literal +
+      over [ 4 cells ] literal + stack-count move
+      rp@ [ 6 cells ] literal +
+      over [ 4 cells ] literal + stack-count + rstack-count move
     ;
 
     \ Convert a pair of cells to nulls, integers, or words
@@ -2370,7 +2371,8 @@ begin-module zscript
     endcase
     dup integral? if integral> execute exit then
     dup >type cont-type = averts x-incorrect-type
-    dup [ 3 forth::cells ] literal forth::+ forth::@ forth::handler forth::!
+    dup [ 3 forth::cells ] literal forth::+ forth::@ integral>
+    forth::handler forth::!
     dup forth::cell+ forth::@ integral>
     over [ 2 forth::cells ] literal forth::+ forth::@ integral>
     forth::rstack-base forth::@ forth::stack-base forth::@

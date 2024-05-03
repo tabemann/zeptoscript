@@ -82,7 +82,7 @@ begin-module zscript-task
   : fork ( -- parent? )
     [: { cont }
       false 1 cont bind schedule
-      true cont execute
+      true
     ;] call/cc
   ;
 
