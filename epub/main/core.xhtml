@@ -130,6 +130,16 @@
 <p>( – type )</p>
 <p>The slice type; note that this encompasses slices of cell sequences, non-constant byte sequences, and constant byte sequences.</p>
 </section>
+<section id="cont-type">
+<h3><code class="docutils literal notranslate"><span class="pre">cont-type</span></code></h3>
+<p>( – type )</p>
+<p>The continuation type.</p>
+</section>
+<section id="ref-type">
+<h3><code class="docutils literal notranslate"><span class="pre">ref-type</span></code></h3>
+<p>( – type )</p>
+<p>The reference type.</p>
+</section>
 <section id="raw-lit">
 <h3><code class="docutils literal notranslate"><span class="pre">raw-lit,</span></code></h3>
 <p>( x – )</p>
@@ -165,12 +175,27 @@
 <p>( x – len )</p>
 <p>Get the length of a cell sequence, byte sequence, or slice in entries or bytes.</p>
 </section>
+<section id="ref">
+<h3><code class="docutils literal notranslate"><span class="pre">ref</span></code></h3>
+<p>( x – ref )</p>
+<p>Create a reference with a value <em>x</em>.</p>
+</section>
+<section id="id2">
+<h3><code class="docutils literal notranslate"><span class="pre">ref&#64;</span></code></h3>
+<p>( ref – x )</p>
+<p>Get the value of a reference.</p>
+</section>
+<section id="id3">
+<h3><code class="docutils literal notranslate"><span class="pre">ref!</span></code></h3>
+<p>( x ref – )</p>
+<p>Set the value of a reference.</p>
+</section>
 <section id="pair">
 <h3><code class="docutils literal notranslate"><span class="pre">&gt;pair</span></code></h3>
 <p>( x0 x1 – pair )</p>
 <p>Create a two-element cell sequence from a pair of values.</p>
 </section>
-<section id="id2">
+<section id="id4">
 <h3><code class="docutils literal notranslate"><span class="pre">pair&gt;</span></code></h3>
 <p>( pair – x0 x1 )</p>
 <p>Explode a two-element cell sequence or slice into a pair of values.</p>
@@ -180,7 +205,7 @@
 <p>( x0 x1 x2 – triple )</p>
 <p>Create a three-element cell sequence from three values.</p>
 </section>
-<section id="id3">
+<section id="id5">
 <h3><code class="docutils literal notranslate"><span class="pre">triple&gt;</span></code></h3>
 <p>( triple – x0 x1 x2 )</p>
 <p>Explode a three-element cell sequence or slice into three values.</p>
@@ -205,12 +230,12 @@
 <p>( cn … c0 count – bytes )</p>
 <p>Create a byte sequence with <em>count</em> bytes taken off the stack.</p>
 </section>
-<section id="id4">
+<section id="id6">
 <h3><code class="docutils literal notranslate"><span class="pre">cells&gt;</span></code></h3>
 <p>( cells – xn … x0 count )</p>
 <p>Explode a cell sequence or slice into elements and a count on the stack.</p>
 </section>
-<section id="id5">
+<section id="id7">
 <h3><code class="docutils literal notranslate"><span class="pre">bytes&gt;</span></code></h3>
 <p>( bytes – cn … c0 count )</p>
 <p>Explode a byte sequence or slice into bytes and a count on the stack.</p>
@@ -225,12 +250,12 @@
 <p>( bytes – cn … c0 )</p>
 <p>Explode a byte sequence or slice into bytes on the stack.</p>
 </section>
-<section id="id6">
+<section id="id8">
 <h3><code class="docutils literal notranslate"><span class="pre">&#64;+</span></code></h3>
 <p>( index cells – x )</p>
 <p>Get the element at <em>index</em>, indexed from zero, of a cell sequence or slice.</p>
 </section>
-<section id="id7">
+<section id="id9">
 <h3><code class="docutils literal notranslate"><span class="pre">!+</span></code></h3>
 <p>( x index cells – )</p>
 <p>Set the elememt at <em>index</em>, indexed from zero, of a cell sequence or slice.</p>
@@ -240,7 +265,7 @@
 <p>( index bytes – x )</p>
 <p>Get the cell at <em>index</em>, indexed from zero and word-aligned, of a byte sequence or slice.</p>
 </section>
-<section id="id8">
+<section id="id10">
 <h3><code class="docutils literal notranslate"><span class="pre">w!+</span></code></h3>
 <p>( x index bytes – )</p>
 <p>Set the cell at <em>index</em>, indexed from zero and word-aligned, of a non-constant byte sequence or slice.</p>
@@ -250,7 +275,7 @@
 <p>( index bytes – h )</p>
 <p>Get the halfword at <em>index</em>, indexed from zero and halfword-aligned, of a byte sequence or slice.</p>
 </section>
-<section id="id9">
+<section id="id11">
 <h3><code class="docutils literal notranslate"><span class="pre">h!+</span></code></h3>
 <p>( h index bytes – )</p>
 <p>Set the halfword at <em>index</em>, indexed from zero and halfword-aligned, of a non-constant byte sequence or slice.</p>
@@ -260,7 +285,7 @@
 <p>( index bytes – c )</p>
 <p>Get the byte at <em>index</em>, indexed from zero, of a byte sequence or slice.</p>
 </section>
-<section id="id10">
+<section id="id12">
 <h3><code class="docutils literal notranslate"><span class="pre">c!+</span></code></h3>
 <p>( c index bytes – )</p>
 <p>Set the byte at <em>index</em>, indexed from zero, of a non-constant byte sequence or slice.</p>
@@ -270,17 +295,17 @@
 <p>( index cells|bytes – x )</p>
 <p>Get the element or byte at <em>index</em>, indexed from zero, of a cell or byte sequence or slice.</p>
 </section>
-<section id="id11">
+<section id="id13">
 <h3><code class="docutils literal notranslate"><span class="pre">x!+</span></code></h3>
 <p>( x index cells|bytes – )</p>
 <p>Set the elememt or byte at <em>index</em>, indexed from zero, of a non-constant cell or byte sequence or slice.</p>
 </section>
-<section id="id12">
+<section id="id14">
 <h3><code class="docutils literal notranslate"><span class="pre">cells?</span></code></h3>
 <p>( x – cells? )</p>
 <p>Get whether a value is a cell sequence or slice.</p>
 </section>
-<section id="id13">
+<section id="id15">
 <h3><code class="docutils literal notranslate"><span class="pre">bytes?</span></code></h3>
 <p>( x – bytes? )</p>
 <p>Get whether a value is a byte sequence or slice.</p>
@@ -345,16 +370,16 @@
 <p>( “string” – bytes )</p>
 <p>Create a string literal as a byte sequence; note that if compiled the resulting byte sequence is constant, whereas if immediate the resulting byte sequence is non-constant.</p>
 </section>
-<section id="id14">
+<section id="id16">
 <h3><code class="docutils literal notranslate"><span class="pre">s\&quot;</span></code></h3>
 <p>Create a string literal with escapes as a byte sequence; note that if compiled the resulting byte sequence is constant, whereas if immediate the resulting byte sequence is non-constant.</p>
 </section>
-<section id="id15">
+<section id="id17">
 <h3><code class="docutils literal notranslate"><span class="pre">+</span></code></h3>
 <p>( x0 x1 – x2 )</p>
 <p>Add two integers.</p>
 </section>
-<section id="id16">
+<section id="id18">
 <h3><code class="docutils literal notranslate"><span class="pre">1+</span></code></h3>
 <p>( x0 – x1 )</p>
 <p>Add one to an integer.</p>
@@ -364,47 +389,47 @@
 <p>( x0 – x1 )</p>
 <p>Add a cell, i.e. four, to an integer.</p>
 </section>
-<section id="id17">
+<section id="id19">
 <h3><code class="docutils literal notranslate"><span class="pre">-</span></code></h3>
 <p>( x0 x1 – x2 )</p>
 <p>Subtract two integers.</p>
 </section>
-<section id="id18">
+<section id="id20">
 <h3><code class="docutils literal notranslate"><span class="pre">1-</span></code></h3>
 <p>( x0 x1 – x2 )</p>
 <p>Subtract one from an integer.</p>
 </section>
-<section id="id19">
+<section id="id21">
 <h3><code class="docutils literal notranslate"><span class="pre">*</span></code></h3>
 <p>( x0 x1 – x2 )</p>
 <p>Multiply two integers.</p>
 </section>
-<section id="id20">
+<section id="id22">
 <h3><code class="docutils literal notranslate"><span class="pre">2*</span></code></h3>
 <p>( x0 – x1 )</p>
 <p>Multiply an integer by two.</p>
 </section>
-<section id="id21">
+<section id="id23">
 <h3><code class="docutils literal notranslate"><span class="pre">4*</span></code></h3>
 <p>( x0 – x1 )</p>
 <p>Multiply an integer by four.</p>
 </section>
-<section id="id22">
+<section id="id24">
 <h3><code class="docutils literal notranslate"><span class="pre">cells</span></code></h3>
 <p>( x0 – x1 )</p>
 <p>Multiply an integer by a cell.</p>
 </section>
-<section id="id23">
+<section id="id25">
 <h3><code class="docutils literal notranslate"><span class="pre">/</span></code></h3>
 <p>( n0 n1 – n2 )</p>
 <p>Divide two signed integers.</p>
 </section>
-<section id="id24">
+<section id="id26">
 <h3><code class="docutils literal notranslate"><span class="pre">2/</span></code></h3>
 <p>( n0 – n1 )</p>
 <p>Divide a signed integer by two.</p>
 </section>
-<section id="id25">
+<section id="id27">
 <h3><code class="docutils literal notranslate"><span class="pre">4/</span></code></h3>
 <p>( n0 – n1 )</p>
 <p>Divide a signed integer by four.</p>
@@ -479,102 +504,102 @@
 <p>( x0 x1 – x2 )</p>
 <p>Align a value to a power of two.</p>
 </section>
-<section id="id26">
+<section id="id28">
 <h3><code class="docutils literal notranslate"><span class="pre">=</span></code></h3>
 <p>( x0 x1 – flag )</p>
 <p>Get whether two values are equal. Integral values are compared for their values, even in the case of big integers. Execution tokens are compared for their underlying code addresses. All other values are compared for their addresses in memory.</p>
 </section>
-<section id="id27">
+<section id="id29">
 <h3><code class="docutils literal notranslate"><span class="pre">&lt;&gt;</span></code></h3>
 <p>( x0 x1 – flag )</p>
 <p>Get whether two values are unequal. Integral values are compared for their values, even in the case of big integers. Execution tokens are compared for their underlying code addresses. All other values are compared for their addresses in memory.</p>
 </section>
-<section id="id28">
+<section id="id30">
 <h3><code class="docutils literal notranslate"><span class="pre">&lt;</span></code></h3>
 <p>( n0 n1 – flag )</p>
 <p>Signed less than.</p>
 </section>
-<section id="id29">
+<section id="id31">
 <h3><code class="docutils literal notranslate"><span class="pre">&gt;</span></code></h3>
 <p>( n0 n1 – flag )</p>
 <p>Signed greater than.</p>
 </section>
-<section id="id30">
+<section id="id32">
 <h3><code class="docutils literal notranslate"><span class="pre">&lt;=</span></code></h3>
 <p>( n0 n1 – flag )</p>
 <p>Signed less than or equal.</p>
 </section>
-<section id="id31">
+<section id="id33">
 <h3><code class="docutils literal notranslate"><span class="pre">&gt;=</span></code></h3>
 <p>( n0 n1 – flag )</p>
 <p>Signed greater than or equal.</p>
 </section>
-<section id="id32">
+<section id="id34">
 <h3><code class="docutils literal notranslate"><span class="pre">u&lt;</span></code></h3>
 <p>( u0 u1 – flag )</p>
 <p>Unsigned less than.</p>
-</section>
-<section id="id33">
-<h3><code class="docutils literal notranslate"><span class="pre">u&gt;</span></code></h3>
-<p>( u0 u1 – flag )</p>
-<p>Unsigned greater than.</p>
-</section>
-<section id="id34">
-<h3><code class="docutils literal notranslate"><span class="pre">u&lt;=</span></code></h3>
-<p>( u0 u1 – flag )</p>
-<p>Unsigned less than or equal.</p>
 </section>
 <section id="id35">
-<h3><code class="docutils literal notranslate"><span class="pre">u&gt;=</span></code></h3>
-<p>( u0 u1 – flag )</p>
-<p>Unsigned greater than or equal.</p>
-</section>
-<section id="id36">
-<h3><code class="docutils literal notranslate"><span class="pre">u&lt;</span></code></h3>
-<p>( u0 u1 – flag )</p>
-<p>Unsigned less than.</p>
-</section>
-<section id="id37">
 <h3><code class="docutils literal notranslate"><span class="pre">u&gt;</span></code></h3>
 <p>( u0 u1 – flag )</p>
 <p>Unsigned greater than.</p>
 </section>
-<section id="id38">
+<section id="id36">
 <h3><code class="docutils literal notranslate"><span class="pre">u&lt;=</span></code></h3>
 <p>( u0 u1 – flag )</p>
 <p>Unsigned less than or equal.</p>
 </section>
-<section id="id39">
+<section id="id37">
 <h3><code class="docutils literal notranslate"><span class="pre">u&gt;=</span></code></h3>
 <p>( u0 u1 – flag )</p>
 <p>Unsigned greater than or equal.</p>
 </section>
+<section id="id38">
+<h3><code class="docutils literal notranslate"><span class="pre">u&lt;</span></code></h3>
+<p>( u0 u1 – flag )</p>
+<p>Unsigned less than.</p>
+</section>
+<section id="id39">
+<h3><code class="docutils literal notranslate"><span class="pre">u&gt;</span></code></h3>
+<p>( u0 u1 – flag )</p>
+<p>Unsigned greater than.</p>
+</section>
 <section id="id40">
+<h3><code class="docutils literal notranslate"><span class="pre">u&lt;=</span></code></h3>
+<p>( u0 u1 – flag )</p>
+<p>Unsigned less than or equal.</p>
+</section>
+<section id="id41">
+<h3><code class="docutils literal notranslate"><span class="pre">u&gt;=</span></code></h3>
+<p>( u0 u1 – flag )</p>
+<p>Unsigned greater than or equal.</p>
+</section>
+<section id="id42">
 <h3><code class="docutils literal notranslate"><span class="pre">0=</span></code></h3>
 <p>( x – flag )</p>
 <p>Equal to zero; note that for non-integral values <code class="docutils literal notranslate"><span class="pre">false</span></code> is returned.</p>
 </section>
-<section id="id41">
+<section id="id43">
 <h3><code class="docutils literal notranslate"><span class="pre">0&lt;&gt;</span></code></h3>
 <p>( x – flag )</p>
 <p>Not equal to zero; note that for non-integral values <code class="docutils literal notranslate"><span class="pre">true</span></code> is returned.</p>
 </section>
-<section id="id42">
+<section id="id44">
 <h3><code class="docutils literal notranslate"><span class="pre">0&lt;</span></code></h3>
 <p>( n – flag )</p>
 <p>Less than zero.</p>
 </section>
-<section id="id43">
+<section id="id45">
 <h3><code class="docutils literal notranslate"><span class="pre">0&gt;</span></code></h3>
 <p>( n – flag )</p>
 <p>Greater than zero.</p>
 </section>
-<section id="id44">
+<section id="id46">
 <h3><code class="docutils literal notranslate"><span class="pre">0&lt;=</span></code></h3>
 <p>( n – flag )</p>
 <p>Less than or equal to zero.</p>
 </section>
-<section id="id45">
+<section id="id47">
 <h3><code class="docutils literal notranslate"><span class="pre">0&gt;=</span></code></h3>
 <p>( n – flag )</p>
 <p>Greater than or equal to zero.</p>
@@ -589,7 +614,7 @@
 <p>( n0 n1 – n2 )</p>
 <p>Get the maximum of two numbers.</p>
 </section>
-<section id="id46">
+<section id="id48">
 <h3><code class="docutils literal notranslate"><span class="pre">cell</span></code></h3>
 <p>( – u )</p>
 <p>The size of a cell, i.e. four.</p>
@@ -619,7 +644,7 @@
 <p>( – )</p>
 <p>Close a <code class="docutils literal notranslate"><span class="pre">do</span></code> loop.</p>
 </section>
-<section id="id47">
+<section id="id49">
 <h3><code class="docutils literal notranslate"><span class="pre">+loop</span></code></h3>
 <p>( increment – )</p>
 <p>Close a <code class="docutils literal notranslate"><span class="pre">do</span></code> loop with an increment.</p>
@@ -634,22 +659,22 @@
 <p>( x – )</p>
 <p>Start an <code class="docutils literal notranslate"><span class="pre">of</span></code> block.</p>
 </section>
-<section id="id48">
+<section id="id50">
 <h3><code class="docutils literal notranslate"><span class="pre">.</span></code></h3>
 <p>( n – )</p>
 <p>Print a signed integer with a following space.</p>
 </section>
-<section id="id49">
+<section id="id51">
 <h3><code class="docutils literal notranslate"><span class="pre">u.</span></code></h3>
 <p>( u – )</p>
 <p>Print an unsigned integer with a following space.</p>
 </section>
-<section id="id50">
+<section id="id52">
 <h3><code class="docutils literal notranslate"><span class="pre">(.)</span></code></h3>
 <p>( n – )</p>
 <p>Print a signed integer without a following space.</p>
 </section>
-<section id="id51">
+<section id="id53">
 <h3><code class="docutils literal notranslate"><span class="pre">(u.)</span></code></h3>
 <p>( u – )</p>
 <p>Print an unsigned integer without a following space.</p>
@@ -734,7 +759,7 @@
 <p>( word – xt )</p>
 <p>Get an execution token corresponding to a word.</p>
 </section>
-<section id="id52">
+<section id="id54">
 <h3><code class="docutils literal notranslate"><span class="pre">;]</span></code></h3>
 <p>( – xt )</p>
 <p>End a quotation (also known as a lambda) and, if compiling, compile pushing the execution token, or otherwise immediately pushing the execution token.</p>
@@ -749,7 +774,7 @@
 <p>( xt | closure – exception | 0 )</p>
 <p>Execute an execution token or closure like <code class="docutils literal notranslate"><span class="pre">execute</span></code>, but catching any exceptions that are raised. If an exception is raised it is returned, otherwise 0 is returned.</p>
 </section>
-<section id="id53">
+<section id="id55">
 <h3><code class="docutils literal notranslate"><span class="pre">?execute</span></code></h3>
 <p>( xt | closure | 0 – )</p>
 <p>If a non-zero value is provided it is executed like with <code class="docutils literal notranslate"><span class="pre">execute</span></code>, otherwise it is ignored.</p>
@@ -759,17 +784,17 @@
 <p>( xt – x ) xt: ( continuation – )</p>
 <p>Call <em>xt</em> with the continuation of the call to <code class="docutils literal notranslate"><span class="pre">call/cc</span></code>. When the continuation is called, the the context of the original call to <code class="docutils literal notranslate"><span class="pre">call/cc</span></code> will be returned to, with the top element of the data stack being preserved.</p>
 </section>
-<section id="id54">
+<section id="id56">
 <h3><code class="docutils literal notranslate"><span class="pre">type</span></code></h3>
 <p>( seq – )</p>
 <p>Type a string.</p>
 </section>
-<section id="id55">
+<section id="id57">
 <h3><code class="docutils literal notranslate"><span class="pre">'</span></code></h3>
 <p>( “name” – xt )</p>
 <p>Get an xt at interpretation-time.</p>
 </section>
-<section id="id56">
+<section id="id58">
 <h3><code class="docutils literal notranslate"><span class="pre">[']</span></code></h3>
 <p>( ‘name” – xt )</p>
 <p>Get an xt at compile-time.</p>
@@ -789,7 +814,7 @@
 <p>( f “name” – )</p>
 <p>Assert that a value is false, otherwise raise a specified exception.</p>
 </section>
-<section id="id57">
+<section id="id59">
 <h3><code class="docutils literal notranslate"><span class="pre">raise</span></code></h3>
 <p>( “name” – )</p>
 <p>Always raise an exception; this is needed due to issues with compiling code.</p>
@@ -819,7 +844,7 @@
 <p>( “name” – x )</p>
 <p>Redefine [CHAR].</p>
 </section>
-<section id="id58">
+<section id="id60">
 <h3><code class="docutils literal notranslate"><span class="pre">char</span></code></h3>
 <p>( “name” – x )</p>
 <p>Redefine CHAR.</p>
@@ -884,22 +909,22 @@
 <p>( start-addr name – )</p>
 <p>Finish defining a constant byte sequence.</p>
 </section>
-<section id="id59">
+<section id="id61">
 <h3><code class="docutils literal notranslate"><span class="pre">,</span></code></h3>
 <p>( x – )</p>
 <p>Write a cell to a constant byte sequence; note that it must be aligned.</p>
 </section>
-<section id="id60">
+<section id="id62">
 <h3><code class="docutils literal notranslate"><span class="pre">h,</span></code></h3>
 <p>( h – )</p>
 <p>Write a halfword to a constant byte sequence; note that it must be aligned.</p>
 </section>
-<section id="id61">
+<section id="id63">
 <h3><code class="docutils literal notranslate"><span class="pre">c,</span></code></h3>
 <p>( c – )</p>
 <p>Write a byte to a constant byte sequence.</p>
 </section>
-<section id="id62">
+<section id="id64">
 <h3><code class="docutils literal notranslate"><span class="pre">align,</span></code></h3>
 <p>( size – )</p>
 <p>Align the <code class="docutils literal notranslate"><span class="pre">here</span></code> pointer when defining a constant byte sequence to a <em>size</em> power of two.</p>
@@ -989,7 +1014,7 @@
 <p>( base – )</p>
 <p>Set BASE.</p>
 </section>
-<section id="id63">
+<section id="id65">
 <h3><code class="docutils literal notranslate"><span class="pre">base&#64;</span></code></h3>
 <p>( – base )</p>
 <p>Get BASE.</p>
@@ -1059,12 +1084,12 @@
 <p>( seq xt – seq’ )</p>
 <p>Map a sequence or slice into a new sequence with an index.</p>
 </section>
-<section id="id64">
+<section id="id66">
 <h3><code class="docutils literal notranslate"><span class="pre">map!</span></code></h3>
 <p>( seq xt – )</p>
 <p>Map a sequence or slice in place.</p>
 </section>
-<section id="id65">
+<section id="id67">
 <h3><code class="docutils literal notranslate"><span class="pre">mapi!</span></code></h3>
 <p>( seq xt – )</p>
 <p>Map a sequence or slicein place with an index.</p>
@@ -1084,7 +1109,7 @@
 <p>( bit index bits – )</p>
 <p>Set a bit in a bit sequence.</p>
 </section>
-<section id="id66">
+<section id="id68">
 <h3><code class="docutils literal notranslate"><span class="pre">bit&#64;</span></code></h3>
 <p>( index bits – )</p>
 <p>Get a bit in a bit sequence.</p>
@@ -1164,7 +1189,7 @@
 <p>( seq – seq’ )</p>
 <p>Reverse a sequence producing a new sequence.</p>
 </section>
-<section id="id67">
+<section id="id69">
 <h3><code class="docutils literal notranslate"><span class="pre">reverse!</span></code></h3>
 <p>( seq – )</p>
 <p>Reverse a sequence in place.</p>
@@ -1179,12 +1204,12 @@
 <p>( seq0 seq1 seq2 – seq3 )</p>
 <p>Zip three sequences into a new sequence, using the length of the shorter sequence.</p>
 </section>
-<section id="id68">
+<section id="id70">
 <h3><code class="docutils literal notranslate"><span class="pre">zip!</span></code></h3>
 <p>( seq0 seq1 – )</p>
 <p>Zip two sequences into the first sequence in-place; note that if the ranges do not match an exception is raised, and the first sequence must be a cell sequence.</p>
 </section>
-<section id="id69">
+<section id="id71">
 <h3><code class="docutils literal notranslate"><span class="pre">zip3!</span></code></h3>
 <p>( seq0 seq1 seq2 – )</p>
 <p>Zip three sequences into the first sequence in-place; note that if the ranges do not match an exception is raised, and the first sequence must be a cell sequence.</p>
@@ -1194,7 +1219,7 @@
 <p>( seq xt – )</p>
 <p>Heapsort a sequence or slice in place.</p>
 </section>
-<section id="id70">
+<section id="id72">
 <h3><code class="docutils literal notranslate"><span class="pre">sort</span></code></h3>
 <p>( seq xt – )</p>
 <p>Heapsort a sequence or slice, copying it.</p>
@@ -1244,32 +1269,32 @@
 <p>( – depth )</p>
 <p>Get the current depth.</p>
 </section>
-<section id="id71">
+<section id="id73">
 <h3><code class="docutils literal notranslate"><span class="pre">#(</span></code></h3>
 <p>( – )</p>
 <p>Start defining a cell sequence.</p>
 </section>
-<section id="id72">
+<section id="id74">
 <h3><code class="docutils literal notranslate"><span class="pre">#&lt;</span></code></h3>
 <p>( – )</p>
 <p>Start defining a byte sequence.</p>
 </section>
-<section id="id73">
+<section id="id75">
 <h3><code class="docutils literal notranslate"><span class="pre">)#</span></code></h3>
 <p>( xn … x0 – cells )</p>
 <p>Finish definining a cell sequence.</p>
 </section>
-<section id="id74">
+<section id="id76">
 <h3><code class="docutils literal notranslate"><span class="pre">&gt;#</span></code></h3>
 <p>( cn … c0 – bytes )</p>
 <p>Finish defining a byte sequence.</p>
 </section>
-<section id="id75">
+<section id="id77">
 <h3><code class="docutils literal notranslate"><span class="pre">0cells</span></code></h3>
 <p>( – cells )</p>
 <p>Empty cell sequence.</p>
 </section>
-<section id="id76">
+<section id="id78">
 <h3><code class="docutils literal notranslate"><span class="pre">0bytes</span></code></h3>
 <p>( – bytes )</p>
 <p>Empty byte sequence.</p>
@@ -1282,17 +1307,17 @@
 <p>( bytes – addr len )</p>
 <p>Get the starting address and length of a byte sequence or slice. Note that these are not guaranteed to remain constant with any subsequent allocations that may trigger the garbage collector.</p>
 </section>
-<section id="id77">
+<section id="id79">
 <h3><code class="docutils literal notranslate"><span class="pre">&#64;</span></code></h3>
 <p>( addr – x )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">&#64;</span></code>.</p>
 </section>
-<section id="id78">
+<section id="id80">
 <h3><code class="docutils literal notranslate"><span class="pre">!</span></code></h3>
 <p>( x addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">!</span></code>.</p>
 </section>
-<section id="id79">
+<section id="id81">
 <h3><code class="docutils literal notranslate"><span class="pre">+!</span></code></h3>
 <p>( x addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">+!</span></code>.</p>
@@ -1302,27 +1327,27 @@
 <p>( x addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">BIS!</span></code>.</p>
 </section>
-<section id="id80">
+<section id="id82">
 <h3><code class="docutils literal notranslate"><span class="pre">bic!</span></code></h3>
 <p>( x addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">BIC!</span></code>.</p>
 </section>
-<section id="id81">
+<section id="id83">
 <h3><code class="docutils literal notranslate"><span class="pre">xor!</span></code></h3>
 <p>( x addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">XOR!</span></code>.</p>
 </section>
-<section id="id82">
+<section id="id84">
 <h3><code class="docutils literal notranslate"><span class="pre">h&#64;</span></code></h3>
 <p>( addr – h )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">H&#64;</span></code>.</p>
 </section>
-<section id="id83">
+<section id="id85">
 <h3><code class="docutils literal notranslate"><span class="pre">h!</span></code></h3>
 <p>( h addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">H!</span></code>.</p>
 </section>
-<section id="id84">
+<section id="id86">
 <h3><code class="docutils literal notranslate"><span class="pre">h+!</span></code></h3>
 <p>( h addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">H+!</span></code>.</p>
@@ -1342,17 +1367,17 @@
 <p>( x addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">HXOR!</span></code>.</p>
 </section>
-<section id="id85">
+<section id="id87">
 <h3><code class="docutils literal notranslate"><span class="pre">c&#64;</span></code></h3>
 <p>( addr – c )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">C&#64;</span></code>.</p>
 </section>
-<section id="id86">
+<section id="id88">
 <h3><code class="docutils literal notranslate"><span class="pre">c!</span></code></h3>
 <p>( c addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">C!</span></code>.</p>
 </section>
-<section id="id87">
+<section id="id89">
 <h3><code class="docutils literal notranslate"><span class="pre">c+!</span></code></h3>
 <p>( c addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">C+!</span></code>.</p>
@@ -1377,22 +1402,22 @@
 <p>( addr bytes val – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">FILL</span></code>.</p>
 </section>
-<section id="id88">
+<section id="id90">
 <h3><code class="docutils literal notranslate"><span class="pre">&gt;integral</span></code></h3>
 <p>( x – value )</p>
 <p>Cast a value to an integer.</p>
 </section>
-<section id="id89">
+<section id="id91">
 <h3><code class="docutils literal notranslate"><span class="pre">integral&gt;</span></code></h3>
 <p>( value – x )</p>
 <p>Cast a value from an integer.</p>
 </section>
-<section id="id90">
+<section id="id92">
 <h3><code class="docutils literal notranslate"><span class="pre">2&gt;integral</span></code></h3>
 <p>( x0 x1 – value0 value1 )</p>
 <p>Cast two values to integers.</p>
 </section>
-<section id="id91">
+<section id="id93">
 <h3><code class="docutils literal notranslate"><span class="pre">2integral&gt;</span></code></h3>
 <p>( value0 value1 – x0 x1 )</p>
 <p>Cast two values from integers.</p>
@@ -1402,17 +1427,17 @@
 <p>( x – dvalue )</p>
 <p>Cast a value to an double.</p>
 </section>
-<section id="id92">
+<section id="id94">
 <h3><code class="docutils literal notranslate"><span class="pre">double&gt;</span></code></h3>
 <p>( dvalue – x )</p>
 <p>Cast a value from an double.</p>
 </section>
-<section id="id93">
+<section id="id95">
 <h3><code class="docutils literal notranslate"><span class="pre">2&gt;double</span></code></h3>
 <p>( x0 x1 – dvalue0 dvalue1 )</p>
 <p>Cast two values to doubles.</p>
 </section>
-<section id="id94">
+<section id="id96">
 <h3><code class="docutils literal notranslate"><span class="pre">2double&gt;</span></code></h3>
 <p>( dvalue0 dvalue1 – x0 x1 )</p>
 <p>Cast two values from doubles.</p>

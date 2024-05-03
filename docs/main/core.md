@@ -133,6 +133,16 @@ The closure type.
 
 The slice type; note that this encompasses slices of cell sequences, non-constant byte sequences, and constant byte sequences.
 
+### `cont-type`
+( -- type )
+
+The continuation type.
+
+### `ref-type`
+( -- type )
+
+The reference type.
+
 ### `raw-lit,`
 ( x -- )
 
@@ -167,6 +177,21 @@ Get the raw offset of a cell sequence, byte sequence, or slice value. The primar
 ( x -- len )
 
 Get the length of a cell sequence, byte sequence, or slice in entries or bytes.
+
+### `ref`
+( x -- ref )
+
+Create a reference with a value *x*.
+
+### `ref@`
+( ref -- x )
+
+Get the value of a reference.
+
+### `ref!`
+( x ref -- )
+
+Set the value of a reference.
 
 ### `>pair`
 ( x0 x1 -- pair )

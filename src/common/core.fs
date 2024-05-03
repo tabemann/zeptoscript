@@ -342,6 +342,7 @@ begin-module zscript
     11 >small-int constant closure-type
     12 >small-int constant slice-type
     13 >small-int constant cont-type
+    14 >small-int constant ref-type
 
     \ Tags
     1 >small-int constant word-tag
@@ -486,6 +487,21 @@ begin-module zscript
       bytes 1 lshift type integral> 2 - type-shift lshift or over !
     ;
     
+    \ Allocate a reference
+    : allocate-ref { x -- addr }
+      to-space-current@ [ 2 cells ] literal + to-space-top@ > if
+        gc
+        to-space-current@ [ 2 cells ] literal + to-space-top@ <=
+        averts x-out-of-memory
+      then
+      to-space-current@ { current }
+      current [ 2 cells ] literal + to-space-current!
+      current
+      x over cell+ !
+      [ ref-type integral> 2 - type-shift lshift
+      2 cells 1 lshift or ] literal over !
+    ;
+
     \ Construct a continuation
     : allocate-cont ( -- cont )
       sp@ stack-base @ swap - cell -
@@ -501,7 +517,8 @@ begin-module zscript
       bytes integral> to bytes
       bytes current + to-space-current!
       current
-      bytes 1 lshift cont-type integral> 2 - type-shift lshift or over !
+      bytes 1 lshift
+      [ cont-type integral> 2 - type-shift lshift ] literal or over !
       stack-count over cell+ !
       rstack-count over [ 2 cells ] literal + !
       handler @ over [ 3 cells ] literal + !
@@ -860,7 +877,9 @@ begin-module zscript
   cells-type constant cells-type
   closure-type constant closure-type
   slice-type constant slice-type
-
+  cont-type constant cont-type
+  ref-type constant ref-type
+  
   \ Get the raw LIT,
   : raw-lit, ( x -- ) integral> lit, ;
   
@@ -1003,6 +1022,23 @@ begin-module zscript
       endof
       ['] x-incorrect-type ?raise
     endcase
+  ;
+
+  \ Create a reference
+  : ref ( x -- ref )
+    allocate-ref
+  ;
+
+  \ Get a reference's value
+  : ref@ ( ref -- x )
+    dup >type ref-type = averts x-incorrect-type
+    cell+ @
+  ;
+
+  \ Set a reference's value
+  : ref! ( x ref -- )
+    dup >type ref-type = averts x-incorrect-type
+    cell+ !
   ;
 
   \ Create a cell sequence initialized to null
