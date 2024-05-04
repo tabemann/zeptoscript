@@ -74,6 +74,23 @@ begin-module zscript-queue
     dup if queue queue-size@ 1- queue queue-size! then
   ;
 
+  \ Peek an element on a queue
+  : peek-queue { queue -- element success? }
+    queue queue-old@ { old }
+    old if
+      old pair> drop true
+    else
+      queue queue-new@ { new }
+      new if
+        new rev-list queue queue-old!
+        empty queue queue-new!
+        queue queue-old@ pair> drop true
+      else
+        0 false
+      then
+    then
+  ;
+
   \ Get the queue size
   : queue-size ( queue -- size ) queue-size@ ;
   

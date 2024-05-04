@@ -73,11 +73,18 @@ begin-module zscript-chan
       then
     ;
 
-    \ Actually send a message on a chanel
+    \ Actually send a message on a channel
     : actual-send { msg chan -- }
       false chan chan-send-pending!
       msg chan chan-messages@ enqueue
       chan chan-send-count@ 1- chan chan-send-count!
+      chan wake-recv
+    ;
+
+    \ Actually send a message on a channel for non-blocking
+    : actual-send-non-block { msg chan -- }
+      false chan chan-send-pending!
+      msg chan chan-messages@ enqueue
       chan wake-recv
     ;
 
@@ -87,6 +94,35 @@ begin-module zscript-chan
         false chan chan-recv-pending!
         chan chan-recv-count@ 1- chan chan-recv-count!
         chan wake-send
+      else
+        [: ." should not happen!" cr ;] ?raise
+      then
+    ;
+
+    \ Actually receive a message on a channel for non-blocking
+    : actual-recv-non-block { chan -- msg }
+      chan chan-messages@ dequeue if
+        false chan chan-recv-pending!
+        chan wake-send
+      else
+        [: ." should not happen!" cr ;] ?raise
+      then
+    ;
+
+    \ Actually peek a message on a channel
+    : actual-peek { chan -- msg }
+      chan chan-messages@ peek-queue if
+        false chan chan-recv-pending!
+        chan chan-recv-count@ 1- chan chan-recv-count!
+      else
+        [: ." should not happen!" cr ;] ?raise
+      then
+    ;
+
+    \ Actually peek a message on a channel for non-blocking
+    : actual-peek-non-block { chan -- msg }
+      chan chan-messages@ peek-queue if
+        false chan chan-recv-pending!
       else
         [: ." should not happen!" cr ;] ?raise
       then
@@ -115,7 +151,19 @@ begin-module zscript-chan
         then
       until
     ;
-    
+
+    \ Wait on peeking a message from a channel
+    : wait-peek { chan -- msg }
+      begin
+        chan chan-recv-wait@ block
+        chan chan-messages@ queue-empty? not if
+          chan actual-peek true
+        else
+          false
+        then
+      until
+    ;
+
   end-module> import
 
   \ Make a channel
@@ -137,7 +185,21 @@ begin-module zscript-chan
       msg chan wait-send
     then
   ;
-
+  
+  \ Send a message on a channel in a non-blocking fashion, returning whether
+  \ sending was successful
+  : send-non-block { msg chan -- success? }
+    chan chan-messages@ queue-size chan chan-max-size@ < if
+      chan chan-send-count@ 0= if
+        msg chan actual-send-non-block true
+      else
+        chan wake-send false
+      then
+    else
+      false
+    then
+  ;
+  
   \ Receive a message from a channel, blocking until the channel's queue is not
   \ empty if necessary
   : recv { chan -- msg }
@@ -152,5 +214,48 @@ begin-module zscript-chan
       chan wait-recv
     then
   ;
-  
+
+  \ Receive a message from a channel in a non-blocking fashion, returning
+  \ whether receiving was successful
+  : recv-non-block { chan -- msg success? }
+    chan chan-messages@ queue-empty? not if
+      chan chan-recv-count@ 0= if
+        chan actual-recv-non-block true
+      else
+        chan wake-recv 0 false
+      then
+    else
+      0 false
+    then
+  ;
+
+  \ Receive a message from a channel, blocking until the channel's queue is not
+  \ empty if necessary
+  : peek { chan -- msg }
+    chan chan-recv-count@ 1+ chan chan-recv-count!
+    chan chan-messages@ queue-empty? not if
+      chan chan-recv-count@ 1 = if
+        chan actual-peek
+      else
+        chan wake-recv chan wait-peek
+      then
+    else
+      chan wait-peek
+    then
+  ;
+
+  \ Receive a message from a channel in a non-blocking fashion, returning
+  \ whether receiving was successful
+  : peek-non-block { chan -- msg success? }
+    chan chan-messages@ queue-empty? not if
+      chan chan-recv-count@ 0= if
+        chan actual-peek-non-block true
+      else
+        chan wake-recv 0 false
+      then
+    else
+      0 false
+    then
+  ;
+
 end-module
