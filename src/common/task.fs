@@ -49,7 +49,7 @@ begin-module zscript-task
   end-module> import
 
   \ Schedule a task, which will begin execution with the specified closure or
-  \ continuation
+  \ saved state
   : schedule { task -- }
     task >type dup xt-type = swap closure-type = or if
       task 1 [: nip execute ;] bind to task
@@ -65,7 +65,7 @@ begin-module zscript-task
         tasks@ dequeue { next-task }
         current-task schedule
         0 next-task execute
-      ;] call/cc drop
+      ;] save drop
     then
   ;
 
@@ -80,10 +80,10 @@ begin-module zscript-task
   \ Fork the current task, with the new task being enqueued for future
   \ execution
   : fork ( -- parent? )
-    [: { cont }
-      false 1 cont bind schedule
+    [: { state }
+      false 1 state bind schedule
       true
-    ;] call/cc
+    ;] save
   ;
 
   \ Start execution of the first enqueued task; note that this word does not
@@ -104,11 +104,11 @@ begin-module zscript-task
   \ Block a task in a queue
   : block { queue -- }
     tasks@ queue-empty? not if
-      queue [: { queue cont }
+      queue [: { queue state }
         tasks@ dequeue { next-task }
-        cont queue enqueue
+        state queue enqueue
         0 next-task execute
-      ;] call/cc 2drop
+      ;] save 2drop
     then
   ;
 

@@ -1,13 +1,13 @@
 # Tasks
 
-zeptoscript supports cooperative multitasking, distinct from zeptoforth's preemptive multitasking. zeptoscript tasks all share a single zeptoforth task and a single zeptoscript heap. zeptoscript tasks execute in a round-robin fashion without priorities. Through the use of continuations each task has practically separate data and return stacks, even though they share their parent zeptoforth task's data and return stack underneath it all.
+zeptoscript supports cooperative multitasking, distinct from zeptoforth's preemptive multitasking. zeptoscript tasks all share a single zeptoforth task and a single zeptoscript heap. zeptoscript tasks execute in a round-robin fashion without priorities. Through the use of saved states each task has practically separate data and return stacks, even though they share their parent zeptoforth task's data and return stack underneath it all.
 
 ## `zscript-task` words
 
 ### `schedule`
 ( task -- )
 
-Add a closure or continuation to the task schedule.
+Add a closure or saved state to the task schedule.
 
 ### `yield`
 ( -- )

@@ -561,16 +561,16 @@ begin-module zscript-special-oo
     
   end-class
 
-  \ Type class for continuations
-  cont-type begin-type-class
+  \ Type class for saved states
+  save-type begin-type-class
 
-    \ Show a continuation
+    \ Show a saved state
     :method show { self -- }
       self unsafe::>integral cell+ unsafe::@ unsafe::integral> { stack-count }
       self unsafe::>integral 2 cells + unsafe::@ unsafe::integral>
       { rstack-count }
       stack-count rstack-count + 2* 3 + make-cells { seq }
-      s" cont:stack:(" 0 seq !+
+      s" save:stack:(" 0 seq !+
       stack-count 0 ?do
         self unsafe::>integral 4 i + cells + unsafe::@
         i 2* 1+ seq 16 [: rot format-integral -rot !+ ;] with-base
@@ -596,15 +596,15 @@ begin-module zscript-special-oo
       seq 0bytes join
     ;
 
-    \ Hash a continuation - note that continuations cannot actually be hashed
+    \ Hash a saved state - note that saved states cannot actually be hashed
     \ for reasons, so this just returns a placeholder value
     : hash { self -- }
       1
     ;
 
-    \ Test two continuations for equality
+    \ Test two saved states for equality
     : equal? { other self -- }
-      other >type cont-type = averts x-incorrect-type
+      other >type save-type = averts x-incorrect-type
       self unsafe::>integral cell+ unsafe::@ unsafe::integral>
       { self-stack-count }
       self unsafe::>integral 2 cells + unsafe::@ unsafe::integral>

@@ -37,13 +37,13 @@
             
   <section id="tasks">
 <h1>Tasks<a class="headerlink" href="#tasks" title="Permalink to this heading">¶</a></h1>
-<p>zeptoscript supports cooperative multitasking, distinct from zeptoforth’s preemptive multitasking. zeptoscript tasks all share a single zeptoforth task and a single zeptoscript heap. zeptoscript tasks execute in a round-robin fashion without priorities. Through the use of continuations each task has practically separate data and return stacks, even though they share their parent zeptoforth task’s data and return stack underneath it all.</p>
+<p>zeptoscript supports cooperative multitasking, distinct from zeptoforth’s preemptive multitasking. zeptoscript tasks all share a single zeptoforth task and a single zeptoscript heap. zeptoscript tasks execute in a round-robin fashion without priorities. Through the use of saved states each task has practically separate data and return stacks, even though they share their parent zeptoforth task’s data and return stack underneath it all.</p>
 <section id="zscript-task-words">
 <h2><code class="docutils literal notranslate"><span class="pre">zscript-task</span></code> words<a class="headerlink" href="#zscript-task-words" title="Permalink to this heading">¶</a></h2>
 <section id="schedule">
 <h3><code class="docutils literal notranslate"><span class="pre">schedule</span></code><a class="headerlink" href="#schedule" title="Permalink to this heading">¶</a></h3>
 <p>( task – )</p>
-<p>Add a closure or continuation to the task schedule.</p>
+<p>Add a closure or saved state to the task schedule.</p>
 </section>
 <section id="yield">
 <h3><code class="docutils literal notranslate"><span class="pre">yield</span></code><a class="headerlink" href="#yield" title="Permalink to this heading">¶</a></h3>

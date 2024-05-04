@@ -341,7 +341,7 @@ begin-module zscript
     10 >small-int constant cells-type
     11 >small-int constant closure-type
     12 >small-int constant slice-type
-    13 >small-int constant cont-type
+    13 >small-int constant save-type
     14 >small-int constant ref-type
 
     \ Tags
@@ -638,8 +638,8 @@ begin-module zscript
       >big-int
     ;
 
-    \ Construct a continuation
-    : allocate-cont ( -- cont )
+    \ Construct a saved state
+    : allocate-save ( -- save )
       handler @ >integral { handler }
       sp@ stack-base @ swap - cell -
       rp@ rstack-base @ swap - [ 2 cells ] literal -
@@ -655,7 +655,7 @@ begin-module zscript
       bytes current + to-space-current!
       current
       bytes 1 lshift
-      [ cont-type integral> 2 - type-shift lshift ] literal or over !
+      [ save-type integral> 2 - type-shift lshift ] literal or over !
       stack-count over cell+ !
       rstack-count over [ 2 cells ] literal + !
       handler over [ 3 cells ] literal + !
@@ -878,7 +878,7 @@ begin-module zscript
   cells-type constant cells-type
   closure-type constant closure-type
   slice-type constant slice-type
-  cont-type constant cont-type
+  save-type constant save-type
   ref-type constant ref-type
   
   \ Get the raw LIT,
@@ -2366,11 +2366,11 @@ begin-module zscript
           forth::cell forth::- dup @ swap dup xt-addr forth::=
         forth::until drop
       endof
-      cont-type of endof  
+      save-type of endof  
       ['] x-incorrect-type ?raise
     endcase
     dup integral? if integral> execute exit then
-    dup >type cont-type = averts x-incorrect-type
+    dup >type save-type = averts x-incorrect-type
     dup [ 3 forth::cells ] literal forth::+ forth::@ integral>
     forth::handler forth::!
     dup forth::cell+ forth::@ integral>
@@ -2382,7 +2382,7 @@ begin-module zscript
     r0 sp mov4_,4_
     r0 1 dp ldm \ r0: rstack-count
     0 dp r1 ldr_,[_,#_] \ r1: stack-count
-    4 dp r2 ldr_,[_,#_] \ r2: continuation
+    4 dp r2 ldr_,[_,#_] \ r2: saved state
     4 forth::cells r2 adds_,#_
     r1 r2 r2 adds_,_,_
     mark>
@@ -2393,7 +2393,7 @@ begin-module zscript
     r3 1 push
     2swap b<
     >mark
-    4 dp r2 ldr_,[_,#_] \ r2: continuation
+    4 dp r2 ldr_,[_,#_] \ r2: saved state
     8 dp r0 ldr_,[_,#_] \ r0: return value
     4 forth::cells r2 adds_,#_
     tos dp movs_,_
@@ -2410,14 +2410,14 @@ begin-module zscript
     ]code
   ;
   
-  \ Call with the current continuation
-  : call/cc ( xt -- ? )
-    allocate-cont swap execute
+  \ Call with the current saved state
+  : save ( xt -- ? )
+    allocate-save swap execute
   ;
 
   \ Try a closure
   : try ( xt | closure -- exception | 0 )
-    [: { cont }
+    [: { save }
       dup >type case
         xt-type of forth::cell+ @ endof
         closure-type of
@@ -2429,8 +2429,8 @@ begin-module zscript
         endof
         ['] x-incorrect-type ?raise
       endcase
-      try >integral dup if cont execute then
-    ;] call/cc dup if nip then
+      try >integral dup if save execute then
+    ;] save dup if nip then
   ;
 
   \ Execute a non-null closure
@@ -3304,7 +3304,7 @@ begin-module zscript
         repeat
         new-closure
       endof
-      cont-type of
+      save-type of
         swap { arg-count }
         arg-count 1+ closure-type allocate-cells { closure }
         closure forth::cell+

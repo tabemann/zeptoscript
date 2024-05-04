@@ -112,9 +112,9 @@
         </navPoint>
         <navPoint id="navPoint18" playOrder="16">
           <navLabel>
-            <text>cont-type</text>
+            <text>save-type</text>
           </navLabel>
-          <content src="main/core.xhtml#cont-type" />  
+          <content src="main/core.xhtml#save-type" />  
         </navPoint>
         <navPoint id="navPoint19" playOrder="17">
           <navLabel>
@@ -892,9 +892,9 @@
         </navPoint>
         <navPoint id="navPoint148" playOrder="146">
           <navLabel>
-            <text>call/cc</text>
+            <text>save</text>
           </navLabel>
-          <content src="main/core.xhtml#call-cc" />  
+          <content src="main/core.xhtml#save" />  
         </navPoint>
         <navPoint id="navPoint149" playOrder="147">
           <navLabel>
