@@ -4401,6 +4401,7 @@ begin-module zscript
   : recurse [immediate] [compile-only] forth::postpone forth::recurse ;
   : reboot forth::reboot ;
   : pause forth::pause ;
+  : quit forth::quit ;
   : unused forth::unused ;
   : see forth::see ;
   : disassemble 2integral> forth::disassemble ;
