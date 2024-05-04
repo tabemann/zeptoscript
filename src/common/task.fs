@@ -26,9 +26,6 @@ begin-module zscript-task
 
     \ Queue is empty exception
     : x-queue-empty ( -- ) ." queue is empty" cr ;
-    
-    \ The systick counter
-    0 1 foreign forth::systick::systick-counter systick-counter
 
     \ Number of ticks per millisecond
     10 constant ticks-per-ms

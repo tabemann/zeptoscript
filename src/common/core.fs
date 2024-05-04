@@ -4402,6 +4402,7 @@ begin-module zscript
   : reboot forth::reboot ;
   : pause forth::pause ;
   : quit forth::quit ;
+  : systick-counter forth::systick::systick-counter >integral ;
   : unused forth::unused ;
   : see forth::see ;
   : disassemble 2integral> forth::disassemble ;

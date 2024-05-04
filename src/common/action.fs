@@ -45,9 +45,6 @@ begin-module action
     \ The current action
     global current-action
 
-    \ Make the systick counter available
-    0 1 foreign forth::systick::systick-counter systick-counter
-
     \ Make the error console available
     1 0 foreign forth::with-error-console with-error-console
 
