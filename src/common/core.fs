@@ -4402,6 +4402,8 @@ begin-module zscript
   : reboot forth::reboot ;
   : pause forth::pause ;
   : unused forth::unused ;
+  : see forth::see ;
+  : disassemble 2integral> forth::disassemble ;
   : words forth::words ;
   : lookup forth::lookup ;
   : words-in
