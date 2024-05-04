@@ -18,7 +18,27 @@ Create a channel with a maximum number of elements of *size*.
 
 Send a message to a channel. If the channel is full, block until a receiving task frees up space for the message. Also, if there are blocked receiving tasks, wake up one receiving task.
 
+### `send-non-block`
+( message channel -- success? ).
+
+Send a message to a channel in a non-blocking fashion, If the channel has room to enqueue the message, return `true`, else return `false`.
+
 ### `recv`
 ( channel -- message )
 
 Receive a message from a channel. If the channel is empty, block until a sending task provides a message to receive. Also, if there are blocked sending tasks, wake up one sending task.
+
+### `recv-non-block`
+( channel -- message success? )
+
+Receive a message from a channel in a non-blocking fashion. If the channel is not empty, return the message and `true`, else return `0` and `false`.
+
+### `peek`
+( channel -- message )
+
+Peek a message from a channel, i.e. read it without dequeuing it. If the channel is empty, block until a sending task provides a message to peek.
+
+### `peek-non-block`
+( channel -- message success? )
+
+Peek a message from a channel, i.e. read it without dequeueing it, in a non-blocking fashion. If the channel is not empty, return the message and `true`, else return `0` and `false`.

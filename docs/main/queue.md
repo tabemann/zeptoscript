@@ -24,6 +24,11 @@ Add an element to the end of a queue.
 
 Remove an element from the start of a queue and return the element and `true` for *success?* if the queue was not empty, else return 0 for the element and `false` for *success?*.
 
+### `peek-queue`
+( queue -- element success? )
+
+Read an element from the start of the queue without dequeueing it and return the element and `true` for *success?* if the queue was not empty, else return 0 for the element and `false` for *success?*.
+
 ### `queue-size`
 ( queue -- size )
 

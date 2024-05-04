@@ -31,10 +31,30 @@
 <p>( message channel – )</p>
 <p>Send a message to a channel. If the channel is full, block until a receiving task frees up space for the message. Also, if there are blocked receiving tasks, wake up one receiving task.</p>
 </section>
+<section id="send-non-block">
+<h3><code class="docutils literal notranslate"><span class="pre">send-non-block</span></code></h3>
+<p>( message channel – success? ).</p>
+<p>Send a message to a channel in a non-blocking fashion, If the channel has room to enqueue the message, return <code class="docutils literal notranslate"><span class="pre">true</span></code>, else return <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p>
+</section>
 <section id="recv">
 <h3><code class="docutils literal notranslate"><span class="pre">recv</span></code></h3>
 <p>( channel – message )</p>
 <p>Receive a message from a channel. If the channel is empty, block until a sending task provides a message to receive. Also, if there are blocked sending tasks, wake up one sending task.</p>
+</section>
+<section id="recv-non-block">
+<h3><code class="docutils literal notranslate"><span class="pre">recv-non-block</span></code></h3>
+<p>( channel – message success? )</p>
+<p>Receive a message from a channel in a non-blocking fashion. If the channel is not empty, return the message and <code class="docutils literal notranslate"><span class="pre">true</span></code>, else return <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p>
+</section>
+<section id="peek">
+<h3><code class="docutils literal notranslate"><span class="pre">peek</span></code></h3>
+<p>( channel – message )</p>
+<p>Peek a message from a channel, i.e. read it without dequeuing it. If the channel is empty, block until a sending task provides a message to peek.</p>
+</section>
+<section id="peek-non-block">
+<h3><code class="docutils literal notranslate"><span class="pre">peek-non-block</span></code></h3>
+<p>( channel – message success? )</p>
+<p>Peek a message from a channel, i.e. read it without dequeueing it, in a non-blocking fashion. If the channel is not empty, return the message and <code class="docutils literal notranslate"><span class="pre">true</span></code>, else return <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p>
 </section>
 </section>
 </section>
