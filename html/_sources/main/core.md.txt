@@ -781,6 +781,11 @@ Execute an execution token or closure like `execute`, but catching any exception
 
 If a non-zero value is provided it is executed like with `execute`, otherwise it is ignored.
 
+### `force`
+( xt | force -- x )
+
+Force a thunk, if it is not already forced, and get its value.
+
 ### `save`
 ( xt -- x ) xt: ( save -- )
 

@@ -343,6 +343,7 @@ begin-module zscript
     12 >small-int constant slice-type
     13 >small-int constant save-type
     14 >small-int constant ref-type
+    15 >small-int constant force-type
 
     \ Tags
     1 >small-int constant word-tag
@@ -880,6 +881,7 @@ begin-module zscript
   slice-type constant slice-type
   save-type constant save-type
   ref-type constant ref-type
+  force-type constant force-type
   
   \ Get the raw LIT,
   : raw-lit, ( x -- ) integral> lit, ;
@@ -2408,6 +2410,18 @@ begin-module zscript
     2swap b<
     >mark
     ]code
+  ;
+
+  \ Force a thunk, if not already forced, and get its value
+  : force ( xt | force -- x )
+    dup >type force-type = if
+      forth::cell+ forth::@
+    else
+      dup { thunk } execute
+      [ force-type integral> 2 forth::- type-shift forth::lshift
+      2 forth::cells 1 forth::lshift forth::or ] literal thunk forth::!
+      dup thunk forth::cell+ forth::!
+    then
   ;
   
   \ Call with the current saved state

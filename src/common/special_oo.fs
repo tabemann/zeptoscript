@@ -64,10 +64,10 @@ begin-module zscript-special-oo
   null-type begin-type-class
 
     \ Show a null
-    :method show { self -- } self format-integral ;
+    :method show { self -- bytes } self format-integral ;
 
     \ Hash a null
-    :method hash { self -- } 0 ;
+    :method hash { self -- hash } 0 ;
 
     \ Test a null for equality
     :method equal? { other self -- equal? } other 0= ;
@@ -78,10 +78,10 @@ begin-module zscript-special-oo
   int-type begin-type-class
 
     \ Show a small int
-    :method show { self -- } self format-integral ;
+    :method show { self -- bytes } self format-integral ;
 
     \ Hash a small int
-    :method hash { self -- } self ;
+    :method hash { self -- hash } self ;
 
     \ Test a small int for equality
     :method equal? { other self -- equal? } other self = ;
@@ -92,10 +92,10 @@ begin-module zscript-special-oo
   big-int-type begin-type-class
 
     \ Show a big int
-    :method show { self -- } self format-integral ;
+    :method show { self -- bytes } self format-integral ;
 
     \ Hash a big int
-    :method hash { self -- } self ;
+    :method hash { self -- hash } self ;
 
     \ Test a big int for equality
     :method equal? { other self -- equal? } other self = ;
@@ -106,10 +106,10 @@ begin-module zscript-special-oo
   symbol-type begin-type-class
 
     \ Show a symbol
-    :method show { self -- } self symbol>name ;
+    :method show { self -- bytes } self symbol>name ;
 
     \ Hash a symbol
-    :method hash { self -- } self symbol>integral ;
+    :method hash { self -- hash } self symbol>integral ;
 
     \ Test a symbol for equality
     :method equal? { other self -- equal? } other self = ;
@@ -122,10 +122,12 @@ begin-module zscript-special-oo
     double-type begin-type-class
       
       \ Show a double
-      :method show { self -- } self zscript-double::format-double s" ." concat ;
+      :method show { self -- bytes }
+        self zscript-double::format-double s" ." concat
+      ;
 
       \ Hash a double
-      :method hash { self -- } self double>2integral xor ;
+      :method hash { self -- hash } self double>2integral xor ;
 
       \ Test a double for equality
       :method equal? { other self -- equal? }
@@ -144,7 +146,7 @@ begin-module zscript-special-oo
     double-type begin-type-class
 
       \ Hash a double
-      :method hash { self -- } self double>2integral xor ;
+      :method hash { self -- hash } self double>2integral xor ;
       
     end-class
 
@@ -154,7 +156,7 @@ begin-module zscript-special-oo
   bytes-type begin-type-class
 
     \ Show a byte sequence
-    :method show { self -- }
+    :method show { self -- bytes }
       self >len { len }
       len 2 + make-cells { seq }
       s" #<" 0 seq !+
@@ -165,7 +167,7 @@ begin-module zscript-special-oo
     ;
 
     \ Hash a byte sequence
-    :method hash { self -- } self hash-bytes ;
+    :method hash { self -- hash } self hash-bytes ;
 
     \ Test a byte sequence for equality
     :method equal? { other self -- equal? }
@@ -182,7 +184,7 @@ begin-module zscript-special-oo
   const-bytes-type begin-type-class
 
     \ Show a constant byte sequence
-    :method show { self -- }
+    :method show { self -- bytes }
       self >len { len }
       len 2 + make-cells { seq }
       s" #const<" 0 seq !+
@@ -193,7 +195,7 @@ begin-module zscript-special-oo
     ;
 
     \ Hash a constant byte sequence
-    :method hash { self -- } self hash-bytes ;
+    :method hash { self -- hash } self hash-bytes ;
     
     \ Test a constant byte sequence for equality
     :method equal? { other self -- equal? }
@@ -222,7 +224,7 @@ begin-module zscript-special-oo
     ;
     
     \ Show a cell sequence
-    :method show { self -- }
+    :method show { self -- bytes }
       self test-list if { len }
         len 2 + make-cells { seq }
         s" #[" 0 seq !+
@@ -243,7 +245,7 @@ begin-module zscript-special-oo
     ;
 
     \ Hash a cell sequence
-    :method hash { self -- }
+    :method hash { self -- hash }
       self test-list if { len }
         0 len 0 ?do
           0 self @+ try-hash xor dup 5 lshift swap 27 rshift or
@@ -293,7 +295,7 @@ begin-module zscript-special-oo
   slice-type begin-type-class
 
     \ Show a slice
-    :method show { self -- }
+    :method show { self -- bytes }
       self >raw >type cells-type = if
         self >len { len }
         len 2 + make-cells { seq }
@@ -324,7 +326,7 @@ begin-module zscript-special-oo
     ;
     
     \ Hash a slice
-    :method hash { self -- }
+    :method hash { self -- hash }
       self >raw >type cells-type = if
         0 self [: try-hash xor dup 5 lshift swap 27 rshift or ;] foldl
       else
@@ -359,14 +361,14 @@ begin-module zscript-special-oo
   xt-type begin-type-class
 
     \ Show an xt
-    :method show { self -- }
+    :method show { self -- bytes }
       s" xt:"
       self 16 [: unsafe::xt>integral format-integral-unsigned ;] with-base
       concat
     ;
 
     \ Hash an xt
-    :method hash { self -- } self unsafe::xt>integral ;
+    :method hash { self -- hash } self unsafe::xt>integral ;
 
     \ Test an xt for equality
     :method equal? { other self -- equal? }
@@ -393,7 +395,7 @@ begin-module zscript-special-oo
   closure-type begin-type-class
     
     \ Show a closure
-    :method show { self -- }
+    :method show { self -- bytes }
       self zscript-internal::>size unsafe::>integral
       2 cells - 2 rshift { bound }
       bound 2 * 4 + make-cells { seq }
@@ -412,7 +414,7 @@ begin-module zscript-special-oo
     ;
 
     \ Hash a closure
-    :method hash { self -- }
+    :method hash { self -- hash }
       self zscript-internal::>size unsafe::>integral
       2 cells - 2 rshift { bound }
       self unsafe::>integral cell+ unsafe::@ unsafe::integral> { my-hash }
@@ -460,7 +462,7 @@ begin-module zscript-special-oo
   tagged-type begin-type-class
 
     \ Show a tagged value
-    :method show { self -- }
+    :method show { self -- bytes }
       self zscript-internal::>tag dup { tag } zscript-internal::word-tag = if
         s" word:"
         self 16 [:
@@ -477,7 +479,7 @@ begin-module zscript-special-oo
     ;
 
     \ Hash a tagged value
-    :method hash { self -- }
+    :method hash { self -- hash }
       self zscript-internal::>tag { my-hash }
       self zscript-internal::>size unsafe::>integral
       2 cells - 2 rshift { bound }
@@ -519,12 +521,12 @@ begin-module zscript-special-oo
   class-type begin-type-class
 
     \ Show a class
-    :method show { self -- }
+    :method show { self -- bytes }
       s" class:" self unsafe::>integral format-integral concat
     ;
 
     \ Hash a class
-    :method hash { self -- } self unsafe::>integral ;
+    :method hash { self -- hash } self unsafe::>integral ;
 
     \ Test a class for equality
     :method equal? { other self -- equal? }
@@ -541,12 +543,12 @@ begin-module zscript-special-oo
   ref-type begin-type-class
 
     \ Show a reference
-    :method show { self -- }
+    :method show { self -- bytes }
       s" ref:(" self ref@ try-show s" )" 3 >cells 0bytes join
     ;
 
     \ Hash a reference
-    :method hash { self -- }
+    :method hash { self -- hash }
       self ref@ try-hash 1+
     ;
 
@@ -565,7 +567,7 @@ begin-module zscript-special-oo
   save-type begin-type-class
 
     \ Show a saved state
-    :method show { self -- }
+    :method show { self -- bytes }
       self unsafe::>integral cell+ unsafe::@ unsafe::integral> { stack-count }
       self unsafe::>integral 2 cells + unsafe::@ unsafe::integral>
       { rstack-count }
@@ -598,12 +600,12 @@ begin-module zscript-special-oo
 
     \ Hash a saved state - note that saved states cannot actually be hashed
     \ for reasons, so this just returns a placeholder value
-    : hash { self -- }
+    :method hash { self -- hash }
       1
     ;
 
     \ Test two saved states for equality
-    : equal? { other self -- }
+    :method equal? { other self -- }
       other >type save-type = averts x-incorrect-type
       self unsafe::>integral cell+ unsafe::@ unsafe::integral>
       { self-stack-count }
@@ -630,6 +632,32 @@ begin-module zscript-special-oo
       then
     ;
       
+  end-class
+  
+  \ Type classes for forced thunks
+  force-type begin-type-class
+    
+    \ Show a forced thunk
+    :method show { self -- bytes }
+      3 make-cells { seq }
+      s" force:(" 0 seq !+
+      self unsafe::>integral cell+ unsafe::@ unsafe::integral> try-show 1 seq !+
+      s" )" 2 seq !+
+      seq 0bytes join
+    ;
+
+    \ Hash a forced thunk
+    :method hash { self -- hash }
+      self unsafe::>integral cell+ unsafe::@ unsafe::integral> try-hash 1+
+    ;
+
+    \ Test two force thunks for equality
+    :method equal? { other self -- equal? }
+      other >type force-type = averts x-incorrect-type
+      other unsafe::>integral cell+ unsafe::@ unsafe::integral>
+      self unsafe::>integral cell+ unsafe::@ unsafe::integral> try-equal?
+    ;
+    
   end-class
   
 end-module
