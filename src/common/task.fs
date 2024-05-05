@@ -49,7 +49,14 @@ begin-module zscript-task
   \ saved state
   : schedule { task -- }
     task >type dup xt-type = swap closure-type = or if
-      task 1 [: nip execute ;] bind to task
+      task 1 [:
+        nip execute
+        tasks@ queue-empty? not if
+          0 tasks@ dequeue execute
+        else
+          0
+        then
+      ;] bind to task
     then
     task tasks@ enqueue
   ;
