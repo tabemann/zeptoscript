@@ -86,9 +86,13 @@ begin-module zscript-task
   \ Start execution of the first enqueued task; note that this word does not
   \ return
   : start ( -- )
-    tasks@ queue-empty? not if
-      0 tasks@ dequeue execute
-    then
+    begin tasks@ queue-empty? not while
+      [: { current-task }
+        tasks@ dequeue { next-task }
+        current-task schedule
+        0 next-task execute
+      ;] save drop
+    repeat
   ;
 
   \ Wake up a task in a queue
