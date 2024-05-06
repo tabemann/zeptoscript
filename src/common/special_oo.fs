@@ -653,9 +653,12 @@ begin-module zscript-special-oo
 
     \ Test two force thunks for equality
     :method equal? { other self -- equal? }
-      other >type force-type = averts x-incorrect-type
-      other unsafe::>integral cell+ unsafe::@ unsafe::integral>
-      self unsafe::>integral cell+ unsafe::@ unsafe::integral> try-equal?
+      other >type force-type = if
+        other unsafe::>integral cell+ unsafe::@ unsafe::integral>
+        self unsafe::>integral cell+ unsafe::@ unsafe::integral> try-equal?
+      else
+        false
+      then
     ;
     
   end-class
