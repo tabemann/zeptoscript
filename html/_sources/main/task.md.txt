@@ -4,10 +4,10 @@ zeptoscript supports cooperative multitasking, distinct from zeptoforth's preemp
 
 ## `zscript-task` words
 
-### `schedule`
+### `spawn`
 ( task -- )
 
-Add a closure or saved state to the task schedule.
+Spawn a task which will execute *task* when executed.
 
 ### `yield`
 ( -- )

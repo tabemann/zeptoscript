@@ -2464,9 +2464,9 @@
         </navPoint>
         <navPoint id="navPoint410" playOrder="394">
           <navLabel>
-            <text>schedule</text>
+            <text>spawn</text>
           </navLabel>
-          <content src="main/task.xhtml#schedule" />  
+          <content src="main/task.xhtml#spawn" />  
         </navPoint>
         <navPoint id="navPoint411" playOrder="395">
           <navLabel>

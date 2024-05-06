@@ -19,10 +19,10 @@
 <p>zeptoscript supports cooperative multitasking, distinct from zeptoforth’s preemptive multitasking. zeptoscript tasks all share a single zeptoforth task and a single zeptoscript heap. zeptoscript tasks execute in a round-robin fashion without priorities. Through the use of saved states each task has practically separate data and return stacks, even though they share their parent zeptoforth task’s data and return stack underneath it all.</p>
 <section id="zscript-task-words">
 <h2><code class="docutils literal notranslate"><span class="pre">zscript-task</span></code> words</h2>
-<section id="schedule">
-<h3><code class="docutils literal notranslate"><span class="pre">schedule</span></code></h3>
+<section id="spawn">
+<h3><code class="docutils literal notranslate"><span class="pre">spawn</span></code></h3>
 <p>( task – )</p>
-<p>Add a closure or saved state to the task schedule.</p>
+<p>Spawn a task which will execute <em>task</em> when executed.</p>
 </section>
 <section id="yield">
 <h3><code class="docutils literal notranslate"><span class="pre">yield</span></code></h3>

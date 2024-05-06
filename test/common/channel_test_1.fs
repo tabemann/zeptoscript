@@ -26,9 +26,9 @@ begin-module test
   : run-test ( -- )
     1 make-chan { my-chan }
     
-    my-chan 1 [: { my-chan } 0 begin dup my-chan send 1+ again ;] bind schedule
-    my-chan 1 [: { my-chan } begin my-chan recv . again ;] bind schedule
-    my-chan 1 [: { my-chan } begin my-chan recv . again ;] bind schedule
+    my-chan 1 [: { my-chan } 0 begin dup my-chan send 1+ again ;] bind spawn
+    my-chan 1 [: { my-chan } begin my-chan recv . again ;] bind spawn
+    my-chan 1 [: { my-chan } begin my-chan recv . again ;] bind spawn
     start
   ;
     

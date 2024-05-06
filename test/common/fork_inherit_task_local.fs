@@ -19,17 +19,36 @@
 \ SOFTWARE.
 
 begin-module test
-
+  
   zscript-task import
-  zscript-chan import
+  zscript-map import
+  
+  symbol foo
+  
+  : make-task-local ( -- )
+    16 ['] symbol>integral ['] = make-map task-local!
+  ;
   
   : run-test ( -- )
-    1 make-chan { my-chan }
-    
-    my-chan 1 [: { my-chan } 0 begin dup my-chan send 2 + again ;] bind spawn
-    my-chan 1 [: { my-chan } 1 begin dup my-chan send 2 + again ;] bind spawn
-    my-chan 1 [: { my-chan } begin my-chan recv . again ;] bind spawn
+    make-task-local
+    0 foo task-local@ insert-map
+    fork not if
+      100 0 ?do foo task-local@ find-map drop . yield loop
+      terminate
+    then
+    make-task-local
+    16 foo task-local@ insert-map
+    fork not if
+      100 0 ?do foo task-local@ find-map drop . yield loop
+      terminate
+    then
+    make-task-local
+    256 foo task-local@ insert-map
+    fork not if
+      100 0 ?do foo task-local@ find-map drop . yield loop
+      terminate
+    then
     start
   ;
-    
+  
 end-module

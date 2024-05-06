@@ -22,6 +22,9 @@ begin-module zscript-task
 
   zscript-queue import
   
+  \ Task local storage
+  global task-local
+  
   begin-module zscript-task-internal
 
     \ Queue is empty exception
@@ -46,35 +49,10 @@ begin-module zscript-task
     \ Dequeue from a queue while raising an exception if empty
     : dequeue ( queue -- ) dequeue averts x-queue-empty ;
     
+    \ Schedule a task
+    : schedule ( task -- ) tasks@ enqueue ;
+    
   end-module> import
-
-  \ Schedule a task, which will begin execution with the specified closure or
-  \ saved state
-  : schedule { task -- }
-    task >type dup xt-type = swap closure-type = or if
-      task 1 [:
-        nip execute
-        tasks@ queue-empty? not if
-          0 tasks@ dequeue execute
-        else
-          0
-        then
-      ;] bind to task
-    then
-    task tasks@ enqueue
-  ;
-
-  \ Yield the current task and execute the first task in the queue unless no
-  \ other tasks are queued, where then execution continues as before
-  : yield ( -- )
-    tasks@ queue-empty? not if
-      [: { current-task }
-        tasks@ dequeue { next-task }
-        current-task schedule
-        0 next-task execute
-      ;] save drop
-    then
-  ;
 
   \ Terminate the current task
   : terminate ( -- )
@@ -84,13 +62,43 @@ begin-module zscript-task
     then
   ;
 
+  \ Spawn a task, with the new task being enqueued for future execution
+  : spawn { task -- }
+    task-local@ { new-task-local }
+    [: { state }
+      true 1 state bind schedule
+      false
+    ;] save if
+      new-task-local task-local!
+      task execute
+      terminate
+    then
+  ;
+
+  \ Yield the current task and execute the first task in the queue unless no
+  \ other tasks are queued, where then execution continues as before
+  : yield ( -- )
+    tasks@ queue-empty? not if
+      task-local@ { current-task-local }
+      [: { current-task }
+        tasks@ dequeue { next-task }
+        current-task schedule
+        0 next-task execute
+      ;] save drop
+      current-task-local task-local!
+    then
+  ;
+
   \ Fork the current task, with the new task being enqueued for future
   \ execution
   : fork ( -- parent? )
+    task-local@ { current-task-local }
     [: { state }
       false 1 state bind schedule
       true
-    ;] save
+    ;] save dup not if
+      current-task-local task-local!
+    then
   ;
 
   \ Start execution of the first enqueued task; note that this word does not
@@ -98,6 +106,7 @@ begin-module zscript-task
   : start ( -- )
     started?@ not if
       true started?!
+      task-local@ { current-task-local }
       begin tasks@ queue-empty? not while
         [: { current-task }
           tasks@ dequeue { next-task }
@@ -105,6 +114,7 @@ begin-module zscript-task
           0 next-task execute
         ;] save drop
       repeat
+      current-task-local task-local!
     then
     false started?!
   ;
@@ -119,11 +129,13 @@ begin-module zscript-task
   \ Block a task in a queue
   : block { queue -- }
     tasks@ queue-empty? not if
+      task-local@ { current-task-local }
       queue [: { queue state }
         tasks@ dequeue { next-task }
         state queue enqueue
         0 next-task execute
       ;] save 2drop
+      current-task-local task-local!
     then
   ;
 
