@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Asymmetric coroutines</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/epub.css" /> 
+  </head><body>
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <section id="asymmetric-coroutines">
+<h1>Asymmetric coroutines</h1>
+<p>zeptoscript has optional support for <em>asymmetric</em> coroutines, as contrasted with zeptoscript tasks, which are <em>symmetric</em> coroutines. Asymmetric coroutines are explicitly suspended and resumed, and in particular specific coroutines are resumed, with data being passed to them, and when coroutines are suspended they transfer both control and data back to what had resumed them.</p>
+<p>Coroutines start out in a <em>suspended</em> state, and only suspended coroutines can be resumed. Coroutines stay in a <em>running</em> state after having resumed another coroutine. When coroutines reach the end of the execution token for which they were initially created, they are then <em>dead</em> and can no longer be resumed.</p>
+<p>There is coroutine-local state that is globally accessible within a coroutine. Coroutines initially inherit the coroutine-local state’s value when they are created. Note that there is a global coroutine-local state outside of any coroutines that is used for initializing the coroutine-local states of new coroutines created outside of any coroutine.</p>
+<p>An example of coroutines in action, in this case generating the Fibonacci sequence, is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>zscript-coroutine import
+
+: fibonacci-coroutine ( -- coroutine )
+  [:
+    drop
+    0 1 { x y }
+    x suspend drop
+    y suspend drop
+    begin
+      x y +
+      y to x
+      to y
+      y suspend drop
+    again
+  ;] make-coroutine
+;
+
+: run-test ( -- )
+  fibonacci-coroutine { co }
+  25 0 ?do 0 co resume . loop
+;
+</pre></div>
+</div>
+<p>Executing <code class="docutils literal notranslate"><span class="pre">run-test</span></code> outputs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">5</span> <span class="mi">8</span> <span class="mi">13</span> <span class="mi">21</span> <span class="mi">34</span> <span class="mi">55</span> <span class="mi">89</span> <span class="mi">144</span> <span class="mi">233</span> <span class="mi">377</span> <span class="mi">610</span> <span class="mi">987</span> <span class="mi">1597</span> <span class="mi">2584</span> <span class="mi">4181</span> <span class="mi">6765</span> <span class="mi">10946</span> <span class="mi">17711</span> <span class="mi">28657</span> <span class="mi">46368</span>  <span class="n">ok</span>
+</pre></div>
+</div>
+<p>Another example of coroutines in action is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">zscript</span><span class="o">-</span><span class="n">coroutine</span> <span class="kn">import</span>
+
+<span class="p">:</span> <span class="n">run</span><span class="o">-</span><span class="n">test</span>
+  <span class="p">[:</span>
+    <span class="o">.</span>
+    <span class="p">[:</span>
+      <span class="o">.</span>
+      <span class="o">-</span><span class="mi">1</span> <span class="n">suspend</span> <span class="o">.</span>
+      <span class="o">-</span><span class="mi">2</span> <span class="n">suspend</span> <span class="o">.</span>
+      <span class="o">-</span><span class="mi">3</span> <span class="n">suspend</span> <span class="o">.</span>
+      <span class="o">-</span><span class="mi">4</span>
+    <span class="p">;]</span> <span class="n">make</span><span class="o">-</span><span class="n">coroutine</span> <span class="p">{</span> <span class="n">co</span> <span class="p">}</span>
+    <span class="mi">256</span> <span class="n">co</span> <span class="n">resume</span> <span class="o">.</span>
+    <span class="o">-</span><span class="mi">256</span> <span class="n">suspend</span> <span class="o">.</span>
+    <span class="mi">257</span> <span class="n">co</span> <span class="n">resume</span> <span class="o">.</span>
+    <span class="o">-</span><span class="mi">257</span> <span class="n">suspend</span> <span class="o">.</span>
+    <span class="mi">258</span> <span class="n">co</span> <span class="n">resume</span> <span class="o">.</span>
+    <span class="o">-</span><span class="mi">258</span> <span class="n">suspend</span> <span class="o">.</span>
+    <span class="o">-</span><span class="mi">259</span>
+  <span class="p">;]</span> <span class="n">make</span><span class="o">-</span><span class="n">coroutine</span> <span class="p">{</span> <span class="n">co</span> <span class="p">}</span>
+  <span class="mi">0</span> <span class="n">co</span> <span class="n">resume</span> <span class="o">.</span>
+  <span class="mi">1</span> <span class="n">co</span> <span class="n">resume</span> <span class="o">.</span>
+  <span class="mi">2</span> <span class="n">co</span> <span class="n">resume</span> <span class="o">.</span>
+  <span class="mi">3</span> <span class="n">co</span> <span class="n">resume</span> <span class="o">.</span>
+  <span class="mi">4</span> <span class="n">co</span> <span class="n">resume</span> <span class="o">.</span>
+<span class="p">;</span>
+</pre></div>
+</div>
+<p>Executing <code class="docutils literal notranslate"><span class="pre">run-test</span></code> outputs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">0</span> <span class="mi">256</span> <span class="o">-</span><span class="mi">1</span> <span class="o">-</span><span class="mi">256</span> <span class="mi">1</span> <span class="mi">257</span> <span class="o">-</span><span class="mi">2</span> <span class="o">-</span><span class="mi">257</span> <span class="mi">2</span> <span class="mi">258</span> <span class="o">-</span><span class="mi">3</span> <span class="o">-</span><span class="mi">258</span> <span class="mi">3</span> <span class="o">-</span><span class="mi">259</span> <span class="n">coroutine</span> <span class="ow">is</span> <span class="n">dead</span>
+</pre></div>
+</div>
+<section id="zscript-coroutine-words">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-coroutine</span></code> words</h2>
+<section id="make-coroutine">
+<h3><code class="docutils literal notranslate"><span class="pre">make-coroutine</span></code></h3>
+<p>( xt – coroutine )</p>
+<p>Create a coroutine with an execution token. Note that this coroutine will inherit the current coroutine-local state.</p>
+</section>
+<section id="suspend">
+<h3><code class="docutils literal notranslate"><span class="pre">suspend</span></code></h3>
+<p>( x – x’ )</p>
+<p>Suspend the current coroutine, passing <em>x</em> to that which resumed it, and then returning <em>x’</em> passed in next time it is resumed.</p>
+</section>
+<section id="resume">
+<h3><code class="docutils literal notranslate"><span class="pre">resume</span></code></h3>
+<p>( x coroutine – x’ )</p>
+<p>Resume a coroutine, passing in <em>x</em>, and then returning <em>x’</em> passed in next time it is suspended.</p>
+</section>
+<section id="current-coroutine">
+<h3><code class="docutils literal notranslate"><span class="pre">current-coroutine</span></code></h3>
+<p>( – coroutine )</p>
+<p>Get the current coroutine.</p>
+</section>
+<section id="coroutine-state">
+<h3><code class="docutils literal notranslate"><span class="pre">coroutine-state&#64;</span></code></h3>
+<p>( coroutine – state )</p>
+<p>Get the state of a coroutine.</p>
+</section>
+<section id="coroutine-local">
+<h3><code class="docutils literal notranslate"><span class="pre">coroutine-local&#64;</span></code></h3>
+<p>( – x )</p>
+<p>Get the current coroutine-local state. Note that this can be called outside of a coroutine, as there is a global not-in-coroutine state that is used for initializing the coroutine-local states of new coroutines.</p>
+</section>
+<section id="id1">
+<h3><code class="docutils literal notranslate"><span class="pre">coroutine-local!</span></code></h3>
+<p>( x – )</p>
+<p>Set the current coroutine-local state. Note that this can be called outside of a coroutine, as there is a global not-in-coroutine state that is used for initializing the coroutine-local states of new coroutines.</p>
+</section>
+<section id="suspended">
+<h3><code class="docutils literal notranslate"><span class="pre">suspended</span></code></h3>
+<p>( – state )</p>
+<p>Suspended coroutine state.</p>
+</section>
+<section id="running">
+<h3><code class="docutils literal notranslate"><span class="pre">running</span></code></h3>
+<p>( – state )</p>
+<p>Running coroutine state.</p>
+</section>
+<section id="dead">
+<h3><code class="docutils literal notranslate"><span class="pre">dead</span></code></h3>
+<p>( – dead )</p>
+<p>Dead coroutine state.</p>
+</section>
+<section id="x-not-in-coroutine">
+<h3><code class="docutils literal notranslate"><span class="pre">x-not-in-coroutine</span></code></h3>
+<p>( – )</p>
+<p>Not in coroutine exception.</p>
+</section>
+<section id="x-dead-coroutine">
+<h3><code class="docutils literal notranslate"><span class="pre">x-dead-coroutine</span></code></h3>
+<p>( – )</p>
+<p>Attempted to resume a dead coroutine exception.</p>
+</section>
+<section id="x-running-coroutine">
+<h3><code class="docutils literal notranslate"><span class="pre">x-running-coroutine</span></code></h3>
+<p>( – )</p>
+<p>Attempted to resume a running coroutine exception.</p>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

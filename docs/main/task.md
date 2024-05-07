@@ -44,7 +44,17 @@ If there are any tasks ready to execute, enqueue the current task into the queue
 
 Wait for *delay* ticks after *start-time* ticks.
 
-### `ms` -- )
+### `ms`
 ( ms -- )
 
 Wait for *ms* milliseconds
+
+### `task-local@`
+( -- task-local )
+
+Get task-local state.
+
+### `task-local!`
+( task-local -- )
+
+Set task-local state.

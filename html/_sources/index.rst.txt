@@ -13,5 +13,6 @@ zeptoscript Documentation
    main/queue
    main/task
    main/channel
+   main/coroutine
    main/action
    
