@@ -4293,6 +4293,66 @@ begin-module zscript
     unsafe::bytes>addr-len 2integral> internal::constant-with-name
   ;
 
+  continue-module unsafe
+
+    \ Write a cell to the dictionary
+    : , ( x -- )
+      unsafe::here [ 3 >small-int ] forth::literal
+      and triggers x-unaligned-access
+      integral> forth::,
+    ;
+
+    \ Write a halfword to the dictionary
+    : h, ( h -- )
+      unsafe::here [ 1 >small-int ] forth::literal
+      and triggers x-unaligned-access
+      integral> forth::h,
+    ;
+
+    \ Write a byte to the dictionary
+    : c, ( c -- )
+      integral> forth::c,
+    ;
+
+    \ Write a cell at an arbitrary address to the dictionary
+    : current! ( x addr -- )
+      dup [ 3 >small-int ] forth::literal and triggers x-unaligned-access
+      2integral> forth::current!
+    ;
+
+    \ Write a halfword at an arbitrary address to the dictionary
+    : hcurrent! ( h addr -- )
+      dup [ 1 >small-int ] forth::literal and triggers x-unaligned-access
+      2integral> forth::hcurrent!
+    ;
+
+    \ Write a byte at an arbitrary address to the dictionary
+    : ccurrent! ( c addr -- )
+      2integral> forth::ccurrent!
+    ;
+
+    \ Align space in a constant byte sequence
+    : align, ( size -- )
+      integral> forth::align,
+    ;
+
+    \ Reserve a cell
+    : reserve ( -- addr )
+      forth::reserve >integral
+    ;
+
+    \ Reserve a halfword
+    : hreserve ( -- addr )
+      forth::hreserve >integral
+    ;
+
+    \ Reserve a byte
+    : creserve ( -- addr )
+      forth::creserve >integral
+    ;
+
+end-module
+
   \ Write a cell to a constant byte sequence
   : , ( x -- )
     syntax-const-bytes internal::verify-syntax
@@ -4360,6 +4420,7 @@ begin-module zscript
   
   true >small-int constant true
   false >small-int constant false
+  type-shift >small-int constant type-shift
   : [: [immediate] postpone [: ;
   : \ [immediate] postpone \ ;
   : ( [immediate] postpone ( ;
@@ -4381,8 +4442,6 @@ begin-module zscript
   : over [inlined] forth::over ;
   : rot [inlined] forth::rot ;
   : -rot [inlined] forth::-rot ;
-  : pick [inlined] forth::pick ;
-  : roll [inlined] forth::roll ;
   : nip [inlined] forth::nip ;
   : tuck [inlined] forth::tuck ;
   : 2drop [inlined] forth::2drop ;
@@ -4391,6 +4450,7 @@ begin-module zscript
   : 2dup [inlined] forth::2dup ;
   : 2nip [inlined] forth::2nip ;
   : 2tuck [inlined] forth::2tuck ;
+  : bit integral> forth::bit >integral ;
   : emit integral> forth::emit ;
   : emit? forth::emit? >integral ;
   : space forth::space ;

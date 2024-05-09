@@ -20,7 +20,7 @@
 
 begin-module zscript-oo
 
-  forth::armv6m import
+  zscript-armv6m import
 
   \ Types
   9 constant class-type
@@ -51,21 +51,6 @@ begin-module zscript-oo
 
     \ Verify syntax
     1 0 foreign internal::verify-syntax verify-syntax
-
-    \ Write a cell to the current dictionary
-    2 0 foreign forth::current! current!
-
-    \ Reserve a cell
-    0 1 foreign forth::reserve reserve
-    
-    \ Write a word to the dictionary
-    1 0 foreign forth::, ,
-
-    \ Write a halfword to the dictionary
-    1 0 foreign forth::h, h,
-
-    \ Align the dictionary
-    1 0 foreign forth::align, align,
 
     \ Get the current wordlist
     0 1 foreign forth::get-current get-current
@@ -121,21 +106,21 @@ begin-module zscript-oo
       rot
       code[
       0 tos r0 ldr_,[_,#_]
-      type-shift unsafe::integral> r0 r0 lsrs_,_,#_
-      object-type 2 - unsafe::integral> r0 cmp_,#_
+      type-shift r0 r0 lsrs_,_,#_
+      object-type 2 - r0 cmp_,#_
       ne bc>
-      r0 1 unsafe::integral> dp ldm
-      cell unsafe::integral> tos r1 ldr_,[_,#_]
-      cell unsafe::integral> r1 r1 ldr_,[_,#_]
+      r0 1 dp ldm
+      cell tos r1 ldr_,[_,#_]
+      cell r1 r1 ldr_,[_,#_]
       r1 r0 cmp_,_
       ne bc>
-      r1 1 unsafe::integral> dp ldm
+      r1 1 dp ldm
       r1 tos tos adds_,_,_
-      pc 1 unsafe::integral> pop
+      pc 1 pop
       >mark
       0 tos movs_,#_
       b>
-      2swap
+      swap
       >mark
       0 tos movs_,#_
       tos tos mvns_,_
@@ -150,15 +135,15 @@ begin-module zscript-oo
       code[
       0 tos cmp_,#_
       eq bc>
-      1 unsafe::integral> r0 movs_,#_
+      1 r0 movs_,#_
       r0 tos tst_,_
       ne bc>
       0 tos r0 ldr_,[_,#_]
-      type-shift unsafe::integral> r0 r0 lsrs_,_,#_
-      object-type 2 - unsafe::integral> r0 cmp_,#_
+      type-shift r0 r0 lsrs_,_,#_
+      object-type 2 - r0 cmp_,#_
       ne bc>
-      cell unsafe::integral> tos tos ldr_,[_,#_]
-      pc 1 unsafe::integral> pop
+      cell tos tos ldr_,[_,#_]
+      pc 1 pop
       >mark
       >mark
       >mark
@@ -179,27 +164,27 @@ begin-module zscript-oo
     \ Look up and execute a method
     : execute-method ( ? class method-id -- ? )
       code[
-      r0 1 unsafe::integral> dp ldm
+      r0 1 dp ldm
       0 r0 r1 ldr_,[_,#_]
-      32 type-shift - unsafe::integral> r1 r1 lsls_,_,#_
-      32 type-shift - 1+ unsafe::integral> r1 r1 lsrs_,_,#_
-      2 cells 1+ unsafe::integral> r1 subs_,#_
-      2 cells unsafe::integral> r0 adds_,#_
-      3 unsafe::integral> tos r2 lsls_,_,#_
+      32 type-shift - r1 r1 lsls_,_,#_
+      32 type-shift - 1+ r1 r1 lsrs_,_,#_
+      2 cells 1+ r1 subs_,#_
+      2 cells r0 adds_,#_
+      3 tos r2 lsls_,_,#_
       mark>
       r1 r2 ands_,_
       r0 r2 r3 ldr_,[_,_]
       tos r3 cmp_,_
       ne bc>
-      cell unsafe::integral> r2 adds_,#_
+      cell r2 adds_,#_
       r0 r2 r3 ldr_,[_,_]
-      tos 1 unsafe::integral> dp ldm
+      tos 1 dp ldm
       r3 bx_
       >mark
       0 r3 cmp_,#_
       eq bc>
-      2 cells unsafe::integral> r2 adds_,#_
-      2swap
+      2 cells r2 adds_,#_
+      swap
       b<
       >mark
       ]code
@@ -221,8 +206,8 @@ begin-module zscript-oo
       postpone dup
       postpone prepare-method
       id raw-lit, postpone execute-method
-      pop-pc h,
-      cell align, method-id-marker , id , end-compile,
+      pop-pc unsafe::h,
+      cell unsafe::align, method-id-marker unsafe::, id unsafe::, end-compile,
     ;
 
     \ Get a method ID
@@ -316,8 +301,8 @@ begin-module zscript-oo
         method-index 1+ table-size 1- and to method-index
       repeat
       method-index 2* cells class-table + { method-addr }
-      method-rec method-id@ method-addr current!
-      method-rec method-code@ 1 or method-addr cell+ current!
+      method-rec method-id@ method-addr unsafe::current!
+      method-rec method-code@ 1 or method-addr cell+ unsafe::current!
     ;
 
     \ Generate methods
@@ -327,8 +312,9 @@ begin-module zscript-oo
       unsafe::here { class-table }
       table-size 2* cells [ 2 cells ] literal + unsafe::allot
       class-type 2 - type-shift lshift
-      table-size 2* cells [ 2 cells ] literal + 1 lshift or class-table current!
-      class-rec class-id@ class-table cell+ current!
+      table-size 2* cells [ 2 cells ] literal + 1 lshift or class-table
+      unsafe::current!
+      class-rec class-id@ class-table cell+ unsafe::current!
       compiling-to-flash? not if
         class-table [ 2 cells ] literal + table-size 2* cells $FF unsafe::fill
       then
@@ -336,8 +322,8 @@ begin-module zscript-oo
       2 ['] generate-method bind iter
       class-table [ 2 cells ] literal + dup table-size 2* cells + swap ?do
         i unsafe::@ $FFFFFFFF = if
-          0 i current!
-          0 i cell+ current!
+          0 i unsafe::current!
+          0 i cell+ unsafe::current!
         then
       [ 2 cells ] literal +loop
       class-table class-rec class-addr!
@@ -394,14 +380,14 @@ begin-module zscript-oo
   : begin-class ( "name" -- class-rec )
     token dup 0<> averts x-token-expected
     s" make-" swap concat start-compile visible
-    [ armv6m-instr import ]
+    [ zscript-armv6m-instr import ]
     r0 ldr_,[pc]
     r0 blx_
-    pc 1 unsafe::integral> pop
-    cell align,
+    pc 1 pop
+    cell unsafe::align,
     >mark
-    reserve
-    [ armv6m-instr unimport ]
+    unsafe::reserve
+    [ zscript-armv6m-instr unimport ]
     end-compile,
     0 get-next-class-id 0cells 0 0 -1 >class-record
     syntax-class push-syntax
@@ -471,7 +457,7 @@ begin-module zscript-oo
     class-rec class-addr@ unsafe::integral> { our-class }
     class-rec class-type@ dup { type } -1 = if
       forth:::noname unsafe::>integral
-      1 or class-rec class-construct@ current!
+      1 or class-rec class-construct@ unsafe::current!
       class-rec class-member-count@ lit,
       our-class unsafe::>integral raw-lit,
       postpone make-object
