@@ -381,6 +381,11 @@
 <p>( – bytes )</p>
 <p>Get the number of bytes free in the heap. Note that this specifically does not run the garbage collector, so to get a good picture of how much space is really available run <code class="docutils literal notranslate"><span class="pre">gc</span></code> first.</p>
 </section>
+<section id="ensure">
+<h3><code class="docutils literal notranslate"><span class="pre">ensure</span></code><a class="headerlink" href="#ensure" title="Permalink to this heading">¶</a></h3>
+<p>( bytes – )</p>
+<p>Ensure that <em>bytes</em> will be available for allocation in the heap without triggering a garbage collection cycle. The primary purpose of this is to avoid things like fixed addresses changing before they can be used.</p>
+</section>
 <section id="copy">
 <h3><code class="docutils literal notranslate"><span class="pre">copy</span></code><a class="headerlink" href="#copy" title="Permalink to this heading">¶</a></h3>
 <p>( value0 offset0 value1 offset1 count – )</p>
@@ -1333,6 +1338,16 @@
 <p>( bytes – addr len )</p>
 <p>Get the starting address and length of a byte sequence or slice. Note that these are not guaranteed to remain constant with any subsequent allocations that may trigger the garbage collector.</p>
 </section>
+<section id="bytes-buffer">
+<h3><code class="docutils literal notranslate"><span class="pre">bytes&gt;buffer</span></code><a class="headerlink" href="#bytes-buffer" title="Permalink to this heading">¶</a></h3>
+<p>( bytes offset dest-address count – }</p>
+<p>Copy <em>count</em> bytes starting at <em>offset</em> in <em>bytes</em> to a buffer starting at <em>dest-address</em>.</p>
+</section>
+<section id="buffer-bytes">
+<h3><code class="docutils literal notranslate"><span class="pre">buffer&gt;bytes</span></code><a class="headerlink" href="#buffer-bytes" title="Permalink to this heading">¶</a></h3>
+<p>( src-address bytes offset count – )</p>
+<p>Copy <em>count</em> bytes from a buffer starting at <em>src-address</em> to <em>offset</em> in <em>bytes</em>.</p>
+</section>
 <section id="id79">
 <h3><code class="docutils literal notranslate"><span class="pre">&#64;</span></code><a class="headerlink" href="#id79" title="Permalink to this heading">¶</a></h3>
 <p>( addr – x )</p>
@@ -1486,7 +1501,37 @@
 <section id="allot">
 <h3><code class="docutils literal notranslate"><span class="pre">allot</span></code><a class="headerlink" href="#allot" title="Permalink to this heading">¶</a></h3>
 <p>( x – )</p>
-<p>ALLOT space.</p>
+<p>Allot space.</p>
+</section>
+<section id="ram-here">
+<h3><code class="docutils literal notranslate"><span class="pre">ram-here</span></code><a class="headerlink" href="#ram-here" title="Permalink to this heading">¶</a></h3>
+<p>( – x )</p>
+<p>Get the RAM HERE pointer.</p>
+</section>
+<section id="id97">
+<h3><code class="docutils literal notranslate"><span class="pre">ram-here!</span></code><a class="headerlink" href="#id97" title="Permalink to this heading">¶</a></h3>
+<p>( x – )</p>
+<p>Set the RAM HERE pointer.</p>
+</section>
+<section id="ram-allot">
+<h3><code class="docutils literal notranslate"><span class="pre">ram-allot</span></code><a class="headerlink" href="#ram-allot" title="Permalink to this heading">¶</a></h3>
+<p>( x – )</p>
+<p>Allot space in the RAM dictionary.</p>
+</section>
+<section id="flash-here">
+<h3><code class="docutils literal notranslate"><span class="pre">flash-here</span></code><a class="headerlink" href="#flash-here" title="Permalink to this heading">¶</a></h3>
+<p>( – x )</p>
+<p>Get the flash HERE pointer.</p>
+</section>
+<section id="id98">
+<h3><code class="docutils literal notranslate"><span class="pre">flash-here!</span></code><a class="headerlink" href="#id98" title="Permalink to this heading">¶</a></h3>
+<p>( x – )</p>
+<p>Set the flash HERE pointer.</p>
+</section>
+<section id="flash-allot">
+<h3><code class="docutils literal notranslate"><span class="pre">flash-allot</span></code><a class="headerlink" href="#flash-allot" title="Permalink to this heading">¶</a></h3>
+<p>( x – )</p>
+<p>Allot space in the flash dictionary.</p>
 </section>
 </section>
 </section>
@@ -1518,6 +1563,7 @@
 <li class="toctree-l1"><a class="reference internal" href="queue.html">Queues</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task.html">Tasks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="channel.html">Channels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coroutine.html">Asymmetric coroutines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="action.html">Actions</a></li>
 </ul>
 

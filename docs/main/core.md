@@ -362,6 +362,11 @@ Trigger the garbage collector.
 
 Get the number of bytes free in the heap. Note that this specifically does not run the garbage collector, so to get a good picture of how much space is really available run `gc` first.
 
+### `ensure`
+( bytes -- )
+
+Ensure that *bytes* will be available for allocation in the heap without triggering a garbage collection cycle. The primary purpose of this is to avoid things like fixed addresses changing before they can be used.
+
 ### `copy`
 ( value0 offset0 value1 offset1 count -- )
 
@@ -1312,6 +1317,16 @@ Empty byte sequence.
 ( bytes -- addr len )
 
 Get the starting address and length of a byte sequence or slice. Note that these are not guaranteed to remain constant with any subsequent allocations that may trigger the garbage collector.
+
+### `bytes>buffer`
+( bytes offset dest-address count -- }
+
+Copy *count* bytes starting at *offset* in *bytes* to a buffer starting at *dest-address*.
+
+### `buffer>bytes`
+( src-address bytes offset count -- )
+
+Copy *count* bytes from a buffer starting at *src-address* to *offset* in *bytes*.
     
 ### `@`
 ( addr -- x )
@@ -1466,4 +1481,34 @@ Get the HERE pointer.
 ### `allot`
 ( x -- )
 
-ALLOT space.
+Allot space.
+
+### `ram-here`
+( -- x )
+
+Get the RAM HERE pointer.
+
+### `ram-here!`
+( x -- )
+
+Set the RAM HERE pointer.
+
+### `ram-allot`
+( x -- )
+
+Allot space in the RAM dictionary.
+
+### `flash-here`
+( -- x )
+
+Get the flash HERE pointer.
+
+### `flash-here!`
+( x -- )
+
+Set the flash HERE pointer.
+
+### `flash-allot`
+( x -- )
+
+Allot space in the flash dictionary.
