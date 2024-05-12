@@ -25,6 +25,7 @@ begin-module test
   zscript-bitmap-utils import
   zscript-ssd1306 import
   zscript-double import
+  zscript-queue import
 
   128 constant display-width
   64 constant display-height
@@ -46,7 +47,7 @@ begin-module test
     my-ssd1306 clear-bitmap
     my-ssd1306 update-display
     
-    zscript-queue::make-queue { my-queue }
+    make-queue { my-queue }
     
     begin key? not while
 
@@ -54,7 +55,7 @@ begin-module test
       display-height random-scaled
       display-width display-height max random-scaled >triple { my-triple }
 
-      my-triple my-queue zscript-queue::enqueue
+      my-triple my-queue enqueue
       
       $FF
       my-triple triple>
@@ -62,9 +63,9 @@ begin-module test
       my-ssd1306
       draw-filled-circle
       
-      my-queue zscript-queue::queue-size 10 > if
+      my-queue queue-size 10 > if
         $FF
-        my-queue zscript-queue::dequeue drop triple>
+        my-queue dequeue drop triple>
         op-xor
         my-ssd1306
         draw-filled-circle
