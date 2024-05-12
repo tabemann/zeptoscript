@@ -43,10 +43,6 @@ begin-module zscript-bitmap
   \ Invalid operation exception
   : x-invalid-op ( -- ) ." invalid drawing operation" cr ;
 
-  begin-module zscript-bitmap-internal
-    
-  end-module
-
   \ Clear the dirty rectnagle
   method clear-dirty ( bitmap -- )
   
