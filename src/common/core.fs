@@ -523,7 +523,7 @@ begin-module zscript
     \ Allocate a word
     : >big-int { x -- addr }
       to-space-current@ [ 2 cells ] literal + to-space-top@ > if
-        x dup 1 and { lowest }
+        x 1 and { lowest }
         x 1 or to x
         gc
         x 1 bic lowest or to x
