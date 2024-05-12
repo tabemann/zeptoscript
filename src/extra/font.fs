@@ -35,6 +35,12 @@ begin-module zscript-font
   \ Draw a string onto a bitmap
   method draw-string ( c-addr u col row op bitmap font -- )
 
+  \ Get the size of a character
+  method char-dim@ ( c font -- cols rows )
+
+  \ Get the size of a string
+  method string-dim@ ( bytes self -- cols rows )
+
   begin-class font
 
     \ The backing bitmap
@@ -102,6 +108,16 @@ begin-module zscript-font
       ;] bind iteri
     ;
 
+    \ Get the size of a character
+    :method char-dim@ { c self -- cols rows }
+      self char-cols@ self char-rows@
+    ;
+
+    \ Get the size of a string
+    :method string-dim@ { bytes self -- cols rows }
+      bytes >len self char-cols@ * self char-rows@
+    ;
+    
   end-class
   
 end-module

@@ -1022,6 +1022,16 @@ begin-module zscript-simple-font
       my-font@ draw-string
     ;
 
+    \ Get the size of a character
+    :method char-dim@ ( c self -- cols rows )
+      my-font@ char-dim@
+    ;
+
+    \ Get the size of a string
+    :method string-dim@ ( bytes self -- cols rows )
+      my-font@ string-dim@
+    ;
+
   end-class
 
 end-module
