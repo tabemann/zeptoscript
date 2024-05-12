@@ -20,6 +20,11 @@
 
 begin-module test
 
+  zscript-oo import
+  zscript-bitmap import
+  zscript-bitmap-utils import
+  zscript-ssd1306 import
+  
   128 constant display-width
   64 constant display-height
   1 constant i2c-device
