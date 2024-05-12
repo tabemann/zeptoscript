@@ -404,14 +404,14 @@ begin-module zscript-double
   \ Parse an S31.32 fixed-point number
   : parse-fixed ( bytes -- f64 success? )
     unsafe::bytes>addr-len zscript-internal::2integral> forth::parse-fixed
-    5 cells zscript-internal::ensure
+    5 cells ensure
     zscript-internal::>integral -rot zscript-internal::>double swap
   ;
 
   \ Parse a double number
   : parse-double ( bytes -- dvalue success? )
     unsafe::bytes>addr-len zscript-internal::2integral> forth::parse-double
-    5 cells zscript-internal::ensure
+    5 cells ensure
     zscript-internal::>integral -rot zscript-internal::>double swap
   ;
 

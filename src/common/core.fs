@@ -883,6 +883,10 @@ begin-module zscript
   ref-type constant ref-type
   force-type constant force-type
   
+  \ Ensure that a number of bytes are available in the heap without using said
+  \ bytes triggering GC
+  : ensure ( bytes -- ) ensure ;
+  
   \ Get the raw LIT,
   : raw-lit, ( x -- ) integral> lit, ;
   
@@ -1974,6 +1978,11 @@ begin-module zscript
     integral> 0>=
   ;
 
+  \ Get the absolute value of a number
+  : abs ( n -- u )
+    integral> abs >integral
+  ;
+
   \ Get the minimum of two numbers
   : min ( n0 n1 -- n2 )
     integral> swap integral> min >integral
@@ -2461,19 +2470,54 @@ begin-module zscript
     \ Get the address and size of a bytes or constant bytes value
     : bytes>addr-len ( value -- addr len )
       dup bytes? averts x-incorrect-type
-      [ 4 forth::cells >small-int ] literal ensure
       dup >len { len }
       dup >raw-offset { offset }
       >raw dup >type case
         bytes-type of
+          [ 4 forth::cells >small-int ] literal ensure
           forth::cell+ >integral offset +
         endof
         const-bytes-type of
+          [ 4 forth::cells >small-int ] literal ensure
           forth::cell+ @ >integral offset +
         endof
         ['] x-incorrect-type ?raise
       endcase
       len
+    ;
+
+    \ Move data from a bytes or constant bytes value into a buffer safely
+    : bytes>buffer { bytes offset dest count -- }
+      bytes bytes? averts x-incorrect-type
+      bytes >len { len }
+      offset count + len <= averts x-offset-out-of-range
+      bytes >raw-offset offset + { src-offset }
+      bytes >raw dup >type case
+        bytes-type of
+          forth::cell+ src-offset integral> forth::+ dest integral>
+          count integral> forth::move
+        endof
+        const-bytes-type of
+          forth::cell+ forth::@ src-offset integral> forth::+ dest integral>
+          count integral> forth::move
+        endof
+        ['] x-incorrect-type ?raise
+      endcase
+    ;
+
+    \ Move data from a buffer to a bytes value safely
+    : buffer>bytes { src bytes offset count -- }
+      bytes bytes? averts x-incorrect-type
+      bytes >len { len }
+      offset count + len <= averts x-offset-out-of-range
+      bytes >raw-offset offset + { dest-offset }
+      bytes >raw dup >type case
+        bytes-type of
+          src integral> forth::cell+ dest-offset integral> forth::+
+          count integral> forth::move
+        endof
+        ['] x-incorrect-type ?raise
+      endcase
     ;
     
     \ Redefine @
@@ -2667,6 +2711,24 @@ begin-module zscript
 
     \ ALLOT space
     : allot ( x -- ) integral> allot ;
+
+    \ Get the RAM HERE pointer
+    : ram-here ( -- x ) ram-here >integral ;
+
+    \ Set the RAM HERE pointer
+    : ram-here! ( x -- ) integral> ram-here! ;
+    
+    \ ALLOT RAM space
+    : ram-allot ( x -- ) integral> ram-allot ;
+
+    \ Get the flash HERE pointer
+    : flash-here ( -- x ) flash-here >integral ;
+    
+    \ Set the flash HERE pointer
+    : flash-here! ( x -- ) integral> flash-here! ;
+    
+    \ ALLOT flash space
+    : flash-allot ( x -- ) integral> flash-allot ;
 
   end-module
 
@@ -4312,6 +4374,44 @@ begin-module zscript
     \ Write a byte to the dictionary
     : c, ( c -- )
       integral> forth::c,
+    ;
+
+    \ Write a cell to the RAM dictionary
+    : ram, ( x -- )
+      unsafe::ram-here [ 3 >small-int ] forth::literal
+      and triggers x-unaligned-access
+      integral> forth::ram,
+    ;
+
+    \ Write a halfword to the RAM dictionary
+    : hram, ( h -- )
+      unsafe::ram-here [ 1 >small-int ] forth::literal
+      and triggers x-unaligned-access
+      integral> forth::hram,
+    ;
+
+    \ Write a byte to the RAM dictionary
+    : cram, ( c -- )
+      integral> forth::cram,
+    ;
+
+    \ Write a cell to the flash dictionary
+    : flash, ( x -- )
+      unsafe::flash-here [ 3 >small-int ] forth::literal
+      and triggers x-unaligned-access
+      integral> forth::flash,
+    ;
+
+    \ Write a halfword to the flash dictionary
+    : hflash, ( h -- )
+      unsafe::flash-here [ 1 >small-int ] forth::literal
+      and triggers x-unaligned-access
+      integral> forth::hflash,
+    ;
+
+    \ Write a byte to the flash dictionary
+    : cflash, ( c -- )
+      integral> forth::cflash,
     ;
 
     \ Write a cell at an arbitrary address to the dictionary
