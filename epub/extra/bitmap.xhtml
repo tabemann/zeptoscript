@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Bitmaps, fonts, and displays</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/epub.css" /> 
+  </head><body>
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <section id="bitmaps-fonts-and-displays">
+<h1>Bitmaps, fonts, and displays</h1>
+<p>zeptoscript comes with functionality for drawing on and copying between bitmaps and displays and for drawing characters and text on bitmaps with fonts.</p>
+<section id="zscript-bitmap-words">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-bitmap</span></code> words</h2>
+<section id="op-set">
+<h3><code class="docutils literal notranslate"><span class="pre">op-set</span></code></h3>
+<p>Set pixels operation.</p>
+</section>
+<section id="op-or">
+<h3><code class="docutils literal notranslate"><span class="pre">op-or</span></code></h3>
+<p>Or pixels operation.</p>
+</section>
+<section id="op-and">
+<h3><code class="docutils literal notranslate"><span class="pre">op-and</span></code></h3>
+<p>And pixels operation.</p>
+</section>
+<section id="op-bic">
+<h3><code class="docutils literal notranslate"><span class="pre">op-bic</span></code></h3>
+<p>Bit-clear pixels operation</p>
+</section>
+<section id="op-xor">
+<h3><code class="docutils literal notranslate"><span class="pre">op-xor</span></code></h3>
+<p>Exclusive-or pixels operation</p>
+</section>
+<section id="make-bitmap">
+<h3><code class="docutils literal notranslate"><span class="pre">make-bitmap</span></code></h3>
+<p>( cols rows – bitmap )</p>
+<p>Create a bitmap with <em>cols</em> and <em>rows</em>.</p>
+</section>
+<section id="clear-dirty">
+<h3><code class="docutils literal notranslate"><span class="pre">clear-dirty</span></code></h3>
+<p>( bitmap – )</p>
+<p>Clear the dirty state of a bitmap.</p>
+</section>
+<section id="dirty">
+<h3><code class="docutils literal notranslate"><span class="pre">dirty?</span></code></h3>
+<p>( bitmap – dirty? )</p>
+<p>Get the dirty state of a bitmap.</p>
+</section>
+<section id="dirty-rect">
+<h3><code class="docutils literal notranslate"><span class="pre">dirty-rect&#64;</span></code></h3>
+<p>( bitmap – start-col start-row end-col end-row )</p>
+<p>Get the dirty rectangle of a bitmap.</p>
+</section>
+<section id="dim">
+<h3><code class="docutils literal notranslate"><span class="pre">dim&#64;</span></code></h3>
+<p>( bitmap – cols rows )</p>
+<p>Get the dimensions of a bitmap.</p>
+</section>
+<section id="clear-bitmap">
+<h3><code class="docutils literal notranslate"><span class="pre">clear-bitmap</span></code></h3>
+<p>( bitmap – )</p>
+<p>Clear a bitmap.</p>
+</section>
+<section id="back-bitmap">
+<h3><code class="docutils literal notranslate"><span class="pre">back-bitmap&#64;</span></code></h3>
+<p>( bitmap – bitmap’ )</p>
+<p>Get the real backing bitmap for an object implementing the bitmap API.</p>
+</section>
+<section id="pixel">
+<h3><code class="docutils literal notranslate"><span class="pre">pixel&#64;</span></code></h3>
+<p>( col row bitmap – state )</p>
+<p>Get whether a pixel at <em>col</em> and <em>row</em> in a bitmap is set.</p>
+</section>
+<section id="draw-pixel-const">
+<h3><code class="docutils literal notranslate"><span class="pre">draw-pixel-const</span></code></h3>
+<p>( pattern dst-col dst-row op dst-bitmap – )</p>
+<p>Draw <em>pattern</em> as an 8-bit vertical pattern using <em>op</em> on <em>dst-bitmap</em> at <em>dst-col</em> and <em>dst-row</em>.</p>
+</section>
+<section id="draw-rect-const">
+<h3><code class="docutils literal notranslate"><span class="pre">draw-rect-const</span></code></h3>
+<p>( pattern start-dst-col start-dst-row cols rows op dst-bitmap – )</p>
+<p>Draw <em>pattern</em> as an 8-bit vertical pattern using <em>op</em> on <em>dst-bitmap</em> as a rectangle starting at <em>start-dst-col</em> and <em>start-dst-row</em> of <em>cols</em> and <em>rows</em> size.</p>
+</section>
+<section id="draw-rect">
+<h3><code class="docutils literal notranslate"><span class="pre">draw-rect</span></code></h3>
+<p>( start-src-col start-src-row start-dst-col start-dst-row cols rows op src-bitmap dst-bitmap – )</p>
+<p>Draw <em>cols</em> by <em>rows</em> pixels from <em>start-src-col</em> and <em>start-src-row</em> in <em>src-bitmap</em> to <em>start-dst-col</em> and <em>start-dst-row</em> in <em>dst-bitmap</em>.</p>
+</section>
+<section id="copy-pixels">
+<h3><code class="docutils literal notranslate"><span class="pre">copy-pixels</span></code></h3>
+<p>( col page dst-address count bitmap – )</p>
+<p>Copy <em>count</em> bytes of <em>bitmap</em> starting at <em>col</em> and an eight-bit-high <em>page</em> (i.e. the row divided by eight) to a buffer at <em>dst-address</em>.</p>
+</section>
+</section>
+<section id="zscript-bitmap-utils-words">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-bitmap-utils</span></code> words</h2>
+<section id="draw-pixel-line">
+<h3><code class="docutils literal notranslate"><span class="pre">draw-pixel-line</span></code></h3>
+<p>( pattern x0 y0 x1 y1 op dst-bitmap – )</p>
+<p>Draw a line from <em>x0</em> and <em>y0</em> to <em>x1</em> and <em>y1</em> on <em>dst-bitmap</em> with <em>op</em> and <em>pattern</em>.</p>
+</section>
+<section id="draw-rect-line">
+<h3><code class="docutils literal notranslate"><span class="pre">draw-rect-line</span></code></h3>
+<p>( pattern width height x0 y0 x1 y1 op dst-bitmap – )</p>
+<p>Draw a rectangle to <em>dst-bitmap</em> with <em>op</em> and <em>pattern</em> along a line from <em>x0</em> and <em>y0</em> to <em>x1</em> and <em>y1</em>.</p>
+</section>
+<section id="draw-bitmap-line">
+<h3><code class="docutils literal notranslate"><span class="pre">draw-bitmap-line</span></code></h3>
+<p>( src-x src-y width height x0 y0 x1 y1 op src-bitmap dst-bitmap – )</p>
+<p>Apply a <em>src-x</em> and <em>src-y</em> of <em>src-bitmap</em> of size <em>width</em> and <em>height</em> to <em>dst-bitmap</em> with <em>op</em> and <em>pattern</em> along a line from <em>x0</em> and <em>y0</em> to <em>x1</em> and <em>y1</em>.</p>
+</section>
+<section id="draw-pixel-circle">
+<h3><code class="docutils literal notranslate"><span class="pre">draw-pixel-circle</span></code></h3>
+<p>( pattern x y radius op dst-bitmap – )</p>
+<p>Draw an empty circle of <em>radius</em> centered at <em>x</em> and <em>y</em>  on a bitmap with <em>op</em> and <em>pattern</em>.</p>
+</section>
+<section id="draw-rect-circle">
+<h3><code class="docutils literal notranslate"><span class="pre">draw-rect-circle</span></code></h3>
+<p>( pattern width height x y radius op dst-bitmap – )</p>
+<p>Draw an empty circle of <em>radius</em> centered at <em>x</em> and <em>y</em> on a bitmap with a constant rectangle of <em>width</em> and <em>height</em> with <em>op</em> and <em>pattern</em>.</p>
+</section>
+<section id="draw-bitmap-circle">
+<h3><code class="docutils literal notranslate"><span class="pre">draw-bitmap-circle</span></code></h3>
+<p>( src-x src-y width height x y radius op src-bitmap dst-bitmap – )</p>
+<p>Draw an empty circle of <em>radius</em> centered at <em>x</em> and <em>y</em> on <em>dst-bitmap</em> with <em>src-x</em> and <em>src-y</em> of <em>src-bitmap</em> of size <em>width</em> and <em>height</em> as a brush.</p>
+</section>
+<section id="draw-filled-circle">
+<h3><code class="docutils literal notranslate"><span class="pre">draw-filled-circle</span></code></h3>
+<p>( pattern x y radius op dst-bitmap – )</p>
+<p>Draw an filled circle of <em>radius</em> centered at <em>x</em> and <em>y</em> on a bitmap with a rectangle operation.</p>
+</section>
+</section>
+<section id="zscript-font-words">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-font</span></code> words</h2>
+<section id="make-font">
+<h3><code class="docutils literal notranslate"><span class="pre">make-font</span></code></h3>
+<p>( default-char cols rows min-char max-char – font )</p>
+<p>Create a font with characters of <em>cols</em> by <em>rows</em> with a default character <em>default-char</em> and minimum and maximum characters <em>min-char</em> and <em>max-char</em>.</p>
+</section>
+<section id="char-row">
+<h3><code class="docutils literal notranslate"><span class="pre">char-row!</span></code></h3>
+<p>( xn … x0 row c font – )</p>
+<p>Set <em>row</em> in a character <em>c</em> of <em>font</em>.</p>
+</section>
+<section id="draw-char">
+<h3><code class="docutils literal notranslate"><span class="pre">draw-char</span></code></h3>
+<p>( c col row op bitmap font – )</p>
+<p>Draw with <em>font</em> a character <em>c</em> onto <em>bitmap</em> at <em>col</em> and <em>row</em> with <em>op</em>.</p>
+</section>
+<section id="draw-string">
+<h3><code class="docutils literal notranslate"><span class="pre">draw-string</span></code></h3>
+<p>( bytes col row op bitmap font – )</p>
+<p>Draw with <em>font</em> a string <em>bytes</em> onto <em>bitmap</em> at <em>col</em> and <em>row</em> with <em>op</em>.</p>
+</section>
+<section id="char-dim">
+<h3><code class="docutils literal notranslate"><span class="pre">char-dim&#64;</span></code></h3>
+<p>( c font – cols rows )</p>
+<p>Get the dimensions in pixels in <em>font</em> of a character <em>c</em>.</p>
+</section>
+<section id="string-dim">
+<h3><code class="docutils literal notranslate"><span class="pre">string-dim&#64;</span></code></h3>
+<p>( bytes self – cols rows )</p>
+<p>Get the dimensions in pixels in <em>font</em> of a string <em>bytes</em>.</p>
+</section>
+</section>
+<section id="zscript-simple-font-words">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-simple-font</span></code> words</h2>
+<section id="make-simple-font">
+<h3><code class="docutils literal notranslate"><span class="pre">make-simple-font</span></code></h3>
+<p>( – font )</p>
+<p>Make a simple font.</p>
+<p>Also implemented by the <code class="docutils literal notranslate"><span class="pre">simple-font</span></code> class are the following words in <code class="docutils literal notranslate"><span class="pre">zscript-font</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">draw-char</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">draw-string</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">char-dim&#64;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">string-dim&#64;</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="zscript-ssd1306-words">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-ssd1306</span></code> words</h2>
+<section id="make-ssd1306">
+<h3><code class="docutils literal notranslate"><span class="pre">make-ssd1306</span></code></h3>
+<p>( pin0 pin1 cols rows i2c-addr i2c-device – ssd1306 )</p>
+<p>Create an SSD1306 device at <em>i2c-addr</em> on <em>i2c-device</em> using I2C pins <em>pin0</em> and <em>pin1</em> (their identities do not matter) of size *cols by <em>rows</em>. Note that the display is not blanked by default.</p>
+</section>
+<section id="display-contrast">
+<h3><code class="docutils literal notranslate"><span class="pre">display-contrast!</span></code></h3>
+<p>( contrast ssd1306 – )</p>
+<p>Set the contrast, from 0 to 255, of <em>ssd1306</em>.</p>
+</section>
+<section id="update-display">
+<h3><code class="docutils literal notranslate"><span class="pre">update-display</span></code></h3>
+<p>( ssd1306 – )</p>
+<p>Update <em>ssd1306</em> with the dirty contents of its framebuffer and clear its dirty state.</p>
+<p>Also implemented by the <code class="docutils literal notranslate"><span class="pre">ssd1306</span></code> class are the following words in <code class="docutils literal notranslate"><span class="pre">zscript-bitmap</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dim&#64;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">clear-bitmap</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">back-bitmap&#64;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pixel&#64;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">draw-pixel-const</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">draw-rect-const</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">draw-rect</span></code></p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

@@ -33,7 +33,7 @@ begin-module zscript-font
   method draw-char ( c col row op bitmap font -- )
   
   \ Draw a string onto a bitmap
-  method draw-string ( c-addr u col row op bitmap font -- )
+  method draw-string ( bytes col row op bitmap font -- )
 
   \ Get the size of a character
   method char-dim@ ( c font -- cols rows )

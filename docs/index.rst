@@ -15,4 +15,4 @@ zeptoscript Documentation
    main/channel
    main/coroutine
    main/action
-   
+   extra/bitmap.md

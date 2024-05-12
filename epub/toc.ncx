@@ -2908,5 +2908,281 @@
         </navPoint>
       </navPoint>
     </navPoint>
+    <navPoint id="navPoint484" playOrder="462">
+      <navLabel>
+        <text>Bitmaps, fonts, and displays</text>
+      </navLabel>
+      <content src="extra/bitmap.xhtml" />  
+      <navPoint id="navPoint485" playOrder="462">
+        <navLabel>
+          <text>Bitmaps, fonts, and displays</text>
+        </navLabel>
+        <content src="extra/bitmap.xhtml" />  
+      </navPoint>
+      <navPoint id="navPoint486" playOrder="463">
+        <navLabel>
+          <text>zscript-bitmap words</text>
+        </navLabel>
+        <content src="extra/bitmap.xhtml#zscript-bitmap-words" />  
+        <navPoint id="navPoint487" playOrder="463">
+          <navLabel>
+            <text>zscript-bitmap words</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#zscript-bitmap-words" />  
+        </navPoint>
+        <navPoint id="navPoint488" playOrder="464">
+          <navLabel>
+            <text>op-set</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#op-set" />  
+        </navPoint>
+        <navPoint id="navPoint489" playOrder="465">
+          <navLabel>
+            <text>op-or</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#op-or" />  
+        </navPoint>
+        <navPoint id="navPoint490" playOrder="466">
+          <navLabel>
+            <text>op-and</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#op-and" />  
+        </navPoint>
+        <navPoint id="navPoint491" playOrder="467">
+          <navLabel>
+            <text>op-bic</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#op-bic" />  
+        </navPoint>
+        <navPoint id="navPoint492" playOrder="468">
+          <navLabel>
+            <text>op-xor</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#op-xor" />  
+        </navPoint>
+        <navPoint id="navPoint493" playOrder="469">
+          <navLabel>
+            <text>make-bitmap</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#make-bitmap" />  
+        </navPoint>
+        <navPoint id="navPoint494" playOrder="470">
+          <navLabel>
+            <text>clear-dirty</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#clear-dirty" />  
+        </navPoint>
+        <navPoint id="navPoint495" playOrder="471">
+          <navLabel>
+            <text>dirty?</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#dirty" />  
+        </navPoint>
+        <navPoint id="navPoint496" playOrder="472">
+          <navLabel>
+            <text>dirty-rect@</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#dirty-rect" />  
+        </navPoint>
+        <navPoint id="navPoint497" playOrder="473">
+          <navLabel>
+            <text>dim@</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#dim" />  
+        </navPoint>
+        <navPoint id="navPoint498" playOrder="474">
+          <navLabel>
+            <text>clear-bitmap</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#clear-bitmap" />  
+        </navPoint>
+        <navPoint id="navPoint499" playOrder="475">
+          <navLabel>
+            <text>back-bitmap@</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#back-bitmap" />  
+        </navPoint>
+        <navPoint id="navPoint500" playOrder="476">
+          <navLabel>
+            <text>pixel@</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#pixel" />  
+        </navPoint>
+        <navPoint id="navPoint501" playOrder="477">
+          <navLabel>
+            <text>draw-pixel-const</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#draw-pixel-const" />  
+        </navPoint>
+        <navPoint id="navPoint502" playOrder="478">
+          <navLabel>
+            <text>draw-rect-const</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#draw-rect-const" />  
+        </navPoint>
+        <navPoint id="navPoint503" playOrder="479">
+          <navLabel>
+            <text>draw-rect</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#draw-rect" />  
+        </navPoint>
+        <navPoint id="navPoint504" playOrder="480">
+          <navLabel>
+            <text>copy-pixels</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#copy-pixels" />  
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint505" playOrder="481">
+        <navLabel>
+          <text>zscript-bitmap-utils words</text>
+        </navLabel>
+        <content src="extra/bitmap.xhtml#zscript-bitmap-utils-words" />  
+        <navPoint id="navPoint506" playOrder="481">
+          <navLabel>
+            <text>zscript-bitmap-utils words</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#zscript-bitmap-utils-words" />  
+        </navPoint>
+        <navPoint id="navPoint507" playOrder="482">
+          <navLabel>
+            <text>draw-pixel-line</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#draw-pixel-line" />  
+        </navPoint>
+        <navPoint id="navPoint508" playOrder="483">
+          <navLabel>
+            <text>draw-rect-line</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#draw-rect-line" />  
+        </navPoint>
+        <navPoint id="navPoint509" playOrder="484">
+          <navLabel>
+            <text>draw-bitmap-line</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#draw-bitmap-line" />  
+        </navPoint>
+        <navPoint id="navPoint510" playOrder="485">
+          <navLabel>
+            <text>draw-pixel-circle</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#draw-pixel-circle" />  
+        </navPoint>
+        <navPoint id="navPoint511" playOrder="486">
+          <navLabel>
+            <text>draw-rect-circle</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#draw-rect-circle" />  
+        </navPoint>
+        <navPoint id="navPoint512" playOrder="487">
+          <navLabel>
+            <text>draw-bitmap-circle</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#draw-bitmap-circle" />  
+        </navPoint>
+        <navPoint id="navPoint513" playOrder="488">
+          <navLabel>
+            <text>draw-filled-circle</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#draw-filled-circle" />  
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint514" playOrder="489">
+        <navLabel>
+          <text>zscript-font words</text>
+        </navLabel>
+        <content src="extra/bitmap.xhtml#zscript-font-words" />  
+        <navPoint id="navPoint515" playOrder="489">
+          <navLabel>
+            <text>zscript-font words</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#zscript-font-words" />  
+        </navPoint>
+        <navPoint id="navPoint516" playOrder="490">
+          <navLabel>
+            <text>make-font</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#make-font" />  
+        </navPoint>
+        <navPoint id="navPoint517" playOrder="491">
+          <navLabel>
+            <text>char-row!</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#char-row" />  
+        </navPoint>
+        <navPoint id="navPoint518" playOrder="492">
+          <navLabel>
+            <text>draw-char</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#draw-char" />  
+        </navPoint>
+        <navPoint id="navPoint519" playOrder="493">
+          <navLabel>
+            <text>draw-string</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#draw-string" />  
+        </navPoint>
+        <navPoint id="navPoint520" playOrder="494">
+          <navLabel>
+            <text>char-dim@</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#char-dim" />  
+        </navPoint>
+        <navPoint id="navPoint521" playOrder="495">
+          <navLabel>
+            <text>string-dim@</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#string-dim" />  
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint522" playOrder="496">
+        <navLabel>
+          <text>zscript-simple-font words</text>
+        </navLabel>
+        <content src="extra/bitmap.xhtml#zscript-simple-font-words" />  
+        <navPoint id="navPoint523" playOrder="496">
+          <navLabel>
+            <text>zscript-simple-font words</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#zscript-simple-font-words" />  
+        </navPoint>
+        <navPoint id="navPoint524" playOrder="497">
+          <navLabel>
+            <text>make-simple-font</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#make-simple-font" />  
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint525" playOrder="498">
+        <navLabel>
+          <text>zscript-ssd1306 words</text>
+        </navLabel>
+        <content src="extra/bitmap.xhtml#zscript-ssd1306-words" />  
+        <navPoint id="navPoint526" playOrder="498">
+          <navLabel>
+            <text>zscript-ssd1306 words</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#zscript-ssd1306-words" />  
+        </navPoint>
+        <navPoint id="navPoint527" playOrder="499">
+          <navLabel>
+            <text>make-ssd1306</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#make-ssd1306" />  
+        </navPoint>
+        <navPoint id="navPoint528" playOrder="500">
+          <navLabel>
+            <text>display-contrast!</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#display-contrast" />  
+        </navPoint>
+        <navPoint id="navPoint529" playOrder="501">
+          <navLabel>
+            <text>update-display</text>
+          </navLabel>
+          <content src="extra/bitmap.xhtml#update-display" />  
+        </navPoint>
+      </navPoint>
+    </navPoint>
   </navMap>
 </ncx>

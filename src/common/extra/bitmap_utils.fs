@@ -169,7 +169,7 @@ begin-module zscript-bitmap-utils
     then
   ;
   
-  \ Apply a bitmap to another bitmap with an operation along a line
+  \ Draw a rectangle to another bitmap with an operation along a line
   : draw-rect-line { const width height x0 y0 x1 y1 op dst -- }
     y1 y0 - abs x1 x0 - abs < if
       x0 x1 > if
