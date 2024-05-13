@@ -1,0 +1,220 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Real-time clock &#8212; zeptoscript  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Bitmaps, fonts, and displays" href="bitmap.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="real-time-clock">
+<h1>Real-time clock<a class="headerlink" href="#real-time-clock" title="Permalink to this heading">¶</a></h1>
+<p>zeptoscript has support for real-time clocks on the RP2040, and more basic support for date/time handling on other MCU’s. This is encapsulated in the <code class="docutils literal notranslate"><span class="pre">date-time</span></code> class, which wraps the RTC and date/time functionality provided by zeptoforth. This includes getting and setting the real-time clock, calculating the day of the week, and converting dates into human-readable byte sequences.</p>
+<section id="zscript-rtc-module">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-rtc</span></code> module<a class="headerlink" href="#zscript-rtc-module" title="Permalink to this heading">¶</a></h2>
+<section id="make-date-time">
+<h3><code class="docutils literal notranslate"><span class="pre">make-date-time</span></code><a class="headerlink" href="#make-date-time" title="Permalink to this heading">¶</a></h3>
+<p>( – date-time )</p>
+<p>Construct a <code class="docutils literal notranslate"><span class="pre">date-time</span></code> instance, initializing it to the current date/time on the RP2040 and to all zeroes on other platforms.</p>
+</section>
+<section id="date-time">
+<h3><code class="docutils literal notranslate"><span class="pre">date-time&#64;</span></code><a class="headerlink" href="#date-time" title="Permalink to this heading">¶</a></h3>
+<p>( self – )</p>
+<p>Get date time. Note that this is only available on the RP2040.</p>
+</section>
+<section id="id1">
+<h3><code class="docutils literal notranslate"><span class="pre">date-time!</span></code><a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h3>
+<p>( self – )</p>
+<p>Set date time. Note that this is only available on the RP2040.</p>
+</section>
+<section id="date-time-year">
+<h3><code class="docutils literal notranslate"><span class="pre">date-time-year!</span></code><a class="headerlink" href="#date-time-year" title="Permalink to this heading">¶</a></h3>
+<p>( year self – )</p>
+<p>Set year.</p>
+</section>
+<section id="date-time-month">
+<h3><code class="docutils literal notranslate"><span class="pre">date-time-month!</span></code><a class="headerlink" href="#date-time-month" title="Permalink to this heading">¶</a></h3>
+<p>( month self – )</p>
+<p>Set month.</p>
+</section>
+<section id="date-time-day">
+<h3><code class="docutils literal notranslate"><span class="pre">date-time-day!</span></code><a class="headerlink" href="#date-time-day" title="Permalink to this heading">¶</a></h3>
+<p>( day self – )</p>
+<p>Set day.</p>
+</section>
+<section id="date-time-dotw">
+<h3><code class="docutils literal notranslate"><span class="pre">date-time-dotw!</span></code><a class="headerlink" href="#date-time-dotw" title="Permalink to this heading">¶</a></h3>
+<p>( dotw self – )</p>
+<p>Set day of the week.</p>
+</section>
+<section id="date-time-hour">
+<h3><code class="docutils literal notranslate"><span class="pre">date-time-hour!</span></code><a class="headerlink" href="#date-time-hour" title="Permalink to this heading">¶</a></h3>
+<p>( hour self – )</p>
+<p>Set hour.</p>
+</section>
+<section id="date-time-minute">
+<h3><code class="docutils literal notranslate"><span class="pre">date-time-minute!</span></code><a class="headerlink" href="#date-time-minute" title="Permalink to this heading">¶</a></h3>
+<p>( minute self – )</p>
+<p>Set minute.</p>
+</section>
+<section id="date-time-second">
+<h3><code class="docutils literal notranslate"><span class="pre">date-time-second!</span></code><a class="headerlink" href="#date-time-second" title="Permalink to this heading">¶</a></h3>
+<p>( second self – )</p>
+<p>Set second.</p>
+</section>
+<section id="id2">
+<h3><code class="docutils literal notranslate"><span class="pre">date-time-year&#64;</span></code><a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
+<p>( self – year )</p>
+<p>Get year.</p>
+</section>
+<section id="id3">
+<h3><code class="docutils literal notranslate"><span class="pre">date-time-month&#64;</span></code><a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h3>
+<p>( self – month )</p>
+<p>Get month.</p>
+</section>
+<section id="id4">
+<h3><code class="docutils literal notranslate"><span class="pre">date-time-day&#64;</span></code><a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h3>
+<p>( self – day )</p>
+<p>Get day.</p>
+</section>
+<section id="id5">
+<h3><code class="docutils literal notranslate"><span class="pre">date-time-dotw&#64;</span></code><a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h3>
+<p>( self – dotw )</p>
+<p>Get day of the week.</p>
+</section>
+<section id="id6">
+<h3><code class="docutils literal notranslate"><span class="pre">date-time-hour&#64;</span></code><a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h3>
+<p>( self – hour )</p>
+<p>Get hour.</p>
+</section>
+<section id="id7">
+<h3><code class="docutils literal notranslate"><span class="pre">date-time-minute&#64;</span></code><a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h3>
+<p>( self – minute )</p>
+<p>Get minute.</p>
+</section>
+<section id="id8">
+<h3><code class="docutils literal notranslate"><span class="pre">date-time-second&#64;</span></code><a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h3>
+<p>( self – second )</p>
+<p>Get second.</p>
+</section>
+<section id="update-dotw">
+<h3><code class="docutils literal notranslate"><span class="pre">update-dotw</span></code><a class="headerlink" href="#update-dotw" title="Permalink to this heading">¶</a></h3>
+<p>( self – )</p>
+<p>Update the day of the week for a date/time.</p>
+<p>Also implemented are the following words from <code class="docutils literal notranslate"><span class="pre">zscript-special-oo</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">show</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hash</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">equal?</span></code></p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">zeptoscript</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main/core.html">zeptoscript Core Functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/oo.html">zeptoscript Object-Orientation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/list.html">Lists</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/map.html">Maps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/set.html">Sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/queue.html">Queues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/task.html">Tasks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/channel.html">Channels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/coroutine.html">Asymmetric coroutines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/action.html">Actions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bitmap.html">Bitmaps, fonts, and displays</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Real-time clock</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="bitmap.html" title="previous chapter">Bitmaps, fonts, and displays</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2024, Travis Bemann.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/extra/rtc.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

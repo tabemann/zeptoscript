@@ -27,6 +27,7 @@ begin-module test
   zscript-font import
   zscript-simple-font import
   zscript-double import
+  zscript-rtc import
   
   128 constant display-width
   64 constant display-height
@@ -35,23 +36,9 @@ begin-module test
   15 constant i2c-pin1
   
   0 1 foreign forth::rng::random random
-  foreign-constant forth::rtc::date-time-size date-time-size
-  1 0 foreign forth::rtc::date-time@ date-time@
-  1 1 foreign forth::rtc::date-time-hour date-time-hour
-  1 1 foreign forth::rtc::date-time-minute date-time-minute
-  1 1 foreign forth::rtc::date-time-second date-time-second
 
   25,0 constant init-x-delta
   25,0 constant init-y-delta
-  
-  : get-time ( -- triple )
-    date-time-size make-bytes { date-time }
-    date-time unsafe::bytes>addr-len drop date-time@
-    date-time unsafe::bytes>addr-len drop date-time-hour unsafe::c@
-    date-time unsafe::bytes>addr-len drop date-time-minute unsafe::c@
-    date-time unsafe::bytes>addr-len drop date-time-second unsafe::c@
-    >triple
-  ;
   
   : populate-field { field field-offset field-len form -- }
     field >len { len }
@@ -60,7 +47,9 @@ begin-module test
   ;
   
   : format-time { time -- bytes }
-    time triple> { hour minute second }
+    time date-time-hour@ { hour }
+    time date-time-minute@ { minute }
+    time date-time-second@ { second }
     s" 00:00:00" duplicate { bytes }
     hour format-integral { hour-bytes }
     minute format-integral { minute-bytes }
@@ -96,7 +85,7 @@ begin-module test
     
     begin key? not while
       
-      get-time format-time { time-bytes }
+      make-date-time format-time { time-bytes }
       
       time-bytes
       x round-half-zero y round-half-zero

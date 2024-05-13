@@ -3184,5 +3184,137 @@
         </navPoint>
       </navPoint>
     </navPoint>
+    <navPoint id="navPoint530" playOrder="502">
+      <navLabel>
+        <text>Real-time clock</text>
+      </navLabel>
+      <content src="extra/rtc.xhtml" />  
+      <navPoint id="navPoint531" playOrder="502">
+        <navLabel>
+          <text>Real-time clock</text>
+        </navLabel>
+        <content src="extra/rtc.xhtml" />  
+      </navPoint>
+      <navPoint id="navPoint532" playOrder="503">
+        <navLabel>
+          <text>zscript-rtc module</text>
+        </navLabel>
+        <content src="extra/rtc.xhtml#zscript-rtc-module" />  
+        <navPoint id="navPoint533" playOrder="503">
+          <navLabel>
+            <text>zscript-rtc module</text>
+          </navLabel>
+          <content src="extra/rtc.xhtml#zscript-rtc-module" />  
+        </navPoint>
+        <navPoint id="navPoint534" playOrder="504">
+          <navLabel>
+            <text>make-date-time</text>
+          </navLabel>
+          <content src="extra/rtc.xhtml#make-date-time" />  
+        </navPoint>
+        <navPoint id="navPoint535" playOrder="505">
+          <navLabel>
+            <text>date-time@</text>
+          </navLabel>
+          <content src="extra/rtc.xhtml#date-time" />  
+        </navPoint>
+        <navPoint id="navPoint536" playOrder="506">
+          <navLabel>
+            <text>date-time!</text>
+          </navLabel>
+          <content src="extra/rtc.xhtml#id1" />  
+        </navPoint>
+        <navPoint id="navPoint537" playOrder="507">
+          <navLabel>
+            <text>date-time-year!</text>
+          </navLabel>
+          <content src="extra/rtc.xhtml#date-time-year" />  
+        </navPoint>
+        <navPoint id="navPoint538" playOrder="508">
+          <navLabel>
+            <text>date-time-month!</text>
+          </navLabel>
+          <content src="extra/rtc.xhtml#date-time-month" />  
+        </navPoint>
+        <navPoint id="navPoint539" playOrder="509">
+          <navLabel>
+            <text>date-time-day!</text>
+          </navLabel>
+          <content src="extra/rtc.xhtml#date-time-day" />  
+        </navPoint>
+        <navPoint id="navPoint540" playOrder="510">
+          <navLabel>
+            <text>date-time-dotw!</text>
+          </navLabel>
+          <content src="extra/rtc.xhtml#date-time-dotw" />  
+        </navPoint>
+        <navPoint id="navPoint541" playOrder="511">
+          <navLabel>
+            <text>date-time-hour!</text>
+          </navLabel>
+          <content src="extra/rtc.xhtml#date-time-hour" />  
+        </navPoint>
+        <navPoint id="navPoint542" playOrder="512">
+          <navLabel>
+            <text>date-time-minute!</text>
+          </navLabel>
+          <content src="extra/rtc.xhtml#date-time-minute" />  
+        </navPoint>
+        <navPoint id="navPoint543" playOrder="513">
+          <navLabel>
+            <text>date-time-second!</text>
+          </navLabel>
+          <content src="extra/rtc.xhtml#date-time-second" />  
+        </navPoint>
+        <navPoint id="navPoint544" playOrder="514">
+          <navLabel>
+            <text>date-time-year@</text>
+          </navLabel>
+          <content src="extra/rtc.xhtml#id2" />  
+        </navPoint>
+        <navPoint id="navPoint545" playOrder="515">
+          <navLabel>
+            <text>date-time-month@</text>
+          </navLabel>
+          <content src="extra/rtc.xhtml#id3" />  
+        </navPoint>
+        <navPoint id="navPoint546" playOrder="516">
+          <navLabel>
+            <text>date-time-day@</text>
+          </navLabel>
+          <content src="extra/rtc.xhtml#id4" />  
+        </navPoint>
+        <navPoint id="navPoint547" playOrder="517">
+          <navLabel>
+            <text>date-time-dotw@</text>
+          </navLabel>
+          <content src="extra/rtc.xhtml#id5" />  
+        </navPoint>
+        <navPoint id="navPoint548" playOrder="518">
+          <navLabel>
+            <text>date-time-hour@</text>
+          </navLabel>
+          <content src="extra/rtc.xhtml#id6" />  
+        </navPoint>
+        <navPoint id="navPoint549" playOrder="519">
+          <navLabel>
+            <text>date-time-minute@</text>
+          </navLabel>
+          <content src="extra/rtc.xhtml#id7" />  
+        </navPoint>
+        <navPoint id="navPoint550" playOrder="520">
+          <navLabel>
+            <text>date-time-second@</text>
+          </navLabel>
+          <content src="extra/rtc.xhtml#id8" />  
+        </navPoint>
+        <navPoint id="navPoint551" playOrder="521">
+          <navLabel>
+            <text>update-dotw</text>
+          </navLabel>
+          <content src="extra/rtc.xhtml#update-dotw" />  
+        </navPoint>
+      </navPoint>
+    </navPoint>
   </navMap>
 </ncx>

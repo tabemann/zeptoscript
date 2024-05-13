@@ -4517,6 +4517,11 @@ begin-module zscript
 
   \ Print out the amount of space available (execute GC first)
   : heap-free ( -- space ) to-space-top@ to-space-current@ forth::- >integral ;
+
+  \ Check whether a word is defined
+  : defined? ( 'name" -- defined? )
+    token dup 0<> averts x-token-expected find 0<>
+  ;
   
   true >small-int constant true
   false >small-int constant false
@@ -4598,7 +4603,6 @@ begin-module zscript
   : .\( [immediate] postpone .\( ;
   : x-token-expected x-token-expected ;
   : initializer initializer ;
-  : defined? defined? >small-int ;
   : [if] [immediate] integral> postpone [if] ;
   : [else] [immediate] postpone [else] ;
   : [then] [immediate] postpone [then] ;

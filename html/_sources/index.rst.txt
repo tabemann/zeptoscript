@@ -16,3 +16,4 @@ zeptoscript Documentation
    main/coroutine
    main/action
    extra/bitmap.md
+   extra/rtc.md
