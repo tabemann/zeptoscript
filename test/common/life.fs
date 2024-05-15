@@ -25,13 +25,19 @@ begin-module life
   life-ssd1306 import
 
   \ Cycle the life world
-  method cycle ( self -- )
+  method cycle ( life -- )
 
   \ Draw the life world
-  method draw ( display self -- )
+  method draw ( display life -- )
 
+  \ Clear the life world
+  method clear ( life -- )
+  
   \ Set the state of a cell
-  method cell! ( state col row self -- )
+  method cell! ( state col row life -- )
+
+  \ Set a row
+  method row! ( cells col row life -- )
 
   begin-class life
     
@@ -51,12 +57,12 @@ begin-module life
     
     \ Get a column portion
     :private column@ { col row self -- val }
-      self life-width@ row 5 rshift * col + cells self life-old-world@ w@+
+      self life-width@ row * col + cells self life-old-world@ w@+
     ;
 
     \ Set a column portion
     :private column! { val col row self -- }
-      val self life-width@ row 5 rshift * col + cells self life-new-world@ w!+
+      val self life-width@ row * col + cells self life-new-world@ w!+
     ;
 
     \ Cycle the middle of a column
@@ -160,6 +166,8 @@ begin-module life
       r3 tos movs_,_
       r5 r4 2 pop
       ]code
+
+      unsafe::>integral
     ;
 
     \ Cycle the middle of columns
@@ -167,15 +175,15 @@ begin-module life
       0 0 { col row }
 
       self life-width@ { width }
-      self life-height@ { height }
+      self life-height@ 5 rshift { height }
       
       begin row height < while
 
         width 1- { left-col }
         left-col row self column@ { left-column }
-        height 1- { upper-row }
+        row 1- dup 0< if drop height 1- then { upper-row }
         left-col upper-row self column@ { upper-left-column }
-        32 dup height = if drop 0 then { lower-row }
+        row 1+ dup height = if drop 0 then { lower-row }
         left-col lower-row self column@ { lower-left-column }
         0 row self column@ { current-column }
         0 upper-row self column@ { upper-column }
@@ -185,15 +193,13 @@ begin-module life
 
           col 1+ dup width = if drop 0 then { right-col }
           right-col row self column@ { right-column }
-          row 1- dup 0< if drop height 1- then to upper-row
-          row 1+ dup height = if drop 0 then to lower-row
           right-col upper-row self column@ { upper-right-column }
           right-col lower-row self column@ { lower-right-column }
 
           left-column current-column right-column cycle-column-middle
-          0 upper-left-column 1 and +
-          upper-column 1 and +
-          upper-right-column 1 and +
+          0 upper-left-column 31 rshift 1 and +
+          upper-column 31 rshift 1 and +
+          upper-right-column 31 rshift 1 and +
           left-column 1 and +
           right-column 1 and +
           left-column 1 rshift 1 and +
@@ -212,10 +218,10 @@ begin-module life
           lower-left-column 1 and +
           lower-column 1 and +
           lower-right-column 1 and +
-          current-column 31 and if
-            dup 2 = swap 3 = or 31 and or
+          current-column 31 rshift 1 and if
+            dup 2 = swap 3 = or 31 bit and or
           else
-            3 = 31 and or
+            3 = 31 bit and or
           then
           col row self column!
 
@@ -231,7 +237,7 @@ begin-module life
         repeat
         
         0 to col
-        32 +to row
+        1 +to row
         
       repeat
     ;
@@ -249,6 +255,15 @@ begin-module life
       self life-new-world@ display draw-world
     ;
 
+    \ Clear the life world
+    :method clear { self -- }
+      self life-height@ 5 rshift 0 ?do
+        self life-width@ 0 ?do
+          0 i j self column!
+        loop
+      loop
+    ;
+
     \ Set the state of a cell
     :method cell! { state col row self -- }
       self life-width@ { width }
@@ -259,7 +274,21 @@ begin-module life
       offset self life-new-world@ w@+
       row $1F and bit state if or else bic then offset self life-new-world@ w!+
     ;      
+
+    \ Set a row
+    :method row! { cells col row self -- }
+      cells >len 0 ?do
+        i cells c@+ [char] # = col i + row self cell!
+      loop
+    ;
     
   end-class
+
+  \ Create an R-pentomino
+  : r-pentomino { col row life -- }
+    s" .##" col row 0 + life row!
+    s" ##." col row 1 + life row!
+    s" .#." col row 2 + life row!
+  ;
   
 end-module
