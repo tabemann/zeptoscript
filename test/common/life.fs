@@ -37,17 +37,48 @@ begin-module life
   method cell! ( state col row life -- )
 
   \ Set a row
-  method row! ( cells col row life -- )
+  method row! ( cells orient col row life -- )
 
+  \ Set a block
+  method rows! ( rows orient col row life -- )
+
+  \ Run world until a key is presed
+  method run ( life -- )
+
+  \ Run world with a delay between cycles until a key is pressed
+  method run-slow ( delay life -- )
+
+  \ Single-step the world
+  method step ( life -- )
+
+  \ Orientation
+
+  \ Left to right, top to bottom
+  symbol lrtb
+
+  \ Left to right, bottom to top
+  symbol lrbt
+
+  \ Right to left, top to bottom
+  symbol rltb
+
+  \ Right to left, bottom to top
+  symbol rlbt
+
+  \ Invalid orientation exception
+  : x-invalid-orient ( -- ) ." invalid orientation" cr  ;
+  
   begin-class life
-    
+
+    member: life-display
     member: life-width
     member: life-height
     member: life-old-world
     member: life-new-world
 
     \ Constructor
-    :method new { width height self -- }
+    :method new { display width height self -- }
+      display self life-display!
       width self life-width!
       height self life-height!
       width height * 5 rshift cells { size }
@@ -251,8 +282,8 @@ begin-module life
     ;
 
     \ Draw the life world
-    :method draw { display self -- }
-      self life-new-world@ display draw-world
+    :method draw { self -- }
+      self life-new-world@ self life-display@ draw-world
     ;
 
     \ Clear the life world
@@ -276,19 +307,97 @@ begin-module life
     ;      
 
     \ Set a row
-    :method row! { cells col row self -- }
-      cells >len 0 ?do
-        i cells c@+ [char] # = col i + row self cell!
-      loop
+    :method row! { cells orient col row self -- }
+      orient lrtb = orient lrbt = or if
+        cells >len 0 ?do
+          i cells c@+ [char] # = col i + row self cell!
+        loop
+      else
+        orient rltb = orient rlbt = or averts x-invalid-orient
+        cells >len dup col + 1- to col 0 ?do
+          i cells c@+ [char] # = col i - row self cell!
+        loop
+      then
+    ;
+
+    \ Set a block
+    :method rows! { rows orient col row self -- }
+      orient lrtb = orient rltb = or if
+        rows orient col row self 4 [: { cells index orient col row self }
+          cells orient col row index + self row!
+        ;] bind iteri
+      else
+        orient lrbt = orient rlbt = or averts x-invalid-orient
+        rows orient col rows >len + 1- row self 4 [:
+          { cells index orient col row self }
+          cells orient col row index - self row!
+        ;] bind iteri
+      then
+    ;
+
+    \ Run the world until a key is pressed
+    :method run { self -- }
+      begin key? not while
+        self cycle
+        self draw
+      repeat
+      key drop
+    ;
+
+    \ Run the world slowly until a key is pressed
+    :method run-slow { delay self -- }
+      begin key? not while
+        self cycle
+        self draw
+        delay zscript-task::ms
+      repeat
+      key drop
+    ;
+
+    \ Step the world
+    :method step { self -- }
+      self cycle
+      self draw
     ;
     
   end-class
 
-  \ Create an R-pentomino
-  : r-pentomino { col row life -- }
-    s" .##" col row 0 + life row!
-    s" ##." col row 1 + life row!
-    s" .#." col row 2 + life row!
+  \ Add a block to the world
+  : block { col row life -- }
+    #( s" ##" s" ##" )# lrtb col row life rows!
+  ;
+  
+  \ Add a tub to the world
+  : tub { col row life -- }
+    #( s" .#." s" #.#" s" .#." )# lrtb col row life rows!
+  ;
+  
+  \ Add a boat to the world
+  : boat { orient col row life -- }
+    #( s" .#." s" #.#" s" .##" )# orient col row life rows!
+  ;
+
+  \ Add a blinker to the world
+  : blinker { orient phase col row life -- }
+    phase case
+      0 of #( s" .#." s" .#." s" .#." )# orient col row life rows! endof
+      1 of #( s" ..." s" ###" s" ..." )# orient col row life rows! endof
+    endcase
+  ;
+  
+  \ Add a glider to the world
+  : glider { orient phase col row life -- }
+    phase case
+      0 of #( s" .#." s" ..#" s" ###" )# orient col row life rows! endof
+      1 of #( s" #.#" s" .##" s" .#." )# orient col row life rows! endof
+      2 of #( s" ..#" s" #.#" s" .##" )# orient col row life rows! endof
+      3 of #( s" #.." s" .##" s" ##." )# orient col row life rows! endof
+    endcase
+  ;
+
+  \ Add an R-pentomino to the world
+  : r-pentomino { orient col row life -- }
+    #( s" .##" s" ##." s" .#." )# orient col row life rows!
   ;
   
 end-module
