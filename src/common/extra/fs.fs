@@ -20,6 +20,8 @@
 
 begin-module zscript-fs
 
+  zscript-oo import
+  
   \ Unsupported file name format exception
   : x-file-name-format ( -- ) ." unsupported filename" cr ;
 

@@ -20,6 +20,8 @@
 
 begin-module zscript-block-dev
 
+  zscript-oo import
+  
   \ Block out of range exception
   : x-block-out-of-range ( -- ) ." block out of range" cr ;
 

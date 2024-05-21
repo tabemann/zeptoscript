@@ -20,11 +20,14 @@
 
 begin-module zscript-sdcard
 
+  zscript-oo import
+  zscript-block-dev import
+
   \ Initialize the SD card
   method init-sd ( sd -- )
 
   \ Enable block zero writes
-  method write-sd-block-zero ( enabled sd -- )
+  method write-sd-block-zero! ( enabled sd -- )
 
   begin-module zscript-sdcard-internal
     
@@ -42,7 +45,7 @@ begin-module zscript-sdcard
     ( sd -- )
 
     \ Enable block zero writes
-    2 0 foreign forth::sd::write-sd-block-zero foreign-write-sd-block-zero
+    2 0 foreign forth::sd::write-sd-block-zero! foreign-write-sd-block-zero!
     ( enabled sd -- )
     
     \ Get block size
@@ -85,7 +88,7 @@ begin-module zscript-sdcard
     1 1 foreign forth::block-dev::write-through@ foreign-write-through@
     ( dev -- write-through )
     
-  end-module
+  end-module> import
   
   begin-class sd
 
@@ -106,8 +109,8 @@ begin-module zscript-sdcard
     ;
     
     \ Enable block zero writes
-    :method write-sd-block-zero { enabled self -- }
-      enabled self sd@ foreign-write-sd-block-zero
+    :method write-sd-block-zero! { enabled self -- }
+      enabled self sd@ foreign-write-sd-block-zero!
     ;
 
     \ Get block size

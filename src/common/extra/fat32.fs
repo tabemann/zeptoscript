@@ -20,7 +20,12 @@
 
 begin-module zscript-fat32
 
+  zscript-oo import
+  zscript-special-oo import
+  zscript-rtc import
   zscript-block-dev import
+  zscript-fs import
+  zscript-map import
   
   \ Sector size exception
   : x-sector-size-not-supported ( -- )
@@ -52,6 +57,9 @@ begin-module zscript-fat32
     
     \ Sector size
     512 constant sector-size
+
+    \ Directory entry size
+    32 constant entry-size
 
     \ Default open map size
     8 constant default-open-map-size
@@ -189,30 +197,6 @@ begin-module zscript-fat32
       len1 len ?do $20 i bytes1 c@+ loop
     ;
 
-    \ Convert a filename into 8.3 uppercase format without a dot
-    : convert-file-name { bytes -- bytes' }
-      bytes validate-file-name
-      bytes dot-index { index }
-      11 make-bytes { bytes' }
-      11 0 ?do $20 i bytes' c!+ loop
-      bytes 0 bytes' 0 index copy
-      bytes index 1+ bytes' 8 3 copy
-      0 bytes' c@+ $E5 = if $05 0 bytes' c!+ then
-      bytes' ['] upcase-char map!
-      bytes'
-    ;
-
-    \ Convert a directory name into an 8 uppercase format
-    : convert-dir-name { bytes -- bytes' }
-      bytes validate-dir-name
-      11 make-bytes { bytes' }
-      11 0 ?do $20 i bytes' c!+ loop
-      bytes 0 bytes' 0 bytes >len copy
-      0 bytes' c@+ $E5 = if $05 0 bytes' c!+ then
-      bytes' ['] upcase-char map!
-      bytes'
-    ;
-
     \ Is name a directory name
     : dir-name? ( bytes -- dir-name? )
       s" ." over equal? if
@@ -224,11 +208,6 @@ begin-module zscript-fat32
           dot-index -1 =
         then
       then
-    ;
-
-    \ Convert a file name or directory name
-    : convert-name ( bytes -- bytes' )
-      dup dir-name? if convert-dir-name else convert-file-name then
     ;
 
     \ Check whether a directory name is forbidden
@@ -345,7 +324,7 @@ begin-module zscript-fat32
       len -1 parts @+ validate-name
     ;
     
-  end-module>
+  end-module> import
 
   \ Is the partition really active?
   method partition-active? ( self -- active? )
@@ -460,6 +439,12 @@ begin-module zscript-fat32
 
     \ Set an entry's modification date and time
     method modify-date-time! ( date-time entry -- )
+
+    \ Get an entry's file size
+    method entry-file-size@ ( entry -- size )
+
+    \ Set an entry's file size
+    method entry-file-size! ( size entry -- )
     
     \ Read the FAT
     method fat@ ( cluster fat fs -- link )
@@ -475,6 +460,12 @@ begin-module zscript-fat32
 
     \ Free a cluster tail
     method free-cluster-tail ( cluster fs -- )
+
+    \ Get the number of sectors per cluster
+    method cluster-sectors@ ( self -- sectors )
+
+    \ Cluster offset to sector
+    method cluster-offset>sector ( offset cluster self -- sector )
 
     \ Directory cluster entry count
     method dir-cluster-entry-count@ ( fs -- )
@@ -527,6 +518,9 @@ begin-module zscript-fat32
     \ Actually open a directory
     method do-open-dir ( name parent-dir dir -- )
 
+    \ Get directory first cluster
+    method dir-first-cluster@ ( dir -- cluster )
+
     \ Get the root directory
     method do-root-dir ( cluster dir -- )
 
@@ -575,7 +569,7 @@ begin-module zscript-fat32
     member: my-short-file-name
     member: my-short-file-ext
     member: my-file-attributes
-    member: my-nt-vfat-casee
+    member: my-nt-vfat-case
     member: my-create-time-fine
     member: my-create-time-coarse
     member: my-create-date
@@ -584,6 +578,7 @@ begin-module zscript-fat32
     member: my-modify-time-coarse
     member: my-modify-date
     member: my-first-cluster-low
+    member: my-entry-file-size
 
     \ Copy a buffer into an entry
     :method buffer>entry { bytes self -- }
@@ -604,26 +599,26 @@ begin-module zscript-fat32
 
     \ Copy an entry into a buffer
     :method entry>buffer { bytes self -- }
-      self my-short-file-name 0 bytes 0 8 copy
-      self my-short-file-ext 0 bytes 8 3 copy
-      self my-file-attributes 11 bytes c!+
-      self my-nt-vfat-case 12 bytes c!+
-      self my-create-time-fine 13 bytes c!+
-      self my-create-time-coarse 14 bytes h!+
-      self my-create-date 16 bytes h!+
-      self my-access-date 18 bytes h!+
-      self my-first-cluster-high 20 bytes h!+
-      self my-modify-time-coarse 22 bytes h!+
-      self my-modify-date 24 bytes h!+
-      self my-first-cluster-low 26 bytes h!+
-      self my-entry-file-size 28 bytes w!+
+      self my-short-file-name@ 0 bytes 0 8 copy
+      self my-short-file-ext@ 0 bytes 8 3 copy
+      self my-file-attributes@ 11 bytes c!+
+      self my-nt-vfat-case@ 12 bytes c!+
+      self my-create-time-fine@ 13 bytes c!+
+      self my-create-time-coarse@ 14 bytes h!+
+      self my-create-date@ 16 bytes h!+
+      self my-access-date@ 18 bytes h!+
+      self my-first-cluster-high@ 20 bytes h!+
+      self my-modify-time-coarse@ 22 bytes h!+
+      self my-modify-date@ 24 bytes h!+
+      self my-first-cluster-low@ 26 bytes h!+
+      self my-entry-file-size@ 28 bytes w!+
     ;
 
     \ Initialize a blank entry
     :method init-blank-entry { self -- }
-      $E5 0 self my-short-file-name c!+
-      8 1 ?do $20 i self my-short-file-name c!+ loop
-      3 0 ?do $20 i self my-short-file-ext c!+ loop
+      $E5 0 self my-short-file-name@ c!+
+      8 1 ?do $20 i self my-short-file-name@ c!+ loop
+      3 0 ?do $20 i self my-short-file-ext@ c!+ loop
       0 self my-file-attributes!
       0 self first-cluster!
       0 self my-entry-file-size!
@@ -706,13 +701,13 @@ begin-module zscript-fat32
 
     \ Get the first cluster of an entry
     :method first-cluster@ ( self -- cluster )
-      dup first-cluster-low@ swap first-cluster-high@ 16 lshift or
+      dup my-first-cluster-low@ swap my-first-cluster-high@ 16 lshift or
     ;
 
     \ Set the first cluster of an entry
     :method first-cluster! { cluster self -- }
-      cluster $FFFF and self first-cluster-low!
-      cluster 16 rshift self first-cluster-high!
+      cluster $FFFF and self my-first-cluster-low!
+      cluster 16 rshift self my-first-cluster-high!
     ;
 
     \ Set an entry's file name
@@ -754,7 +749,7 @@ begin-module zscript-fat32
 
     \ Set an entry's creation date and time
     :method create-date-time! { date-time self -- }
-      date-time date-time-yea @ 1980 < if
+      date-time date-time-year@ 1980 < if
         0 9 lshift 1 5 lshift or 1 or self my-create-date!
       else
         date-time date-time-year@ 1980 - $7F and 9 lshift
@@ -811,6 +806,12 @@ begin-module zscript-fat32
       date-time update-dotw
       date-time
     ;
+
+    \ Get an entry's file size
+    :method entry-file-size@ ( entry -- size ) my-entry-file-size@ ;
+
+    \ Set an entry's file size
+    :method entry-file-size! ( size entry -- ) my-entry-file-size! ;
     
   end-class
 
@@ -821,7 +822,7 @@ begin-module zscript-fat32
     member: my-file-open
     member: my-file-parent-index
     member: my-file-parent-cluster
-    member: my-file-start-cluster
+    member: my-file-first-cluster
     member: my-file-offset
     member: my-file-current-cluster
     member: my-file-current-cluster-index
@@ -846,10 +847,10 @@ begin-module zscript-fat32
 
     \ Get the current file sector
     :private current-file-sector@ { self -- sector }
-      self file-offset@
-      self file-fs@ cluster-sectors@ sector-size * umod
-      self file-current-cluster@
-      self file-fs@ current-offset>sector
+      self my-file-offset@
+      self my-file-fs@ cluster-sectors@ sector-size * umod
+      self my-file-current-cluster@
+      self my-file-fs@ cluster-offset>sector
     ;
     
     \ Advance to the next cluster if necessary
@@ -914,7 +915,7 @@ begin-module zscript-fat32
       false self my-file-open!
       -1 self my-file-parent-index!
       -1 self my-file-parent-cluster!
-      -1 self my-file-start-cluster!
+      -1 self my-file-first-cluster!
       0 self my-file-offset!
       -1 self my-file-current-cluster!
       0 self my-file-current-cluster-index!
@@ -929,41 +930,41 @@ begin-module zscript-fat32
 
     \ Actually create a file
     :method do-create-file { name parent-dir self -- }
-      name parent-dir dir-start-cluster@ self my-file-fs@ entry-exists?
+      name parent-dir dir-first-cluster@ self my-file-fs@ entry-exists?
       triggers x-entry-already-exists
-      parent-dir dir-start-cluster@ self my-file-fs@ allocate-entry
+      parent-dir dir-first-cluster@ self my-file-fs@ allocate-entry
       self my-file-parent-cluster!
       self my-file-parent-index!
       self my-file-fs@ allocate-cluster
-      dup self my-file-start-cluster!
+      dup self my-file-first-cluster!
       self my-file-current-cluster!
       make-fat32-entry { entry }
-      0 self my-file-start-cluster@ name entry init-file-entry
+      0 self my-file-first-cluster@ name entry init-file-entry
       entry self my-file-parent-index@ self my-file-parent-cluster@
       self my-file-fs@ entry!
       true self my-file-open!
-      self my-file-start-cluster@ self my-file-fs@ register-open
+      self my-file-first-cluster@ self my-file-fs@ register-open
     ;
 
     \ Actually open a file
     :method do-open-file { name parent-dir self -- }
-      name parent-dir dir-start-cluster@ self my-file-fs@ lookup-entry
+      name parent-dir dir-first-cluster@ self my-file-fs@ lookup-entry
       self my-file-parent-cluster!
       self my-file-parent-index!
       self my-file-parent-index@ self my-file-parent-cluster@
       self my-file-fs@ entry@ { entry }
       entry entry-file? averts x-entry-not-file
-      entry first-cluster@ dup self my-file-start-cluster!
+      entry first-cluster@ dup self my-file-first-cluster!
       self my-file-current-cluster!
       true self my-file-open!
-      self my-file-start-cluster@ self my-file-fs@ register-open
+      self my-file-first-cluster@ self my-file-fs@ register-open
     ;
 
     \ Actually seek to an offset in a file
     :private do-seek-file { offset self -- }
       offset self file-size@ min 0 max self my-file-offset!
       0 self my-file-current-cluster-index!
-      self my-file-start-cluster@ { cluster }
+      self my-file-first-cluster@ { cluster }
       self my-file-offset@ { offset }
       begin
         offset sector-size < if
@@ -1032,13 +1033,13 @@ begin-module zscript-fat32
     ;
 
     \ Tell a file
-    :method tell-file ( self -- )
+    :method tell-file { self -- }
       self my-file-open@ averts x-not-open
-      my-file-offset@
+      self my-file-offset@
     ;
 
     \ Truncate a file
-    :method truncate-file ( self -- )
+    :method truncate-file { self -- }
       self my-file-open@ averts x-not-open
       self my-file-first-cluster@ self my-file-fs@ open-count@
       1 = averts x-shared-file
@@ -1061,10 +1062,13 @@ begin-module zscript-fat32
     member: my-dir-root
     member: my-dir-parent-index
     member: my-dir-parent-cluster
-    member: my-dir-start-cluster
+    member: my-dir-first-cluster
     member: my-dir-offset
     member: my-dir-current-cluster
     member: my-dir-current-cluster-index
+
+    \ Get directory first cluster
+    :method dir-first-cluster@ ( dir -- cluster ) my-dir-first-cluster@ ;
 
     \ Update the directory date and time
     :private update-dir-date-time { self -- }
@@ -1135,7 +1139,7 @@ begin-module zscript-fat32
       false self my-dir-root!
       -1 self my-dir-parent-index!
       -1 self my-dir-parent-cluster!
-      -1 self my-dir-start-cluster!
+      -1 self my-dir-first-cluster!
       0 self my-dir-offset!
       -1 self my-dir-current-cluster!
       0 self my-dir-current-cluster-index!
@@ -1154,7 +1158,7 @@ begin-module zscript-fat32
         self my-dir-current-cluster-index@ 1+ { next-index }
         self my-dir-offset@ next-index
         self my-dir-fs@ dir-cluster-entry-count@ * < if
-          self self-dir-offset@
+          self my-dir-offset@
           self my-dir-fs@ dir-cluster-entry-count@ umod
           self my-dir-current-cluster@ self my-dir-fs@ entry@ { entry }
           entry entry-end? if
@@ -1211,11 +1215,11 @@ begin-module zscript-fat32
     :method remove-file { path self -- }
       self my-dir-open@ averts x-not-open
       path self resolve-file-path { name dir opened? }
-      name dir my-dir-start-cluster@ dir my-dir-fs@ lookup-entry
+      name dir my-dir-first-cluster@ dir my-dir-fs@ lookup-entry
       { index cluster }
       index cluster dir my-dir-fs@ entry@ { entry }
       entry entry-file? averts x-entry-not-file
-      entry first-cluster dir my-dir-fs@ open-count@ 0= averts x-open
+      entry first-cluster@ dir my-dir-fs@ open-count@ 0= averts x-open
       entry first-cluster@ dir my-dir-fs@ free-cluster-chain
       entry mark-entry-deleted
       entry index cluster dir my-dir-fs@ entry!
@@ -1247,16 +1251,16 @@ begin-module zscript-fat32
     ;
 
     \ Remove a directory
-    :method remove-dir { name self -- }
+    :method remove-dir { path self -- }
       self my-dir-open@ averts x-not-open
       path self resolve-dir-path { name parent-dir opened? }
       name validate-dir-name
       name parent-dir open-dir dir-empty? averts x-dir-is-not-empty
-      name parent-dir my-dir-start-cluster@ parent-dir my-dir-fs@ lookup-entry
+      name parent-dir my-dir-first-cluster@ parent-dir my-dir-fs@ lookup-entry
       { index cluster }
       index cluster parent-dir my-dir-fs@ entry@ { entry }
       entry entry-dir? averts x-entry-not-dir
-      entry first-cluster parent-dir my-dir-fs@ open-count@ 0= averts x-open
+      entry first-cluster@ parent-dir my-dir-fs@ open-count@ 0= averts x-open
       entry first-cluster@ parent-dir my-dir-fs@ free-cluster-chain
       entry mark-entry-deleted
       entry index cluster parent-dir my-dir-fs@ entry!
@@ -1268,7 +1272,7 @@ begin-module zscript-fat32
     :method rename { new-name old-path self -- }
       self my-dir-open@ averts x-not-open
       old-path self resolve-path { old-name parent-dir opened? }
-      old-name parent-dir my-dir-start-cluster@ parent-dir
+      old-name parent-dir my-dir-first-cluster@ parent-dir
       my-dir-fs@ lookup-entry
       { index cluster }
       index cluster parent-dir my-dir-fs@ entry@ { entry }
@@ -1280,14 +1284,14 @@ begin-module zscript-fat32
         new-name entry file-name!
       then
       entry index cluster parent-dir my-dir-fs@ entry!
-      parent-dir update-dir-date-fime
+      parent-dir update-dir-date-time
       opened? if parent-dir close then
     ;
 
     \ Get whether a directory is empty
     :method dir-empty? { self -- empty? }
       self my-dir-open@ averts x-not-open
-      0 self my-dir-start-cluster@ { index cluster }
+      0 self my-dir-first-cluster@ { index cluster }
       begin
         index cluster self my-dir-fs@ find-entry
         over -1 = if 2drop true exit then
@@ -1308,7 +1312,7 @@ begin-module zscript-fat32
     :method exists? { path self -- exists? }
       self my-dir-open@ averts x-not-open
       path self resolve-path { name parent-dir opened? }
-      name parent-dir my-dir-start-cluster@ parent-dir my-dir-fs@ entry-exists?
+      name parent-dir my-dir-first-cluster@ parent-dir my-dir-fs@ entry-exists?
       opened? if parent-dir close then
     ;
 
@@ -1316,7 +1320,7 @@ begin-module zscript-fat32
     :method file? { path self -- file? }
       self my-dir-open@ averts x-not-open
       path self resolve-path { name parent-dir opened? }
-      name parent-dir my-dir-start-cluster@ parent-dir my-dir-fs@ lookup-entry
+      name parent-dir my-dir-first-cluster@ parent-dir my-dir-fs@ lookup-entry
       parent-dir my-dir-fs@ entry@ entry-file?
       opened? if parent-dir close then
     ;
@@ -1325,7 +1329,7 @@ begin-module zscript-fat32
     :method dir? { path self -- dir? }
       self my-dir-open@ averts x-not-open
       path self resolve-path { name parent-dir opened? }
-      name parent-dir my-dir-start-cluster@ parent-dir my-dir-fs@ lookup-entry
+      name parent-dir my-dir-first-cluster@ parent-dir my-dir-fs@ lookup-entry
       parent-dir my-dir-fs@ entry@ entry-dir?
       opened? if parent-dir close then
     ;
@@ -1335,14 +1339,14 @@ begin-module zscript-fat32
 
     \ Raw directory creation
     :private do-create-dir-raw { name parent-dir self -- }
-      parent-dir my-dir-start-cluster@ self my-dir-fs@ allocate-entry
+      parent-dir my-dir-first-cluster@ self my-dir-fs@ allocate-entry
       self my-dir-parent-cluster!
       self my-dir-parent-index!
       self my-dir-fs@ allocate-cluster { dir-cluster }
       make-fat32-entry { entry }
       entry init-end-entry
       entry 0 dir-cluster self my-dir-fs@ entry!
-      dir-cluster self my-dir-start-cluster!
+      dir-cluster self my-dir-first-cluster!
       make-fat32-entry { entry }
       dir-cluster name entry init-dir-entry
       entry self my-dir-parent-index@ self my-dir-parent-cluster@
@@ -1351,58 +1355,58 @@ begin-module zscript-fat32
 
     \ Create . directory entry
     :private do-create-dot-entry { self -- }
-      self my-dir-start-cluster@ self my-dir-fs@ allocate-entry
+      self my-dir-first-cluster@ self my-dir-fs@ allocate-entry
       { index cluster }
       make-fat32-entry { entry }
-      self my-dir-start-cluster@ entry init-dir-entry
+      self my-dir-first-cluster@ entry init-dir-entry
       entry index cluster self my-dir-fs@ entry!
     ;
 
     \ Create .. directory entry
     :private do-create-dot-dot-entry { parent-dir self -- }
-      self my-dir-start-cluster@ self my-dir-fs@ allocate-entry
+      self my-dir-first-cluster@ self my-dir-fs@ allocate-entry
       { index cluster }
       make-fat32-entry { entry }
-      parent-dir my-dir-start-cluster@ entry init-dir-entry
+      parent-dir my-dir-first-cluster@ entry init-dir-entry
       entry index cluster self my-dir-fs@ entry!
     ;
     
     \ Actually create a directory
     :method do-create-dir { name parent-dir self -- }
-      name parent-dir my-dir-start-cluster@ self my-dir-fs@ entry-exists?
+      name parent-dir my-dir-first-cluster@ self my-dir-fs@ entry-exists?
       triggers x-entry-already-exists
       name parent-dir self do-create-dir-raw
       self do-create-dot-entry
       parent-dir self do-create-dot-dot-entry
       true self my-dir-open!
       false self my-dir-root!
-      self my-dir-start-cluster@ self my-dir-fs@ register-open
+      self my-dir-first-cluster@ self my-dir-fs@ register-open
     ;
 
     \ Actually open a directory
     :method do-open-dir { name parent-dir self -- }
-      name parent-dir my-dir-start-cluster@ self my-dir-fs@ lookup-entry
+      name parent-dir my-dir-first-cluster@ self my-dir-fs@ lookup-entry
       self my-dir-parent-cluster!
       self my-dir-parent-index!
       self my-dir-parent-index@ self my-dir-parent-cluster@
-      self my-dir-fs entry@ { entry }
+      self my-dir-fs@ entry@ { entry }
       entry entry-dir? averts x-entry-not-dir
       entry first-cluster@ dup
-      self my-dir-start-cluster! self my-dir-current-cluster!
+      self my-dir-first-cluster! self my-dir-current-cluster!
       true self my-dir-open!
       false self my-dir-root!
-      self my-dir-start-cluster@ self my-dir-fs@ register-open
+      self my-dir-first-cluster@ self my-dir-fs@ register-open
     ;
 
     \ Get the root directory
     :method do-root-dir { cluster self -- }
       -1 self my-dir-parent-cluster!
       -1 self my-dir-parent-index!
-      cluster self my-dir-start-cluster!
+      cluster self my-dir-first-cluster!
       cluster self my-dir-current-cluster!
       true self my-dir-open!
       true self my-dir-root!
-      self my-dir-start-cluster@ self my-dir-fs@ register-open
+      self my-dir-first-cluster@ self my-dir-fs@ register-open
     ;
 
   end-class
@@ -1423,6 +1427,13 @@ begin-module zscript-fat32
     member: my-free-cluster-count
     member: my-recent-allocated-cluster
 
+    \ Get the cluster count
+    :private cluster-count@ { self -- }
+      self my-sector-count@ self my-reserved-sectors@ -
+      self my-fat-count@ self my-fat-sectors@ * -
+      self my-fat-sectors@ sector-size * 4 / 2 - min
+    ;
+
     \ Read the info sector
     :private read-info-sector { self -- }
       sector-size make-bytes { data }
@@ -1430,7 +1441,7 @@ begin-module zscript-fat32
       $000 data w@+ $41615252 = averts x-bad-info-sector
       $1E4 data w@+ $61417272 = averts x-bad-info-sector
       $1FC data w@+ $AA550000 = averts x-bad-info-sector
-      $1E8 data w@+ self my-cluster-count@ min self my-free-cluster-count!
+      $1E8 data w@+ self cluster-count@ min self my-free-cluster-count!
       $1EC data w@+ self my-recent-allocated-cluster!
     ;
 
@@ -1456,12 +1467,8 @@ begin-module zscript-fat32
       cluster 2 - self my-cluster-sectors@ * +
     ;
 
-    \ Get the cluster count
-    :private cluster-count@ { self -- }
-      self my-sector-count@ self my-reserved-sectors@ -
-      self my-fat-count@ self my-fat-sectors@ * -
-      self my-fat-sectors@ sector-size * 4 / 2 - min
-    ;
+    \ Get the number of sectors per cluster
+    :method cluster-sectors@ ( self -- sectors ) my-cluster-sectors@ ;
     
     \ Read the FAT
     :method fat@ { cluster fat self -- link }
@@ -1483,14 +1490,14 @@ begin-module zscript-fat32
 
     \ Write all the FAT's
     :private all-fat! { link cluster self -- }
-      self my-fat-count@ 0 ?do link cluster fat self fat! loop
+      self my-fat-count@ 0 ?do link cluster i self fat! loop
     ;
 
     \ Find a free cluster
     :private find-free-cluster { self -- cluster }
       self my-recent-allocated-cluster@
       dup -1 = if drop 2 else 1+ then { recent }
-      recent self cluster-count@ 2+ recent ?do
+      recent self cluster-count@ 2 + recent ?do
         i 0 self fat@ free-cluster? if i exit then
       loop
       recent 2 ?do
@@ -1538,6 +1545,11 @@ begin-module zscript-fat32
       dup link-cluster? if cluster-link self free-cluster-chain else drop then
     ;
 
+    \ Cluster offset to sector
+    :method cluster-offset>sector ( offset cluster self -- sector )
+      cluster>sector swap sector-size /
+    ;
+    
     \ Directory cluster entry count
     :method dir-cluster-entry-count@ ( self -- )
       my-cluster-sectors@ sector-size entry-size / *
@@ -1583,7 +1595,8 @@ begin-module zscript-fat32
 
     \ Look up an entry
     :method lookup-entry { name cluster self -- index cluster }
-      name convert-name to name
+      name upcase-bytes to name
+      name validate-name
       0 { index }
       begin
         index cluster self find-entry
@@ -1592,7 +1605,7 @@ begin-module zscript-fat32
         index cluster self entry@ { entry }
         entry entry-end? not averts x-entry-not-found \ first char is not $00
         entry entry-deleted? not if \ first char is not $E5
-          name entry name-matches? if
+          name entry name@ equal? if
             index cluster exit
           then
         then
@@ -1602,7 +1615,8 @@ begin-module zscript-fat32
 
     \ Get whether an entry exists
     :method entry-exists? { name cluster self -- exists? }
-      name convert-name to name
+      name upcase-bytes to name
+      name validate-name
       0 { index }
       begin
         index cluster self find-entry
@@ -1611,7 +1625,7 @@ begin-module zscript-fat32
         index cluster self entry@ { entry }
         entry entry-end? if false exit then \ first char is $00
         entry entry-deleted? not if \ first char is not $E5
-          name entry name-matches? if
+          name entry name@ equal? if
             true exit
           then
         then
