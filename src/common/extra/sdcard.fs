@@ -165,12 +165,12 @@ begin-module zscript-sdcard
     
     \ Set write-through cache mode
     :method write-through! { write-through self -- }
-      write-through self sd@ write-through!
+      write-through self sd@ foreign-write-through!
     ;
     
     \ Get write-through cache mode
     :method write-through@ { self -- write-through }
-      self sd@ write-through@
+      self sd@ foreign-write-through@
     ;
 
   end-class

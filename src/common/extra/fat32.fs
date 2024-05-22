@@ -260,7 +260,6 @@ begin-module zscript-fat32
     : segment-path { path -- parts }
       path >len { len }
       0 path [: [char] / = if 1+ then ;] foldl { count }
-      count 0> averts x-empty-path
       count 1+ make-cells { parts }
       0 0 { index part-index }
       path { remainder }
@@ -274,6 +273,7 @@ begin-module zscript-fat32
         remainder [: [char] / = ;] find-index drop
         0 over remainder >slice part-index parts !+
         1+ remainder >len over - remainder >slice to remainder
+        1 +to part-index
       repeat
       remainder part-index parts !+
       parts clean-path
@@ -292,7 +292,7 @@ begin-module zscript-fat32
       len 2 > if
         len 1- 1 ?do i parts @+ validate-dir-name loop
       then
-      len -1 parts @+ validate-file-name
+      len 1- parts @+ validate-file-name
     ;
 
     \ Validate a directory path
@@ -321,7 +321,7 @@ begin-module zscript-fat32
       len 2 > if
         len 1- 1 ?do i parts @+ validate-dir-name loop
       then
-      len -1 parts @+ validate-name
+      len 1- parts @+ validate-name
     ;
     
   end-module> import
@@ -545,7 +545,7 @@ begin-module zscript-fat32
     \ Read a partition
     :method partition@ { index self -- partition }
       index 0>= index 4 < and averts x-out-of-range-partition
-      $10 make-bytes dup { data } $10 $1BE $10 index * + 0
+      $10 make-bytes dup { data } $1BE $10 index * + 0
       self my-mbr-device@ block-part@
       $00 data c@+ $04 data c@+ $08 data w@+ $0C data w@+ make-partition
     ;
@@ -737,7 +737,7 @@ begin-module zscript-fat32
       self entry-file? if
         self my-short-file-name@ strip-end-spaces
         self my-short-file-ext@ strip-end-spaces
-        >pair ." ." join
+        >pair s" ." join
       else
         self entry-dir? if
           self my-short-file-name@ strip-end-spaces
@@ -745,6 +745,7 @@ begin-module zscript-fat32
       then
       duplicate { name }
       0 name c@+ $05 = if $E5 0 name c!+ then
+      name
     ;
 
     \ Set an entry's creation date and time
@@ -887,7 +888,7 @@ begin-module zscript-fat32
     :private read-file-sector { bytes self -- count }
       self current-file-sector@ { sector }
       sector-size self my-file-offset@ sector-size umod -
-      self file-size@ self my-file-offset@ - bytes >len min { count }
+      self file-size@ self my-file-offset@ - bytes >len min min { count }
       self my-file-offset@ sector-size umod { offset }
       0 count bytes >slice offset sector
       self my-file-fs@ fat32-device@ block-part@
@@ -900,7 +901,7 @@ begin-module zscript-fat32
     :private write-file-sector { bytes self -- count }
       self current-file-sector@ { sector }
       sector-size self my-file-offset@ sector-size umod -
-      self file-size@ self my-file-offset@ - bytes >len min { count }
+      self file-size@ self my-file-offset@ - bytes >len min min { count }
       self my-file-offset@ sector-size umod { offset }
       0 count bytes >slice offset sector
       self my-file-fs@ fat32-device@ block-part!
@@ -1086,14 +1087,16 @@ begin-module zscript-fat32
         self my-dir-root@ averts x-invalid-path
         1 parts >len 1- parts >slice to parts
       then
-      parts >len 1 = if 0 parts @+ self false then
+      parts >len { len }
+      len 0> averts x-empty-path
+      len 1 = if 0 parts @+ self false exit then
       0 parts @+ self open-dir { current-dir }
-      parts >len 1- 1 ?do
+      len 1- 1 ?do
         i parts @+ current-dir open-dir { new-dir }
         current-dir close
         new-dir to current-dir
       loop
-      parts >len 1-  parts @+ current-dir true
+      len 1-  parts @+ current-dir true
     ;
 
     \ Find a containing directory and a directory name
@@ -1104,14 +1107,16 @@ begin-module zscript-fat32
         self my-dir-root@ averts x-invalid-path
         1 parts >len 1- parts >slice to parts
       then
-      parts >len 1 = if 0 parts @+ self false then
+      parts >len { len }
+      len 0> averts x-empty-path
+      len 1 = if 0 parts @+ self false exit then
       0 parts @+ self open-dir { current-dir }
-      parts >len 1- 1 ?do
+      len 1- 1 ?do
         i parts @+ current-dir open-dir { new-dir }
         current-dir close
         new-dir to current-dir
       loop
-      parts >len 1-  parts @+ current-dir true
+      len 1- parts @+ current-dir true
     ;
 
     \ Find a containing directory and a file or directory name
@@ -1122,14 +1127,16 @@ begin-module zscript-fat32
         self my-dir-root@ averts x-invalid-path
         1 parts >len 1- parts >slice to parts
       then
-      parts >len 1 = if 0 parts @+ self false then
+      parts >len { len }
+      len 0> averts x-empty-path
+      len 1 = if 0 parts @+ self false exit then
       0 parts @+ self open-dir { current-dir }
-      parts >len 1- 1 ?do
+      len 1- 1 ?do
         i parts @+ current-dir open-dir { new-dir }
         current-dir close
         new-dir to current-dir
       loop
-      parts >len 1-  parts @+ current-dir true
+      len 1-  parts @+ current-dir true
     ;
 
     \ Constructor
@@ -1547,7 +1554,7 @@ begin-module zscript-fat32
 
     \ Cluster offset to sector
     :method cluster-offset>sector ( offset cluster self -- sector )
-      cluster>sector swap sector-size /
+      cluster>sector swap sector-size / +
     ;
     
     \ Directory cluster entry count
@@ -1577,7 +1584,7 @@ begin-module zscript-fat32
       index sector-size entry-size / u/ + { sector }
       index sector-size entry-size / umod to index
       entry-size make-bytes { data }
-      data index entry-size * self my-device@ block-part@
+      data index entry-size * sector self my-device@ block-part@
       data entry buffer>entry
       entry
     ;
@@ -1590,7 +1597,7 @@ begin-module zscript-fat32
       index sector-size entry-size / u/ + { sector }
       index sector-size entry-size / umod to index
       entry-size make-bytes { data }
-      entry entry>buffer index entry-size * self my-device@ block-part!
+      entry entry>buffer index entry-size * sector self my-device@ block-part!
     ;
 
     \ Look up an entry
@@ -1677,7 +1684,7 @@ begin-module zscript-fat32
       default-open-map-size [: ;] ['] = make-map self my-open-map!
       partition partition-first-sector@ self my-first-sector!
       sector-size make-bytes { data }
-      data self my-first-sector@ my-device@ block@
+      data self my-first-sector@ self my-device@ block@
       $00B data unaligned-h@+ sector-size = averts x-sector-size-not-supported
       $00D data c@+ self my-cluster-sectors!
       $00E data h@+ self my-reserved-sectors!

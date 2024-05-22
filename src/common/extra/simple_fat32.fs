@@ -48,7 +48,8 @@ begin-module zscript-simple-fat32
       cs-pin output-pin cs-pin pull-up-pin
       cs-pin spi-device make-sd self my-sd!
       self my-sd@ init-sd
-      0 self my-sd@ make-mbr partition@ self my-sd@ make-fat32-fs self my-fs!
+      0 self my-sd@ make-mbr partition@
+      self my-sd@ make-fat32-fs self my-fs!
     ;
 
     \ Get root directory
