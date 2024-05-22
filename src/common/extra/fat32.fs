@@ -1163,6 +1163,7 @@ begin-module zscript-fat32
     :method close { self -- }
       self my-dir-open@ averts x-not-open
       false self my-dir-open!
+      self my-dir-first-cluster@ self my-dir-fs@ unregister-open
     ;
     
     \ Read a directory
@@ -1269,7 +1270,9 @@ begin-module zscript-fat32
       self my-dir-open@ averts x-not-open
       path self resolve-dir-path { name parent-dir opened? }
       name validate-dir-name
-      name parent-dir open-dir dir-empty? averts x-dir-is-not-empty
+      name parent-dir open-dir { removed-dir }
+      removed-dir dir-empty? averts x-dir-is-not-empty
+      removed-dir close
       name parent-dir my-dir-first-cluster@ parent-dir my-dir-fs@ lookup-entry
       { index cluster }
       index cluster parent-dir my-dir-fs@ entry@ { entry }
@@ -1372,7 +1375,7 @@ begin-module zscript-fat32
       self my-dir-first-cluster@ self my-dir-fs@ allocate-entry
       { index cluster }
       make-fat32-entry { entry }
-      self my-dir-first-cluster@ entry init-dir-entry
+      self my-dir-first-cluster@ s" ." entry init-dir-entry
       entry index cluster self my-dir-fs@ entry!
     ;
 
@@ -1381,7 +1384,7 @@ begin-module zscript-fat32
       self my-dir-first-cluster@ self my-dir-fs@ allocate-entry
       { index cluster }
       make-fat32-entry { entry }
-      parent-dir my-dir-first-cluster@ entry init-dir-entry
+      parent-dir my-dir-first-cluster@ s" .." entry init-dir-entry
       entry index cluster self my-dir-fs@ entry!
     ;
     
