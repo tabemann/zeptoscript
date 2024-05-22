@@ -616,6 +616,8 @@ begin-module zscript-fat32
 
     \ Initialize a blank entry
     :method init-blank-entry { self -- }
+      8 make-bytes self my-short-file-name!
+      3 make-bytes self my-short-file-ext!
       $E5 0 self my-short-file-name@ c!+
       8 1 ?do $20 i self my-short-file-name@ c!+ loop
       3 0 ?do $20 i self my-short-file-ext@ c!+ loop
@@ -633,6 +635,8 @@ begin-module zscript-fat32
 
     \ Initialize a file entry
     :method init-file-entry { file-size first-cluster name self -- }
+      8 make-bytes self my-short-file-name!
+      3 make-bytes self my-short-file-ext!
       name self file-name!
       first-cluster self first-cluster!
       file-size self my-entry-file-size!
@@ -646,6 +650,8 @@ begin-module zscript-fat32
 
     \ Initialize a directory entry
     :method init-dir-entry { first-cluster name self -- }
+      8 make-bytes self my-short-file-name!
+      3 make-bytes self my-short-file-ext!
       name self dir-name!
       first-cluster self first-cluster!
       0 self my-entry-file-size!
@@ -718,8 +724,8 @@ begin-module zscript-fat32
       8 0 ?do $20 i self my-short-file-name@ c!+ loop
       3 0 ?do $20 i self my-short-file-ext@ c!+ loop
       name dot-index { index }
-      name 0 self my-short-file-name@ 0 dot-index copy
-      name dot-index 1+ self my-short-file-ext@ 0 name >len dot-index - 1- copy
+      name 0 self my-short-file-name@ 0 index copy
+      name index 1+ self my-short-file-ext@ 0 name >len index - 1- copy
     ;
 
     \ Set an entry's directory name
@@ -901,11 +907,12 @@ begin-module zscript-fat32
     :private write-file-sector { bytes self -- count }
       self current-file-sector@ { sector }
       sector-size self my-file-offset@ sector-size umod -
-      self file-size@ self my-file-offset@ - bytes >len min min { count }
+      bytes >len min { count }
       self my-file-offset@ sector-size umod { offset }
       0 count bytes >slice offset sector
       self my-file-fs@ fat32-device@ block-part!
       self my-file-offset@ count + self my-file-offset!
+      self file-size@ self my-file-offset@ max self file-size!
       self advance-cluster
       count
     ;
@@ -1597,7 +1604,8 @@ begin-module zscript-fat32
       index sector-size entry-size / u/ + { sector }
       index sector-size entry-size / umod to index
       entry-size make-bytes { data }
-      entry entry>buffer index entry-size * sector self my-device@ block-part!
+      data entry entry>buffer
+      data index entry-size * sector self my-device@ block-part!
     ;
 
     \ Look up an entry
