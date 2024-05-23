@@ -94,44 +94,41 @@ begin-module zscript-fs
   \ Get the filesystem of a file or directory
   method fs@ ( file|dir -- fs )
   
-  \ Find whether a file or directory in a path from a directory exists
-  method path-exists? ( name dir -- exists? )
-
   \ Read an entry from a directory, and return whether an entry was read
   method read-dir ( entry dir -- entry-read? )
   
   \ Create a file
-  method create-file ( name dir -- file )
+  method create-file ( path dir -- file )
   
   \ Open a file
-  method open-file ( name dir -- file )
+  method open-file ( path dir -- file )
   
   \ Remove a file
-  method remove-file ( name dir -- )
+  method remove-file ( path dir -- )
   
   \ Create a directory
-  method create-dir ( name dir -- dir' )
+  method create-dir ( path dir -- dir' )
   
   \ Open a directory
-  method open-dir ( name dir -- dir' )
+  method open-dir ( path dir -- dir' )
   
   \ Remove a directory
-  method remove-dir ( name dir -- )
+  method remove-dir ( path dir -- )
   
   \ Rename a file or directory
-  method rename ( new-name name dir -- )
+  method rename ( new-name path dir -- )
   
   \ Get whether a directory is empty
   method dir-empty? ( dir -- empty? )
 
   \ Get whether a directory entry exists
-  method exists? ( name dir -- exists? )
+  method exists? ( path dir -- exists? )
 
   \ Get whether a directory entry is a file
-  method file? ( name dir -- file? )
+  method file? ( path dir -- file? )
 
   \ Get whether a directory entry is a directory
-  method dir? ( name dir -- dir? )
+  method dir? ( path dir -- dir? )
 
   \ Get the filesystem root directory
   method root-dir@ ( fs -- dir )

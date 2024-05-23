@@ -63,7 +63,62 @@ begin-module zscript-simple-fat32
 
     \ Get write-through cache mode
     :method write-through@ ( self -- write-through ) my-sd@ write-through@ ;
-    
+
+    \ Create a file
+    :method create-file ( path dir -- file )
+      my-fs@ create-file
+    ;
+  
+    \ Open a file
+    :method open-file ( path dir -- file )
+      my-fs@ open-file
+    ;
+  
+    \ Remove a file
+    :method remove-file ( path dir -- )
+      my-fs@ remove-file
+    ;
+  
+    \ Create a directory
+    :method create-dir ( path dir -- dir' )
+      my-fs@ create-dir
+    ;
+  
+    \ Open a directory
+    :method open-dir ( path dir -- dir' )
+      my-fs@ open-dir
+    ;
+  
+    \ Remove a directory
+    :method remove-dir ( path dir -- )
+      my-fs@ remove-dir
+    ;
+  
+    \ Rename a file or directory
+    :method rename ( new-name path dir -- )
+      my-fs@ rename
+    ;
+  
+    \ Get whether a directory is empty
+    :method dir-empty? ( dir -- empty? )
+      my-fs@ dir-empty?
+    ;
+
+    \ Get whether a directory entry exists
+    :method exists? ( path dir -- exists? )
+      my-fs@ exists?
+    ;
+
+    \ Get whether a directory entry is a file
+    :method file? ( path dir -- file? )
+      my-fs@ file?
+    ;
+
+    \ Get whether a directory entry is a directory
+    :method dir? ( path dir -- dir? )
+      my-fs@ dir?
+    ;
+
   end-class
   
 end-module

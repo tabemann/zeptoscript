@@ -302,6 +302,7 @@ begin-module zscript-fat32
       0 parts @+ dup s" /" equal? not if
         validate-dir-name
       else
+        len 1 > averts x-invalid-path
         drop
       then
       len 1 > if
@@ -316,6 +317,7 @@ begin-module zscript-fat32
       0 parts @+ dup s" /" equal? not if
         len 1 > if validate-dir-name else validate-name then
       else
+        len 1 > averts x-invalid-path
         drop
       then
       len 2 > if
@@ -1746,6 +1748,99 @@ begin-module zscript-fat32
     \ Get the number of open references to a file or directory
     :method open-count@ { cluster self -- count }
       cluster self my-open-map@ find-map not if drop 0 then
+    ;
+
+    \ Create a file
+    :method create-file { path self -- file }
+      self root-dir@ { root-dir }
+      path root-dir ['] create-file try
+      root-dir close
+      ?raise
+    ;
+    
+    \ Open a file
+    :method open-file { path self -- file }
+      self root-dir@ { root-dir }
+      path root-dir ['] open-file try
+      root-dir close
+      ?raise
+    ;
+    
+    \ Remove a file
+    :method remove-file { path self -- }
+      self root-dir@ { root-dir }
+      path root-dir ['] remove-file try
+      root-dir close
+      ?raise
+    ;
+    
+    \ Create a directory
+    :method create-dir { path self -- dir' }
+      self root-dir@ { root-dir }
+      path root-dir ['] create-dir try
+      root-dir close
+      ?raise
+    ;
+    
+    \ Open a directory
+    :method open-dir { path self -- dir' }
+      0 path [: [char] / <> if 1+ then ;] foldl 0<> if
+        self root-dir@ { root-dir }
+        path root-dir ['] open-dir try
+        root-dir close
+        ?raise
+      else
+        path >len 0> averts x-empty-path
+        self root-dir@
+      then
+    ;
+    
+    \ Remove a directory
+    :method remove-dir { path self -- }
+      self root-dir@ { root-dir }
+      path root-dir ['] remove-dir try
+      root-dir close
+      ?raise
+    ;
+    
+    \ Repath a file or directory
+    :method rename { new-name path self -- }
+      self root-dir@ { root-dir }
+      new-name path root-dir ['] rename try
+      root-dir close
+      ?raise
+    ;
+    
+    \ Get whether a directory is empty
+    :method dir-empty? { self -- empty? }
+      self root-dir@ { root-dir }
+      root-dir ['] dir-empty? try
+      root-dir close
+      ?raise
+    ;
+
+    \ Get whether a directory entry exists
+    :method exists? { path self -- exists? }
+      self root-dir@ { root-dir }
+      path root-dir ['] exists? try
+      root-dir close
+      ?raise
+    ;
+
+    \ Get whether a directory entry is a file
+    :method file? { path self -- file? }
+      self root-dir@ { root-dir }
+      path root-dir ['] file? try
+      root-dir close
+      ?raise
+    ;
+
+    \ Get whether a directory entry is a directory
+    :method dir? { path self -- dir? }
+      self root-dir@ { root-dir }
+      path root-dir ['] dir? try
+      root-dir close
+      ?raise
     ;
     
   end-class
