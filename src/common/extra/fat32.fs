@@ -1209,23 +1209,27 @@ begin-module zscript-fat32
     :method create-file { path self -- file }
       self my-dir-open@ averts x-not-open
       path self resolve-file-path { name dir opened? }
-      name validate-file-name
-      dir my-dir-fs@ make-fat32-file { file }
-      name dir file do-create-file
-      dir update-dir-date-time
+      name dir [: { name dir }
+        dir my-dir-fs@ make-fat32-file { file }
+        name dir file do-create-file
+        dir update-dir-date-time
+        file
+      ;] try
       opened? if dir close then
-      file
+      ?raise
     ;
 
     \ Open a file
     :method open-file { path self -- file }
       self my-dir-open@ averts x-not-open
       path self resolve-file-path { name dir opened? }
-      name validate-file-name
-      dir my-dir-fs@ make-fat32-file { file }
-      name dir file do-open-file
+      name dir [: { name dir }
+        dir my-dir-fs@ make-fat32-file { file }
+        name dir file do-open-file
+        file
+      ;] try
       opened? if dir close then
-      file
+      ?raise
     ;
 
     \ Remove a file
@@ -1233,58 +1237,66 @@ begin-module zscript-fat32
       self my-dir-open@ averts x-not-open
       path self resolve-file-path { name dir opened? }
       name dir my-dir-first-cluster@ dir my-dir-fs@ lookup-entry
-      { index cluster }
-      index cluster dir my-dir-fs@ entry@ { entry }
-      entry entry-file? averts x-entry-not-file
-      entry first-cluster@ dir my-dir-fs@ open-count@ 0= averts x-open
-      entry first-cluster@ dir my-dir-fs@ free-cluster-chain
-      entry mark-entry-deleted
-      entry index cluster dir my-dir-fs@ entry!
-      dir update-dir-date-time
+      dir [: { index cluster dir }
+        index cluster dir my-dir-fs@ entry@ { entry }
+        entry entry-file? averts x-entry-not-file
+        entry first-cluster@ dir my-dir-fs@ open-count@ 0= averts x-open
+        entry first-cluster@ dir my-dir-fs@ free-cluster-chain
+        entry mark-entry-deleted
+        entry index cluster dir my-dir-fs@ entry!
+        dir update-dir-date-time
+      ;] try
       opened? if dir close then
+      ?raise
     ;
 
     \ Create a directory
     :method create-dir { path self -- dir }
       self my-dir-open@ averts x-not-open
       path self resolve-dir-path { name parent-dir opened? }
-      name validate-dir-name
-      parent-dir my-dir-fs@ make-fat32-dir { dir }
-      name parent-dir dir do-create-dir
-      parent-dir update-dir-date-time
+      name parent-dir [: { name parent-dir }
+        parent-dir my-dir-fs@ make-fat32-dir { dir }
+        name parent-dir dir do-create-dir
+        parent-dir update-dir-date-time
+        dir
+      ;] try
       opened? if parent-dir close then
-      dir
+      ?raise
     ;
 
     \ Open a directory
     :method open-dir { path self -- dir }
       self my-dir-open@ averts x-not-open
       path self resolve-dir-path { name parent-dir opened? }
-      name validate-dir-name
-      parent-dir my-dir-fs@ make-fat32-dir { dir }
-      name parent-dir dir do-open-dir
+      name parent-dir [: { name parent-dir }
+        parent-dir my-dir-fs@ make-fat32-dir { dir }
+        name parent-dir dir do-open-dir
+        dir
+      ;] try
       opened? if parent-dir close then
-      dir
+      ?raise
     ;
 
     \ Remove a directory
     :method remove-dir { path self -- }
       self my-dir-open@ averts x-not-open
       path self resolve-dir-path { name parent-dir opened? }
-      name validate-dir-name
       name parent-dir open-dir { removed-dir }
       removed-dir dir-empty? averts x-dir-is-not-empty
       removed-dir close
       name parent-dir my-dir-first-cluster@ parent-dir my-dir-fs@ lookup-entry
-      { index cluster }
-      index cluster parent-dir my-dir-fs@ entry@ { entry }
-      entry entry-dir? averts x-entry-not-dir
-      entry first-cluster@ parent-dir my-dir-fs@ open-count@ 0= averts x-open
-      entry first-cluster@ parent-dir my-dir-fs@ free-cluster-chain
-      entry mark-entry-deleted
-      entry index cluster parent-dir my-dir-fs@ entry!
-      parent-dir update-dir-date-time
+      parent-dir [:
+        { index cluster parent-dir }
+        index cluster parent-dir my-dir-fs@ entry@ { entry }
+        entry entry-dir? averts x-entry-not-dir
+        entry first-cluster@ parent-dir my-dir-fs@ open-count@ 0= averts x-open
+        entry first-cluster@ parent-dir my-dir-fs@ free-cluster-chain
+        entry mark-entry-deleted
+        entry index cluster parent-dir my-dir-fs@ entry!
+        parent-dir update-dir-date-time
+      ;] try
       opened? if parent-dir close then
+      ?raise
     ;
 
     \ Rename an entry
@@ -1293,18 +1305,21 @@ begin-module zscript-fat32
       old-path self resolve-path { old-name parent-dir opened? }
       old-name parent-dir my-dir-first-cluster@ parent-dir
       my-dir-fs@ lookup-entry
-      { index cluster }
-      index cluster parent-dir my-dir-fs@ entry@ { entry }
-      entry entry-dir? if
-        old-name forbidden-dir? triggers x-forbidden-dir
-        new-name forbidden-dir? triggers x-forbidden-dir
-        new-name entry dir-name!
-      else
-        new-name entry file-name!
-      then
-      entry index cluster parent-dir my-dir-fs@ entry!
-      parent-dir update-dir-date-time
+      new-name old-name parent-dir [:
+        { index cluster new-name old-name parent-dir }
+        index cluster parent-dir my-dir-fs@ entry@ { entry }
+        entry entry-dir? if
+          old-name forbidden-dir? triggers x-forbidden-dir
+          new-name forbidden-dir? triggers x-forbidden-dir
+          new-name entry dir-name!
+        else
+          new-name entry file-name!
+        then
+        entry index cluster parent-dir my-dir-fs@ entry!
+        parent-dir update-dir-date-time
+      ;] try
       opened? if parent-dir close then
+      ?raise
     ;
 
     \ Get whether a directory is empty

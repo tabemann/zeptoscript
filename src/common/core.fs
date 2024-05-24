@@ -2452,7 +2452,7 @@ begin-module zscript
         endof
         ['] x-incorrect-type ?raise
       endcase
-      try >integral dup if save execute then
+      try >integral dup if integral>xt save execute then
     ;] save dup if nip then
   ;
 
