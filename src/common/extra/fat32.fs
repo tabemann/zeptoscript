@@ -864,7 +864,7 @@ begin-module zscript-fat32
     
     \ Advance to the next cluster if necessary
     :private advance-cluster { self -- }
-      self my-file-offset@ self file-size@ < if
+      self my-file-offset@ self file-size@ <= if
         self my-file-current-cluster-index@ 1+ dup { new-index }
         self my-file-fs@ cluster-sectors@ sector-size * *
         self my-file-offset@ = if

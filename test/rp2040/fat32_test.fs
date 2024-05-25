@@ -76,7 +76,11 @@ begin-module fat32-test
   
   : write-test { count path -- }
     false my-fs@ zscript-block-dev::write-through!
-    path my-fs@ create-file { my-file }
+    path my-fs@ exists? if
+      path my-fs@ open-file
+    else
+      path my-fs@ create-file
+    then { my-file }
     cell make-bytes { data }
     count 0 ?do
       i 128 umod 0= if i . then
