@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Block devices</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/epub.css" /> 
+  </head><body>
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <section id="block-devices">
+<h1>Block devices</h1>
+<p>zeptoscript comes with modules for interacting with block devices. Currently only SDHC/SDXC cards communicated with over SPI are supported. These devices provide storage in the form of discrete fixed-sized blocks of storage at indices. Typically they provide caching of blocks for the purpose of speeding up repeated reads to the same blocks.</p>
+<section id="zscript-block-dev-words">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-block-dev</span></code> words</h2>
+<p>This module is provided by <code class="docutils literal notranslate"><span class="pre">src/common/extra/block_dev.fs</span></code>.</p>
+<p>The following words are available:</p>
+<section id="block-size">
+<h3><code class="docutils literal notranslate"><span class="pre">block-size</span></code></h3>
+<p>( device – bytes )</p>
+<p>Get the size of a <em>device</em>’s blocks in bytes.</p>
+</section>
+<section id="block-count">
+<h3><code class="docutils literal notranslate"><span class="pre">block-count</span></code></h3>
+<p>( device – count )</p>
+<p>Get the number of blocks for <em>device</em>.</p>
+</section>
+<section id="block">
+<h3><code class="docutils literal notranslate"><span class="pre">block!</span></code></h3>
+<p>( data index device – )</p>
+<p>Write <em>data</em> to block <em>index</em> of <em>device</em>. <em>data</em> has to be of the size of a block.</p>
+</section>
+<section id="block-part">
+<h3><code class="docutils literal notranslate"><span class="pre">block-part!</span></code></h3>
+<p>( data offset index device – )</p>
+<p>Write <em>data</em> to block <em>index</em> of <em>device</em> starting at <em>offset</em>. The length of <em>data</em> plus <em>offset</em> cannot be greater than the size of a block.</p>
+</section>
+<section id="id1">
+<h3><code class="docutils literal notranslate"><span class="pre">block&#64;</span></code></h3>
+<p>( data index device – )</p>
+<p>Write block <em>index</em> of <em>device</em> to <em>data</em>. <em>data</em> has to be the size of a block.</p>
+</section>
+<section id="id2">
+<h3><code class="docutils literal notranslate"><span class="pre">block-part&#64;</span></code></h3>
+<p>( data offset index device – )</p>
+<p>Write block <em>index</em> of <em>device</em> starting at <em>offset</em> to <em>data</em>. The length of <em>data</em> plus <em>offset</em> cannot be greater than the size of a block.</p>
+</section>
+<section id="flush-blocks">
+<h3><code class="docutils literal notranslate"><span class="pre">flush-blocks</span></code></h3>
+<p>( device – )</p>
+<p>Flush cached blocks for <em>device</em> to the underlying media.</p>
+</section>
+<section id="clear-blocks">
+<h3><code class="docutils literal notranslate"><span class="pre">clear-blocks</span></code></h3>
+<p>( device – )</p>
+<p>Clear cached blocks for <em>device</em>.</p>
+</section>
+<section id="write-through">
+<h3><code class="docutils literal notranslate"><span class="pre">write-through!</span></code></h3>
+<p>( write-through device – )</p>
+<p>Set the <em>write-through</em> cache mode for <em>device</em>. When this is set to <code class="docutils literal notranslate"><span class="pre">true</span></code> writes to blocks are immediately written to the underlying media, while when this is set to <code class="docutils literal notranslate"><span class="pre">false</span></code> writes to blocks are merely cached unless an access forces a cached block to be evicted.</p>
+</section>
+<section id="id3">
+<h3><code class="docutils literal notranslate"><span class="pre">write-through&#64;</span></code></h3>
+<p>( device – write-through )</p>
+<p>Get the <em>write-through</em> cache mode for <em>device</em>.</p>
+</section>
+<section id="x-block-out-of-range">
+<h3><code class="docutils literal notranslate"><span class="pre">x-block-out-of-range</span></code></h3>
+<p>( – )</p>
+<p>Block out of range exception.</p>
+</section>
+</section>
+<section id="zscript-sdcard-module">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-sdcard</span></code> module</h2>
+<p>This module is provided by <code class="docutils literal notranslate"><span class="pre">src/common/extra/sdcard.fs</span></code> and is dependent upon the <code class="docutils literal notranslate"><span class="pre">zscript-block-dev</span></code> module.</p>
+<p>This module has the following words:</p>
+<section id="make-sd">
+<h3><code class="docutils literal notranslate"><span class="pre">make-sd</span></code></h3>
+<p>( cs-pin spi-device – sd )</p>
+<p>Construct an SDHC/SDXC card object with chip select pin <em>cs-pin</em> and SPI peripheral <em>spi-device</em>. These objects implement all the <em>device</em> methods specified in <code class="docutils literal notranslate"><span class="pre">zscript-block-dev</span></code>.</p>
+</section>
+<section id="init-sd">
+<h3><code class="docutils literal notranslate"><span class="pre">init-sd</span></code></h3>
+<p>( sd – )</p>
+<p>Initialize the SDHC/SDXC card. This must be called prior to using the SDHC/SDXC card.</p>
+</section>
+<section id="write-sd-block-zero">
+<h3><code class="docutils literal notranslate"><span class="pre">write-sd-block-zero!</span></code></h3>
+<p>( enabled sd – )</p>
+<p>Set whether block zero of an SDHC/SDXC card is protected.</p>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

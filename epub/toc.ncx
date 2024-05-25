@@ -3316,5 +3316,125 @@
         </navPoint>
       </navPoint>
     </navPoint>
+    <navPoint id="navPoint552" playOrder="522">
+      <navLabel>
+        <text>Block devices</text>
+      </navLabel>
+      <content src="extra/block_dev.xhtml" />  
+      <navPoint id="navPoint553" playOrder="522">
+        <navLabel>
+          <text>Block devices</text>
+        </navLabel>
+        <content src="extra/block_dev.xhtml" />  
+      </navPoint>
+      <navPoint id="navPoint554" playOrder="523">
+        <navLabel>
+          <text>zscript-block-dev words</text>
+        </navLabel>
+        <content src="extra/block_dev.xhtml#zscript-block-dev-words" />  
+        <navPoint id="navPoint555" playOrder="523">
+          <navLabel>
+            <text>zscript-block-dev words</text>
+          </navLabel>
+          <content src="extra/block_dev.xhtml#zscript-block-dev-words" />  
+        </navPoint>
+        <navPoint id="navPoint556" playOrder="524">
+          <navLabel>
+            <text>block-size</text>
+          </navLabel>
+          <content src="extra/block_dev.xhtml#block-size" />  
+        </navPoint>
+        <navPoint id="navPoint557" playOrder="525">
+          <navLabel>
+            <text>block-count</text>
+          </navLabel>
+          <content src="extra/block_dev.xhtml#block-count" />  
+        </navPoint>
+        <navPoint id="navPoint558" playOrder="526">
+          <navLabel>
+            <text>block!</text>
+          </navLabel>
+          <content src="extra/block_dev.xhtml#block" />  
+        </navPoint>
+        <navPoint id="navPoint559" playOrder="527">
+          <navLabel>
+            <text>block-part!</text>
+          </navLabel>
+          <content src="extra/block_dev.xhtml#block-part" />  
+        </navPoint>
+        <navPoint id="navPoint560" playOrder="528">
+          <navLabel>
+            <text>block@</text>
+          </navLabel>
+          <content src="extra/block_dev.xhtml#id1" />  
+        </navPoint>
+        <navPoint id="navPoint561" playOrder="529">
+          <navLabel>
+            <text>block-part@</text>
+          </navLabel>
+          <content src="extra/block_dev.xhtml#id2" />  
+        </navPoint>
+        <navPoint id="navPoint562" playOrder="530">
+          <navLabel>
+            <text>flush-blocks</text>
+          </navLabel>
+          <content src="extra/block_dev.xhtml#flush-blocks" />  
+        </navPoint>
+        <navPoint id="navPoint563" playOrder="531">
+          <navLabel>
+            <text>clear-blocks</text>
+          </navLabel>
+          <content src="extra/block_dev.xhtml#clear-blocks" />  
+        </navPoint>
+        <navPoint id="navPoint564" playOrder="532">
+          <navLabel>
+            <text>write-through!</text>
+          </navLabel>
+          <content src="extra/block_dev.xhtml#write-through" />  
+        </navPoint>
+        <navPoint id="navPoint565" playOrder="533">
+          <navLabel>
+            <text>write-through@</text>
+          </navLabel>
+          <content src="extra/block_dev.xhtml#id3" />  
+        </navPoint>
+        <navPoint id="navPoint566" playOrder="534">
+          <navLabel>
+            <text>x-block-out-of-range</text>
+          </navLabel>
+          <content src="extra/block_dev.xhtml#x-block-out-of-range" />  
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint567" playOrder="535">
+        <navLabel>
+          <text>zscript-sdcard module</text>
+        </navLabel>
+        <content src="extra/block_dev.xhtml#zscript-sdcard-module" />  
+        <navPoint id="navPoint568" playOrder="535">
+          <navLabel>
+            <text>zscript-sdcard module</text>
+          </navLabel>
+          <content src="extra/block_dev.xhtml#zscript-sdcard-module" />  
+        </navPoint>
+        <navPoint id="navPoint569" playOrder="536">
+          <navLabel>
+            <text>make-sd</text>
+          </navLabel>
+          <content src="extra/block_dev.xhtml#make-sd" />  
+        </navPoint>
+        <navPoint id="navPoint570" playOrder="537">
+          <navLabel>
+            <text>init-sd</text>
+          </navLabel>
+          <content src="extra/block_dev.xhtml#init-sd" />  
+        </navPoint>
+        <navPoint id="navPoint571" playOrder="538">
+          <navLabel>
+            <text>write-sd-block-zero!</text>
+          </navLabel>
+          <content src="extra/block_dev.xhtml#write-sd-block-zero" />  
+        </navPoint>
+      </navPoint>
+    </navPoint>
   </navMap>
 </ncx>

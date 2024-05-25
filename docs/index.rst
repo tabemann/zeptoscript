@@ -17,3 +17,4 @@ zeptoscript Documentation
    main/action
    extra/bitmap.md
    extra/rtc.md
+   extra/block_dev.md
