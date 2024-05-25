@@ -74,4 +74,41 @@ begin-module fat32-test
     file close
   ;
   
+  : write-test { count path -- }
+    false my-fs@ zscript-block-dev::write-through!
+    path my-fs@ create-file { my-file }
+    cell make-bytes { data }
+    count 0 ?do
+      i 128 umod 0= if i . then
+      i 0 data w!+
+      data my-file write-file drop
+    loop
+    count .
+    true my-fs@ zscript-block-dev::write-through!
+    my-fs@ flush
+    my-file close
+  ;
+  
+  : read-test { path -- }
+    path my-fs@ open-file { my-file }
+    cell make-bytes { data }
+    0 { index }
+    begin
+      data my-file read-file 0<> if
+        0 data w@+ index = if
+          index 128 umod 0= if index . then
+          1 +to index
+          false
+        else
+          ." NOT MATCHING: " index . 0 data w@+ .
+          true
+        then
+      else
+        index .
+        true
+      then
+    until
+    my-file close
+  ;
+  
 end-module
