@@ -111,4 +111,60 @@ begin-module fat32-test
     my-file close
   ;
   
+  : hexdump-file { path -- }
+    path my-fs@ open-file { my-file }
+    512 make-bytes { full-data }
+    0 { index }
+    begin
+      full-data my-file read-file { full-count }
+      full-count 0> if
+      
+        begin
+        
+          index 512 umod dup 16 + full-count min over - 0 max full-data >slice { data }
+          data >len { count }
+          
+          count 0> if
+      
+            cr index h.8 space
+      
+            0 begin dup count 4 min < while space dup data c@+ h.2 1+ repeat drop
+            count 4 min 0 max begin dup 4 < while ."  --" 1+ repeat drop
+      
+            space
+            4 begin dup count 8 min 4 max < while space dup data c@+ h.2 1+ repeat drop
+            count 8 min 4 max begin dup 8 < while ."  --" 1+ repeat drop
+            
+            space
+            8 begin dup count 12 min 8 max < while space dup data c@+ h.2 1+ repeat drop
+            count 12 min 8 max begin dup 12 < while ."  --" 1+ repeat drop
+            
+            space
+            12 begin dup count 16 min 12 max < while space dup data c@+ h.2 1+ repeat drop
+            count 16 min 12 max begin dup 16 < while ."  --" 1+ repeat drop
+      
+            space space
+            ." |"
+            data count 16 <> if 0 count rot >slice then
+            [: dup $20 < over $7E > or if drop [char] . then emit ;] iter
+            0 begin dup 16 count - < while ." ." 1+ repeat drop
+            ." |"
+      
+            16 +to index
+            
+            index 512 umod 0=
+            
+          else
+            true
+          then
+            
+        until
+        false
+      else
+        true
+      then
+    until
+    my-file close
+  ;
+  
 end-module
