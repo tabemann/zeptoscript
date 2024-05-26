@@ -53,7 +53,7 @@ begin-module zscript
   : x-wrong-seq-type ." wrong sequence type" cr ;
   
   begin-module zscript-internal
-
+    
     \ Are we initialized
     false value inited?
 
@@ -1183,9 +1183,9 @@ begin-module zscript
   : @+ ( index object -- value )
     dup >type case
       cells-type of
-        swap integral> 1+ cells
-        over >size over u> averts x-offset-out-of-range
-        + @
+        swap integral> cells
+        over >size cell - over u> averts x-offset-out-of-range
+        cell+ + @
       endof
       slice-type of
         { index slice }
@@ -1207,9 +1207,9 @@ begin-module zscript
   : !+ ( value index object -- )
     dup >type case
       cells-type of
-        swap integral> 1+ cells
-        over >size over u> averts x-offset-out-of-range
-        + !
+        swap integral> cells
+        over >size cell - over u> averts x-offset-out-of-range
+        cell+ + !
       endof
       slice-type of
         { index slice }
@@ -1231,10 +1231,10 @@ begin-module zscript
   : w@+ ( index object -- byte )
     dup >type case
       bytes-type of
-        swap integral> cell+
-        over >size over 4 + u>= averts x-offset-out-of-range
+        swap integral>
+        over >size cell - over u> averts x-offset-out-of-range
         dup 3 and triggers x-unaligned-access
-        +
+        cell+ +
       endof
       const-bytes-type of
         dup [ 2 cells ] literal + @ { len }
@@ -1254,12 +1254,12 @@ begin-module zscript
         raw >type case
           bytes-type of
             len index 4 + u>= averts x-offset-out-of-range
-            index 3 and triggers x-unaligned-access
+            offset index + 3 and triggers x-unaligned-access
             raw index offset + cell+ +
           endof
           const-bytes-type of
             len index 4 + u>= averts x-offset-out-of-range
-            index 3 and triggers x-unaligned-access
+            offset index + 3 and triggers x-unaligned-access
             raw cell+ @ index offset + +
           endof
           ['] x-incorrect-type ?raise
@@ -1274,10 +1274,10 @@ begin-module zscript
   : w!+ ( byte index object -- )
     dup >type case
       bytes-type of
-        swap integral> cell+
-        over >size over 4 + u>= averts x-offset-out-of-range
+        swap integral>
+        over >size cell - over u> averts x-offset-out-of-range
         dup 3 and triggers x-unaligned-access
-        + 
+        cell+ +
       endof
       slice-type of
         { index slice }
@@ -1290,7 +1290,7 @@ begin-module zscript
         raw >type case
           bytes-type of
             len index 4 + u>= averts x-offset-out-of-range
-            index 3 and triggers x-unaligned-access
+            offset index + 3 and triggers x-unaligned-access
             raw index offset + cell+ +
           endof
           ['] x-incorrect-type ?raise
@@ -1305,10 +1305,10 @@ begin-module zscript
   : h@+ ( index object -- byte )
     dup >type case
       bytes-type of
-        swap integral> cell+
-        over >size over 2 + u>= averts x-offset-out-of-range
+        swap integral>
+        over >size cell - over u> averts x-offset-out-of-range
         dup 1 and triggers x-unaligned-access
-        +
+        cell+ +
       endof
       const-bytes-type of
         dup [ 2 cells ] literal + @ { len }
@@ -1328,12 +1328,12 @@ begin-module zscript
         raw >type case
           bytes-type of
             len index 2 + u>= averts x-offset-out-of-range
-            index 1 and triggers x-unaligned-access
+            offset index + 1 and triggers x-unaligned-access
             raw index offset + cell+ +
           endof
           const-bytes-type of
             len index 2 + u>= averts x-offset-out-of-range
-            index 1 and triggers x-unaligned-access
+            offset index + 1 and triggers x-unaligned-access
             raw cell+ @ index offset + +
           endof
           ['] x-incorrect-type ?raise
@@ -1348,10 +1348,10 @@ begin-module zscript
   : h!+ ( byte index object -- )
     dup >type case
       bytes-type of
-        swap integral> cell+
-        over >size over 2 + u>= averts x-offset-out-of-range
+        swap integral>
+        over >size cell - over u> averts x-offset-out-of-range
         dup 1 and triggers x-unaligned-access
-        + 
+        cell+ +
       endof
       slice-type of
         { index slice }
@@ -1364,7 +1364,7 @@ begin-module zscript
         raw >type case
           bytes-type of
             len index 2 + u>= averts x-offset-out-of-range
-            index 1 and triggers x-unaligned-access
+            offset index + 1 and triggers x-unaligned-access
             raw index offset + cell+ +
           endof
           ['] x-incorrect-type ?raise
@@ -1379,9 +1379,9 @@ begin-module zscript
   : c@+ ( index object -- byte )
     dup >type case
       bytes-type of
-        swap integral> cell+
-        over >size over u> averts x-offset-out-of-range
-        +
+        swap integral>
+        over >size cell - over u> averts x-offset-out-of-range
+        cell+ +
       endof
       const-bytes-type of
         dup [ 2 cells ] literal + @ { len }
@@ -1418,9 +1418,9 @@ begin-module zscript
   : c!+ ( byte index object -- )
     dup >type case
       bytes-type of
-        swap integral> cell+
-        over >size over u> averts x-offset-out-of-range
-        + 
+        swap integral>
+        over >size cell - over u> averts x-offset-out-of-range
+        cell+ +
       endof
       slice-type of
         { index slice }
@@ -1448,14 +1448,14 @@ begin-module zscript
   : x@+ ( index object -- x )
     dup >type case
       cells-type of
-        swap integral> 1+ cells
-        over >size over u> averts x-offset-out-of-range
-        + @
+        swap integral> cells
+        over >size cell - over u> averts x-offset-out-of-range
+        cell+ + @
       endof
       bytes-type of
-        swap integral> cell+
-        over >size over u> averts x-offset-out-of-range
-        + c@ >integral
+        swap integral>
+        over >size cell - over u> averts x-offset-out-of-range
+        cell+ + c@
       endof
       const-bytes-type of
         dup [ 2 cells ] literal + @ { len }
