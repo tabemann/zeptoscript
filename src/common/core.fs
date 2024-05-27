@@ -4575,6 +4575,7 @@ begin-module zscript
   : compiling-to-flash? forth::compiling-to-flash? ;
   : cornerstone forth::cornerstone ;
   : marker forth::marker ;
+  : forget forth::forget ;
   : postpone [immediate] [compile-only] postpone forth::postpone ;
   : literal [immediate] [compile-only] forth::postpone forth::literal ;
   : recurse [immediate] [compile-only] forth::postpone forth::recurse ;
