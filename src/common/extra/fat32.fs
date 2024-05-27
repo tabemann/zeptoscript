@@ -50,7 +50,7 @@ begin-module zscript-fat32
   \ Out of range partition index exception
   : x-out-of-range-partition ( -- ) ." out of range partition" cr ;
 
-  \ Directory with end marker
+  \ Directory with no end marker exception
   : x-no-end-marker ( -- ) ." no end marker" cr ;
   
   begin-module zscript-fat32-internal

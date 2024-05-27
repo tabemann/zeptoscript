@@ -18,3 +18,4 @@ zeptoscript Documentation
    extra/bitmap.md
    extra/rtc.md
    extra/block_dev.md
+   extra/fs.md

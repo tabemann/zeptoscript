@@ -1,0 +1,439 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Filesystems &#8212; zeptoscript  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Block devices" href="block_dev.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="filesystems">
+<h1>Filesystems<a class="headerlink" href="#filesystems" title="Permalink to this heading">¶</a></h1>
+<p>zeptoscript has optional support for filesystems, specifically FAT32 filesystems on SDHC/SDXC cards. This support includes opening and creating files, reading and writing files, removing files, opening and creating directories, reading directory entries, removing directories, and renaming files and directories. Note that moving files is not supported due to the nature of the FAT32 filesystem.</p>
+<p>There are three main modules concerned with filesystems ─ <code class="docutils literal notranslate"><span class="pre">zscript-fs</span></code> for providing abstract methods for accessing filesystems, <code class="docutils literal notranslate"><span class="pre">zscript-fat32</span></code> for providing access to the FAT32 filesystem itself, and <code class="docutils literal notranslate"><span class="pre">zscript-simple-fat32</span></code> for providing a simplified interface for accessing FAT32 filesystems. Additionally, the module <code class="docutils literal notranslate"><span class="pre">zscript-block-dev</span></code> (discussed elsewhere) exposes being able to set and get write-through on FAT32 filesytems. For most purposes one will only need to use the <code class="docutils literal notranslate"><span class="pre">zscript-fs</span></code> module except when creating a filesystem, for which one will typically only need the <code class="docutils literal notranslate"><span class="pre">zscript-simple-fat32</span></code> module.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">zscript-fs</span></code> module is provided by <code class="docutils literal notranslate"><span class="pre">src/common/extra/fs.fs</span></code>. The <code class="docutils literal notranslate"><span class="pre">zscript-fat32</span></code> module is provided by <code class="docutils literal notranslate"><span class="pre">src/common/extra/fat32.fs</span></code>. The <code class="docutils literal notranslate"><span class="pre">zscript-simple-fat32</span></code> module is provided by <code class="docutils literal notranslate"><span class="pre">src/common/extra/simple_fat32.fs</span></code>.</p>
+<section id="zscript-fs-words">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-fs</span></code> words<a class="headerlink" href="#zscript-fs-words" title="Permalink to this heading">¶</a></h2>
+<section id="flush">
+<h3><code class="docutils literal notranslate"><span class="pre">flush</span></code><a class="headerlink" href="#flush" title="Permalink to this heading">¶</a></h3>
+<p>( fs – )</p>
+<p>Flush a filesystem.</p>
+</section>
+<section id="close">
+<h3><code class="docutils literal notranslate"><span class="pre">close</span></code><a class="headerlink" href="#close" title="Permalink to this heading">¶</a></h3>
+<p>( file|dir – )</p>
+<p>Close a file or directory.</p>
+</section>
+<section id="read-file">
+<h3><code class="docutils literal notranslate"><span class="pre">read-file</span></code><a class="headerlink" href="#read-file" title="Permalink to this heading">¶</a></h3>
+<p>( buffer file – bytes )</p>
+<p>Read data from a file.</p>
+</section>
+<section id="write-file">
+<h3><code class="docutils literal notranslate"><span class="pre">write-file</span></code><a class="headerlink" href="#write-file" title="Permalink to this heading">¶</a></h3>
+<p>( buffer file – bytes )</p>
+<p>Write data to a file.</p>
+</section>
+<section id="truncate-file">
+<h3><code class="docutils literal notranslate"><span class="pre">truncate-file</span></code><a class="headerlink" href="#truncate-file" title="Permalink to this heading">¶</a></h3>
+<p>( file – )</p>
+<p>Truncate a file.</p>
+</section>
+<section id="seek-file">
+<h3><code class="docutils literal notranslate"><span class="pre">seek-file</span></code><a class="headerlink" href="#seek-file" title="Permalink to this heading">¶</a></h3>
+<p>( offset whence file – )</p>
+<p>Seek in a file.</p>
+</section>
+<section id="tell-file">
+<h3><code class="docutils literal notranslate"><span class="pre">tell-file</span></code><a class="headerlink" href="#tell-file" title="Permalink to this heading">¶</a></h3>
+<p>( file – offset )</p>
+<p>Get the current offset in a file.</p>
+</section>
+<section id="file-size">
+<h3><code class="docutils literal notranslate"><span class="pre">file-size&#64;</span></code><a class="headerlink" href="#file-size" title="Permalink to this heading">¶</a></h3>
+<p>( file – bytes )</p>
+<p>Get the size of a file.</p>
+</section>
+<section id="fs">
+<h3><code class="docutils literal notranslate"><span class="pre">fs&#64;</span></code><a class="headerlink" href="#fs" title="Permalink to this heading">¶</a></h3>
+<p>( file|dir – fs )</p>
+<p>Get the filesystem of a file or directory.</p>
+</section>
+<section id="read-dir">
+<h3><code class="docutils literal notranslate"><span class="pre">read-dir</span></code><a class="headerlink" href="#read-dir" title="Permalink to this heading">¶</a></h3>
+<p>( entry dir – entry-read? )</p>
+<p>Read an entry from a directory, and return whether an entry was read.</p>
+</section>
+<section id="create-file">
+<h3><code class="docutils literal notranslate"><span class="pre">create-file</span></code><a class="headerlink" href="#create-file" title="Permalink to this heading">¶</a></h3>
+<p>( path dir – file )</p>
+<p>Create a file.</p>
+</section>
+<section id="open-file">
+<h3><code class="docutils literal notranslate"><span class="pre">open-file</span></code><a class="headerlink" href="#open-file" title="Permalink to this heading">¶</a></h3>
+<p>( path dir – file )</p>
+<p>Open a file.</p>
+</section>
+<section id="remove-file">
+<h3><code class="docutils literal notranslate"><span class="pre">remove-file</span></code><a class="headerlink" href="#remove-file" title="Permalink to this heading">¶</a></h3>
+<p>( path dir – )</p>
+<p>Remove a file.</p>
+</section>
+<section id="create-dir">
+<h3><code class="docutils literal notranslate"><span class="pre">create-dir</span></code><a class="headerlink" href="#create-dir" title="Permalink to this heading">¶</a></h3>
+<p>( path dir – dir’ )</p>
+<p>Create a directory.</p>
+</section>
+<section id="open-dir">
+<h3><code class="docutils literal notranslate"><span class="pre">open-dir</span></code><a class="headerlink" href="#open-dir" title="Permalink to this heading">¶</a></h3>
+<p>( path dir – dir’ )</p>
+<p>Open a directory.</p>
+</section>
+<section id="remove-dir">
+<h3><code class="docutils literal notranslate"><span class="pre">remove-dir</span></code><a class="headerlink" href="#remove-dir" title="Permalink to this heading">¶</a></h3>
+<p>( path dir – )</p>
+<p>Remove a directory.</p>
+</section>
+<section id="rename">
+<h3><code class="docutils literal notranslate"><span class="pre">rename</span></code><a class="headerlink" href="#rename" title="Permalink to this heading">¶</a></h3>
+<p>( new-name path dir – )</p>
+<p>Rename a file or directory.</p>
+</section>
+<section id="dir-empty">
+<h3><code class="docutils literal notranslate"><span class="pre">dir-empty?</span></code><a class="headerlink" href="#dir-empty" title="Permalink to this heading">¶</a></h3>
+<p>( dir – empty? )</p>
+<p>Get whether a directory is empty.</p>
+</section>
+<section id="exists">
+<h3><code class="docutils literal notranslate"><span class="pre">exists?</span></code><a class="headerlink" href="#exists" title="Permalink to this heading">¶</a></h3>
+<p>( path dir – exists? )</p>
+<p>Get whether a directory entry exists.</p>
+</section>
+<section id="file">
+<h3><code class="docutils literal notranslate"><span class="pre">file?</span></code><a class="headerlink" href="#file" title="Permalink to this heading">¶</a></h3>
+<p>( path dir – file? )</p>
+<p>Get whether a directory entry is a file.</p>
+</section>
+<section id="dir">
+<h3><code class="docutils literal notranslate"><span class="pre">dir?</span></code><a class="headerlink" href="#dir" title="Permalink to this heading">¶</a></h3>
+<p>( path dir – dir? )</p>
+<p>Get whether a directory entry is a directory.</p>
+</section>
+<section id="root-dir">
+<h3><code class="docutils literal notranslate"><span class="pre">root-dir&#64;</span></code><a class="headerlink" href="#root-dir" title="Permalink to this heading">¶</a></h3>
+<p>( fs – dir )</p>
+<p>Get the filesystem root directory.</p>
+</section>
+<section id="entry-file">
+<h3><code class="docutils literal notranslate"><span class="pre">entry-file?</span></code><a class="headerlink" href="#entry-file" title="Permalink to this heading">¶</a></h3>
+<p>( entry – file? )</p>
+<p>Get whether an entry is a file.</p>
+</section>
+<section id="entry-dir">
+<h3><code class="docutils literal notranslate"><span class="pre">entry-dir?</span></code><a class="headerlink" href="#entry-dir" title="Permalink to this heading">¶</a></h3>
+<p>( entry – dir? )</p>
+<p>Get whether an entry is a directory.</p>
+</section>
+<section id="name">
+<h3><code class="docutils literal notranslate"><span class="pre">name&#64;</span></code><a class="headerlink" href="#name" title="Permalink to this heading">¶</a></h3>
+<p>( entry – name )</p>
+<p>Get an entry’s file or directory name.</p>
+</section>
+<section id="create-date-time">
+<h3><code class="docutils literal notranslate"><span class="pre">create-date-time&#64;</span></code><a class="headerlink" href="#create-date-time" title="Permalink to this heading">¶</a></h3>
+<p>( entry – date-time )</p>
+<p>Get an entry’s creation date and time.</p>
+</section>
+<section id="modify-date-time">
+<h3><code class="docutils literal notranslate"><span class="pre">modify-date-time&#64;</span></code><a class="headerlink" href="#modify-date-time" title="Permalink to this heading">¶</a></h3>
+<p>( entry – date-time )</p>
+<p>Get an entry’s modification date and time.</p>
+</section>
+<section id="seek-set">
+<h3><code class="docutils literal notranslate"><span class="pre">seek-set</span></code><a class="headerlink" href="#seek-set" title="Permalink to this heading">¶</a></h3>
+<p>( – whence )</p>
+<p>Seek from the beginning of a file.</p>
+</section>
+<section id="seek-cur">
+<h3><code class="docutils literal notranslate"><span class="pre">seek-cur</span></code><a class="headerlink" href="#seek-cur" title="Permalink to this heading">¶</a></h3>
+<p>( – whence )</p>
+<p>Seek from the current position in a file.</p>
+</section>
+<section id="seek-end">
+<h3><code class="docutils literal notranslate"><span class="pre">seek-end</span></code><a class="headerlink" href="#seek-end" title="Permalink to this heading">¶</a></h3>
+<p>( – whence )</p>
+<p>Seek from the end of a file.</p>
+</section>
+<section id="x-file-name-format">
+<h3><code class="docutils literal notranslate"><span class="pre">x-file-name-format</span></code><a class="headerlink" href="#x-file-name-format" title="Permalink to this heading">¶</a></h3>
+<p>( – )</p>
+<p>Unsupported file name format exception.</p>
+</section>
+<section id="x-entry-not-found">
+<h3><code class="docutils literal notranslate"><span class="pre">x-entry-not-found</span></code><a class="headerlink" href="#x-entry-not-found" title="Permalink to this heading">¶</a></h3>
+<p>( – )</p>
+<p>Directory entry not found exception.</p>
+</section>
+<section id="x-entry-already-exists">
+<h3><code class="docutils literal notranslate"><span class="pre">x-entry-already-exists</span></code><a class="headerlink" href="#x-entry-already-exists" title="Permalink to this heading">¶</a></h3>
+<p>( – )</p>
+<p>Directory entry already exists exception.</p>
+</section>
+<section id="x-entry-not-file">
+<h3><code class="docutils literal notranslate"><span class="pre">x-entry-not-file</span></code><a class="headerlink" href="#x-entry-not-file" title="Permalink to this heading">¶</a></h3>
+<p>( – )</p>
+<p>Directory entry is not a file exception.</p>
+</section>
+<section id="x-entry-not-dir">
+<h3><code class="docutils literal notranslate"><span class="pre">x-entry-not-dir</span></code><a class="headerlink" href="#x-entry-not-dir" title="Permalink to this heading">¶</a></h3>
+<p>( – )</p>
+<p>Directory entry is not a directory exception.</p>
+</section>
+<section id="x-dir-is-not-empty">
+<h3><code class="docutils literal notranslate"><span class="pre">x-dir-is-not-empty</span></code><a class="headerlink" href="#x-dir-is-not-empty" title="Permalink to this heading">¶</a></h3>
+<p>( – )</p>
+<p>Directory is not empty exception.</p>
+</section>
+<section id="x-forbidden-dir">
+<h3><code class="docutils literal notranslate"><span class="pre">x-forbidden-dir</span></code><a class="headerlink" href="#x-forbidden-dir" title="Permalink to this heading">¶</a></h3>
+<p>( – )</p>
+<p>Directory name being changed or set is forbidden exception.</p>
+</section>
+<section id="x-empty-path">
+<h3><code class="docutils literal notranslate"><span class="pre">x-empty-path</span></code><a class="headerlink" href="#x-empty-path" title="Permalink to this heading">¶</a></h3>
+<p>( – )</p>
+<p>No file or directory referred to in path within directory exception.</p>
+</section>
+<section id="x-invalid-path">
+<h3><code class="docutils literal notranslate"><span class="pre">x-invalid-path</span></code><a class="headerlink" href="#x-invalid-path" title="Permalink to this heading">¶</a></h3>
+<p>( – )</p>
+<p>Invalid path exception.</p>
+</section>
+<section id="x-not-open">
+<h3><code class="docutils literal notranslate"><span class="pre">x-not-open</span></code><a class="headerlink" href="#x-not-open" title="Permalink to this heading">¶</a></h3>
+<p>( – )</p>
+<p>File or directory is not open exception.</p>
+</section>
+<section id="x-shared-file">
+<h3><code class="docutils literal notranslate"><span class="pre">x-shared-file</span></code><a class="headerlink" href="#x-shared-file" title="Permalink to this heading">¶</a></h3>
+<p>( – )</p>
+<p>File is shared exception.</p>
+</section>
+<section id="x-open">
+<h3><code class="docutils literal notranslate"><span class="pre">x-open</span></code><a class="headerlink" href="#x-open" title="Permalink to this heading">¶</a></h3>
+<p>( – )</p>
+<p>File or directory is open exception.</p>
+</section>
+</section>
+<section id="zscript-fat32-words">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-fat32</span></code> words<a class="headerlink" href="#zscript-fat32-words" title="Permalink to this heading">¶</a></h2>
+<section id="partition-active">
+<h3><code class="docutils literal notranslate"><span class="pre">partition-active?</span></code><a class="headerlink" href="#partition-active" title="Permalink to this heading">¶</a></h3>
+<p>( partition – active? )</p>
+<p>Is the partition really active?.</p>
+</section>
+<section id="id1">
+<h3><code class="docutils literal notranslate"><span class="pre">partition-active&#64;</span></code><a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h3>
+<p>( partition – active )</p>
+<p>Is the partition active.</p>
+</section>
+<section id="partition-type">
+<h3><code class="docutils literal notranslate"><span class="pre">partition-type&#64;</span></code><a class="headerlink" href="#partition-type" title="Permalink to this heading">¶</a></h3>
+<p>( partition – type )</p>
+<p>Get the partition type.</p>
+</section>
+<section id="partition-first-sector">
+<h3><code class="docutils literal notranslate"><span class="pre">partition-first-sector&#64;</span></code><a class="headerlink" href="#partition-first-sector" title="Permalink to this heading">¶</a></h3>
+<p>( partition – first-sector )</p>
+<p>Get the partition first sector.</p>
+</section>
+<section id="partition-sectors">
+<h3><code class="docutils literal notranslate"><span class="pre">partition-sectors&#64;</span></code><a class="headerlink" href="#partition-sectors" title="Permalink to this heading">¶</a></h3>
+<p>( partition – sectors )</p>
+<p>Get the partition sector count.</p>
+</section>
+<section id="make-mbr">
+<h3><code class="docutils literal notranslate"><span class="pre">make-mbr</span></code><a class="headerlink" href="#make-mbr" title="Permalink to this heading">¶</a></h3>
+<p>( mbr-device – mbr )</p>
+<p>Construct a master boot record object.</p>
+</section>
+<section id="mbr-valid">
+<h3><code class="docutils literal notranslate"><span class="pre">mbr-valid?</span></code><a class="headerlink" href="#mbr-valid" title="Permalink to this heading">¶</a></h3>
+<p>( mbr – valid? )</p>
+<p>Get whether the master boot record is valid.</p>
+</section>
+<section id="partition">
+<h3><code class="docutils literal notranslate"><span class="pre">partition&#64;</span></code><a class="headerlink" href="#partition" title="Permalink to this heading">¶</a></h3>
+<p>( index mbr – partition )</p>
+<p>Read a partition.</p>
+</section>
+<section id="id2">
+<h3><code class="docutils literal notranslate"><span class="pre">partition!</span></code><a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
+<p>( partition index mbr – )</p>
+<p>Write a partition.</p>
+</section>
+<section id="make-fat32-fs">
+<h3><code class="docutils literal notranslate"><span class="pre">make-fat32-fs</span></code><a class="headerlink" href="#make-fat32-fs" title="Permalink to this heading">¶</a></h3>
+<p>( partition device – fs )</p>
+<p>Construct a FAT32 filesystem object.</p>
+</section>
+<section id="x-sector-size-not-supported">
+<h3><code class="docutils literal notranslate"><span class="pre">x-sector-size-not-supported</span></code><a class="headerlink" href="#x-sector-size-not-supported" title="Permalink to this heading">¶</a></h3>
+<p>( – )</p>
+<p>Sector size exception.</p>
+</section>
+<section id="x-fs-version-not-supported">
+<h3><code class="docutils literal notranslate"><span class="pre">x-fs-version-not-supported</span></code><a class="headerlink" href="#x-fs-version-not-supported" title="Permalink to this heading">¶</a></h3>
+<p>( – )</p>
+<p>Filesystem version not supported exception.</p>
+</section>
+<section id="x-bad-info-sector">
+<h3><code class="docutils literal notranslate"><span class="pre">x-bad-info-sector</span></code><a class="headerlink" href="#x-bad-info-sector" title="Permalink to this heading">¶</a></h3>
+<p>( – )</p>
+<p>Bad info sector exception.</p>
+</section>
+<section id="x-no-clusters-free">
+<h3><code class="docutils literal notranslate"><span class="pre">x-no-clusters-free</span></code><a class="headerlink" href="#x-no-clusters-free" title="Permalink to this heading">¶</a></h3>
+<p>( – )</p>
+<p>No clusters free exception.</p>
+</section>
+<section id="id3">
+<h3><code class="docutils literal notranslate"><span class="pre">x-file-name-format</span></code><a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h3>
+<p>( – )</p>
+<p>Unsupported file name format exception.</p>
+</section>
+<section id="x-out-of-range-entry">
+<h3><code class="docutils literal notranslate"><span class="pre">x-out-of-range-entry</span></code><a class="headerlink" href="#x-out-of-range-entry" title="Permalink to this heading">¶</a></h3>
+<p>( – )</p>
+<p>Out of range directory entry index exception.</p>
+</section>
+<section id="x-out-of-range-partition">
+<h3><code class="docutils literal notranslate"><span class="pre">x-out-of-range-partition</span></code><a class="headerlink" href="#x-out-of-range-partition" title="Permalink to this heading">¶</a></h3>
+<p>( – )</p>
+<p>Out of range partition index exception.</p>
+</section>
+<section id="x-no-end-marker">
+<h3><code class="docutils literal notranslate"><span class="pre">x-no-end-marker</span></code><a class="headerlink" href="#x-no-end-marker" title="Permalink to this heading">¶</a></h3>
+<p>( – )</p>
+<p>Directory with no end marker exception.</p>
+</section>
+</section>
+<section id="zscript-simple-fat32-words">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-simple-fat32</span></code> words<a class="headerlink" href="#zscript-simple-fat32-words" title="Permalink to this heading">¶</a></h2>
+<section id="make-simple-fat32-fs">
+<h3><code class="docutils literal notranslate"><span class="pre">make-simple-fat32-fs</span></code><a class="headerlink" href="#make-simple-fat32-fs" title="Permalink to this heading">¶</a></h3>
+<p>( sck-pin tx-pin rx-pin cs-pin spi-device – fs )</p>
+<p>Create a FAT32 filesystem for partition 0 of an SDHC/SDXC card communicated with over SPI with SPI peripheral <em>spi-device</em>, SCK pin <em>sck-pin</em>, TX pin <em>tx-pin</em>, RX pin <em>rx-pin</em>, and Chip Select pin <em>cs-pin</em>.</p>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">zeptoscript</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main/core.html">zeptoscript Core Functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/oo.html">zeptoscript Object-Orientation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/list.html">Lists</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/map.html">Maps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/set.html">Sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/queue.html">Queues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/task.html">Tasks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/channel.html">Channels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/coroutine.html">Asymmetric coroutines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main/action.html">Actions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bitmap.html">Bitmaps, fonts, and displays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rtc.html">Real-time clock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="block_dev.html">Block devices</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Filesystems</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="block_dev.html" title="previous chapter">Block devices</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2024, Travis Bemann.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/extra/fs.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

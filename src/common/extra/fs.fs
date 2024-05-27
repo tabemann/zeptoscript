@@ -49,13 +49,13 @@ begin-module zscript-fs
   \ Invalid path exception
   : x-invalid-path ( -- ) ." invalid path" cr ;
 
-  \ File or directory is not open
+  \ File or directory is not open exception
   : x-not-open ( -- ) ." file/directory is not open" cr ;
 
-  \ File is shared
+  \ File is shared exception
   : x-shared-file ( -- ) ." file is shared" cr ;
 
-  \ File or directory is open
+  \ File or directory is open exception
   : x-open ( -- ) ." file/directory is open" cr ;
 
   \ Seek from the beginning of a file
@@ -74,10 +74,10 @@ begin-module zscript-fs
   method close ( file|dir -- )
   
   \ Read data from a file
-  method read-file ( bytes file -- bytes )
+  method read-file ( buffer file -- bytes )
   
   \ Write data to a file
-  method write-file ( bytes file -- bytes )
+  method write-file ( buffer file -- bytes )
   
   \ Truncate a file
   method truncate-file ( file -- )
