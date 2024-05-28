@@ -77,7 +77,7 @@ begin-module zscript
     
     \ Record syntax
     255 constant syntax-record
-    
+
     \ The per-task zeptoscript structure
     \ This will ultimately be a user variable, but for testing purposes it will
     \ be a plain variable.
@@ -852,11 +852,14 @@ begin-module zscript
     \ Sequence definition index
     1 >small-int constant seq-define-index
     
+    \ Evaluation stack
+    2 >small-int constant eval-stack-global-id
+    
     \ Initial RAM global ID
-    2 >small-int constant init-ram-global-id
+    3 >small-int constant init-ram-global-id
 
     \ Initial RAM globals count
-    2 >small-int constant init-ram-global-count
+    3 >small-int constant init-ram-global-count
 
     \ Cell sequence definition type
     0 >small-int constant define-cells
@@ -2676,6 +2679,22 @@ begin-module zscript
       addr bytes val fill
     ;
 
+    \ MOVE to an offset
+    : move-offset { src src-offset dest dest-offset bytes -- }
+      src integral> src-offset integral> forth::+ to src
+      dest integral> dest-offset integral> forth::+ to dest
+      bytes integral> to bytes
+      src dest bytes forth::move
+    ;
+
+    \ FILL to an offset
+    : fill-offset { addr offset bytes val -- }
+      addr integral> offset integral> forth::+ to addr
+      bytes integral> to bytes
+      val integral> to val
+      addr bytes val forth::fill
+    ;
+
     \ Cast a value to an integer
     : >integral ( x -- value ) >integral ;
     
@@ -2927,7 +2946,7 @@ begin-module zscript
   ;
 
   \ Make a foreign buffer; note that this is aligned
-  : foreign-buffer ( bytes "name" -- )
+  : foreign-buffer: ( bytes "name" -- )
     token dup 0<> averts x-token-expected
     forth::cell forth::align,
     unsafe::here rot unsafe::allot
@@ -4519,8 +4538,21 @@ begin-module zscript
   : heap-free ( -- space ) to-space-top@ to-space-current@ forth::- >integral ;
 
   \ Check whether a word is defined
-  : defined? ( 'name" -- defined? )
+  : defined? ( "name" -- defined? )
     token dup 0<> averts x-token-expected find 0<>
+  ;
+
+  \ Evaluate code as a string
+  : evaluate-with-input { addr count refill-xt eof-xt -- ? }
+    refill-xt eof-xt eval-stack-global-id ram-global@ >triple
+    eval-stack-global-id ram-global!
+    0 addr count
+    [: 0 eval-stack-global-id ram-global@ @+ execute ;] xt>integral
+    [: 1 eval-stack-global-id ram-global@ @+ execute ;] xt>integral
+    [ 5 >small-int ] literal nintegral>
+    forth::['] forth::evaluate-with-input forth::try
+    2 eval-stack-global-id ram-global@ @+ eval-stack-global-id ram-global!
+    forth::?raise
   ;
   
   true >small-int constant true

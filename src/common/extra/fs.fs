@@ -148,5 +148,7 @@ begin-module zscript-fs
   \ Get an entry's modification date and time
   method modify-date-time@ ( entry -- date-time )
 
+  \ Get an entry's file size
+  method entry-file-size@ ( entry -- size )
   
 end-module

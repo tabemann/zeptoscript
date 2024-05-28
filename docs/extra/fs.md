@@ -143,6 +143,11 @@ Get an entry's creation date and time.
 
 Get an entry's modification date and time.
 
+### `entry-file-size@`
+( entry -- size )
+
+Get an entry's file size.
+
 ### `seek-set`
 ( -- whence )
 

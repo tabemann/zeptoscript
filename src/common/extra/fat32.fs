@@ -442,9 +442,6 @@ begin-module zscript-fat32
     \ Set an entry's modification date and time
     method modify-date-time! ( date-time entry -- )
 
-    \ Get an entry's file size
-    method entry-file-size@ ( entry -- size )
-
     \ Set an entry's file size
     method entry-file-size! ( size entry -- )
     
