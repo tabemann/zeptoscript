@@ -4548,10 +4548,12 @@ begin-module zscript
     eval-stack-global-id ram-global!
     0 addr count
     [: 0 eval-stack-global-id ram-global@ @+ execute ;] xt>integral
-    [: 1 eval-stack-global-id ram-global@ @+ execute ;] xt>integral
+    [: [ 1 >small-int ] literal eval-stack-global-id ram-global@ @+ execute
+      integral> ;] xt>integral
     [ 5 >small-int ] literal nintegral>
     forth::['] forth::evaluate-with-input forth::try
-    2 eval-stack-global-id ram-global@ @+ eval-stack-global-id ram-global!
+    [ 2 >small-int ] literal eval-stack-global-id ram-global@ @+
+    eval-stack-global-id ram-global!
     forth::?raise
   ;
   

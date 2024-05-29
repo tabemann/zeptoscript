@@ -19,3 +19,4 @@ zeptoscript Documentation
    extra/rtc.md
    extra/block_dev.md
    extra/fs.md
+   extra/fs_tools.md

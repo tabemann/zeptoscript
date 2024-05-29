@@ -18,19 +18,18 @@
 \ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 \ SOFTWARE.
 
-begin-module zscript-fat32-tools
+begin-module zscript-fs-tools
 
   zscript-oo import
   zscript-special-oo import
   zscript-fs import
   zscript-block-dev import
-  zscript-simple-fat32 import
   zscript-rtc import
   
   \ Filesystem not set exception
   : x-fs-not-set ( -- ) ." filesystem not set" cr ;
   
-  begin-module zscript-fat32-tools-internal
+  begin-module zscript-fs-tools-internal
 
     2 0 foreign forth::feed-input feed-input
   
@@ -43,7 +42,7 @@ begin-module zscript-fat32-tools
     \ Include frame
     begin-record include-frame
       
-      \ Frame FAT32 file
+      \ Frame file
       item: frame-file
 
       \ End of file condition
@@ -75,71 +74,73 @@ begin-module zscript-fat32-tools
     ;
 
     \ Read code from a file
-    : read-file-into-buffer ( -- ) ." A "
-      include-buffer-size include-buffer-content-len@ - make-bytes { data } ." B "
-      data include-stack@ frame-file@ read-file { count } ." C "
-      data unsafe::bytes>addr-len drop 0 ." D "
-      include-buffer include-buffer-content-len@ count unsafe::move-offset ." E "
-      include-buffer-content-len@ count + include-buffer-content-len! ." F "
+    : read-file-into-buffer ( -- )
+      include-buffer-size include-buffer-content-len@ - make-bytes { data }
+      data include-stack@ frame-file@ read-file { count }
+      data unsafe::bytes>addr-len drop 0
+      include-buffer include-buffer-content-len@ count unsafe::move-offset
+      include-buffer-content-len@ count + include-buffer-content-len!
     ;
     
     \ Get the executable line length
-    : execute-line-len ( -- bytes ) ." G "
-      include-buffer-content-len@ 0 ?do ." H "
-        include-buffer i + unsafe::c@ dup $0A = swap $0D = or if ." I "
-          i 1+ exit ." J "
-        then ." K "
-      loop ." L "
-      include-buffer-content-len@ ." M "
+    : execute-line-len ( -- bytes )
+      include-buffer-content-len@ 0 ?do
+        include-buffer i + unsafe::c@ dup $0A = swap $0D = or if
+          i 1+ exit
+        then
+      loop
+      include-buffer-content-len@
     ;
     
     \ Update the EOF and get the input length
-    : update-line ( -- u ) ." N "
-      execute-line-len dup include-stack@ frame-offset@ + ." O "
-      include-stack@ frame-file@ file-size@ = ." P "
-      include-stack@ frame-eof! ." Q "
-      dup dup 0> if ." R "
-        1- include-buffer + unsafe::c@ dup $0A = swap $0D = or if 1- then ." S "
-      then ." T "
+    : update-line ( -- u )
+      execute-line-len dup include-stack@ frame-offset@ +
+      include-stack@ frame-file@ file-size@ =
+      include-stack@ frame-eof!
+      dup dup 0> if
+        1- include-buffer + unsafe::c@ dup $0A = swap $0D = or if 1- then
+      then
     ;
 
     \ Refill file
-    : frame-eval-refill ( -- ) ." U "
-      execute-line-len dup include-stack@ frame-offset@ + ." V "
-      include-stack@ frame-offset! ." W "
-      dup negate include-buffer-content-len@ + ." X "
-      include-buffer-content-len! ." Y "
-      include-buffer swap include-buffer 0 include-buffer-content-len@ ." Z "
-      unsafe::move-offset ." a "
-      read-file-into-buffer ." b "
-      include-buffer update-line feed-input ." c "
+    : frame-eval-refill ( -- )
+      execute-line-len dup include-stack@ frame-offset@ +
+      include-stack@ frame-offset!
+      dup negate include-buffer-content-len@ +
+      include-buffer-content-len!
+      include-buffer swap include-buffer 0 include-buffer-content-len@
+      unsafe::move-offset
+      read-file-into-buffer
+      include-buffer update-line feed-input
     ;
     
     \ Check end of file condition
     : frame-eval-eof ( -- eof? ) include-stack@ frame-eof@ ;
       
     \ Un-nest an include
-    : unnest-include ( -- ) ." d "
-      include-stack-next@ include-stack! ." e "
-      include-stack@ 0<> if ." f "
-        include-stack@ frame-offset@ seek-set ." g "
-        include-stack@ frame-file@ seek-file ." h "
-        0 include-buffer-content-len! ." i "
-        read-file-into-buffer ." j "
-      then  ." k "
+    : unnest-include ( -- )
+      include-stack@ frame-file@ close
+      include-stack-next@ include-stack!
+      include-stack@ 0<> if
+        include-stack@ frame-offset@ seek-set
+        include-stack@ frame-file@ seek-file
+        0 include-buffer-content-len!
+        read-file-into-buffer
+      then 
     ;
     
     \ Execute an included file
-    : execute-file ( -- ) ." l "
-      [: ." m "
-        read-file-into-buffer ." n "
-        include-buffer-content-len@ 0> if ." o "
-          0 include-buffer update-line ['] frame-eval-refill ['] frame-eval-eof ." p "
-          evaluate-with-input ." q "
-        then ." r "
-      ;] try ." s "
-      unnest-include ." t "
-      ?raise ." y "
+    : execute-file ( -- )
+      [:
+        0 include-buffer-content-len!
+        read-file-into-buffer
+        include-buffer-content-len@ 0> if
+          0 include-buffer update-line ['] frame-eval-refill ['] frame-eval-eof
+          evaluate-with-input
+        then
+      ;] try
+      unnest-include
+      ?raise
     ;
 
     \ List a directory with file sizes
@@ -376,8 +377,8 @@ begin-module zscript-fat32-tools
       until
     ;
 
-    \ Initialize FAT32 including
-    : init-fat32-tools ( -- )
+    \ Initialize filesystem tools
+    : init-fs-tools ( -- )
       0 current-fs!
       0 include-stack!
       0 include-buffer-content-len!
@@ -389,7 +390,7 @@ begin-module zscript-fat32-tools
   : current-fs! ( fs -- ) current-fs! ;
   
   \ Get the current filesystem
-  : current-fs@ ( fs -- ) current-fs@ ;
+  : current-fs@ ( -- fs ) current-fs@ ;
   
   \ Load a file
   : load-file ( file -- )
@@ -621,5 +622,5 @@ begin-module zscript-fat32-tools
 
 end-module
 
-initializer zscript-fat32-tools::zscript-fat32-tools-internal::init-fat32-tools
+initializer zscript-fs-tools::zscript-fs-tools-internal::init-fs-tools
 

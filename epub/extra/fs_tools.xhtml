@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Filesystem tools</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/epub.css" /> 
+  </head><body>
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <section id="filesystem-tools">
+<h1>Filesystem tools</h1>
+<p>In addition to the raw filesystem API, zeptoscript also comes with optional filesystem tools to ease working with filesystems. They enable things such as executing code in files, listing directories, dumping files, creating and writing to files, creating directories, removing and renaming files and directories, and so on.</p>
+<p>The filesystem tools are provided by the <code class="docutils literal notranslate"><span class="pre">zscript-fs-tools</span></code> module, which is provided by <code class="docutils literal notranslate"><span class="pre">src/common/extra/fs_tools.fs</span></code>.</p>
+<p>Be aware that some of these words, such as <code class="docutils literal notranslate"><span class="pre">create-file</span></code> and <code class="docutils literal notranslate"><span class="pre">write-file</span></code>, share names with words in the <code class="docutils literal notranslate"><span class="pre">zscript-fs</span></code> module. As a result, one may want to refer to words in the <code class="docutils literal notranslate"><span class="pre">zscript-fs</span></code> module explicitly with <code class="docutils literal notranslate"><span class="pre">zscript-fs::</span></code> if one wants to use them, unless one is defining a module and has specifically imported the <code class="docutils literal notranslate"><span class="pre">zscript-fs</span></code> module and not th e <code class="docutils literal notranslate"><span class="pre">zscript-fs-tools</span></code> module.</p>
+<section id="zscript-fs-tools-module">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-fs-tools</span></code> module</h2>
+<p>The following words are in this module:</p>
+<section id="current-fs">
+<h3><code class="docutils literal notranslate"><span class="pre">current-fs!</span></code></h3>
+<p>( fs – )</p>
+<p>Set the current filesystem.</p>
+</section>
+<section id="id1">
+<h3><code class="docutils literal notranslate"><span class="pre">current-fs&#64;</span></code></h3>
+<p>( – fs )</p>
+<p>Get the current filesystem.</p>
+</section>
+<section id="load-file">
+<h3><code class="docutils literal notranslate"><span class="pre">load-file</span></code></h3>
+<p>( file – )</p>
+<p>Load an already-open file and execute it. Note that the file will be closed afterwards.</p>
+</section>
+<section id="included">
+<h3><code class="docutils literal notranslate"><span class="pre">included</span></code></h3>
+<p>( path – )</p>
+<p>Execute a file specified as path in a byte sequence.</p>
+</section>
+<section id="include">
+<h3><code class="docutils literal notranslate"><span class="pre">include</span></code></h3>
+<p>( “path” – )</p>
+<p>Execute a file specified as a token.</p>
+</section>
+<section id="list-dir">
+<h3><code class="docutils literal notranslate"><span class="pre">list-dir</span></code></h3>
+<p>( path – )</p>
+<p>List a directory.</p>
+</section>
+<section id="create-dir">
+<h3><code class="docutils literal notranslate"><span class="pre">create-dir</span></code></h3>
+<p>( path – )</p>
+<p>Create a directory.</p>
+</section>
+<section id="copy-file">
+<h3><code class="docutils literal notranslate"><span class="pre">copy-file</span></code></h3>
+<p>( path new-path – )</p>
+<p>Copy a file.</p>
+</section>
+<section id="append-file">
+<h3><code class="docutils literal notranslate"><span class="pre">append-file</span></code></h3>
+<p>( data path – )</p>
+<p>Append to a file.</p>
+</section>
+<section id="write-file-window">
+<h3><code class="docutils literal notranslate"><span class="pre">write-file-window</span></code></h3>
+<p>( data offset path – )</p>
+<p>Write data at an offset in a file without truncating it.</p>
+</section>
+<section id="write-file">
+<h3><code class="docutils literal notranslate"><span class="pre">write-file</span></code></h3>
+<p>( data path – )</p>
+<p>Overwrite a file and then truncate it afterwards.</p>
+</section>
+<section id="create-file">
+<h3><code class="docutils literal notranslate"><span class="pre">create-file</span></code></h3>
+<p>( data path – )</p>
+<p>Create a file.</p>
+</section>
+<section id="dump-file-raw">
+<h3><code class="docutils literal notranslate"><span class="pre">dump-file-raw</span></code></h3>
+<p>( path – )</p>
+<p>Dump the contents of a file to the console as raw data.</p>
+</section>
+<section id="dump-file-raw-window">
+<h3><code class="docutils literal notranslate"><span class="pre">dump-file-raw-window</span></code></h3>
+<p>( offset length path – )</p>
+<p>Dump the contents of a window in a file to the console as raw data.</p>
+</section>
+<section id="dump-file">
+<h3><code class="docutils literal notranslate"><span class="pre">dump-file</span></code></h3>
+<p>( path – )</p>
+<p>Dump the contents of a file to the console as bytes plus ASCII.</p>
+</section>
+<section id="dump-file-window">
+<h3><code class="docutils literal notranslate"><span class="pre">dump-file-window</span></code></h3>
+<p>( offset length path – )</p>
+<p>Dump the contents of a window in a file to the console as bytes plus ASCII.</p>
+</section>
+<section id="dump-file-ascii">
+<h3><code class="docutils literal notranslate"><span class="pre">dump-file-ascii</span></code></h3>
+<p>( path – )</p>
+<p>Dump the contents of a file to the console as ASCII.</p>
+</section>
+<section id="dump-file-ascii-window">
+<h3><code class="docutils literal notranslate"><span class="pre">dump-file-ascii-window</span></code></h3>
+<p>( offset length path – )</p>
+<p>Dump the contents of a window in a file to the console as ASCII.</p>
+</section>
+<section id="read-file">
+<h3><code class="docutils literal notranslate"><span class="pre">read-file</span></code></h3>
+<p>( buffer offset path – count )</p>
+<p>Read a file, from an offset from the start of the file, to a fixed-sized.</p>
+</section>
+<section id="file-size">
+<h3><code class="docutils literal notranslate"><span class="pre">file-size&#64;</span></code></h3>
+<p>( path – size )</p>
+<p>Get the size of a file.</p>
+</section>
+<section id="remove-file">
+<h3><code class="docutils literal notranslate"><span class="pre">remove-file</span></code></h3>
+<p>( path – )</p>
+<p>Remove a file.</p>
+</section>
+<section id="remove-dir">
+<h3><code class="docutils literal notranslate"><span class="pre">remove-dir</span></code></h3>
+<p>( path – )</p>
+<p>Remove a directory.</p>
+</section>
+<section id="rename">
+<h3><code class="docutils literal notranslate"><span class="pre">rename</span></code></h3>
+<p>( path new-name – )</p>
+<p>Rename a file.</p>
+</section>
+<section id="exists">
+<h3><code class="docutils literal notranslate"><span class="pre">exists?</span></code></h3>
+<p>( path – exists? )</p>
+<p>Get whether a file or directory at a given path exists.</p>
+</section>
+<section id="file">
+<h3><code class="docutils literal notranslate"><span class="pre">file?</span></code></h3>
+<p>( path – file? )</p>
+<p>Get whether a directory entry is a file.</p>
+</section>
+<section id="dir">
+<h3><code class="docutils literal notranslate"><span class="pre">dir?</span></code></h3>
+<p>( path – dir? )</p>
+<p>Get whether a directory entry is a directory.</p>
+</section>
+<section id="x-fs-not-set">
+<h3><code class="docutils literal notranslate"><span class="pre">x-fs-not-set</span></code></h3>
+<p>( – )</p>
+<p>Filesystem not set exception.</p>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>
