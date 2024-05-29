@@ -58,3 +58,8 @@ Get task-local state.
 ( task-local -- )
 
 Set task-local state.
+
+### `init-task-console-io`
+( -- )
+
+Initialize task console IO so `key` and `emit` will trigger `yield` to be called if console IO is not ready for input or for output, respectively.
