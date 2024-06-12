@@ -1779,6 +1779,12 @@ begin-module zscript
     swap integral> / >integral
   ;
 
+  \ Divide and get the modulus of two signed integers
+  : /mod ( n0 n1 -- nrem nquot )
+    swap integral>
+    swap integral> /mod 2>integral
+  ;
+
   \ Divide a signed integer by two
   : 2/ ( n0 -- n1 )
     integral> 1 arshift >integral
