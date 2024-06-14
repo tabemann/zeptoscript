@@ -110,9 +110,9 @@ begin-module zscript-text-display
       char-rows self text-display-char-rows!
       cols char-cols / self text-display-cols!
       rows char-rows / self text-display-rows!
-      self text-display-cols@ self text-display-cols@ * make-bytes
+      self text-display-rows@ self text-display-cols@ * make-bytes
       self text-display-text-buf!
-      self text-display-cols@ self text-display-cols@ 8 align 8 / * make-bytes
+      self text-display-rows@ self text-display-cols@ 8 align 8 / * make-bytes
       self text-display-invert-buf!
       self clear-display
     ;
@@ -201,15 +201,15 @@ begin-module zscript-text-display
     ;
 
     \ Set a string
-    :method string! { c-addr u col row self -- }
-      u 0 ?do c-addr i + c@ col i + row self char! loop
+    :method string! { bytes col row self -- }
+      bytes >len 0 ?do i bytes c@+ col i + row self char! loop
     ;
 
     \ Set inverted video
     :method invert! { invert? col row self -- }
       col 0< col self text-display-cols@ >= or
       row 0< or row self text-display-rows@ >= or if exit then
-      self text-display-cols@ row 3 rshift * + col + { offset }
+      self text-display-cols@ row 3 rshift * col + { offset }
       offset self text-display-invert-buf@ c@+
       row $7 and bit
       invert? if or else bic then
@@ -221,7 +221,7 @@ begin-module zscript-text-display
     :method toggle-invert! { col row self -- }
       col 0< col self text-display-cols@ >= or
       row 0< or row self text-display-rows@ >= or if exit then
-      self text-display-cols@ row 3 rshift * + col + { offset }
+      self text-display-cols@ row 3 rshift * col + { offset }
       offset self text-display-invert-buf@ c@+
       row $7 and bit
       xor
@@ -233,7 +233,7 @@ begin-module zscript-text-display
     :method invert@ { col row self -- invert? }
       col 0< col self text-display-cols@ >= or
       row 0< or row self text-display-rows@ >= or if false exit then
-      self text-display-cols@ row 3 rshift * + col + { offset }
+      self text-display-cols@ row 3 rshift * col + { offset }
       offset self text-display-invert-buf@ c@+
       row $7 and bit
       and 0<>
@@ -245,10 +245,10 @@ begin-module zscript-text-display
       pixel-row self text-display-char-rows@ /mod { font-pixel-row char-row }
 
       char-row self text-display-cols@ * char-col +
-      self text-display-text-buf@ + c@+
+      self text-display-text-buf@ c@+
       font-pixel-col font-pixel-row self text-display-font@ char-pixel@
       
-      self text-display-cols@ char-row 3 rshift * + char-col +
+      self text-display-cols@ char-row 3 rshift * char-col +
       self text-display-invert-buf@ c@+
       char-row 7 and rshift 1 and 0<> xor
     ;

@@ -1012,6 +1012,11 @@ begin-module zscript-simple-font
       repeat
     ;
 
+    \ Get a pixel of a character
+    :method char-pixel@ ( c pixel-col pixel-row self -- pixel? )
+      my-font@ char-pixel@
+    ;
+    
     \ Draw a character onto a bitmap
     :method draw-char ( c col row op bitmap self -- )
       my-font@ draw-char

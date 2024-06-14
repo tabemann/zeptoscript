@@ -58,15 +58,15 @@ begin-module zscript-sh1122-text
     1 0 foreign forth::dma-pool::free-dma free-dma
 
     : buffer>spi { bytes device -- }
-      bytes unsafe::bytes>addr-len
+      bytes unsafe::bytes>addr-len unsafe::2integral>
       device unsafe::integral>
       forth::spi::buffer>spi
     ;
 
-    : buffer>spi-raw-dma { bytes dma0 dma1 device -- output }
-      bytes unsafe::bytes>addr-len
-      dma0 unsafe::integral>
+    : buffer>spi-raw-dma { bytes dma1 dma0 device -- output }
+      bytes unsafe::bytes>addr-len unsafe::2integral>
       dma1 unsafe::integral>
+      dma0 unsafe::integral>
       device unsafe::integral>
       forth::spi::buffer>spi-raw-dma
       unsafe::>integral
@@ -227,7 +227,7 @@ begin-module zscript-sh1122-text
       $B0 0 cmd-buf c!+
       start-col2/ $F and 2 cmd-buf c!+
       start-col2/ 4 rshift $10 or 3 cmd-buf c!+
-      
+
       self start-sh1122-transfer
       end-row start-row ?do
         i 1 cmd-buf c!+
