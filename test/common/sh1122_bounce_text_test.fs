@@ -66,7 +66,6 @@ begin-module sh1122-test
     random 0 2integral>double 2,0 pi f* f* { angle }
     my-speed angle cos f* my-speed angle sin f* { dx dy }
     hello >len s>f -0,5 f* my-char-width s>f f* -0,5 my-char-height s>f f* { ox oy }
-    ox ." ox: " f. oy ." oy: " f.
     x ox dnegate dmax to x
     y oy dnegate dmax to y
     dimx -1,0 d+ ox d+ x dmin to x
