@@ -82,7 +82,7 @@ begin-module zscript-font
 
     \ Get a pixel of a character
     :method char-pixel@ { c pixel-col pixel-row self -- pixel? }
-      c self find-char-col pixel-col + pixel-row self font-bitmap@ pixel@
+      c self find-char-col pixel-col + pixel-row self font-bitmap@ unsafe-pixel@
     ;
     
     \ Set a row in a character

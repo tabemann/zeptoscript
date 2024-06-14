@@ -64,6 +64,9 @@ begin-module zscript-bitmap
   \ Get the state of a pixel
   method pixel@ ( col row bitmap -- state )
 
+  \ Get the state of a pixel without validation
+  method unsafe-pixel@ ( col row bitmap -- state )
+
   \ Draw a constant pixel on a bitmap
   method draw-pixel-const ( const dst-col dst-row op dst -- )
 
@@ -982,6 +985,11 @@ begin-module zscript-bitmap
       else
         false
       then
+    ;
+
+    \ Get the state of a pixel without validation
+    :method unsafe-pixel@ { col row self -- state }
+      col row self col-row-addr unsafe::c@ row 7 and rshift 1 and 0<>
     ;
 
     \ Draw a constant pixel on a bitmap

@@ -308,7 +308,7 @@ begin-module zscript-oo
     \ Generate methods
     : generate-methods { class-rec -- }
       class-rec class-methods@ { methods }
-      methods >len 1+ round-to-pow2 { table-size }
+      methods >len 1+ 2 * round-to-pow2 { table-size }
       unsafe::here { class-table }
       table-size 2* cells [ 2 cells ] literal + unsafe::allot
       class-type 2 - type-shift lshift
