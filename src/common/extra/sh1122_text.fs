@@ -276,7 +276,7 @@ begin-module zscript-sh1122-text
       device clk spi-pin
       device din spi-pin
       device master-spi
-      40000000 device spi-baud!
+      20000000 device spi-baud!
       8 device spi-data-size!
       false false device motorola-spi
       device enable-spi
