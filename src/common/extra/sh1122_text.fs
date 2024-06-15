@@ -22,6 +22,7 @@ begin-module zscript-sh1122-text
 
   zscript-oo import
   zscript-text-display import
+  zscript-font import
   zscript-task import
 
   \ Update the SH1122 device
@@ -75,7 +76,10 @@ begin-module zscript-sh1122-text
   end-module> import
 
   begin-class sh1122-text
-      
+
+    \ Font
+    member: sh1122-text-font
+    
     \ SPI device
     member: sh1122-text-device
 
@@ -121,6 +125,12 @@ begin-module zscript-sh1122-text
     \ Data buffer
     member: sh1122-text-data-buf
 
+    \ DMA channel 0
+    member: sh1122-text-dma0
+
+    \ DMA channel 1
+    member: sh1122-text-dma1
+
     \ Reset the SH1122
     :private reset-sh1122-text { self -- }
       high self sh1122-text-reset-pin@ pin!
@@ -145,7 +155,9 @@ begin-module zscript-sh1122-text
     :private cmd>sh1122-text { cmd self -- }
       self sh1122-text-cmd1-buf@ { cmd-buf }
       cmd 0 cmd-buf c!+
-      cmd-buf self sh1122-text-device@ buffer>spi
+      cmd-buf
+      self sh1122-text-dma1@ self sh1122-text-dma0@
+      self sh1122-text-device@ buffer>spi-raw-dma drop
     ;
 
     \ Send a command and argument to the SH1122
@@ -153,16 +165,32 @@ begin-module zscript-sh1122-text
       self sh1122-text-cmd2-buf@ { cmd-buf }
       cmd 0 cmd-buf c!+
       arg 1 cmd-buf c!+
-      cmd-buf self sh1122-text-device@ buffer>spi
+      cmd-buf
+      self sh1122-text-dma1@ self sh1122-text-dma0@
+      self sh1122-text-device@ buffer>spi-raw-dma drop
     ;
     
+    \ Send four command bytes
+    :private cmd4>sh1122-text { self -- }
+      self sh1122-text-cmd4-buf@
+      self sh1122-text-dma1@ self sh1122-text-dma0@
+      self sh1122-text-device@ buffer>spi-raw-dma drop
+    ;
+
+    \ Send data
+    :private data>sh1122-text { cols self -- }
+      high self sh1122-text-dc-pin@ pin!
+      0 cols 1 rshift self sh1122-text-data-buf@ >slice
+      self sh1122-text-dma1@ self sh1122-text-dma0@
+      self sh1122-text-device@ buffer>spi-raw-dma drop
+      low self sh1122-text-dc-pin@ pin!
+    ;
+
     \ Erase the SH1122
     :private erase-sh1122-text { self -- }
       self sh1122-text-bg-gray@ dup 4 lshift or { gray }
       self sh1122-text-cmd4-buf@ { cmd-buf }
       self sh1122-text-data-buf@ { data-buf }
-      allocate-dma { dma0 }
-      allocate-dma { dma1 }
 
       self sh1122-text-cols@ 1 rshift 0 ?do gray i data-buf c!+ loop
 
@@ -173,17 +201,13 @@ begin-module zscript-sh1122-text
       self start-sh1122-transfer
       self sh1122-text-rows@ 0 ?do
         i 1 cmd-buf c!+
-        cmd-buf dma1 dma0 self sh1122-text-device@ buffer>spi-raw-dma drop
+        self cmd4>sh1122-text
 
-        high self sh1122-text-dc-pin@ pin!
-        data-buf dma1 dma0 self sh1122-text-device@ buffer>spi-raw-dma drop
-        low self sh1122-text-dc-pin@ pin!
+        self sh1122-text-cols@ self data>sh1122-text
 
       loop
       $AF self cmd>sh1122-text \ display on
       self end-sh1122-transfer
-      dma0 free-dma
-      dma1 free-dma
     ;
 
     \ Initialize the SH1122
@@ -215,15 +239,16 @@ begin-module zscript-sh1122-text
 
     \ Update a rectangular space on the SH1122 device
     :private update-area { start-col end-col start-row end-row self -- }
+      self sh1122-text-font@ { font }
+      $20 font char-dim@ { char-cols char-rows }
       start-col 1 bic to start-col
-      end-col start-col - 2 align { cols }
+      end-col 2 align to end-col
+      start-col char-cols /mod { start-char-col start-char-index }
+      end-col start-col - { cols }
+      char-cols start-char-col - cols min { start-current-cols }
       start-col 1 rshift { start-col2/ }
-      cols 1 rshift { cols2/ }
       self sh1122-text-cmd4-buf@ { cmd-buf }
       self sh1122-text-data-buf@ { data-buf }
-      0 cols2/ data-buf >slice { data-slice }
-      allocate-dma { dma0 }
-      allocate-dma { dma1 }
       self sh1122-text-fg-gray@ self sh1122-text-bg-gray@ { fg bg }
 
       $B0 0 cmd-buf c!+
@@ -231,27 +256,70 @@ begin-module zscript-sh1122-text
       start-col2/ 4 rshift $10 or 3 cmd-buf c!+
 
       self start-sh1122-transfer
-      end-row start-row ?do
-        i 1 cmd-buf c!+
-        cmd-buf dma1 dma0 self sh1122-text-device@ buffer>spi-raw-dma drop
-        cols2/ 0 ?do
-          start-col2/ i + 1 lshift
-          dup j self pixel@ if fg else bg then 4 lshift
-          swap 1+ j self pixel@ if fg else bg then or
-          i data-buf c!+
-        loop
-        high self sh1122-text-dc-pin@ pin!
-        data-slice dma1 dma0 self sh1122-text-device@ buffer>spi-raw-dma drop
-        low self sh1122-text-dc-pin@ pin!
-      loop
+
+      start-row { row }
+      begin row end-row < while
+
+        row 1 cmd-buf c!+
+        self cmd4>sh1122-text
+        row char-rows /mod { font-pixel-row char-row }
+        start-char-index char-row self text-display@ unsafe-invert@ { invert? }
+        start-char-index char-row self text-display@ unsafe-char@
+        self sh1122-text-font@ find-char-col { offset }
+        start-char-col { font-pixel-col }
+
+        0 { col }
+        
+        begin col cols < while
+          
+          font-pixel-col char-cols = if
+            col start-col + { abs-col }
+            abs-col char-cols / { char-index }
+            char-index char-row self text-display@ unsafe-invert@ to invert?
+            char-index char-row self text-display@ unsafe-char@
+            self sh1122-text-font@ find-char-col to offset
+            0 to font-pixel-col
+          then
+
+          offset font-pixel-col + font-pixel-row font raw-pixel@
+          invert? xor
+          if fg else bg then 4 lshift
+          
+          1 +to font-pixel-col
+
+          font-pixel-col char-cols = if
+            col 1+ start-col + { abs-col }
+            abs-col char-cols / { char-index }
+            char-index char-row self text-display@ unsafe-invert@ to invert?
+            char-index char-row self text-display@ unsafe-char@
+            self sh1122-text-font@ find-char-col to offset
+            0 to font-pixel-col
+          then
+
+          offset font-pixel-col + font-pixel-row font raw-pixel@
+          invert? xor
+          if fg else bg then or
+          
+          col 1 rshift data-buf c!+
+
+          1 +to font-pixel-col
+
+          2 +to col
+
+        repeat
+        
+        cols self data>sh1122-text
+
+        1 +to row
+      repeat
+      
       self end-sh1122-transfer
-      dma0 free-dma
-      dma1 free-dma
     ;
 
     \ Constructor
     :method new
       { fg bg din clk dc cs reset font cols rows device self -- }
+      font self sh1122-text-font!
       1 make-bytes self sh1122-text-cmd1-buf!
       2 make-bytes self sh1122-text-cmd2-buf!
       4 make-bytes self sh1122-text-cmd4-buf!
@@ -280,6 +348,8 @@ begin-module zscript-sh1122-text
       8 device spi-data-size!
       false false device motorola-spi
       device enable-spi
+      allocate-dma self sh1122-text-dma0!
+      allocate-dma self sh1122-text-dma1!
       self reset-sh1122-text
       self init-sh1122-text
       self erase-sh1122-text
@@ -359,11 +429,6 @@ begin-module zscript-sh1122-text
     
     \ Get inverted video
     :method invert@ ( col row self -- invert? ) text-display@ invert@ ;
-    
-    \ Get the state of a pixel - note that this does no validation
-    :method pixel@ ( pixel-col pixel-row self -- pixel-set? )
-      text-display@ pixel@
-    ;
     
   end-class
   

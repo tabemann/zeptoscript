@@ -1012,9 +1012,14 @@ begin-module zscript-simple-font
       repeat
     ;
 
+    \ Get the column of a character
+    :method find-char-col ( c self -- col )
+      my-font@ find-char-col
+    ;
+
     \ Get a pixel of a character
-    :method char-pixel@ ( c pixel-col pixel-row self -- pixel? )
-      my-font@ char-pixel@
+    :method raw-pixel@ ( c pixel-col pixel-row self -- pixel? )
+      my-font@ raw-pixel@
     ;
     
     \ Draw a character onto a bitmap
