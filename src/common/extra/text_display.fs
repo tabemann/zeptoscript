@@ -51,6 +51,9 @@ begin-module zscript-text-display
   \ Get a character
   method char@ ( col row self -- c )
 
+  \ Raw get a character
+  method unsafe-char@ ( col row self -- c )
+    
   \ Set a string
   method string! ( c-addr u col row self -- )
 
@@ -63,8 +66,8 @@ begin-module zscript-text-display
   \ Get inverted video
   method invert@ ( col row self -- invert? )
 
-  \ Get the state of a pixel - note that this does no validation
-  method pixel@ ( pixel-col pixel-row self -- pixel-set? )
+  \ Get raw inverted video
+  method unsafe-invert@ ( col row self -- invert? )
 
   \ Text display class
   begin-class text-display
@@ -200,6 +203,11 @@ begin-module zscript-text-display
       row self text-display-cols@ * col + self text-display-text-buf@ c@+
     ;
 
+    \ Raw get a character
+    :method unsafe-char@ { col row self -- c }
+      row self text-display-cols@ * col + self text-display-text-buf@ c@+
+    ;
+    
     \ Set a string
     :method string! { bytes col row self -- }
       bytes >len 0 ?do i bytes c@+ col i + row self char! loop
@@ -239,18 +247,12 @@ begin-module zscript-text-display
       and 0<>
     ;
 
-    \ Get the state of a pixel - note that this does no validation
-    :method pixel@ { pixel-col pixel-row self -- pixel-set? }
-      pixel-col self text-display-char-cols@ /mod { font-pixel-col char-col }
-      pixel-row self text-display-char-rows@ /mod { font-pixel-row char-row }
-
-      char-row self text-display-cols@ * char-col +
-      self text-display-text-buf@ c@+
-      font-pixel-col font-pixel-row self text-display-font@ char-pixel@
-      
-      self text-display-cols@ char-row 3 rshift * char-col +
-      self text-display-invert-buf@ c@+
-      char-row 7 and rshift 1 and 0<> xor
+    \ Get raw inverted video
+    :method unsafe-invert@ { col row self -- invert? }
+      self text-display-cols@ row 3 rshift * col + { offset }
+      offset self text-display-invert-buf@ c@+
+      row $7 and bit
+      and 0<>
     ;
 
   end-class

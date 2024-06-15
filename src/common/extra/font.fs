@@ -29,8 +29,11 @@ begin-module zscript-font
   \ Set a row in a character
   method char-row! ( xn ... x0 row c font -- )
 
-  \ Get a pixel of a character
-  method char-pixel@ ( c pixel-col pixel-row font -- pixel? )
+  \ Get the column of a character
+  method find-char-col ( c self -- col )
+    
+  \ Get a pixel of font
+  method raw-pixel@ ( pixel-col pixel-row font -- pixel? )
 
   \ Draw a character onto a bitmap
   method draw-char ( c col row op bitmap font -- )
@@ -76,13 +79,13 @@ begin-module zscript-font
     ;
 
     \ Get the column of a character
-    :private find-char-col { c self -- col }
+    :method find-char-col { c self -- col }
       c self min-char-index@ - self char-cols@ *
     ;
 
-    \ Get a pixel of a character
-    :method char-pixel@ { c pixel-col pixel-row self -- pixel? }
-      c self find-char-col pixel-col + pixel-row self font-bitmap@ unsafe-pixel@
+    \ Get a pixel of a font
+    :method raw-pixel@ { pixel-col pixel-row self -- pixel? }
+      pixel-col pixel-row self font-bitmap@ unsafe-pixel@
     ;
     
     \ Set a row in a character
