@@ -153,12 +153,104 @@ Get the dimensions in pixels in *font* of a character *c*.
 
 Get the dimensions in pixels in *font* of a string *bytes*.
 
+### `find-char-col`
+( c self -- col )
+
+Get the starting column of a character in a font's backing bitmap.
+
+### `raw-pixel@`
+( pixel-col pixel-row self -- pixel? )
+
+Get the pixel state of a raw pixel at *pixel-col* and *pixel-row* in a font's backing bitmap.
+
+## `zscript-text-display` words
+
+### `make-text-display`
+( font cols rows -- text-display )
+
+Makes a text display for *font* of *cols* pixels by *rows* pixels.
+
+### `clear-display`
+( self -- )
+
+Clear the display.
+
+### `set-dirty`
+( self -- )
+
+Set the entire display as dirty.
+
+### `dirty-char`
+( col row self -- )
+
+Set a character as dirty.
+
+### `dirty?`
+( self -- dirty? )
+
+Get whether a display is dirty.
+
+### `dirty-rect@`
+( self -- start-col start-row end-col end-row )
+
+Get the display's dirty rectangle in pixels.
+
+### `clear-dirty`
+( self -- )
+
+Clear the entire display's dirty state.
+
+### `dim@`
+( self -- cols rows )
+
+Get the display dimensions in characters.
+
+### `char!`
+( c col row self -- )
+
+Set a character.
+
+### `char@`
+( col row self -- c )
+
+Get a character.
+
+### `unsafe-char@`
+( col row self -- c )
+
+Get a character without validation.
+
+### `string!`
+( c-addr u col row self -- )
+
+Set a string.
+
+### `invert!`
+( invert? col row self -- )
+
+Set inverted video.
+
+### `toggle-invert!`
+( col row self -- )
+
+Toggle inverted video.
+
+### `invert@`
+( col row self -- invert? )
+
+Get inverted video.
+
+### `unsafe-invert@`
+( col row self -- invert? )
+
+Get inverted video without validation.
+
 ## `zscript-simple-font` words
 
 ### `make-simple-font`
 ( -- font )
 
-Make a simple font.
+Make a 7x8 simple font.
 
 Also implemented by the `simple-font` class are the following words in `zscript-font`:
 
@@ -166,6 +258,24 @@ Also implemented by the `simple-font` class are the following words in `zscript-
 * `draw-string`
 * `char-dim@`
 * `string-dim@`
+* `find-char-col`
+* `raw-pixel@`
+
+## `zscript-simple-font-6x8` words
+
+### `make-simple-font-6x8`
+( -- font )
+
+Make a 6x8 simple font.
+
+Also implemented by the `simple-font-6x8` class are the following words in `zscript-font`:
+
+* `draw-char`
+* `draw-string`
+* `char-dim@`
+* `string-dim@`
+* `find-char-col`
+* `raw-pixel@`
 
 ## `zscript-ssd1306` words
 
@@ -193,3 +303,55 @@ Also implemented by the `ssd1306` class are the following words in `zscript-bitm
 * `draw-pixel-const`
 * `draw-rect-const`
 * `draw-rect`
+
+### `zscript-sh1122-text` words
+( fg-gray bg-gray din clk dc cs reset font cols rows spi-device -- sh1122 )
+
+Create an SH1122 text display device with SPI peripheral *spi-device* using SPI pins *din* and *clk*, DC pin *dc*, chip select pin *cs*, reset pin *reset*, font *font*, and foreground gray *fg-gray* and and background gray *bg-gray* (grays are from 0 to 15) of size *cols* by *rows*.
+
+### `update-display`
+( sh1122 -- )
+
+Update the SH1122 device.
+
+### `display-contrast!`
+( contrast sh1122 -- )
+
+Change the SH1122 device contrast.
+
+### `fg-gray!`
+( fg-gray sh1122 -- )
+
+Set the foreground gray level from 0 to 15 and dirty the display.
+
+### `bg-gray!`
+( bg-gray sh1122 -- )
+
+Set the background gray level from 0 to 15 and dirty the display.
+
+### `fg-gray@`
+( sh1122 -- fg-gray )
+
+Get the foreground gray level from 0 to 15.
+
+### `bg-gray@`
+( sh1122 -- bg-gray )
+
+Get the foreground gray level from 0 to 15.
+
+Also implemented by the `sh1122-text` class are the following methods in `zscript-text-display`:
+
+* `clear-display`
+* `set-dirty`
+* `dirty-char`
+* `dirty?`
+* `dirty-rect@`
+* `clear-dirty`
+* `dim@`
+* `char!`
+* `char@`
+* `string!`
+* `invert!`
+* `toggle-invert!`
+* `invert@`
+

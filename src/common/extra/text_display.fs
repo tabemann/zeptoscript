@@ -51,11 +51,11 @@ begin-module zscript-text-display
   \ Get a character
   method char@ ( col row self -- c )
 
-  \ Raw get a character
+  \ Get a character without validation
   method unsafe-char@ ( col row self -- c )
     
   \ Set a string
-  method string! ( c-addr u col row self -- )
+  method string! ( bytes col row self -- )
 
   \ Set inverted video
   method invert! ( invert? col row self -- )
@@ -66,7 +66,7 @@ begin-module zscript-text-display
   \ Get inverted video
   method invert@ ( col row self -- invert? )
 
-  \ Get raw inverted video
+  \ Get inverted video without validation
   method unsafe-invert@ ( col row self -- invert? )
 
   \ Text display class
@@ -203,7 +203,7 @@ begin-module zscript-text-display
       row self text-display-cols@ * col + self text-display-text-buf@ c@+
     ;
 
-    \ Raw get a character
+    \ Get a character without validation
     :method unsafe-char@ { col row self -- c }
       row self text-display-cols@ * col + self text-display-text-buf@ c@+
     ;
@@ -247,7 +247,7 @@ begin-module zscript-text-display
       and 0<>
     ;
 
-    \ Get raw inverted video
+    \ Get inverted video without validation
     :method unsafe-invert@ { col row self -- invert? }
       self text-display-cols@ row 3 rshift * col + { offset }
       offset self text-display-invert-buf@ c@+

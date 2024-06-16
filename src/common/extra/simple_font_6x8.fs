@@ -1018,7 +1018,7 @@ begin-module zscript-simple-font-6x8
     ;
 
     \ Get a pixel of a character
-    :method raw-pixel@ ( c pixel-col pixel-row self -- pixel? )
+    :method raw-pixel@ ( pixel-col pixel-row self -- pixel? )
       my-font@ raw-pixel@
     ;
 
