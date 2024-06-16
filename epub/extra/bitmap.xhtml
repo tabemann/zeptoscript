@@ -170,19 +170,131 @@
 <p>( bytes self – cols rows )</p>
 <p>Get the dimensions in pixels in <em>font</em> of a string <em>bytes</em>.</p>
 </section>
+<section id="find-char-col">
+<h3><code class="docutils literal notranslate"><span class="pre">find-char-col</span></code></h3>
+<p>( c self – col )</p>
+<p>Get the starting column of a character in a font’s backing bitmap.</p>
+</section>
+<section id="raw-pixel">
+<h3><code class="docutils literal notranslate"><span class="pre">raw-pixel&#64;</span></code></h3>
+<p>( pixel-col pixel-row self – pixel? )</p>
+<p>Get the pixel state of a raw pixel at <em>pixel-col</em> and <em>pixel-row</em> in a font’s backing bitmap.</p>
+</section>
+</section>
+<section id="zscript-text-display-words">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-text-display</span></code> words</h2>
+<section id="make-text-display">
+<h3><code class="docutils literal notranslate"><span class="pre">make-text-display</span></code></h3>
+<p>( font cols rows – text-display )</p>
+<p>Makes a text display for <em>font</em> of <em>cols</em> pixels by <em>rows</em> pixels.</p>
+</section>
+<section id="clear-display">
+<h3><code class="docutils literal notranslate"><span class="pre">clear-display</span></code></h3>
+<p>( self – )</p>
+<p>Clear the display.</p>
+</section>
+<section id="set-dirty">
+<h3><code class="docutils literal notranslate"><span class="pre">set-dirty</span></code></h3>
+<p>( self – )</p>
+<p>Set the entire display as dirty.</p>
+</section>
+<section id="dirty-char">
+<h3><code class="docutils literal notranslate"><span class="pre">dirty-char</span></code></h3>
+<p>( col row self – )</p>
+<p>Set a character as dirty.</p>
+</section>
+<section id="id1">
+<h3><code class="docutils literal notranslate"><span class="pre">dirty?</span></code></h3>
+<p>( self – dirty? )</p>
+<p>Get whether a display is dirty.</p>
+</section>
+<section id="id2">
+<h3><code class="docutils literal notranslate"><span class="pre">dirty-rect&#64;</span></code></h3>
+<p>( self – start-col start-row end-col end-row )</p>
+<p>Get the display’s dirty rectangle in pixels.</p>
+</section>
+<section id="id3">
+<h3><code class="docutils literal notranslate"><span class="pre">clear-dirty</span></code></h3>
+<p>( self – )</p>
+<p>Clear the entire display’s dirty state.</p>
+</section>
+<section id="id4">
+<h3><code class="docutils literal notranslate"><span class="pre">dim&#64;</span></code></h3>
+<p>( self – cols rows )</p>
+<p>Get the display dimensions in characters.</p>
+</section>
+<section id="char">
+<h3><code class="docutils literal notranslate"><span class="pre">char!</span></code></h3>
+<p>( c col row self – )</p>
+<p>Set a character.</p>
+</section>
+<section id="id5">
+<h3><code class="docutils literal notranslate"><span class="pre">char&#64;</span></code></h3>
+<p>( col row self – c )</p>
+<p>Get a character.</p>
+</section>
+<section id="unsafe-char">
+<h3><code class="docutils literal notranslate"><span class="pre">unsafe-char&#64;</span></code></h3>
+<p>( col row self – c )</p>
+<p>Get a character without validation.</p>
+</section>
+<section id="string">
+<h3><code class="docutils literal notranslate"><span class="pre">string!</span></code></h3>
+<p>( c-addr u col row self – )</p>
+<p>Set a string.</p>
+</section>
+<section id="invert">
+<h3><code class="docutils literal notranslate"><span class="pre">invert!</span></code></h3>
+<p>( invert? col row self – )</p>
+<p>Set inverted video.</p>
+</section>
+<section id="toggle-invert">
+<h3><code class="docutils literal notranslate"><span class="pre">toggle-invert!</span></code></h3>
+<p>( col row self – )</p>
+<p>Toggle inverted video.</p>
+</section>
+<section id="id6">
+<h3><code class="docutils literal notranslate"><span class="pre">invert&#64;</span></code></h3>
+<p>( col row self – invert? )</p>
+<p>Get inverted video.</p>
+</section>
+<section id="unsafe-invert">
+<h3><code class="docutils literal notranslate"><span class="pre">unsafe-invert&#64;</span></code></h3>
+<p>( col row self – invert? )</p>
+<p>Get inverted video without validation.</p>
+</section>
 </section>
 <section id="zscript-simple-font-words">
 <h2><code class="docutils literal notranslate"><span class="pre">zscript-simple-font</span></code> words</h2>
 <section id="make-simple-font">
 <h3><code class="docutils literal notranslate"><span class="pre">make-simple-font</span></code></h3>
 <p>( – font )</p>
-<p>Make a simple font.</p>
+<p>Make a 7x8 simple font.</p>
 <p>Also implemented by the <code class="docutils literal notranslate"><span class="pre">simple-font</span></code> class are the following words in <code class="docutils literal notranslate"><span class="pre">zscript-font</span></code>:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">draw-char</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">draw-string</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">char-dim&#64;</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">string-dim&#64;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">find-char-col</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">raw-pixel&#64;</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="zscript-simple-font-6x8-words">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-simple-font-6x8</span></code> words</h2>
+<section id="make-simple-font-6x8">
+<h3><code class="docutils literal notranslate"><span class="pre">make-simple-font-6x8</span></code></h3>
+<p>( – font )</p>
+<p>Make a 6x8 simple font.</p>
+<p>Also implemented by the <code class="docutils literal notranslate"><span class="pre">simple-font-6x8</span></code> class are the following words in <code class="docutils literal notranslate"><span class="pre">zscript-font</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">draw-char</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">draw-string</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">char-dim&#64;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">string-dim&#64;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">find-char-col</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">raw-pixel&#64;</span></code></p></li>
 </ul>
 </section>
 </section>
@@ -211,6 +323,57 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">draw-pixel-const</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">draw-rect-const</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">draw-rect</span></code></p></li>
+</ul>
+</section>
+<section id="zscript-sh1122-text-words">
+<h3><code class="docutils literal notranslate"><span class="pre">zscript-sh1122-text</span></code> words</h3>
+<p>( fg-gray bg-gray din clk dc cs reset font cols rows spi-device – sh1122 )</p>
+<p>Create an SH1122 text display device with SPI peripheral <em>spi-device</em> using SPI pins <em>din</em> and <em>clk</em>, DC pin <em>dc</em>, chip select pin <em>cs</em>, reset pin <em>reset</em>, font <em>font</em>, and foreground gray <em>fg-gray</em> and and background gray <em>bg-gray</em> (grays are from 0 to 15) of size <em>cols</em> by <em>rows</em>.</p>
+</section>
+<section id="id7">
+<h3><code class="docutils literal notranslate"><span class="pre">update-display</span></code></h3>
+<p>( sh1122 – )</p>
+<p>Update the SH1122 device.</p>
+</section>
+<section id="id8">
+<h3><code class="docutils literal notranslate"><span class="pre">display-contrast!</span></code></h3>
+<p>( contrast sh1122 – )</p>
+<p>Change the SH1122 device contrast.</p>
+</section>
+<section id="fg-gray">
+<h3><code class="docutils literal notranslate"><span class="pre">fg-gray!</span></code></h3>
+<p>( fg-gray sh1122 – )</p>
+<p>Set the foreground gray level from 0 to 15 and dirty the display.</p>
+</section>
+<section id="bg-gray">
+<h3><code class="docutils literal notranslate"><span class="pre">bg-gray!</span></code></h3>
+<p>( bg-gray sh1122 – )</p>
+<p>Set the background gray level from 0 to 15 and dirty the display.</p>
+</section>
+<section id="id9">
+<h3><code class="docutils literal notranslate"><span class="pre">fg-gray&#64;</span></code></h3>
+<p>( sh1122 – fg-gray )</p>
+<p>Get the foreground gray level from 0 to 15.</p>
+</section>
+<section id="id10">
+<h3><code class="docutils literal notranslate"><span class="pre">bg-gray&#64;</span></code></h3>
+<p>( sh1122 – bg-gray )</p>
+<p>Get the foreground gray level from 0 to 15.</p>
+<p>Also implemented by the <code class="docutils literal notranslate"><span class="pre">sh1122-text</span></code> class are the following methods in <code class="docutils literal notranslate"><span class="pre">zscript-text-display</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">clear-display</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set-dirty</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dirty-char</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dirty?</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dirty-rect&#64;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">clear-dirty</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dim&#64;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">char!</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">char&#64;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">string!</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">invert!</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">toggle-invert!</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">invert&#64;</span></code></p></li>
 </ul>
 </section>
 </section>

@@ -31,16 +31,16 @@ begin-module zscript-sh1122-text
   \ Change the SH1122 device contrast
   method display-contrast! ( contrast self -- )
   
-  \ Set the foreground color and dirty the display
+  \ Set the foreground gray level and dirty the display
   method fg-gray! ( fg-gray self -- )
   
-  \ Set the background color and dirty the display
+  \ Set the background gray level and dirty the display
   method bg-gray! ( bg-gray self -- )
   
-  \ Get the foreground color
+  \ Get the foreground gray level
   method fg-gray@ ( self -- fg-gray )
   
-  \ Get the foreground color
+  \ Get the foreground gray level
   method bg-gray@ ( self -- bg-gray )
 
   begin-module zscript-sh1122-text-internal
@@ -98,10 +98,10 @@ begin-module zscript-sh1122-text
     \ DIN pin
     member: sh1122-text-din-pin
 
-    \ Foreground color (grayscale from 0 to 15)
+    \ Foreground gray level (grayscale from 0 to 15)
     member: sh1122-text-fg-gray
 
-    \ Background color (grayscale from 0 to 15)
+    \ Background gray level (grayscale from 0 to 15)
     member: sh1122-text-bg-gray
 
     \ Display columns
@@ -371,22 +371,22 @@ begin-module zscript-sh1122-text
       self end-sh1122-transfer
     ;
 
-    \ Set the foreground color and dirty the display
+    \ Set the foreground gray level and dirty the display
     :method fg-gray! { fg-gray self -- }
       fg-gray $F and self sh1122-text-fg-gray!
       self set-dirty
     ;
 
-    \ Set the background color and dirty the display
+    \ Set the background gray level and dirty the display
     :method bg-gray! { bg-gray self -- }
       bg-gray $F and self sh1122-text-bg-gray!
       self set-dirty
     ;
 
-    \ Get the foreground color
+    \ Get the foreground gray level
     :method fg-gray@ ( self -- ) sh1122-text-fg-gray@ ;
 
-    \ Get the background color
+    \ Get the background gray level
     :method bg-gray@ ( self -- ) sh1122-text-bg-gray@ ;
 
     \ Clear the display
@@ -419,7 +419,7 @@ begin-module zscript-sh1122-text
     :method char@ ( col row self -- c ) text-display@ char@ ;
     
     \ Set a string
-    :method string! ( c-addr u col row self -- ) text-display@ string! ;
+    :method string! ( bytes col row self -- ) text-display@ string! ;
     
     \ Set inverted video
     :method invert! ( invert? col row self -- ) text-display@ invert! ;
