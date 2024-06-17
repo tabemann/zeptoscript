@@ -100,7 +100,13 @@ begin-module zscript-oo
       item: class-type
       
     end-record
-
+    
+    \ Hash a methodID
+    : hash-method { id -- hash }
+      0 31 0 ?do id i lshift id 32 i - rshift or xor loop
+      dup $FFFFFFFF = if drop 1 then
+    ;
+    
     \ Look up a member
     : lookup-member ( object member-offset class-id -- addr )
       rot
@@ -162,15 +168,16 @@ begin-module zscript-oo
     ;
 
     \ Look up and execute a method
-    : execute-method ( ? class method-id -- ? )
+    : execute-method ( ? class method-hash method-id -- ? )
       code[
+      r2 1 dp ldm
       r0 1 dp ldm
       0 r0 r1 ldr_,[_,#_]
       32 type-shift - r1 r1 lsls_,_,#_
       32 type-shift - 1+ r1 r1 lsrs_,_,#_
       2 cells 1+ r1 subs_,#_
       2 cells r0 adds_,#_
-      3 tos r2 lsls_,_,#_
+      3 r2 r2 lsls_,_,#_
       mark>
       r1 r2 ands_,_
       r0 r2 r3 ldr_,[_,_]
@@ -205,7 +212,7 @@ begin-module zscript-oo
       name start-compile visible
       postpone dup
       postpone prepare-method
-      id raw-lit, postpone execute-method
+      id hash-method raw-lit, id raw-lit, postpone execute-method
       pop-pc unsafe::h,
       cell unsafe::align, method-id-marker unsafe::, id unsafe::, end-compile,
     ;
@@ -296,7 +303,7 @@ begin-module zscript-oo
 
     \ Generate a method
     : generate-method { method-rec class-table table-size -- }
-      table-size 1- method-rec method-id@ and { method-index }
+      table-size 1- method-rec method-id@ hash-method and { method-index }
       begin method-index 2* cells class-table + unsafe::@ $FFFFFFFF <> while
         method-index 1+ table-size 1- and to method-index
       repeat
