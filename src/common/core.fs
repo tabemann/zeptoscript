@@ -846,6 +846,24 @@ begin-module zscript
       then
     ;
 
+    \ KEY? stack base
+    variable key?-stack-base
+
+    \ KEY stack base
+    variable key-stack-base
+
+    \ EMIT? stack base
+    variable emit?-stack-base
+
+    \ EMIT stack base
+    variable emit-stack-base
+
+    \ ERROR-EMIT? stack base
+    variable error-emit?-stack-base
+
+    \ ERROR-EMIT stack base
+    variable error-emit-stack-base
+
     \ RAM global ID index
     0 constant current-ram-global-id-index
 
@@ -854,12 +872,30 @@ begin-module zscript
     
     \ Evaluation stack
     2 >small-int constant eval-stack-global-id
+
+    \ KEY? stack
+    3 >small-int constant key?-stack-global-id
+
+    \ KEY stack
+    4 >small-int constant key-stack-global-id
+
+    \ EMIT? stack
+    5 >small-int constant emit?-stack-global-id
+
+    \ EMIT stack
+    6 >small-int constant emit-stack-global-id
+
+    \ ERROR-EMIT? stack
+    7 >small-int constant error-emit?-stack-global-id
+
+    \ ERROR-EMIT stack
+    8 >small-int constant error-emit-stack-global-id
     
     \ Initial RAM global ID
-    3 >small-int constant init-ram-global-id
+    9 >small-int constant init-ram-global-id
 
     \ Initial RAM globals count
-    3 >small-int constant init-ram-global-count
+    9 >small-int constant init-ram-global-count
 
     \ Cell sequence definition type
     0 >small-int constant define-cells
@@ -4562,7 +4598,181 @@ begin-module zscript
     eval-stack-global-id ram-global!
     forth::?raise
   ;
-  
+
+  \ Push KEY? hook
+  : push-key? { xt -- }
+    key?-stack-global-id ram-global@ { prev }
+    prev 0= if
+      forth::key?-hook forth::@ key?-stack-base forth::!
+    then
+    xt prev >pair key?-stack-global-id ram-global!
+    [: 0 key?-stack-global-id ram-global@ @+ execute integral> ;]
+    xt>integral integral>
+    forth::key?-hook forth::!
+  ;
+
+  \ Drop KEY? hook
+  : drop-key? ( -- )
+    key?-stack-global-id ram-global@ { current }
+    current 0<> if
+      [ 1 >small-int ] literal current @+ { prev }
+      prev key?-stack-global-id ram-global!
+      prev 0= if
+        key?-stack-base forth::@ forth::key?-hook forth::!
+      then
+    then
+  ;
+
+  \ Push KEY hook
+  : push-key { xt -- }
+    key-stack-global-id ram-global@ { prev }
+    prev 0= if
+      forth::key-hook forth::@ key-stack-base forth::!
+    then
+    xt prev >pair key-stack-global-id ram-global!
+    [: 0 key-stack-global-id ram-global@ @+ execute integral> ;]
+    xt>integral integral>
+    forth::key-hook forth::!
+  ;
+
+  \ Drop KEY hook
+  : drop-key ( -- )
+    key-stack-global-id ram-global@ { current }
+    current 0<> if
+      [ 1 >small-int ] literal current @+ { prev }
+      prev key-stack-global-id ram-global!
+      prev 0= if
+        key-stack-base forth::@ forth::key-hook forth::!
+      then
+    then
+  ;
+
+  \ Push EMIT? hook
+  : push-emit? { xt -- }
+    emit?-stack-global-id ram-global@ { prev }
+    prev 0= if
+      forth::emit?-hook forth::@ emit?-stack-base forth::!
+    then
+    xt prev >pair emit?-stack-global-id ram-global!
+    [: 0 emit?-stack-global-id ram-global@ @+ execute integral> ;]
+    xt>integral integral>
+    forth::emit?-hook forth::!
+  ;
+
+  \ Drop EMIT? hook
+  : drop-emit? ( -- )
+    emit?-stack-global-id ram-global@ { current }
+    current 0<> if
+      [ 1 >small-int ] literal current @+ { prev }
+      prev emit?-stack-global-id ram-global!
+      prev 0= if
+        emit?-stack-base forth::@ forth::emit?-hook forth::!
+      then
+    then
+  ;
+
+  \ Push EMIT hook
+  : push-emit { xt -- }
+    emit-stack-global-id ram-global@ { prev }
+    prev 0= if
+      forth::emit-hook forth::@ emit-stack-base forth::!
+    then
+    xt prev >pair emit-stack-global-id ram-global!
+    [: >integral 0 emit-stack-global-id ram-global@ @+ execute ;]
+    xt>integral integral>
+    forth::emit-hook forth::!
+  ;
+
+  \ Drop EMIT hook
+  : drop-emit ( -- )
+    emit-stack-global-id ram-global@ { current }
+    current 0<> if
+      [ 1 >small-int ] literal current @+ { prev }
+      prev emit-stack-global-id ram-global!
+      prev 0= if
+        emit-stack-base forth::@ forth::emit-hook forth::!
+      then
+    then
+  ;
+
+  \ Push ERROR-EMIT? hook
+  : push-error-emit? { xt -- }
+    error-emit?-stack-global-id ram-global@ { prev }
+    prev 0= if
+      forth::error-emit?-hook forth::@ error-emit?-stack-base forth::!
+    then
+    xt prev >pair error-emit?-stack-global-id ram-global!
+    [: 0 error-emit?-stack-global-id ram-global@ @+ execute integral> ;]
+    xt>integral integral>
+    forth::error-emit?-hook forth::!
+  ;
+
+  \ Drop ERROR-EMIT? hook
+  : drop-error-emit? ( -- )
+    error-emit?-stack-global-id ram-global@ { current }
+    current 0<> if
+      [ 1 >small-int ] literal current @+ { prev }
+      prev error-emit?-stack-global-id ram-global!
+      prev 0= if
+        error-emit?-stack-base forth::@ forth::error-emit?-hook forth::!
+      then
+    then
+  ;
+
+  \ Push ERROR-EMIT hook
+  : push-error-emit { xt -- }
+    error-emit-stack-global-id ram-global@ { prev }
+    prev 0= if
+      forth::error-emit-hook forth::@ error-emit-stack-base forth::!
+    then
+    xt prev >pair error-emit-stack-global-id ram-global!
+    [: >integral 0 error-emit-stack-global-id ram-global@ @+ execute ;]
+    xt>integral integral>
+    forth::error-emit-hook forth::!
+  ;
+
+  \ Drop ERROR-EMIT hook
+  : drop-error-emit ( -- )
+    error-emit-stack-global-id ram-global@ { current }
+    current 0<> if
+      [ 1 >small-int ] literal current @+ { prev }
+      prev error-emit-stack-global-id ram-global!
+      prev 0= if
+        error-emit-stack-base forth::@ forth::error-emit-hook forth::!
+      then
+    then
+  ;
+
+  \ Execute code with an input
+  : with-input ( key?-xt key-xt xt -- )
+    rot push-key?
+    swap push-key
+    try
+    drop-key
+    drop-key?
+    ?raise
+  ;
+
+  \ Execute code with an output
+  : with-output ( emit?-xt emit-xt xt -- )
+    rot push-emit?
+    swap push-emit
+    try
+    drop-emit
+    drop-emit?
+    ?raise
+  ;
+
+  \ Execute code with an error output
+  : with-error-output ( error-emit?-xt error-emit-xt xt -- )
+    rot push-error-emit?
+    swap push-error-emit
+    try
+    drop-error-emit
+    drop-error-emit?
+    ?raise
+  ;
+      
   true >small-int constant true
   false >small-int constant false
   type-shift >small-int constant type-shift
