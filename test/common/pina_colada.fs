@@ -65,7 +65,7 @@ begin-module pina-colada-test
   ;
 
   \ Handle messages and send messages
-  : actor-main { chan actors this-actor conds outputs text -- }
+  : do-actor { chan actors this-actor conds outputs text -- }
     4 ['] hash ['] equal? make-map { map }
     begin
       chan recv pair> { src-actor id }
@@ -80,6 +80,7 @@ begin-module pina-colada-test
         ;] bind iter
         id map remove-map
         yield
+        exit
       then
     again
   ;
@@ -90,7 +91,7 @@ begin-module pina-colada-test
     #( actor-get-pink-umbrellas actor-get-glasses actor-open-blender-1 )#
     #( )#
     s" Served a pina colada!"
-    actor-main
+    do-actor
   ;
 
   \ Get pink umbrellas
@@ -99,7 +100,7 @@ begin-module pina-colada-test
     #( actor-make-pina-colada )#
     #( actor-serve )#
     s" Got pink umbrellas"
-    actor-main
+    do-actor
   ;
 
   \ Get glasses
@@ -108,7 +109,7 @@ begin-module pina-colada-test
     #( actor-make-pina-colada )#
     #( actor-serve )#
     s" Got glasses "
-    actor-main
+    do-actor
   ;
 
   \ Open the blender a second time
@@ -117,7 +118,7 @@ begin-module pina-colada-test
     #( actor-liquify )#
     #( actor-serve )#
     s" Opened the blender a second time"
-    actor-main
+    do-actor
   ;
 
   \ Liquify
@@ -126,7 +127,7 @@ begin-module pina-colada-test
     #( actor-close-blender )#
     #( actor-open-blender-1 )#
     s" Liquified"
-    actor-main
+    do-actor
   ;
 
   \ Close the blender
@@ -135,7 +136,7 @@ begin-module pina-colada-test
     #( actor-add-two-cups-ice actor-pour-in-rum actor-put-mix-in )#
     #( actor-liquify )#
     s" Closed the blender"
-    actor-main
+    do-actor
   ;
 
   \ Add two cups ice
@@ -144,7 +145,7 @@ begin-module pina-colada-test
     #( actor-open-blender-0 )#
     #( actor-close-blender )#
     s" Added two cups ice"
-    actor-main
+    do-actor
   ;
 
   \ Pour in rum
@@ -153,7 +154,7 @@ begin-module pina-colada-test
     #( actor-measure-rum actor-open-blender-0 )#
     #( actor-close-blender )#
     s" Poured in rum"
-    actor-main
+    do-actor
   ;
 
   \ Measure rum
@@ -162,7 +163,7 @@ begin-module pina-colada-test
     #( actor-make-pina-colada )#
     #( actor-pour-in-rum )#
     s" Measured rum"
-    actor-main
+    do-actor
   ;
 
   \ Put mix in
@@ -171,7 +172,7 @@ begin-module pina-colada-test
     #( actor-open-mix actor-open-blender-0 )#
     #( actor-close-blender )#
     s" Put mix in"
-    actor-main
+    do-actor
   ;
 
   \ Open mix
@@ -180,7 +181,7 @@ begin-module pina-colada-test
     #( actor-make-pina-colada )#
     #( actor-put-mix-in )#
     s" Opened mix"
-    actor-main
+    do-actor
   ;
 
   \ Open the blender the first itme
@@ -189,7 +190,7 @@ begin-module pina-colada-test
     #( actor-make-pina-colada )#
     #( actor-add-two-cups-ice actor-pour-in-rum actor-put-mix-in )#
     s" Opened the blender the first time"
-    actor-main
+    do-actor
   ;
 
   \ Make a pina colada
@@ -199,7 +200,7 @@ begin-module pina-colada-test
     #( actor-get-pink-umbrellas actor-get-glasses actor-measure-rum
     actor-open-mix actor-open-blender-0 )#
     s" Making a pina colada..."
-    actor-main
+    do-actor
   ;
 
   \ Set up a pina colada maker.
