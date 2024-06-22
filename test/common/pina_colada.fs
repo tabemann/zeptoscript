@@ -230,5 +230,10 @@ begin-module pina-colada-test
     actor-open-blender-0 actors insert-map
     1 actors 1 ['] make-pina-colada bind make-actor
   ;
+
+  \ Run the test
+  : run-test { id -- }
+    start-make-pina-colada id >pair make-pina-colada-maker send
+  ;
   
 end-module
