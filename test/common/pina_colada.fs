@@ -41,6 +41,11 @@ begin-module pina-colada-test
   symbol actor-open-blender-0
   symbol actor-make-pina-colada
   symbol start-make-pina-colada
+
+  \ Symbols for exit messages
+  symbol pina-colada-served
+  symbol trigger-exit
+  symbol exit-actor
   
   \ Make an actor; size is the number of entries in the actor's channel and
   \ xt is executed for the actor, passed the actors channel, with the actor
@@ -68,20 +73,27 @@ begin-module pina-colada-test
   : do-actor { chan actors this-actor conds outputs text -- }
     4 ['] hash ['] equal? make-map { map }
     begin
-      chan recv pair> { src-actor id }
-      conds src-actor id map check-cond if
-        cr id show type ." : " text type
-        outputs actors this-actor id >pair 2 [: { output actors msg }
-          output actors find-map if { dest }
-            msg dest send
-          else
-            drop
-          then
-        ;] bind iter
-        id map remove-map
-        yield
-        exit
-      then
+      chan recv
+      case
+        trigger-exit of
+          actors [: drop exit-actor swap send ;] iter-map
+          yield exit
+        endof
+        exit-actor of yield exit endof
+        dup pair> { src-actor id }
+        conds src-actor id map check-cond if
+          cr id show type ." : " text type
+          outputs actors this-actor id >pair 2 [: { output actors msg }
+            output actors find-map if { dest }
+              msg dest send
+            else
+              drop
+            then
+          ;] bind iter
+          id map remove-map
+          yield
+        then
+      endcase
     again
   ;
   
@@ -89,7 +101,7 @@ begin-module pina-colada-test
   : serve ( chan actors -- )
     actor-serve
     #( actor-get-pink-umbrellas actor-get-glasses actor-open-blender-1 )#
-    #( )#
+    #( pina-colada-served )#
     s" Served a pina colada!"
     do-actor
   ;
@@ -204,8 +216,9 @@ begin-module pina-colada-test
   ;
 
   \ Set up a pina colada maker.
-  : make-pina-colada-maker ( -- chan )
+  : make-pina-colada-maker ( served-chan -- chan )
     32 ['] hash ['] equal? make-map { actors }
+    pina-colada-served actors insert-map
     3 actors 1 ['] serve bind make-actor
     actor-serve actors insert-map
     1 actors 1 ['] get-pink-umbrellas bind make-actor
@@ -235,7 +248,11 @@ begin-module pina-colada-test
 
   \ Run the test
   : run-test { id -- }
-    start-make-pina-colada id >pair make-pina-colada-maker send yield
+    1 make-chan { served }
+    served make-pina-colada-maker { maker }
+    start-make-pina-colada id >pair maker send yield
+    served recv drop
+    trigger-exit maker send yield
   ;
   
 end-module
