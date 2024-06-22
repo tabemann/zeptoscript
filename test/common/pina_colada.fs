@@ -79,6 +79,7 @@ begin-module pina-colada-test
           then
         ;] bind iter
         id map remove-map
+        yield
       then
     again
   ;
@@ -233,7 +234,7 @@ begin-module pina-colada-test
 
   \ Run the test
   : run-test { id -- }
-    start-make-pina-colada id >pair make-pina-colada-maker send
+    start-make-pina-colada id >pair make-pina-colada-maker send yield
   ;
   
 end-module
