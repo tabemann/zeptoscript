@@ -48,6 +48,26 @@ Get the current offset in a file.
 
 Get the size of a file.
 
+### `with-file-input`
+( xt file -- )
+
+Redirect input within *xt* to come from *file*. Note that input is buffered, so if *file* is written to while input is redirected from it, the written data may not be reflected in the input data.
+
+### `with-file-output`
+( xt file -- )
+
+Redirect output within *xt* to *file*. Note that output is buffered, so if *file* is read while output is redirected to it, the read data may not reflect the output data.
+
+### `with-file-error-output`
+( xt file -- )
+
+Redirect error output within *xt* to *file*. Note that error output is buffered, so if *file* is read while output is redirected to it, the read data may not reflect the output data.
+
+### `with-file-all-output`
+( xt file -- )
+
+Redirect both output and error output within *xt* to *file*. Note that output and error output are buffered, so if *file* is read while output and error output are redirected to it, the read data may not reflect the output data.
+
 ### `fs@`
 ( file|dir -- fs )
 

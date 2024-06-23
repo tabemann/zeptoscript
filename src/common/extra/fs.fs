@@ -150,5 +150,17 @@ begin-module zscript-fs
 
   \ Get an entry's file size
   method entry-file-size@ ( entry -- size )
+
+  \ Redirect input to be from a file
+  method with-file-input ( xt file -- )
+
+  \ Redirect output to be to a file
+  method with-file-output ( xt file -- )
+
+  \ Redirect error output to be to a file
+  method with-file-error-output ( xt file -- )
+
+  \ Redirect output and error output to be to a file
+  method with-file-all-output ( xt file -- )
   
 end-module

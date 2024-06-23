@@ -4813,8 +4813,8 @@ begin-module zscript
   : space forth::space ;
   : spaces integral> forth::spaces ;
   : .s forth::.s ;
-  : key forth::key integral> ;
-  : key? forth::key? integral> ;
+  : key forth::key >integral ;
+  : key? forth::key? >integral ;
   : enable-int forth::enable-int ;
   : disable-int forth::disable-int ;
   : sleep forth::sleep ;

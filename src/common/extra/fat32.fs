@@ -26,6 +26,7 @@ begin-module zscript-fat32
   zscript-block-dev import
   zscript-fs import
   zscript-map import
+  zscript-task import
   
   \ Sector size exception
   : x-sector-size-not-supported ( -- )
@@ -1057,6 +1058,100 @@ begin-module zscript-fat32
     \ Get a file's filesystem
     :method fs@ ( self -- fs )
       my-file-fs@
+    ;
+
+    \ Redirect input to be from a file
+    :method with-file-input { xt self -- }
+      sector-size make-bytes { buffer }
+      0 0 buffer >slice ref { slice }
+      buffer slice self 3 [: { buffer slice self }
+        slice ref@ >len 0> if
+          true
+        else
+          self my-file-offset@ self file-size@ <
+        then
+      ;] bind
+      buffer slice self 3 [: { buffer slice self }
+        begin
+          slice ref@ >len 0= if
+            buffer self read-file 0 swap buffer >slice slice ref!
+          then
+          slice ref@ { current-slice }
+          current-slice >len { len }
+          len 0> if
+            0 current-slice c@+
+            1 len 1- current-slice >slice slice ref!
+            true
+          else
+            yield
+            false
+          then
+        until
+      ;] bind
+      xt with-input
+    ;
+
+    \ Actually hande output redirection
+    :private with-file-generic-output { xt self -- }
+      sector-size make-bytes { buffer }
+      0 ref { offset }
+      ['] true
+      buffer offset self 3 [: { c buffer offset self }
+        offset ref@ { current-offset }
+        c current-offset buffer c!+
+        1 +to current-offset
+        current-offset buffer >len = if
+          buffer { current-buffer }
+          begin
+            current-buffer >len { len }
+            current-buffer self write-file dup len = if
+              drop
+              0 offset ref!
+              true
+            else
+              len over - current-buffer >slice to current-buffer
+              yield
+              false
+            then
+          until
+        else
+          current-offset offset ref!
+        then
+      ;] bind
+      xt execute
+      offset ref@ 0> if
+        0 offset ref@ buffer >slice to buffer
+        begin
+          buffer >len { len }
+          buffer self write-file dup len = if
+            drop
+            true
+          else
+            len over - buffer >slice to buffer
+            yield
+            false
+          then
+        until
+      then
+    ;
+    
+    \ Redirect output to be to a file
+    :method with-file-output { xt self -- }
+      xt 1 ['] with-output bind self with-file-generic-output
+    ;
+
+    \ Redirect error output to be to a file
+    :method with-file-error-output { xt self -- }
+      xt 1 ['] with-error-output bind self with-file-generic-output
+    ;
+
+    \ Redirect output and error output to be to a file
+    :method with-file-all-output { xt self -- }
+      xt 1 [: { emit?-xt emit-xt xt }
+        emit?-xt emit-xt
+        emit?-xt emit-xt xt 3 ['] with-output bind
+        with-error-output
+      ;] bind self with-file-generic-output
     ;
     
   end-class

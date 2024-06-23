@@ -61,6 +61,26 @@
 <p>( file – bytes )</p>
 <p>Get the size of a file.</p>
 </section>
+<section id="with-file-input">
+<h3><code class="docutils literal notranslate"><span class="pre">with-file-input</span></code></h3>
+<p>( xt file – )</p>
+<p>Redirect input within <em>xt</em> to come from <em>file</em>. Note that input is buffered, so if <em>file</em> is written to while input is redirected from it, the written data may not be reflected in the input data.</p>
+</section>
+<section id="with-file-output">
+<h3><code class="docutils literal notranslate"><span class="pre">with-file-output</span></code></h3>
+<p>( xt file – )</p>
+<p>Redirect output within <em>xt</em> to <em>file</em>. Note that output is buffered, so if <em>file</em> is read while output is redirected to it, the read data may not reflect the output data.</p>
+</section>
+<section id="with-file-error-output">
+<h3><code class="docutils literal notranslate"><span class="pre">with-file-error-output</span></code></h3>
+<p>( xt file – )</p>
+<p>Redirect error output within <em>xt</em> to <em>file</em>. Note that error output is buffered, so if <em>file</em> is read while output is redirected to it, the read data may not reflect the output data.</p>
+</section>
+<section id="with-file-all-output">
+<h3><code class="docutils literal notranslate"><span class="pre">with-file-all-output</span></code></h3>
+<p>( xt file – )</p>
+<p>Redirect both output and error output within <em>xt</em> to <em>file</em>. Note that output and error output are buffered, so if <em>file</em> is read while output and error output are redirected to it, the read data may not reflect the output data.</p>
+</section>
 <section id="fs">
 <h3><code class="docutils literal notranslate"><span class="pre">fs&#64;</span></code></h3>
 <p>( file|dir – fs )</p>

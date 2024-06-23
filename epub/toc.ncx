@@ -3838,347 +3838,371 @@
         </navPoint>
         <navPoint id="navPoint639" playOrder="602">
           <navLabel>
+            <text>with-file-input</text>
+          </navLabel>
+          <content src="extra/fs.xhtml#with-file-input" />  
+        </navPoint>
+        <navPoint id="navPoint640" playOrder="603">
+          <navLabel>
+            <text>with-file-output</text>
+          </navLabel>
+          <content src="extra/fs.xhtml#with-file-output" />  
+        </navPoint>
+        <navPoint id="navPoint641" playOrder="604">
+          <navLabel>
+            <text>with-file-error-output</text>
+          </navLabel>
+          <content src="extra/fs.xhtml#with-file-error-output" />  
+        </navPoint>
+        <navPoint id="navPoint642" playOrder="605">
+          <navLabel>
+            <text>with-file-all-output</text>
+          </navLabel>
+          <content src="extra/fs.xhtml#with-file-all-output" />  
+        </navPoint>
+        <navPoint id="navPoint643" playOrder="606">
+          <navLabel>
             <text>fs@</text>
           </navLabel>
           <content src="extra/fs.xhtml#fs" />  
         </navPoint>
-        <navPoint id="navPoint640" playOrder="603">
+        <navPoint id="navPoint644" playOrder="607">
           <navLabel>
             <text>read-dir</text>
           </navLabel>
           <content src="extra/fs.xhtml#read-dir" />  
         </navPoint>
-        <navPoint id="navPoint641" playOrder="604">
+        <navPoint id="navPoint645" playOrder="608">
           <navLabel>
             <text>create-file</text>
           </navLabel>
           <content src="extra/fs.xhtml#create-file" />  
         </navPoint>
-        <navPoint id="navPoint642" playOrder="605">
+        <navPoint id="navPoint646" playOrder="609">
           <navLabel>
             <text>open-file</text>
           </navLabel>
           <content src="extra/fs.xhtml#open-file" />  
         </navPoint>
-        <navPoint id="navPoint643" playOrder="606">
+        <navPoint id="navPoint647" playOrder="610">
           <navLabel>
             <text>remove-file</text>
           </navLabel>
           <content src="extra/fs.xhtml#remove-file" />  
         </navPoint>
-        <navPoint id="navPoint644" playOrder="607">
+        <navPoint id="navPoint648" playOrder="611">
           <navLabel>
             <text>create-dir</text>
           </navLabel>
           <content src="extra/fs.xhtml#create-dir" />  
         </navPoint>
-        <navPoint id="navPoint645" playOrder="608">
+        <navPoint id="navPoint649" playOrder="612">
           <navLabel>
             <text>open-dir</text>
           </navLabel>
           <content src="extra/fs.xhtml#open-dir" />  
         </navPoint>
-        <navPoint id="navPoint646" playOrder="609">
+        <navPoint id="navPoint650" playOrder="613">
           <navLabel>
             <text>remove-dir</text>
           </navLabel>
           <content src="extra/fs.xhtml#remove-dir" />  
         </navPoint>
-        <navPoint id="navPoint647" playOrder="610">
+        <navPoint id="navPoint651" playOrder="614">
           <navLabel>
             <text>rename</text>
           </navLabel>
           <content src="extra/fs.xhtml#rename" />  
         </navPoint>
-        <navPoint id="navPoint648" playOrder="611">
+        <navPoint id="navPoint652" playOrder="615">
           <navLabel>
             <text>dir-empty?</text>
           </navLabel>
           <content src="extra/fs.xhtml#dir-empty" />  
         </navPoint>
-        <navPoint id="navPoint649" playOrder="612">
+        <navPoint id="navPoint653" playOrder="616">
           <navLabel>
             <text>exists?</text>
           </navLabel>
           <content src="extra/fs.xhtml#exists" />  
         </navPoint>
-        <navPoint id="navPoint650" playOrder="613">
+        <navPoint id="navPoint654" playOrder="617">
           <navLabel>
             <text>file?</text>
           </navLabel>
           <content src="extra/fs.xhtml#file" />  
         </navPoint>
-        <navPoint id="navPoint651" playOrder="614">
+        <navPoint id="navPoint655" playOrder="618">
           <navLabel>
             <text>dir?</text>
           </navLabel>
           <content src="extra/fs.xhtml#dir" />  
         </navPoint>
-        <navPoint id="navPoint652" playOrder="615">
+        <navPoint id="navPoint656" playOrder="619">
           <navLabel>
             <text>root-dir@</text>
           </navLabel>
           <content src="extra/fs.xhtml#root-dir" />  
         </navPoint>
-        <navPoint id="navPoint653" playOrder="616">
+        <navPoint id="navPoint657" playOrder="620">
           <navLabel>
             <text>entry-file?</text>
           </navLabel>
           <content src="extra/fs.xhtml#entry-file" />  
         </navPoint>
-        <navPoint id="navPoint654" playOrder="617">
+        <navPoint id="navPoint658" playOrder="621">
           <navLabel>
             <text>entry-dir?</text>
           </navLabel>
           <content src="extra/fs.xhtml#entry-dir" />  
         </navPoint>
-        <navPoint id="navPoint655" playOrder="618">
+        <navPoint id="navPoint659" playOrder="622">
           <navLabel>
             <text>name@</text>
           </navLabel>
           <content src="extra/fs.xhtml#name" />  
         </navPoint>
-        <navPoint id="navPoint656" playOrder="619">
+        <navPoint id="navPoint660" playOrder="623">
           <navLabel>
             <text>create-date-time@</text>
           </navLabel>
           <content src="extra/fs.xhtml#create-date-time" />  
         </navPoint>
-        <navPoint id="navPoint657" playOrder="620">
+        <navPoint id="navPoint661" playOrder="624">
           <navLabel>
             <text>modify-date-time@</text>
           </navLabel>
           <content src="extra/fs.xhtml#modify-date-time" />  
         </navPoint>
-        <navPoint id="navPoint658" playOrder="621">
+        <navPoint id="navPoint662" playOrder="625">
           <navLabel>
             <text>entry-file-size@</text>
           </navLabel>
           <content src="extra/fs.xhtml#entry-file-size" />  
         </navPoint>
-        <navPoint id="navPoint659" playOrder="622">
+        <navPoint id="navPoint663" playOrder="626">
           <navLabel>
             <text>seek-set</text>
           </navLabel>
           <content src="extra/fs.xhtml#seek-set" />  
         </navPoint>
-        <navPoint id="navPoint660" playOrder="623">
+        <navPoint id="navPoint664" playOrder="627">
           <navLabel>
             <text>seek-cur</text>
           </navLabel>
           <content src="extra/fs.xhtml#seek-cur" />  
         </navPoint>
-        <navPoint id="navPoint661" playOrder="624">
+        <navPoint id="navPoint665" playOrder="628">
           <navLabel>
             <text>seek-end</text>
           </navLabel>
           <content src="extra/fs.xhtml#seek-end" />  
         </navPoint>
-        <navPoint id="navPoint662" playOrder="625">
+        <navPoint id="navPoint666" playOrder="629">
           <navLabel>
             <text>x-file-name-format</text>
           </navLabel>
           <content src="extra/fs.xhtml#x-file-name-format" />  
         </navPoint>
-        <navPoint id="navPoint663" playOrder="626">
+        <navPoint id="navPoint667" playOrder="630">
           <navLabel>
             <text>x-entry-not-found</text>
           </navLabel>
           <content src="extra/fs.xhtml#x-entry-not-found" />  
         </navPoint>
-        <navPoint id="navPoint664" playOrder="627">
+        <navPoint id="navPoint668" playOrder="631">
           <navLabel>
             <text>x-entry-already-exists</text>
           </navLabel>
           <content src="extra/fs.xhtml#x-entry-already-exists" />  
         </navPoint>
-        <navPoint id="navPoint665" playOrder="628">
+        <navPoint id="navPoint669" playOrder="632">
           <navLabel>
             <text>x-entry-not-file</text>
           </navLabel>
           <content src="extra/fs.xhtml#x-entry-not-file" />  
         </navPoint>
-        <navPoint id="navPoint666" playOrder="629">
+        <navPoint id="navPoint670" playOrder="633">
           <navLabel>
             <text>x-entry-not-dir</text>
           </navLabel>
           <content src="extra/fs.xhtml#x-entry-not-dir" />  
         </navPoint>
-        <navPoint id="navPoint667" playOrder="630">
+        <navPoint id="navPoint671" playOrder="634">
           <navLabel>
             <text>x-dir-is-not-empty</text>
           </navLabel>
           <content src="extra/fs.xhtml#x-dir-is-not-empty" />  
         </navPoint>
-        <navPoint id="navPoint668" playOrder="631">
+        <navPoint id="navPoint672" playOrder="635">
           <navLabel>
             <text>x-forbidden-dir</text>
           </navLabel>
           <content src="extra/fs.xhtml#x-forbidden-dir" />  
         </navPoint>
-        <navPoint id="navPoint669" playOrder="632">
+        <navPoint id="navPoint673" playOrder="636">
           <navLabel>
             <text>x-empty-path</text>
           </navLabel>
           <content src="extra/fs.xhtml#x-empty-path" />  
         </navPoint>
-        <navPoint id="navPoint670" playOrder="633">
+        <navPoint id="navPoint674" playOrder="637">
           <navLabel>
             <text>x-invalid-path</text>
           </navLabel>
           <content src="extra/fs.xhtml#x-invalid-path" />  
         </navPoint>
-        <navPoint id="navPoint671" playOrder="634">
+        <navPoint id="navPoint675" playOrder="638">
           <navLabel>
             <text>x-not-open</text>
           </navLabel>
           <content src="extra/fs.xhtml#x-not-open" />  
         </navPoint>
-        <navPoint id="navPoint672" playOrder="635">
+        <navPoint id="navPoint676" playOrder="639">
           <navLabel>
             <text>x-shared-file</text>
           </navLabel>
           <content src="extra/fs.xhtml#x-shared-file" />  
         </navPoint>
-        <navPoint id="navPoint673" playOrder="636">
+        <navPoint id="navPoint677" playOrder="640">
           <navLabel>
             <text>x-open</text>
           </navLabel>
           <content src="extra/fs.xhtml#x-open" />  
         </navPoint>
       </navPoint>
-      <navPoint id="navPoint674" playOrder="637">
+      <navPoint id="navPoint678" playOrder="641">
         <navLabel>
           <text>zscript-fat32 words</text>
         </navLabel>
         <content src="extra/fs.xhtml#zscript-fat32-words" />  
-        <navPoint id="navPoint675" playOrder="637">
+        <navPoint id="navPoint679" playOrder="641">
           <navLabel>
             <text>zscript-fat32 words</text>
           </navLabel>
           <content src="extra/fs.xhtml#zscript-fat32-words" />  
         </navPoint>
-        <navPoint id="navPoint676" playOrder="638">
+        <navPoint id="navPoint680" playOrder="642">
           <navLabel>
             <text>partition-active?</text>
           </navLabel>
           <content src="extra/fs.xhtml#partition-active" />  
         </navPoint>
-        <navPoint id="navPoint677" playOrder="639">
+        <navPoint id="navPoint681" playOrder="643">
           <navLabel>
             <text>partition-active@</text>
           </navLabel>
           <content src="extra/fs.xhtml#id1" />  
         </navPoint>
-        <navPoint id="navPoint678" playOrder="640">
+        <navPoint id="navPoint682" playOrder="644">
           <navLabel>
             <text>partition-type@</text>
           </navLabel>
           <content src="extra/fs.xhtml#partition-type" />  
         </navPoint>
-        <navPoint id="navPoint679" playOrder="641">
+        <navPoint id="navPoint683" playOrder="645">
           <navLabel>
             <text>partition-first-sector@</text>
           </navLabel>
           <content src="extra/fs.xhtml#partition-first-sector" />  
         </navPoint>
-        <navPoint id="navPoint680" playOrder="642">
+        <navPoint id="navPoint684" playOrder="646">
           <navLabel>
             <text>partition-sectors@</text>
           </navLabel>
           <content src="extra/fs.xhtml#partition-sectors" />  
         </navPoint>
-        <navPoint id="navPoint681" playOrder="643">
+        <navPoint id="navPoint685" playOrder="647">
           <navLabel>
             <text>make-mbr</text>
           </navLabel>
           <content src="extra/fs.xhtml#make-mbr" />  
         </navPoint>
-        <navPoint id="navPoint682" playOrder="644">
+        <navPoint id="navPoint686" playOrder="648">
           <navLabel>
             <text>mbr-valid?</text>
           </navLabel>
           <content src="extra/fs.xhtml#mbr-valid" />  
         </navPoint>
-        <navPoint id="navPoint683" playOrder="645">
+        <navPoint id="navPoint687" playOrder="649">
           <navLabel>
             <text>partition@</text>
           </navLabel>
           <content src="extra/fs.xhtml#partition" />  
         </navPoint>
-        <navPoint id="navPoint684" playOrder="646">
+        <navPoint id="navPoint688" playOrder="650">
           <navLabel>
             <text>partition!</text>
           </navLabel>
           <content src="extra/fs.xhtml#id2" />  
         </navPoint>
-        <navPoint id="navPoint685" playOrder="647">
+        <navPoint id="navPoint689" playOrder="651">
           <navLabel>
             <text>make-fat32-fs</text>
           </navLabel>
           <content src="extra/fs.xhtml#make-fat32-fs" />  
         </navPoint>
-        <navPoint id="navPoint686" playOrder="648">
+        <navPoint id="navPoint690" playOrder="652">
           <navLabel>
             <text>x-sector-size-not-supported</text>
           </navLabel>
           <content src="extra/fs.xhtml#x-sector-size-not-supported" />  
         </navPoint>
-        <navPoint id="navPoint687" playOrder="649">
+        <navPoint id="navPoint691" playOrder="653">
           <navLabel>
             <text>x-fs-version-not-supported</text>
           </navLabel>
           <content src="extra/fs.xhtml#x-fs-version-not-supported" />  
         </navPoint>
-        <navPoint id="navPoint688" playOrder="650">
+        <navPoint id="navPoint692" playOrder="654">
           <navLabel>
             <text>x-bad-info-sector</text>
           </navLabel>
           <content src="extra/fs.xhtml#x-bad-info-sector" />  
         </navPoint>
-        <navPoint id="navPoint689" playOrder="651">
+        <navPoint id="navPoint693" playOrder="655">
           <navLabel>
             <text>x-no-clusters-free</text>
           </navLabel>
           <content src="extra/fs.xhtml#x-no-clusters-free" />  
         </navPoint>
-        <navPoint id="navPoint690" playOrder="652">
+        <navPoint id="navPoint694" playOrder="656">
           <navLabel>
             <text>x-file-name-format</text>
           </navLabel>
           <content src="extra/fs.xhtml#id3" />  
         </navPoint>
-        <navPoint id="navPoint691" playOrder="653">
+        <navPoint id="navPoint695" playOrder="657">
           <navLabel>
             <text>x-out-of-range-entry</text>
           </navLabel>
           <content src="extra/fs.xhtml#x-out-of-range-entry" />  
         </navPoint>
-        <navPoint id="navPoint692" playOrder="654">
+        <navPoint id="navPoint696" playOrder="658">
           <navLabel>
             <text>x-out-of-range-partition</text>
           </navLabel>
           <content src="extra/fs.xhtml#x-out-of-range-partition" />  
         </navPoint>
-        <navPoint id="navPoint693" playOrder="655">
+        <navPoint id="navPoint697" playOrder="659">
           <navLabel>
             <text>x-no-end-marker</text>
           </navLabel>
           <content src="extra/fs.xhtml#x-no-end-marker" />  
         </navPoint>
       </navPoint>
-      <navPoint id="navPoint694" playOrder="656">
+      <navPoint id="navPoint698" playOrder="660">
         <navLabel>
           <text>zscript-simple-fat32 words</text>
         </navLabel>
         <content src="extra/fs.xhtml#zscript-simple-fat32-words" />  
-        <navPoint id="navPoint695" playOrder="656">
+        <navPoint id="navPoint699" playOrder="660">
           <navLabel>
             <text>zscript-simple-fat32 words</text>
           </navLabel>
           <content src="extra/fs.xhtml#zscript-simple-fat32-words" />  
         </navPoint>
-        <navPoint id="navPoint696" playOrder="657">
+        <navPoint id="navPoint700" playOrder="661">
           <navLabel>
             <text>make-simple-fat32-fs</text>
           </navLabel>
@@ -4186,185 +4210,185 @@
         </navPoint>
       </navPoint>
     </navPoint>
-    <navPoint id="navPoint697" playOrder="658">
+    <navPoint id="navPoint701" playOrder="662">
       <navLabel>
         <text>Filesystem tools</text>
       </navLabel>
       <content src="extra/fs_tools.xhtml" />  
-      <navPoint id="navPoint698" playOrder="658">
+      <navPoint id="navPoint702" playOrder="662">
         <navLabel>
           <text>Filesystem tools</text>
         </navLabel>
         <content src="extra/fs_tools.xhtml" />  
       </navPoint>
-      <navPoint id="navPoint699" playOrder="659">
+      <navPoint id="navPoint703" playOrder="663">
         <navLabel>
           <text>zscript-fs-tools module</text>
         </navLabel>
         <content src="extra/fs_tools.xhtml#zscript-fs-tools-module" />  
-        <navPoint id="navPoint700" playOrder="659">
+        <navPoint id="navPoint704" playOrder="663">
           <navLabel>
             <text>zscript-fs-tools module</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#zscript-fs-tools-module" />  
         </navPoint>
-        <navPoint id="navPoint701" playOrder="660">
+        <navPoint id="navPoint705" playOrder="664">
           <navLabel>
             <text>current-fs!</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#current-fs" />  
         </navPoint>
-        <navPoint id="navPoint702" playOrder="661">
+        <navPoint id="navPoint706" playOrder="665">
           <navLabel>
             <text>current-fs@</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#id1" />  
         </navPoint>
-        <navPoint id="navPoint703" playOrder="662">
+        <navPoint id="navPoint707" playOrder="666">
           <navLabel>
             <text>load-file</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#load-file" />  
         </navPoint>
-        <navPoint id="navPoint704" playOrder="663">
+        <navPoint id="navPoint708" playOrder="667">
           <navLabel>
             <text>included</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#included" />  
         </navPoint>
-        <navPoint id="navPoint705" playOrder="664">
+        <navPoint id="navPoint709" playOrder="668">
           <navLabel>
             <text>include</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#include" />  
         </navPoint>
-        <navPoint id="navPoint706" playOrder="665">
+        <navPoint id="navPoint710" playOrder="669">
           <navLabel>
             <text>list-dir</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#list-dir" />  
         </navPoint>
-        <navPoint id="navPoint707" playOrder="666">
+        <navPoint id="navPoint711" playOrder="670">
           <navLabel>
             <text>create-dir</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#create-dir" />  
         </navPoint>
-        <navPoint id="navPoint708" playOrder="667">
+        <navPoint id="navPoint712" playOrder="671">
           <navLabel>
             <text>copy-file</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#copy-file" />  
         </navPoint>
-        <navPoint id="navPoint709" playOrder="668">
+        <navPoint id="navPoint713" playOrder="672">
           <navLabel>
             <text>append-file</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#append-file" />  
         </navPoint>
-        <navPoint id="navPoint710" playOrder="669">
+        <navPoint id="navPoint714" playOrder="673">
           <navLabel>
             <text>write-file-window</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#write-file-window" />  
         </navPoint>
-        <navPoint id="navPoint711" playOrder="670">
+        <navPoint id="navPoint715" playOrder="674">
           <navLabel>
             <text>write-file</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#write-file" />  
         </navPoint>
-        <navPoint id="navPoint712" playOrder="671">
+        <navPoint id="navPoint716" playOrder="675">
           <navLabel>
             <text>create-file</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#create-file" />  
         </navPoint>
-        <navPoint id="navPoint713" playOrder="672">
+        <navPoint id="navPoint717" playOrder="676">
           <navLabel>
             <text>dump-file-raw</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#dump-file-raw" />  
         </navPoint>
-        <navPoint id="navPoint714" playOrder="673">
+        <navPoint id="navPoint718" playOrder="677">
           <navLabel>
             <text>dump-file-raw-window</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#dump-file-raw-window" />  
         </navPoint>
-        <navPoint id="navPoint715" playOrder="674">
+        <navPoint id="navPoint719" playOrder="678">
           <navLabel>
             <text>dump-file</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#dump-file" />  
         </navPoint>
-        <navPoint id="navPoint716" playOrder="675">
+        <navPoint id="navPoint720" playOrder="679">
           <navLabel>
             <text>dump-file-window</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#dump-file-window" />  
         </navPoint>
-        <navPoint id="navPoint717" playOrder="676">
+        <navPoint id="navPoint721" playOrder="680">
           <navLabel>
             <text>dump-file-ascii</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#dump-file-ascii" />  
         </navPoint>
-        <navPoint id="navPoint718" playOrder="677">
+        <navPoint id="navPoint722" playOrder="681">
           <navLabel>
             <text>dump-file-ascii-window</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#dump-file-ascii-window" />  
         </navPoint>
-        <navPoint id="navPoint719" playOrder="678">
+        <navPoint id="navPoint723" playOrder="682">
           <navLabel>
             <text>read-file</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#read-file" />  
         </navPoint>
-        <navPoint id="navPoint720" playOrder="679">
+        <navPoint id="navPoint724" playOrder="683">
           <navLabel>
             <text>file-size@</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#file-size" />  
         </navPoint>
-        <navPoint id="navPoint721" playOrder="680">
+        <navPoint id="navPoint725" playOrder="684">
           <navLabel>
             <text>remove-file</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#remove-file" />  
         </navPoint>
-        <navPoint id="navPoint722" playOrder="681">
+        <navPoint id="navPoint726" playOrder="685">
           <navLabel>
             <text>remove-dir</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#remove-dir" />  
         </navPoint>
-        <navPoint id="navPoint723" playOrder="682">
+        <navPoint id="navPoint727" playOrder="686">
           <navLabel>
             <text>rename</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#rename" />  
         </navPoint>
-        <navPoint id="navPoint724" playOrder="683">
+        <navPoint id="navPoint728" playOrder="687">
           <navLabel>
             <text>exists?</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#exists" />  
         </navPoint>
-        <navPoint id="navPoint725" playOrder="684">
+        <navPoint id="navPoint729" playOrder="688">
           <navLabel>
             <text>file?</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#file" />  
         </navPoint>
-        <navPoint id="navPoint726" playOrder="685">
+        <navPoint id="navPoint730" playOrder="689">
           <navLabel>
             <text>dir?</text>
           </navLabel>
           <content src="extra/fs_tools.xhtml#dir" />  
         </navPoint>
-        <navPoint id="navPoint727" playOrder="686">
+        <navPoint id="navPoint731" playOrder="690">
           <navLabel>
             <text>x-fs-not-set</text>
           </navLabel>
