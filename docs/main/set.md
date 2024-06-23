@@ -111,6 +111,32 @@ This will output:
 
 While values may be mutable values, undefined results will occur if the values are mutated; if this may be an issue, it would be prudent to use `duplicate` (or its like) to duplicate the values before inserting them and/or after retrieving the values if they may be mutated afterward.
 
+If `src/common/special_oo.fs` has been compiled after `src/common/set.fs`, `>generic-set` is available. It creates a set sized to the number of specified entries using `zscript-special-oo` words `hash` and `equal?` for members, also known as a *generic* set.
+
+An example of its use is as follows:
+
+```
+s" foo" s" bar" s" baz" 3 >generic-set [: type space ;] iter-set
+```
+
+This outputs:
+
+```
+baz foo bar  ok
+```
+
+There is also syntactic sugar for creating generic sets, by placing members in `#|` ... `|#`. Its use can be seen as follows:
+
+```
+#| s" foo" s" bar" s" baz" |# [: type space ;] iter-set
+```
+
+This outputs:
+
+```
+baz foo bar  ok
+```
+
 ## `zscript-set` words
 
 ### `make-set`
@@ -157,3 +183,20 @@ Remove an entry from a set.
 ( value set -- found? )
 
 Test for membership in a set.
+
+The following words are only available if `src/common/special_oo.fs` has been compiled after `src/common/set.fs`:
+
+### `generic-set`
+( valn ... val0 count -- set )
+
+Create a generic set, i.e. one using `zscript-special-oo::hash` for key hashes and `zscript-special-oo::equal?` for member equality using *count* values on the stack.
+
+### `#|`
+( -- )
+
+Begin defining a generic set without specifying a count.
+
+### `|#`
+( valn .. val0 -- set )
+
+Finish defining a generic set using members on the stack.

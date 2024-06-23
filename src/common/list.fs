@@ -23,7 +23,7 @@ begin-module zscript-list
   begin-module zscript-list-internal
 
     \ List definition type
-    2 constant define-list
+    symbol define-list
 
   end-module> import
 

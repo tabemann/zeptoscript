@@ -196,7 +196,7 @@ begin-module pina-colada-test
     do-actor
   ;
 
-  \ Open the blender the first itme
+  \ Open the blender the first item
   : open-blender-0 ( chan actors -- )
     actor-open-blender-0
     #( actor-make-pina-colada )#

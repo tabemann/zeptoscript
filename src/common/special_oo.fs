@@ -662,5 +662,70 @@ begin-module zscript-special-oo
     ;
     
   end-class
+
+  defined? zscript-map [if]
+
+    continue-module zscript-map
+
+      continue-module zscript-map-internal
   
+        \ Define a map
+        symbol define-map
+        
+      end-module> import
+      
+      \ Incorrect number of items for map exception
+      : x-incorrect-item-count ( -- ) cr ." incorrect item count for map" ;
+      
+      \ Define a generic map
+      : >generic-map ( keyn valn ... key0 val0 ) { count -- map }
+        count ['] hash ['] equal? make-map { map }
+        count 0 ?do swap map insert-map loop
+        map
+      ;
+    
+      \ Begin defining a generic map
+      : #{ ( -- ) define-map zscript-internal::begin-seq-define ;
+      
+      \ End defining a generic map
+      : }# ( keyn valn ... key0 val0 -- map )
+        define-map zscript-internal::end-seq-define
+        dup 1 and 0= averts x-incorrect-item-count
+        1 rshift >generic-map
+      ;
+      
+    end-module
+    
+  [then]
+
+  defined? zscript-set [if]
+
+    continue-module zscript-set
+      
+      continue-module zscript-set-internal
+        
+        \ Define a set
+        symbol define-set
+        
+      end-module> import
+    
+      \ Define a generic set
+      : >generic-set ( valn ... val0 ) { count -- set }
+        count ['] hash ['] equal? make-set { set }
+        count 0 ?do set insert-set loop
+        set
+      ;
+    
+      \ Begin defining a generic set
+      : #| ( -- ) define-set zscript-internal::begin-seq-define ;
+      
+      \ End defining a generic set
+      : |# ( valn ... val0 -- set )
+        define-set zscript-internal::end-seq-define >generic-set
+      ;
+
+    end-module
+    
+  [then]
+
 end-module
