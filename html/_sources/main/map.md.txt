@@ -259,10 +259,20 @@ Remove an entry from a map.
 
 Find an entry in a map.
 
+### `map@`
+( key map -- val )
+
+Convenience word for getting a key from a map which raises x-key-not-found if the key is not found.
+
 ### `in-map?`
 ( key map -- found? )
 
 Test for membership in a map.
+
+### `x-key-not-found`
+( -- )
+
+Exception raised if a key is not found by `map@`.
 
 The following words are only available if `src/common/special_oo.fs` has been compiled after `src/common/map.fs`:
 

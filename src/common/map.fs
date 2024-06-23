@@ -375,6 +375,13 @@ begin-module zscript-map
     until
   ;
 
+  \ Exception raised if a key is not found by MAP@
+  : x-key-not-found ( -- ) ." key not found" cr ;
+
+  \ Convenience word for getting a key from a map which raises x-key-not-found
+  \ if the key is not found
+  : map@ ( key map -- val ) find-map averts x-key-not-found ;
+
   \ Test for membership in a map
   : in-map? { key map -- found? }
     map map-inner@ { inner }

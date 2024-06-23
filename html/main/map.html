@@ -231,10 +231,20 @@
 <p>( key map – val found? )</p>
 <p>Find an entry in a map.</p>
 </section>
+<section id="map">
+<h3><code class="docutils literal notranslate"><span class="pre">map&#64;</span></code><a class="headerlink" href="#map" title="Permalink to this heading">¶</a></h3>
+<p>( key map – val )</p>
+<p>Convenience word for getting a key from a map which raises x-key-not-found if the key is not found.</p>
+</section>
 <section id="in-map">
 <h3><code class="docutils literal notranslate"><span class="pre">in-map?</span></code><a class="headerlink" href="#in-map" title="Permalink to this heading">¶</a></h3>
 <p>( key map – found? )</p>
 <p>Test for membership in a map.</p>
+</section>
+<section id="x-key-not-found">
+<h3><code class="docutils literal notranslate"><span class="pre">x-key-not-found</span></code><a class="headerlink" href="#x-key-not-found" title="Permalink to this heading">¶</a></h3>
+<p>( – )</p>
+<p>Exception raised if a key is not found by <code class="docutils literal notranslate"><span class="pre">map&#64;</span></code>.</p>
 <p>The following words are only available if <code class="docutils literal notranslate"><span class="pre">src/common/special_oo.fs</span></code> has been compiled after <code class="docutils literal notranslate"><span class="pre">src/common/map.fs</span></code>:</p>
 </section>
 <section id="generic-map">

@@ -84,11 +84,7 @@ begin-module pina-colada-test
         conds src-actor id map check-cond if
           cr id show type ." : " text type
           outputs actors this-actor id >pair 2 [: { output actors msg }
-            output actors find-map if { dest }
-              msg dest send
-            else
-              drop
-            then
+            output actors map@ msg swap send
           ;] bind iter
           id map remove-map
           yield

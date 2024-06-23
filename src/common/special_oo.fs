@@ -675,7 +675,7 @@ begin-module zscript-special-oo
       end-module> import
       
       \ Incorrect number of items for map exception
-      : x-incorrect-item-count ( -- ) cr ." incorrect item count for map" ;
+      : x-incorrect-item-count ( -- ) ." incorrect item count for map" cr ;
       
       \ Define a generic map
       : >generic-map ( keyn valn ... key0 val0 ) { count -- map }
