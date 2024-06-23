@@ -185,6 +185,16 @@ Get whether a predicate applies to any element of a list; note that not all elem
 
 Get whether a predicate applies to any element of a list with an index; note that not all elements will be iterated over if an element returns true, and false will be returned if the list is empty.
 
+### `split-list`
+( list xt -- parts-list ) xt: ( element -- delimiter? )
+
+Split a list into sublists divided at delimiters as determined by a predicate, not including the delimiters.
+
+### `spliti-list`
+( list xt -- parts-list ) xt: ( element index -- delimiter? )
+
+Split a list into sublists divided at delimiters as determined by a predicate with an index, not including the delimiters.
+
 ### `foldl-list`
 ( x list xt -- x' ) xt: ( x item -- x' )
 

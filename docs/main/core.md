@@ -1256,6 +1256,16 @@ Get whether a predicate applies to any element of a sequence; note that not all 
 
 Get whether a predicate applies to any element of a sequence with an index; note that not all elements will be iterated over if an element returns true, and false will be returned if the sequence is empty.
 
+### `split`
+( seq xt -- parts-seq ) xt: ( element -- delimiter? )
+
+Split a sequence into subsequences divided at delimiters as determined by a predicate, not including the delimiters.
+
+### `spliti`
+( seq xt -- parts-seq ) xt: ( element index -- delimiter? )
+
+Split a sequence into subsequences divided at delimiters as determined by a predicate with an index, not including the delimiters.
+
 ### `join`
 ( list-seq join-seq -- seq' )
 

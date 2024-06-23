@@ -1275,6 +1275,16 @@
 <p>( seq xt – any? ) xt: ( element index – match? )</p>
 <p>Get whether a predicate applies to any element of a sequence with an index; note that not all elements will be iterated over if an element returns true, and false will be returned if the sequence is empty.</p>
 </section>
+<section id="split">
+<h3><code class="docutils literal notranslate"><span class="pre">split</span></code><a class="headerlink" href="#split" title="Permalink to this heading">¶</a></h3>
+<p>( seq xt – parts-seq ) xt: ( element – delimiter? )</p>
+<p>Split a sequence into subsequences divided at delimiters as determined by a predicate, not including the delimiters.</p>
+</section>
+<section id="spliti">
+<h3><code class="docutils literal notranslate"><span class="pre">spliti</span></code><a class="headerlink" href="#spliti" title="Permalink to this heading">¶</a></h3>
+<p>( seq xt – parts-seq ) xt: ( element index – delimiter? )</p>
+<p>Split a sequence into subsequences divided at delimiters as determined by a predicate with an index, not including the delimiters.</p>
+</section>
 <section id="join">
 <h3><code class="docutils literal notranslate"><span class="pre">join</span></code><a class="headerlink" href="#join" title="Permalink to this heading">¶</a></h3>
 <p>( list-seq join-seq – seq’ )</p>

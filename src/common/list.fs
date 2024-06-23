@@ -209,6 +209,82 @@ begin-module zscript-list
     list'
   ;
 
+  \ Split a list into a list of lists based on a predicate
+  : split-list { list xt -- parts-list } \ xt ( item -- flag )
+    list 0= if 0 exit then
+    empty { parts }
+    0 { parts-last }
+    empty { sub }
+    0 { sub-last }
+    begin list empty? not while
+      list head@ xt execute if
+        sub empty cons { part }
+        parts empty? if
+          part to parts
+        else
+          part parts-last tail!
+        then
+        part to parts-last
+        empty to sub
+      else
+        list head@ empty cons { sub-part }
+        sub empty? if
+          sub-part to sub
+        else
+          sub-part sub-last tail!
+        then
+        sub-part to sub-last
+      then
+      list tail@ to list
+    repeat
+    sub empty cons { part }
+    parts empty? if
+      part to parts
+    else
+      part parts-last tail!
+    then
+    parts
+  ;
+  
+  \ Split a list into a list of lists based on a predicate with an index
+  : spliti-list { list xt -- parts-list } \ xt ( item index -- flag )
+    list 0= if 0 exit then
+    empty { parts }
+    0 { parts-last }
+    empty { sub }
+    0 { sub-last }
+    0 { index }
+    begin list empty? not while
+      list head@ index xt execute if
+        sub empty cons { part }
+        parts empty? if
+          part to parts
+        else
+          part parts-last tail!
+        then
+        part to parts-last
+        empty to sub
+      else
+        list head@ empty cons { sub-part }
+        sub empty? if
+          sub-part to sub
+        else
+          sub-part sub-last tail!
+        then
+        sub-part to sub-last
+      then
+      list tail@ to list
+      1 +to index
+    repeat
+    sub empty cons { part }
+    parts empty? if
+      part to parts
+    else
+      part parts-last tail!
+    then
+    parts
+  ;
+
   \ Reverse a list and convert it to a cell sequence
   : rev-list>cells { list -- seq }
     list list>len { len }

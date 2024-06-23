@@ -197,6 +197,16 @@
 <p>( list xt – any? ) xt: ( element index – match? )</p>
 <p>Get whether a predicate applies to any element of a list with an index; note that not all elements will be iterated over if an element returns true, and false will be returned if the list is empty.</p>
 </section>
+<section id="split-list">
+<h3><code class="docutils literal notranslate"><span class="pre">split-list</span></code></h3>
+<p>( list xt – parts-list ) xt: ( element – delimiter? )</p>
+<p>Split a list into sublists divided at delimiters as determined by a predicate, not including the delimiters.</p>
+</section>
+<section id="spliti-list">
+<h3><code class="docutils literal notranslate"><span class="pre">spliti-list</span></code></h3>
+<p>( list xt – parts-list ) xt: ( element index – delimiter? )</p>
+<p>Split a list into sublists divided at delimiters as determined by a predicate with an index, not including the delimiters.</p>
+</section>
 <section id="foldl-list">
 <h3><code class="docutils literal notranslate"><span class="pre">foldl-list</span></code></h3>
 <p>( x list xt – x’ ) xt: ( x item – x’ )</p>

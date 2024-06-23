@@ -4092,6 +4092,63 @@ begin-module zscript
     false
   ;
 
+  \ Split a sequence based on a predicate
+  : split { seq xt -- parts } \ xt ( item -- flag )
+    seq >len 0= if 0 make-cells exit then
+    0 { parts }
+    0 { count }
+    begin
+      seq xt find-index if { index }
+        0 index seq >slice duplicate parts >pair to parts
+        index 1+ seq >len over - seq >slice to seq
+        count 1+ to count
+        false
+      else
+        drop
+        seq duplicate parts >pair to parts
+        count 1+ to count
+        true
+      then
+    until
+    count make-cells { parts' }
+    count 0 ?do
+      parts pair> to parts
+      count i - 1- parts' !+
+    loop
+    parts'
+  ;
+
+  \ Split a sequence based on a predicate with an index
+  : spliti { seq xt -- parts } \ xt ( item index -- flag )
+    seq >len 0= if 0 make-cells exit then
+    0 { parts }
+    0 { count }
+    0 ref { index }
+    index xt [ 2 >small-int ] literal [: { item current-index index xt }
+      item current-index index ref@ + xt execute
+    ;] bind to xt
+    begin
+      seq xt find-indexi if { found-index }
+        0 found-index seq >slice duplicate parts >pair to parts
+        found-index 1+ seq >len over - seq >slice to seq
+        count 1+ to count
+        index ref@ found-index 1+ + index ref!
+        false
+      else
+        drop
+        seq duplicate parts >pair to parts
+        count 1+ to count
+        true
+      then
+    until
+    count make-cells { parts' }
+    count 0 ?do
+      parts pair> to parts
+      count i - 1- parts' !+
+    loop
+    parts'
+  ;
+
   \ Join a cell sequence of cell or byte sequences
   : join { list-seq join-seq -- seq' }
     list-seq cells? averts x-incorrect-type
