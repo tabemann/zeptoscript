@@ -1311,6 +1311,81 @@ Empty cell sequence.
 
 Empty byte sequence.
 
+### `push-key?`
+( xt -- ) where xt: ( -- flag )
+
+Push `key?` hook.
+
+### `drop-key?`
+( -- )
+
+Drop `key?` hook.
+
+### `push-key`
+( xt -- ) where xt: ( -- c )
+
+Push `key` hook.
+
+### `drop-key`
+( -- )
+
+Drop `key` hook.
+
+### `push-emit?`
+( xt -- ) where xt: ( -- flag )
+
+Push `emit?` hook.
+
+### `drop-emit?`
+( -- )
+
+Drop `emit?` hook.
+
+### `push-emit`
+( xt -- ) where xt: ( c -- )
+
+Push `emit` hook.
+
+### `drop-emit`
+( -- )
+
+Drop `emit` hook.
+
+### `push-error-emit?`
+( xt -- ) where xt: ( -- flag )
+
+Push `error-emit?` hook.
+
+### `drop-error-emit?`
+( -- )
+
+Drop `error-emit?` hook.
+
+### `push-error-emit`
+( xt -- ) where xt: ( c -- )
+
+Push `error-emit` hook.
+
+### `drop-error-emit`
+( -- )
+
+Drop `error-emit` hook.
+
+### `with-input`
+( key?-xt key-xt xt -- ) where key?-xt: ( -- flag ), key-xt: ( -- c ), and xt: ( ? -- ? )
+
+Redirect input with *key?-xt* and *key-xt* within *xt*, restoring it afterwards even if an exception is raised.
+
+### `with-output`
+( emit?-xt emit-xt xt -- ) where emit?-xt: ( -- flag ), emit-xt: ( c -- ), and xt: ( ? -- ? )
+
+Redirect output with *emit?-xt* and *emit-xt* within *xt*, restoring it afterwards even if an exception is raised.
+
+### `with-error-output`
+( error-emit?-xt error-emit-xt xt -- ) where error-emit?-xt: ( -- flag ), error-emit-xt: ( c -- ), and xt: ( ? -- ? )
+
+Redirect error output with *error-emit?-xt* and *error-emit-xt* within *xt*, restoring it afterwards even if an exception is raised.
+
 ## `unsafe` words
 
 ### `bytes>addr-len`

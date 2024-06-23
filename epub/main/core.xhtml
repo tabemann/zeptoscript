@@ -1309,6 +1309,81 @@
 <p>( – bytes )</p>
 <p>Empty byte sequence.</p>
 </section>
+<section id="push-key">
+<h3><code class="docutils literal notranslate"><span class="pre">push-key?</span></code></h3>
+<p>( xt – ) where xt: ( – flag )</p>
+<p>Push <code class="docutils literal notranslate"><span class="pre">key?</span></code> hook.</p>
+</section>
+<section id="drop-key">
+<h3><code class="docutils literal notranslate"><span class="pre">drop-key?</span></code></h3>
+<p>( – )</p>
+<p>Drop <code class="docutils literal notranslate"><span class="pre">key?</span></code> hook.</p>
+</section>
+<section id="id79">
+<h3><code class="docutils literal notranslate"><span class="pre">push-key</span></code></h3>
+<p>( xt – ) where xt: ( – c )</p>
+<p>Push <code class="docutils literal notranslate"><span class="pre">key</span></code> hook.</p>
+</section>
+<section id="id80">
+<h3><code class="docutils literal notranslate"><span class="pre">drop-key</span></code></h3>
+<p>( – )</p>
+<p>Drop <code class="docutils literal notranslate"><span class="pre">key</span></code> hook.</p>
+</section>
+<section id="push-emit">
+<h3><code class="docutils literal notranslate"><span class="pre">push-emit?</span></code></h3>
+<p>( xt – ) where xt: ( – flag )</p>
+<p>Push <code class="docutils literal notranslate"><span class="pre">emit?</span></code> hook.</p>
+</section>
+<section id="drop-emit">
+<h3><code class="docutils literal notranslate"><span class="pre">drop-emit?</span></code></h3>
+<p>( – )</p>
+<p>Drop <code class="docutils literal notranslate"><span class="pre">emit?</span></code> hook.</p>
+</section>
+<section id="id81">
+<h3><code class="docutils literal notranslate"><span class="pre">push-emit</span></code></h3>
+<p>( xt – ) where xt: ( c – )</p>
+<p>Push <code class="docutils literal notranslate"><span class="pre">emit</span></code> hook.</p>
+</section>
+<section id="id82">
+<h3><code class="docutils literal notranslate"><span class="pre">drop-emit</span></code></h3>
+<p>( – )</p>
+<p>Drop <code class="docutils literal notranslate"><span class="pre">emit</span></code> hook.</p>
+</section>
+<section id="push-error-emit">
+<h3><code class="docutils literal notranslate"><span class="pre">push-error-emit?</span></code></h3>
+<p>( xt – ) where xt: ( – flag )</p>
+<p>Push <code class="docutils literal notranslate"><span class="pre">error-emit?</span></code> hook.</p>
+</section>
+<section id="drop-error-emit">
+<h3><code class="docutils literal notranslate"><span class="pre">drop-error-emit?</span></code></h3>
+<p>( – )</p>
+<p>Drop <code class="docutils literal notranslate"><span class="pre">error-emit?</span></code> hook.</p>
+</section>
+<section id="id83">
+<h3><code class="docutils literal notranslate"><span class="pre">push-error-emit</span></code></h3>
+<p>( xt – ) where xt: ( c – )</p>
+<p>Push <code class="docutils literal notranslate"><span class="pre">error-emit</span></code> hook.</p>
+</section>
+<section id="id84">
+<h3><code class="docutils literal notranslate"><span class="pre">drop-error-emit</span></code></h3>
+<p>( – )</p>
+<p>Drop <code class="docutils literal notranslate"><span class="pre">error-emit</span></code> hook.</p>
+</section>
+<section id="with-input">
+<h3><code class="docutils literal notranslate"><span class="pre">with-input</span></code></h3>
+<p>( key?-xt key-xt xt – ) where key?-xt: ( – flag ), key-xt: ( – c ), and xt: ( ? – ? )</p>
+<p>Redirect input with <em>key?-xt</em> and <em>key-xt</em> within <em>xt</em>, restoring it afterwards even if an exception is raised.</p>
+</section>
+<section id="with-output">
+<h3><code class="docutils literal notranslate"><span class="pre">with-output</span></code></h3>
+<p>( emit?-xt emit-xt xt – ) where emit?-xt: ( – flag ), emit-xt: ( c – ), and xt: ( ? – ? )</p>
+<p>Redirect output with <em>emit?-xt</em> and <em>emit-xt</em> within <em>xt</em>, restoring it afterwards even if an exception is raised.</p>
+</section>
+<section id="with-error-output">
+<h3><code class="docutils literal notranslate"><span class="pre">with-error-output</span></code></h3>
+<p>( error-emit?-xt error-emit-xt xt – ) where error-emit?-xt: ( – flag ), error-emit-xt: ( c – ), and xt: ( ? – ? )</p>
+<p>Redirect error output with <em>error-emit?-xt</em> and <em>error-emit-xt</em> within <em>xt</em>, restoring it afterwards even if an exception is raised.</p>
+</section>
 </section>
 <section id="unsafe-words">
 <h2><code class="docutils literal notranslate"><span class="pre">unsafe</span></code> words</h2>
@@ -1327,17 +1402,17 @@
 <p>( src-address bytes offset count – )</p>
 <p>Copy <em>count</em> bytes from a buffer starting at <em>src-address</em> to <em>offset</em> in <em>bytes</em>.</p>
 </section>
-<section id="id79">
+<section id="id85">
 <h3><code class="docutils literal notranslate"><span class="pre">&#64;</span></code></h3>
 <p>( addr – x )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">&#64;</span></code>.</p>
 </section>
-<section id="id80">
+<section id="id86">
 <h3><code class="docutils literal notranslate"><span class="pre">!</span></code></h3>
 <p>( x addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">!</span></code>.</p>
 </section>
-<section id="id81">
+<section id="id87">
 <h3><code class="docutils literal notranslate"><span class="pre">+!</span></code></h3>
 <p>( x addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">+!</span></code>.</p>
@@ -1347,27 +1422,27 @@
 <p>( x addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">BIS!</span></code>.</p>
 </section>
-<section id="id82">
+<section id="id88">
 <h3><code class="docutils literal notranslate"><span class="pre">bic!</span></code></h3>
 <p>( x addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">BIC!</span></code>.</p>
 </section>
-<section id="id83">
+<section id="id89">
 <h3><code class="docutils literal notranslate"><span class="pre">xor!</span></code></h3>
 <p>( x addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">XOR!</span></code>.</p>
 </section>
-<section id="id84">
+<section id="id90">
 <h3><code class="docutils literal notranslate"><span class="pre">h&#64;</span></code></h3>
 <p>( addr – h )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">H&#64;</span></code>.</p>
 </section>
-<section id="id85">
+<section id="id91">
 <h3><code class="docutils literal notranslate"><span class="pre">h!</span></code></h3>
 <p>( h addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">H!</span></code>.</p>
 </section>
-<section id="id86">
+<section id="id92">
 <h3><code class="docutils literal notranslate"><span class="pre">h+!</span></code></h3>
 <p>( h addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">H+!</span></code>.</p>
@@ -1387,17 +1462,17 @@
 <p>( x addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">HXOR!</span></code>.</p>
 </section>
-<section id="id87">
+<section id="id93">
 <h3><code class="docutils literal notranslate"><span class="pre">c&#64;</span></code></h3>
 <p>( addr – c )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">C&#64;</span></code>.</p>
 </section>
-<section id="id88">
+<section id="id94">
 <h3><code class="docutils literal notranslate"><span class="pre">c!</span></code></h3>
 <p>( c addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">C!</span></code>.</p>
 </section>
-<section id="id89">
+<section id="id95">
 <h3><code class="docutils literal notranslate"><span class="pre">c+!</span></code></h3>
 <p>( c addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">C+!</span></code>.</p>
@@ -1422,22 +1497,22 @@
 <p>( addr bytes val – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">FILL</span></code>.</p>
 </section>
-<section id="id90">
+<section id="id96">
 <h3><code class="docutils literal notranslate"><span class="pre">&gt;integral</span></code></h3>
 <p>( x – value )</p>
 <p>Cast a value to an integer.</p>
 </section>
-<section id="id91">
+<section id="id97">
 <h3><code class="docutils literal notranslate"><span class="pre">integral&gt;</span></code></h3>
 <p>( value – x )</p>
 <p>Cast a value from an integer.</p>
 </section>
-<section id="id92">
+<section id="id98">
 <h3><code class="docutils literal notranslate"><span class="pre">2&gt;integral</span></code></h3>
 <p>( x0 x1 – value0 value1 )</p>
 <p>Cast two values to integers.</p>
 </section>
-<section id="id93">
+<section id="id99">
 <h3><code class="docutils literal notranslate"><span class="pre">2integral&gt;</span></code></h3>
 <p>( value0 value1 – x0 x1 )</p>
 <p>Cast two values from integers.</p>
@@ -1447,17 +1522,17 @@
 <p>( x – dvalue )</p>
 <p>Cast a value to an double.</p>
 </section>
-<section id="id94">
+<section id="id100">
 <h3><code class="docutils literal notranslate"><span class="pre">double&gt;</span></code></h3>
 <p>( dvalue – x )</p>
 <p>Cast a value from an double.</p>
 </section>
-<section id="id95">
+<section id="id101">
 <h3><code class="docutils literal notranslate"><span class="pre">2&gt;double</span></code></h3>
 <p>( x0 x1 – dvalue0 dvalue1 )</p>
 <p>Cast two values to doubles.</p>
 </section>
-<section id="id96">
+<section id="id102">
 <h3><code class="docutils literal notranslate"><span class="pre">2double&gt;</span></code></h3>
 <p>( dvalue0 dvalue1 – x0 x1 )</p>
 <p>Cast two values from doubles.</p>
@@ -1487,7 +1562,7 @@
 <p>( – x )</p>
 <p>Get the RAM HERE pointer.</p>
 </section>
-<section id="id97">
+<section id="id103">
 <h3><code class="docutils literal notranslate"><span class="pre">ram-here!</span></code></h3>
 <p>( x – )</p>
 <p>Set the RAM HERE pointer.</p>
@@ -1502,7 +1577,7 @@
 <p>( – x )</p>
 <p>Get the flash HERE pointer.</p>
 </section>
-<section id="id98">
+<section id="id104">
 <h3><code class="docutils literal notranslate"><span class="pre">flash-here!</span></code></h3>
 <p>( x – )</p>
 <p>Set the flash HERE pointer.</p>
