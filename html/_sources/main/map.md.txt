@@ -166,6 +166,32 @@ bar 20 baz 30 foo 10  ok
 
 While keys may be mutable values, undefined results will occur if the keys are mutated; if this may be an issue, it would be prudent to use `duplicate` (or its like) to duplicate the keys before inserting them and/or after retrieving the keys if they may be mutated afterward.
 
+If `src/common/special_oo.fs` has been compiled after `src/common/map.fs`, `>generic-map` is available. It creates a map sized to the number of specified entries using the `zscript-special-oo` words `hash` and `equal?` for keys, also known as a *generic* map.
+
+An example of its use is as follows:
+
+```
+s" foo" 0 s" bar" 1 s" baz" 2 3 >generic-map [: type space . ;] iter-map
+```
+
+This outputs:
+
+```
+baz 2 foo 0 bar 1  ok
+```
+
+There is also syntactic sugar for creating generic maps, by placing key-value pairs, with keys preceding values, in `#{` ... `}#`. Its use can be seen as follows:
+
+```
+#{ s" foo" 0 s" bar" 1 s" baz" 2 }# [: type space . ;] iter-map
+```
+
+This outputs:
+
+```
+baz 2 foo 0 bar 1  ok
+```
+
 ## `zscript-map` words
 
 ### `make-map`
@@ -237,3 +263,25 @@ Find an entry in a map.
 ( key map -- found? )
 
 Test for membership in a map.
+
+The following words are only available if `src/common/special_oo.fs` has been compiled after `src/common/map.fs`:
+
+### `generic-map`
+( keyn valn .. key0 val0 count -- map )
+
+Create a generic map, i.e. one using `zscript-special-oo::hash` for key hashes and `zscript-special-oo::equal?` for key equality using *count* key-value pairs, with keys preceding values, on the stack.
+
+### `#{`
+( -- )
+
+Begin defining a generic map without specifying a count.
+
+### `}#`
+( keyn valn .. key0 val0 -- map )
+
+Finish defining a generic map using key-value pairs on the stack, with keys preceding values. If the count of keys and values is not even, `x-incorrect-item-count` is raised.
+
+### `x-incorrect-item-count`
+( -- )
+
+The exception raised if the count of keys and values between `#{` and `}#` is not even.

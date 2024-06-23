@@ -126,6 +126,23 @@
 </pre></div>
 </div>
 <p>While keys may be mutable values, undefined results will occur if the keys are mutated; if this may be an issue, it would be prudent to use <code class="docutils literal notranslate"><span class="pre">duplicate</span></code> (or its like) to duplicate the keys before inserting them and/or after retrieving the keys if they may be mutated afterward.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">src/common/special_oo.fs</span></code> has been compiled after <code class="docutils literal notranslate"><span class="pre">src/common/map.fs</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;generic-map</span></code> is available. It creates a map sized to the number of specified entries using the <code class="docutils literal notranslate"><span class="pre">zscript-special-oo</span></code> words <code class="docutils literal notranslate"><span class="pre">hash</span></code> and <code class="docutils literal notranslate"><span class="pre">equal?</span></code> for keys, also known as a <em>generic</em> map.</p>
+<p>An example of its use is as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">s</span><span class="s2">&quot; foo&quot;</span> <span class="mi">0</span> <span class="n">s</span><span class="s2">&quot; bar&quot;</span> <span class="mi">1</span> <span class="n">s</span><span class="s2">&quot; baz&quot;</span> <span class="mi">2</span> <span class="mi">3</span> <span class="o">&gt;</span><span class="n">generic</span><span class="o">-</span><span class="nb">map</span> <span class="p">[:</span> <span class="nb">type</span> <span class="n">space</span> <span class="o">.</span> <span class="p">;]</span> <span class="nb">iter</span><span class="o">-</span><span class="nb">map</span>
+</pre></div>
+</div>
+<p>This outputs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">baz</span> <span class="mi">2</span> <span class="n">foo</span> <span class="mi">0</span> <span class="n">bar</span> <span class="mi">1</span>  <span class="n">ok</span>
+</pre></div>
+</div>
+<p>There is also syntactic sugar for creating generic maps, by placing key-value pairs, with keys preceding values, in <code class="docutils literal notranslate"><span class="pre">#{</span></code> … <code class="docutils literal notranslate"><span class="pre">}#</span></code>. Its use can be seen as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#{ s&quot; foo&quot; 0 s&quot; bar&quot; 1 s&quot; baz&quot; 2 }# [: type space . ;] iter-map</span>
+</pre></div>
+</div>
+<p>This outputs:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">baz</span> <span class="mi">2</span> <span class="n">foo</span> <span class="mi">0</span> <span class="n">bar</span> <span class="mi">1</span>  <span class="n">ok</span>
+</pre></div>
+</div>
 <section id="zscript-map-words">
 <h2><code class="docutils literal notranslate"><span class="pre">zscript-map</span></code> words</h2>
 <section id="make-map">
@@ -197,6 +214,27 @@
 <h3><code class="docutils literal notranslate"><span class="pre">in-map?</span></code></h3>
 <p>( key map – found? )</p>
 <p>Test for membership in a map.</p>
+<p>The following words are only available if <code class="docutils literal notranslate"><span class="pre">src/common/special_oo.fs</span></code> has been compiled after <code class="docutils literal notranslate"><span class="pre">src/common/map.fs</span></code>:</p>
+</section>
+<section id="generic-map">
+<h3><code class="docutils literal notranslate"><span class="pre">generic-map</span></code></h3>
+<p>( keyn valn .. key0 val0 count – map )</p>
+<p>Create a generic map, i.e. one using <code class="docutils literal notranslate"><span class="pre">zscript-special-oo::hash</span></code> for key hashes and <code class="docutils literal notranslate"><span class="pre">zscript-special-oo::equal?</span></code> for key equality using <em>count</em> key-value pairs, with keys preceding values, on the stack.</p>
+</section>
+<section id="id2">
+<h3><code class="docutils literal notranslate"><span class="pre">#{</span></code></h3>
+<p>( – )</p>
+<p>Begin defining a generic map without specifying a count.</p>
+</section>
+<section id="id3">
+<h3><code class="docutils literal notranslate"><span class="pre">}#</span></code></h3>
+<p>( keyn valn .. key0 val0 – map )</p>
+<p>Finish defining a generic map using key-value pairs on the stack, with keys preceding values. If the count of keys and values is not even, <code class="docutils literal notranslate"><span class="pre">x-incorrect-item-count</span></code> is raised.</p>
+</section>
+<section id="x-incorrect-item-count">
+<h3><code class="docutils literal notranslate"><span class="pre">x-incorrect-item-count</span></code></h3>
+<p>( – )</p>
+<p>The exception raised if the count of keys and values between <code class="docutils literal notranslate"><span class="pre">#{</span></code> and <code class="docutils literal notranslate"><span class="pre">}#</span></code> is not even.</p>
 </section>
 </section>
 </section>
