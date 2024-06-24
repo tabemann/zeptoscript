@@ -7,5 +7,5 @@
 *.uf2
 *.elf
 *.ihex
-utils/zeptoforth_venv
-src/common/kernel_info.s
+utils/zeptoscript_venv
+

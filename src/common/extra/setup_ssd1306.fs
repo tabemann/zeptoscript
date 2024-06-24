@@ -21,9 +21,9 @@
 compile-to-flash
 #include src/common/extra/clip.fs
 #include src/common/extra/bitmap.fs
+#include src/common/extra/bitmap_utils.fs
 #include src/common/extra/font.fs
 #include src/common/extra/simple_font.fs
 #include src/common/extra/simple_font_6x8.fs
-#include src/common/extra/text_display.fs
-#include src/common/extra/sh1122_text.fs
+#include src/common/extra/ssd1306.fs
 reboot
