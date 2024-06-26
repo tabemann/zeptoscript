@@ -17,7 +17,7 @@
     <script src="../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Actions" href="action.html" />
+    <link rel="next" title="Unbounded channels" href="uchannel.html" />
     <link rel="prev" title="Tasks" href="task.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -65,7 +65,7 @@
 <section id="recv-non-block">
 <h3><code class="docutils literal notranslate"><span class="pre">recv-non-block</span></code><a class="headerlink" href="#recv-non-block" title="Permalink to this heading">¶</a></h3>
 <p>( channel – message success? )</p>
-<p>Receive a message from a channel in a non-blocking fashion. If the channel is not empty, return the message and <code class="docutils literal notranslate"><span class="pre">true</span></code>, else return <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p>
+<p>Receive a message from a channel in a non-blocking fashion. If the channel is not empty, return the message and <code class="docutils literal notranslate"><span class="pre">true</span></code>, else return <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">false</span></code>. Also, if there are blocked sending task, wake up one sending task.</p>
 </section>
 <section id="peek">
 <h3><code class="docutils literal notranslate"><span class="pre">peek</span></code><a class="headerlink" href="#peek" title="Permalink to this heading">¶</a></h3>
@@ -107,7 +107,14 @@
 <li class="toctree-l1"><a class="reference internal" href="queue.html">Queues</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task.html">Tasks</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Channels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uchannel.html">Unbounded channels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coroutine.html">Asymmetric coroutines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="action.html">Actions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extra/bitmap.html">Bitmaps, fonts, and displays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extra/rtc.html">Real-time clock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extra/block_dev.html">Block devices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extra/fs.html">Filesystems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extra/fs_tools.html">Filesystem tools</a></li>
 </ul>
 
 <div class="relations">
@@ -115,7 +122,7 @@
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
       <li>Previous: <a href="task.html" title="previous chapter">Tasks</a></li>
-      <li>Next: <a href="action.html" title="next chapter">Actions</a></li>
+      <li>Next: <a href="uchannel.html" title="next chapter">Unbounded channels</a></li>
   </ul></li>
 </ul>
 </div>

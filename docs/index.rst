@@ -13,6 +13,7 @@ zeptoscript Documentation
    main/queue
    main/task
    main/channel
+   main/uchannel
    main/coroutine
    main/action
    extra/bitmap.md

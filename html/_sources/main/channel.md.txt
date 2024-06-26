@@ -31,7 +31,7 @@ Receive a message from a channel. If the channel is empty, block until a sending
 ### `recv-non-block`
 ( channel -- message success? )
 
-Receive a message from a channel in a non-blocking fashion. If the channel is not empty, return the message and `true`, else return `0` and `false`.
+Receive a message from a channel in a non-blocking fashion. If the channel is not empty, return the message and `true`, else return `0` and `false`. Also, if there are blocked sending task, wake up one sending task.
 
 ### `peek`
 ( channel -- message )

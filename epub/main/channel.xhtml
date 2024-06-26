@@ -44,7 +44,7 @@
 <section id="recv-non-block">
 <h3><code class="docutils literal notranslate"><span class="pre">recv-non-block</span></code></h3>
 <p>( channel – message success? )</p>
-<p>Receive a message from a channel in a non-blocking fashion. If the channel is not empty, return the message and <code class="docutils literal notranslate"><span class="pre">true</span></code>, else return <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p>
+<p>Receive a message from a channel in a non-blocking fashion. If the channel is not empty, return the message and <code class="docutils literal notranslate"><span class="pre">true</span></code>, else return <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">false</span></code>. Also, if there are blocked sending task, wake up one sending task.</p>
 </section>
 <section id="peek">
 <h3><code class="docutils literal notranslate"><span class="pre">peek</span></code></h3>

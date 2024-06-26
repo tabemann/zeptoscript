@@ -12,8 +12,8 @@
     <dc:publisher>Travis Bemann</dc:publisher>
     <dc:rights>2024, Travis Bemann</dc:rights>
     <dc:identifier id="unknown">unknown</dc:identifier>
-    <dc:date>2024-06-25T21:02:05Z</dc:date>
-    <meta property="dcterms:modified">2024-06-25T21:02:05Z</meta>
+    <dc:date>2024-06-25T21:43:21Z</dc:date>
+    <meta property="dcterms:modified">2024-06-25T21:43:21Z</meta>
     <meta property="ibooks:version"></meta>
     <meta property="ibooks:specified-fonts">true</meta>
     <meta property="ibooks:binding">true</meta>
@@ -45,6 +45,7 @@
     <item id="epub-20" href="main/queue.xhtml" media-type="application/xhtml+xml" />
     <item id="epub-21" href="main/set.xhtml" media-type="application/xhtml+xml" />
     <item id="epub-22" href="main/task.xhtml" media-type="application/xhtml+xml" />
+    <item id="epub-23" href="main/uchannel.xhtml" media-type="application/xhtml+xml" />
   </manifest>
   <spine toc="ncx" page-progression-direction="ltr">
     <itemref idref="epub-1" />
@@ -56,6 +57,7 @@
     <itemref idref="epub-20" />
     <itemref idref="epub-22" />
     <itemref idref="epub-14" />
+    <itemref idref="epub-23" />
     <itemref idref="epub-16" />
     <itemref idref="epub-13" />
     <itemref idref="epub-8" />
