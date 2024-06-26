@@ -74,7 +74,7 @@ Redirect both output and error output within *xt* to *file*. Note that output an
 Get the filesystem of a file or directory.
   
 ### `read-dir`
-( entry dir -- entry-read? )
+( dir -- entry|0 entry-read? )
 
 Read an entry from a directory, and return whether an entry was read.
   

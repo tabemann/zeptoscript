@@ -171,6 +171,7 @@ begin-module zscript-fs-tools
     : dump-file { file -- }
       512 make-bytes { full-data }
       0 { index }
+      file tell-file { start-offset }
       begin
         full-data file read-file { full-count }
         full-count 0> if
@@ -183,7 +184,7 @@ begin-module zscript-fs-tools
             
             count 0> if
               
-              cr index h.8 space
+              cr start-offset index + h.8 space
               
               0 begin
                 dup count 4 min < while space dup data c@+ h.2 1+
@@ -235,6 +236,7 @@ begin-module zscript-fs-tools
     : dump-file-length { length file -- }
       512 make-bytes { full-data }
       0 { index }
+      file tell-file { start-offset }
       begin
         full-data file read-file length min { full-count }
         full-count negate +to length
@@ -248,7 +250,7 @@ begin-module zscript-fs-tools
             
             count 0> if
               
-              cr index h.8 space
+              cr start-offset index + h.8 space
               
               0 begin
                 dup count 4 min < while space dup data c@+ h.2 1+
@@ -300,6 +302,7 @@ begin-module zscript-fs-tools
     : dump-file-ascii { file -- }
       512 make-bytes { full-data }
       0 { index }
+      file tell-file { start-offset }
       begin
         full-data file read-file { full-count }
         full-count 0> if
@@ -312,7 +315,7 @@ begin-module zscript-fs-tools
             
             count 0> if
               
-              cr index h.8 space space
+              cr start-offset index + h.8 space space
 
               ." |"
               data count 64 <> if 0 count rot >slice then
@@ -340,6 +343,7 @@ begin-module zscript-fs-tools
     : dump-file-ascii-length { length file -- }
       512 make-bytes { full-data }
       0 { index }
+      file tell-file { start-offset }
       begin
         full-data file read-file length min { full-count }
         full-count negate +to length
@@ -353,7 +357,7 @@ begin-module zscript-fs-tools
             
             count 0> if
               
-              cr index h.8 space space
+              cr start-offset index + h.8 space space
 
               ." |"
               data count 64 <> if 0 count rot >slice then
