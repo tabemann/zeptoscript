@@ -1,0 +1,162 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Unbounded channels &#8212; zeptoscript  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Asymmetric coroutines" href="coroutine.html" />
+    <link rel="prev" title="Channels" href="channel.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="unbounded-channels">
+<h1>Unbounded channels<a class="headerlink" href="#unbounded-channels" title="Permalink to this heading">¶</a></h1>
+<p>Unbounded channels are used by tasks to send each other messages. They consist of queues with an unlimited number of elements.</p>
+<p>Sending on an unbounded channel always returns immediately. The new element will be enqueued, and if a task is waiting to receive an element it will be woken up and will then receive the element; otherwise the element will remain queued for the next task to receive it. Note that as sending on unbounded channels never blocks, the only way to guarantee that the receiving task will actually receive the element is to call <code class="docutils literal notranslate"><span class="pre">zscript-task::yield</span></code> after sending on the  ubnounded channels.</p>
+<p>If there are greater than zero elements in a queue and a task attempts to receive from an unbonded channel, the next element will be dequeued; otherwise the receiving task will block until another task sends on the queue.</p>
+<section id="zscript-uchan-words">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-uchan</span></code> words<a class="headerlink" href="#zscript-uchan-words" title="Permalink to this heading">¶</a></h2>
+<section id="make-uchan">
+<h3><code class="docutils literal notranslate"><span class="pre">make-uchan</span></code><a class="headerlink" href="#make-uchan" title="Permalink to this heading">¶</a></h3>
+<p>( – uchannel )</p>
+<p>Create an unbounded channel.</p>
+</section>
+<section id="send">
+<h3><code class="docutils literal notranslate"><span class="pre">send</span></code><a class="headerlink" href="#send" title="Permalink to this heading">¶</a></h3>
+<p>( message uchannel – )</p>
+<p>Send a message to an unbounded channel. If there are blocked receiving tasks, wake up one receiving task. Note that this always returns immediately.</p>
+</section>
+<section id="recv">
+<h3><code class="docutils literal notranslate"><span class="pre">recv</span></code><a class="headerlink" href="#recv" title="Permalink to this heading">¶</a></h3>
+<p>( uchannel – message )</p>
+<p>Receive a message from a unbounded channel. If the unbounded channel is empty, block until a sending task provides a message to receive.</p>
+</section>
+<section id="recv-non-block">
+<h3><code class="docutils literal notranslate"><span class="pre">recv-non-block</span></code><a class="headerlink" href="#recv-non-block" title="Permalink to this heading">¶</a></h3>
+<p>( uchannel – message success? )</p>
+<p>Receive a message from a unbounded channel in a non-blocking fashion. If the unbounded channel is not empty, return the message and <code class="docutils literal notranslate"><span class="pre">true</span></code>, else return <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p>
+</section>
+<section id="peek">
+<h3><code class="docutils literal notranslate"><span class="pre">peek</span></code><a class="headerlink" href="#peek" title="Permalink to this heading">¶</a></h3>
+<p>( uchannel – message )</p>
+<p>Peek a message from a unbounded channel, i.e. read it without dequeuing it. If the unbounded channel is empty, block until a sending task provides a message to peek.</p>
+</section>
+<section id="peek-non-block">
+<h3><code class="docutils literal notranslate"><span class="pre">peek-non-block</span></code><a class="headerlink" href="#peek-non-block" title="Permalink to this heading">¶</a></h3>
+<p>( uchannel – message success? )</p>
+<p>Peek a message from a unbounded channel, i.e. read it without dequeueing it, in a non-blocking fashion. If the unbounded channel is not empty, return the message and <code class="docutils literal notranslate"><span class="pre">true</span></code>, else return <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">zeptoscript</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="core.html">zeptoscript Core Functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="oo.html">zeptoscript Object-Orientation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="list.html">Lists</a></li>
+<li class="toctree-l1"><a class="reference internal" href="map.html">Maps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="set.html">Sets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="queue.html">Queues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="task.html">Tasks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="channel.html">Channels</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Unbounded channels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coroutine.html">Asymmetric coroutines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="action.html">Actions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extra/bitmap.html">Bitmaps, fonts, and displays</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extra/rtc.html">Real-time clock</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extra/block_dev.html">Block devices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extra/fs.html">Filesystems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../extra/fs_tools.html">Filesystem tools</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="channel.html" title="previous chapter">Channels</a></li>
+      <li>Next: <a href="coroutine.html" title="next chapter">Asymmetric coroutines</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2024, Travis Bemann.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.3.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/main/uchannel.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

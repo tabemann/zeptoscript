@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Unbounded channels</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/epub.css" /> 
+  </head><body>
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <section id="unbounded-channels">
+<h1>Unbounded channels</h1>
+<p>Unbounded channels are used by tasks to send each other messages. They consist of queues with an unlimited number of elements.</p>
+<p>Sending on an unbounded channel always returns immediately. The new element will be enqueued, and if a task is waiting to receive an element it will be woken up and will then receive the element; otherwise the element will remain queued for the next task to receive it. Note that as sending on unbounded channels never blocks, the only way to guarantee that the receiving task will actually receive the element is to call <code class="docutils literal notranslate"><span class="pre">zscript-task::yield</span></code> after sending on the  ubnounded channels.</p>
+<p>If there are greater than zero elements in a queue and a task attempts to receive from an unbonded channel, the next element will be dequeued; otherwise the receiving task will block until another task sends on the queue.</p>
+<section id="zscript-uchan-words">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-uchan</span></code> words</h2>
+<section id="make-uchan">
+<h3><code class="docutils literal notranslate"><span class="pre">make-uchan</span></code></h3>
+<p>( – uchannel )</p>
+<p>Create an unbounded channel.</p>
+</section>
+<section id="send">
+<h3><code class="docutils literal notranslate"><span class="pre">send</span></code></h3>
+<p>( message uchannel – )</p>
+<p>Send a message to an unbounded channel. If there are blocked receiving tasks, wake up one receiving task. Note that this always returns immediately.</p>
+</section>
+<section id="recv">
+<h3><code class="docutils literal notranslate"><span class="pre">recv</span></code></h3>
+<p>( uchannel – message )</p>
+<p>Receive a message from a unbounded channel. If the unbounded channel is empty, block until a sending task provides a message to receive.</p>
+</section>
+<section id="recv-non-block">
+<h3><code class="docutils literal notranslate"><span class="pre">recv-non-block</span></code></h3>
+<p>( uchannel – message success? )</p>
+<p>Receive a message from a unbounded channel in a non-blocking fashion. If the unbounded channel is not empty, return the message and <code class="docutils literal notranslate"><span class="pre">true</span></code>, else return <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p>
+</section>
+<section id="peek">
+<h3><code class="docutils literal notranslate"><span class="pre">peek</span></code></h3>
+<p>( uchannel – message )</p>
+<p>Peek a message from a unbounded channel, i.e. read it without dequeuing it. If the unbounded channel is empty, block until a sending task provides a message to peek.</p>
+</section>
+<section id="peek-non-block">
+<h3><code class="docutils literal notranslate"><span class="pre">peek-non-block</span></code></h3>
+<p>( uchannel – message success? )</p>
+<p>Peek a message from a unbounded channel, i.e. read it without dequeueing it, in a non-blocking fashion. If the unbounded channel is not empty, return the message and <code class="docutils literal notranslate"><span class="pre">true</span></code>, else return <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

@@ -30,5 +30,6 @@ compile-to-flash
 #include src/common/special_oo.fs
 #include src/common/task.fs
 #include src/common/channel.fs
+#include src/common/uchannel.fs
 #include src/common/coroutine.fs
 reboot
