@@ -4901,6 +4901,23 @@ begin-module zscript
   : lookup-in
     dup new-style? if filter-new-style-flag then forth::lookup-in
   ;
+  : enable-line forth::enable-line ;
+  : disable-line forth::disable-line ;
+  : edit integral> forth::edit ;
+  : load integral> forth::load ;
+  : load-range 2integral> forth::load-range ;
+  : list integral> forth::list ;
+  : list-range 2integral> forth::list-range ;
+  : copy-block 2integral> forth::block::copy-block ;
+  : copy-blocks [ 3 >small-int ] literal nintegral> forth::block::copy-blocks ;
+  : block-size forth::block::block-size ;
+  : block? integral> forth::block::block? >integral ;
+  : find-block integral> forth::block::find-block >integral ;
+  : block! 2integral> forth::block::block! >integral ;
+  : insert-blocks 2integral> forth::block::insert-blocks ;
+  : delete-block integral> forth::block::delete-block ;
+  : delete-blocks 2integral> forth::block::delete-blocks ;
+  : erase-all-blocks forth::block::erase-all-blocks ;
   : i [immediate] [compile-only] postpone i ;
   : j [immediate] [compile-only] postpone j ;
   : : : ;

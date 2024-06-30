@@ -235,8 +235,10 @@ def removeComment(line):
         return ''
     elif (re.search('^\\\\$', line)):
         return ''
-    else:
+    elif (re.search('^\s*\\\s', line)):
         return line.partition(' \\ ')[0].strip()
+    else:
+        return line
 
 # test if a word already exists in the dictionary
 def required(word):

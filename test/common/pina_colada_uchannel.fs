@@ -47,7 +47,7 @@ begin-module pina-colada-test
   symbol trigger-exit
   symbol exit-actor
   
-  \ Make an actor; xt is executed for the actor, passed the actors channel,
+  \ Make an actor; xt is executed for the actor, passed the actor's channel,
   \ with the actor terminating when it returns. The actor's channel is returned
   \ in the parent task.
   : make-actor ( xt -- chan )
