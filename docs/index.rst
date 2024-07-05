@@ -8,6 +8,7 @@ zeptoscript Documentation
    main/core
    main/oo
    main/list
+   main/array
    main/map
    main/set
    main/queue

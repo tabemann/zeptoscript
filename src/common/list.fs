@@ -583,6 +583,8 @@ begin-module zscript-list
   : #[ ( -- ) define-list zscript-internal::begin-seq-define ;
 
   \ End defining a list
-  : ]# ( -- list ) define-list zscript-internal::end-seq-define >list ;
+  : ]# ( x0 ... xn -- list )
+    define-list zscript-internal::end-seq-define >list
+  ;
 
 end-module

@@ -242,6 +242,11 @@ Explode a cell sequence or slice into elements and a count on the stack.
 
 Explode a byte sequence or slice into bytes and a count on the stack.
 
+### `seq>`
+( seq -- xn ... x0 count )
+
+Explode a cell or byte sequence or slice into elements and a count on the stack.
+
 ### `cells-no-count>`
 ( cells -- xn ... x0 )
 
@@ -251,6 +256,11 @@ Explode a cell sequence or slice into elements on the stack.
 ( bytes -- cn ... c0 )
 
 Explode a byte sequence or slice into bytes on the stack.
+
+### `seq-no-count>`
+( seq -- xn ... x0 )
+
+Explode a cell or byte sequence or slice into elements on the stack.
 
 ### `@+`
 ( index cells -- x )

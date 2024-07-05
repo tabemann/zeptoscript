@@ -34,9 +34,15 @@ begin-module zscript-map
     
     \ Map minimum size
     4 constant map-min-size
+
+    \ Map marker symbol
+    symbol map-tag
     
     \ Map outer record
-    begin-record map-outer
+    begin-record map-head
+
+      \ Map marker
+      item: map-tag
 
       \ Map inner structure
       item: map-inner
@@ -144,19 +150,34 @@ begin-module zscript-map
 
   end-module> import
 
+  \ Get whether something is a map
+  : map? ( x -- map? )
+    dup cells? if
+      dup >len map-head-size = if
+        map-tag@ map-tag =
+      else
+        drop false
+      then
+    else
+      drop false
+    then
+  ;
+  
   \ Make a map (a size of 0 indicates a default size)
   \
   \ Note that the real size of the map is one entry larger than the specified
   \ size
   : make-map { size hash-xt equal-xt -- map }
+    map-tag
     size map-min-size max
     1+ dup to size 1 lshift make-cells dup { inner } 0
-    hash-xt equal-xt >map-outer
+    hash-xt equal-xt >map-head
     size 0 ?do empty-key i 1 lshift inner !+ loop
   ;
 
   \ Duplicate a map
   : duplicate-map { map -- map' }
+    map map? averts x-incorrect-type
     map map-inner@ duplicate { inner' }
     map duplicate { map' }
     inner' map' map-inner!
@@ -165,6 +186,7 @@ begin-module zscript-map
 
   \ Iterate over the elements of a map
   : iter-map { map xt -- } \ xt ( value key -- )
+    map map? averts x-incorrect-type
     map map-inner@ { inner }
     map map-entry-count@ { count }
     0 0 { index found-count }
@@ -181,6 +203,7 @@ begin-module zscript-map
 
   \ Map over a map and create a new map with identical keys but new values
   : map-map { map xt -- map' } \ xt ( value key -- value' )
+    map map? averts x-incorrect-type
     map map-inner@ { inner }
     map map-entry-count@ { count }
     map duplicate { map' }
@@ -202,6 +225,7 @@ begin-module zscript-map
 
   \ Map over a map and mutate its values in place
   : map!-map { map xt -- } \ xt ( value key -- value' )
+    map map? averts x-incorrect-type
     map map-inner@ { inner }
     map map-entry-count@ { count }
     0 0 { index found-count }
@@ -218,6 +242,7 @@ begin-module zscript-map
 
   \ Get whether any element of a map meet a predicate
   : any-map { map xt -- } \ xt ( value key -- flag )
+    map map? averts x-incorrect-type
     map map-inner@ { inner }
     map map-entry-count@ { count }
     0 0 { index found-count }
@@ -235,6 +260,7 @@ begin-module zscript-map
 
   \ Get whether all elements of a map meet a predicate
   : all-map { map xt -- } \ xt ( value key -- flag )
+    map map? averts x-incorrect-type
     map map-inner@ { inner }
     map map-entry-count@ { count }
     0 0 { index found-count }
@@ -252,6 +278,7 @@ begin-module zscript-map
 
   \ Get the keys of a map
   : map>keys { map -- keys }
+    map map? averts x-incorrect-type
     map map-inner@ { inner }
     map map-entry-count@ { count }
     count make-cells { keys }
@@ -268,6 +295,7 @@ begin-module zscript-map
 
   \ Get the values of a map
   : map>values { map -- values }
+    map map? averts x-incorrect-type
     map map-inner@ { inner }
     map map-entry-count@ { count }
     count make-cells { values }
@@ -284,6 +312,7 @@ begin-module zscript-map
 
   \ Get the keys and values of a map as pairs
   : map>key-values { map -- pairs }
+    map map? averts x-incorrect-type
     map map-inner@ { inner }
     map map-entry-count@ { count }
     count make-cells { key-values }
@@ -302,6 +331,7 @@ begin-module zscript-map
 
   \ Insert an entry in a map
   : insert-map { val key map -- }
+    map map? averts x-incorrect-type
     key map map-hash-xt@ execute { hash }
     hash key map map-index if
       1 lshift { current }
@@ -335,6 +365,7 @@ begin-module zscript-map
 
   \ Remove an entry from a map
   : remove-map { key map -- }
+    map map? averts x-incorrect-type
     key map map-hash-xt@ execute key map map-index if
       1 lshift { current }
       map map-inner@ { inner }
@@ -348,6 +379,7 @@ begin-module zscript-map
   
   \ Find an entry in a map
   : find-map { key map -- val found? }
+    map map? averts x-incorrect-type
     map map-inner@ { inner }
     inner >len 1 rshift { len }
     map map-equal-xt@ { equal }
@@ -384,6 +416,7 @@ begin-module zscript-map
 
   \ Test for membership in a map
   : in-map? { key map -- found? }
+    map map? averts x-incorrect-type
     map map-inner@ { inner }
     inner >len 1 rshift { len }
     map map-equal-xt@ { equal }
@@ -411,4 +444,10 @@ begin-module zscript-map
     until
   ;
 
+  \ Get the entry count of a map
+  : map-entry-count@ { map -- count }
+    map map? averts x-incorrect-type
+    map map-entry-count@
+  ;
+  
 end-module

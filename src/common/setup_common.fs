@@ -23,6 +23,7 @@ compile-to-flash
 #include src/common/double.fs
 #include src/common/fixed32.fs
 #include src/common/list.fs
+#include src/common/array.fs
 #include src/common/map.fs
 #include src/common/set.fs
 #include src/common/queue.fs

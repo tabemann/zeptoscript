@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Arrays</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/epub.css" /> 
+  </head><body>
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <section id="arrays">
+<h1>Arrays</h1>
+<p>zeptoscript has optional support for arrays. Arrays are like sequences (internally they simply wrap a sequence), but they may change length. They have four types, specifically cell arrays, cell array slices, byte arrays, and byte array slices.</p>
+<p>Note that while arrays may be resized, repeated prepending of elements is still best accomplished with lists, and each time an array is concatenated a whole new underlying sequence is allocated and the elements from the original arrays are copied into it. However, arrays are more memory-efficient than lists, especially when long, as they consist simply of a backing sequence and a small wrapper.</p>
+<section id="zscript-array-words">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-array</span></code> Words</h2>
+<section id="array">
+<h3><code class="docutils literal notranslate"><span class="pre">array?</span></code></h3>
+<p>( x – array? )</p>
+<p>Get whether something is an array.</p>
+</section>
+<section id="cell-array">
+<h3><code class="docutils literal notranslate"><span class="pre">cell-array?</span></code></h3>
+<p>( x – cell-array? )</p>
+<p>Get whether something is a cell array.</p>
+</section>
+<section id="byte-array">
+<h3><code class="docutils literal notranslate"><span class="pre">byte-array?</span></code></h3>
+<p>( x – byte-array? )</p>
+<p>Get whether something is a byte array.</p>
+</section>
+<section id="array-seq">
+<h3><code class="docutils literal notranslate"><span class="pre">array-seq&#64;</span></code></h3>
+<p>( array – seq )</p>
+<p>Get the underlying sequence in an array.</p>
+</section>
+<section id="array-len">
+<h3><code class="docutils literal notranslate"><span class="pre">array&gt;len</span></code></h3>
+<p>( array – len )</p>
+<p>Get the length of an array.</p>
+</section>
+<section id="wrap-seq-as-array">
+<h3><code class="docutils literal notranslate"><span class="pre">wrap-seq-as-array</span></code></h3>
+<p>( seq – array )</p>
+<p>Wrap a sequence in an array.</p>
+</section>
+<section id="id1">
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;cell-array</span></code></h3>
+<p>( x0 … xn count – array )</p>
+<p>Create a cell array from the stack.</p>
+</section>
+<section id="id2">
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;byte-array</span></code></h3>
+<p>( c0 … cn count – array )</p>
+<p>Create a byte array from the stack.</p>
+</section>
+<section id="id3">
+<h3><code class="docutils literal notranslate"><span class="pre">array&gt;</span></code></h3>
+<p>( array – x0 … xn count )</p>
+<p>Explode an array onto the stack.</p>
+</section>
+<section id="id4">
+<h3><code class="docutils literal notranslate"><span class="pre">#!</span></code></h3>
+<p>( – )</p>
+<p>Begin defining a cell array.</p>
+</section>
+<section id="id5">
+<h3><code class="docutils literal notranslate"><span class="pre">!#</span></code></h3>
+<p>( – )</p>
+<p>End defining a cell array.</p>
+</section>
+<section id="id6">
+<h3><code class="docutils literal notranslate"><span class="pre">#$</span></code></h3>
+<p>( – )</p>
+<p>Begin defining a byte array.</p>
+</section>
+<section id="id7">
+<h3><code class="docutils literal notranslate"><span class="pre">$#</span></code></h3>
+<p>( – )</p>
+<p>End defining a byte array.</p>
+</section>
+<section id="id8">
+<h3><code class="docutils literal notranslate"><span class="pre">array&#64;</span></code></h3>
+<p>( index array – x )</p>
+<p>Get an element of an array.</p>
+</section>
+<section id="id9">
+<h3><code class="docutils literal notranslate"><span class="pre">array!</span></code></h3>
+<p>( x index array – )</p>
+<p>Set an element of an array.</p>
+</section>
+<section id="duplicate-array">
+<h3><code class="docutils literal notranslate"><span class="pre">duplicate-array</span></code></h3>
+<p>( array – array’ )</p>
+<p>Duplicate an array.</p>
+</section>
+<section id="concat-arrays">
+<h3><code class="docutils literal notranslate"><span class="pre">concat-arrays</span></code></h3>
+<p>( array0 array1 – array2 )</p>
+<p>Concatenate two cell or byte arrays.</p>
+</section>
+<section id="id10">
+<h3><code class="docutils literal notranslate"><span class="pre">concat!-arrays</span></code></h3>
+<p>( array0 array1 – )</p>
+<p>Concatenate two cell or byte arrays in place.</p>
+</section>
+<section id="seq-array">
+<h3><code class="docutils literal notranslate"><span class="pre">seq&gt;array</span></code></h3>
+<p>( seq – array )</p>
+<p>Convert a sequence to an array, duplicating it.</p>
+</section>
+<section id="id11">
+<h3><code class="docutils literal notranslate"><span class="pre">array&gt;seq</span></code></h3>
+<p>( array – seq )</p>
+<p>Convert an array to a sequence, duplicating it.</p>
+</section>
+<section id="array-slice">
+<h3><code class="docutils literal notranslate"><span class="pre">array&gt;slice</span></code></h3>
+<p>( offset count array – array’ )</p>
+<p>Get a slice of an array.</p>
+</section>
+<section id="id12">
+<h3><code class="docutils literal notranslate"><span class="pre">array&gt;slice!</span></code></h3>
+<p>( offset count array – )</p>
+<p>Get a slice of an array in place.</p>
+</section>
+<section id="truncate-start-array">
+<h3><code class="docutils literal notranslate"><span class="pre">truncate-start-array</span></code></h3>
+<p>( count array – array’ )</p>
+<p>Truncate the start of an array as a slice.</p>
+</section>
+<section id="truncate-end-array">
+<h3><code class="docutils literal notranslate"><span class="pre">truncate-end-array</span></code></h3>
+<p>( count array – array’ )</p>
+<p>Truncate the end of an array as a slice.</p>
+</section>
+<section id="id13">
+<h3><code class="docutils literal notranslate"><span class="pre">truncate-start!-array</span></code></h3>
+<p>( count array – )</p>
+<p>Truncate the start of an array in place as a slice.</p>
+</section>
+<section id="id14">
+<h3><code class="docutils literal notranslate"><span class="pre">truncate-end!-array</span></code></h3>
+<p>( count array – )</p>
+<p>Truncate the end of an array in place as a slice.</p>
+</section>
+<section id="iter-array">
+<h3><code class="docutils literal notranslate"><span class="pre">iter-array</span></code></h3>
+<p>( array xt – )</p>
+<p>Iterate over an array.</p>
+</section>
+<section id="iteri-array">
+<h3><code class="docutils literal notranslate"><span class="pre">iteri-array</span></code></h3>
+<p>( array xt – )</p>
+<p>Iterate over an array with an index.</p>
+</section>
+<section id="find-index-array">
+<h3><code class="docutils literal notranslate"><span class="pre">find-index-array</span></code></h3>
+<p>( array xt – index found? ) xt: ( item – flag )</p>
+<p>Get the index of an element that meets a predicate; note that the lowest matching index is returned, and xt will not necessarily be called against all items.</p>
+</section>
+<section id="find-indexi-array">
+<h3><code class="docutils literal notranslate"><span class="pre">find-indexi-array</span></code></h3>
+<p>( array xt – index found? ) xt: ( item index – flag )</p>
+<p>Get the index of an element that meets a predicate with an index; note that the lowest matching index is returned, and xt will not necessarily be called against all items.</p>
+</section>
+<section id="map-array">
+<h3><code class="docutils literal notranslate"><span class="pre">map-array</span></code></h3>
+<p>( array xt – array’ ) xt: ( item – item’ )</p>
+<p>Map a cell or byte array into a new cell or byte array.</p>
+</section>
+<section id="mapi-array">
+<h3><code class="docutils literal notranslate"><span class="pre">mapi-array</span></code></h3>
+<p>( array xt – array’ ) xt: ( item – item’ )</p>
+<p>Map a cell or byte array into a new cell or byte array with an index.</p>
+</section>
+<section id="id15">
+<h3><code class="docutils literal notranslate"><span class="pre">map!-array</span></code></h3>
+<p>( array xt – ) xt: ( item – item’ )</p>
+<p>Map a cell or byte array in place.</p>
+</section>
+<section id="id16">
+<h3><code class="docutils literal notranslate"><span class="pre">mapi!-array</span></code></h3>
+<p>( array xt – ) xt: ( item – item’ )</p>
+<p>Map a cell or byte array in place with an index.</p>
+</section>
+<section id="filter-array">
+<h3><code class="docutils literal notranslate"><span class="pre">filter-array</span></code></h3>
+<p>( array xt – array’ ) xt: ( item – item’ )</p>
+<p>Filter a cell or byte array into a new cell or byte array.</p>
+</section>
+<section id="filteri-array">
+<h3><code class="docutils literal notranslate"><span class="pre">filteri-array</span></code></h3>
+<p>( array xt – array’ ) xt: ( item – item’ )</p>
+<p>Filter a cell or byte array into a new cell or byte array with an index.</p>
+</section>
+<section id="id17">
+<h3><code class="docutils literal notranslate"><span class="pre">filter!-array</span></code></h3>
+<p>( array xt – ) xt: ( item – item’ )</p>
+<p>Filter a cell or byte array in place.</p>
+</section>
+<section id="id18">
+<h3><code class="docutils literal notranslate"><span class="pre">filteri!-array</span></code></h3>
+<p>( array xt – ) xt: ( item – item’ )</p>
+<p>Filter a cell or byte array in place with an index.</p>
+</section>
+<section id="foldl-array">
+<h3><code class="docutils literal notranslate"><span class="pre">foldl-array</span></code></h3>
+<p>( x array xt – x’ ) xt: ( x item – x’ )</p>
+<p>Fold left over a cell or byte array.</p>
+</section>
+<section id="foldli-array">
+<h3><code class="docutils literal notranslate"><span class="pre">foldli-array</span></code></h3>
+<p>( x array xt – x’ ) xt: ( x item index – x’ )</p>
+<p>Fold left over a cell or byte array with an index.</p>
+</section>
+<section id="foldr-array">
+<h3><code class="docutils literal notranslate"><span class="pre">foldr-array</span></code></h3>
+<p>( x array xt – x’ ) xt: ( item x – x’ )</p>
+<p>Fold right over a cell or byte array.</p>
+</section>
+<section id="foldri">
+<h3><code class="docutils literal notranslate"><span class="pre">foldri</span></code></h3>
+<p>( x array xt – x’ ) xt: ( item x index – x’ )</p>
+<p>Fold right over a cell or byte array with an index.</p>
+</section>
+<section id="collectl-cell-array">
+<h3><code class="docutils literal notranslate"><span class="pre">collectl-cell-array</span></code></h3>
+<p>( x len xt – array ) xt: ( x – x item )</p>
+<p>Collect elements of a cell array from left to right.</p>
+</section>
+<section id="collectli-cell-array">
+<h3><code class="docutils literal notranslate"><span class="pre">collectli-cell-array</span></code></h3>
+<p>( x len xt – array ) xt: ( x index – x item )</p>
+<p>Collect elements of a cell array from left to right with an index.</p>
+</section>
+<section id="collectr-cell-array">
+<h3><code class="docutils literal notranslate"><span class="pre">collectr-cell-array</span></code></h3>
+<p>( x len xt – array ) xt: ( x – x item )</p>
+<p>Collect elements of a cell array from right to left.</p>
+</section>
+<section id="collectri-cell-array">
+<h3><code class="docutils literal notranslate"><span class="pre">collectri-cell-array</span></code></h3>
+<p>( x len xt – array ) xt: ( x – x item )</p>
+<p>Collect elements of a cell array from right to left with an index.</p>
+</section>
+<section id="collectl-byte-array">
+<h3><code class="docutils literal notranslate"><span class="pre">collectl-byte-array</span></code></h3>
+<p>( x len xt – array ) xt: ( x – x item )</p>
+<p>Collect elements of a byte array from left to right.</p>
+</section>
+<section id="collectli-byte-array">
+<h3><code class="docutils literal notranslate"><span class="pre">collectli-byte-array</span></code></h3>
+<p>( x len xt – array ) xt: ( x index – x item )</p>
+<p>Collect elements of a byte array from left to right with an index.</p>
+</section>
+<section id="collectr-byte-array">
+<h3><code class="docutils literal notranslate"><span class="pre">collectr-byte-array</span></code></h3>
+<p>( x len xt – array ) xt: ( x – x item )</p>
+<p>Collect elements of a byte array from right to left.</p>
+</section>
+<section id="collectri-byte-array">
+<h3><code class="docutils literal notranslate"><span class="pre">collectri-byte-array</span></code></h3>
+<p>( x len xt – array ) xt: ( x – x item )</p>
+<p>Collect elements of a byte array from right to left with an index.</p>
+</section>
+<section id="reverse-array">
+<h3><code class="docutils literal notranslate"><span class="pre">reverse-array</span></code></h3>
+<p>( array – array’ )</p>
+<p>Reverse an array producing a new array.</p>
+</section>
+<section id="id19">
+<h3><code class="docutils literal notranslate"><span class="pre">reverse!-array</span></code></h3>
+<p>( array – )</p>
+<p>Reverse an array in place.</p>
+</section>
+<section id="zip-arrays">
+<h3><code class="docutils literal notranslate"><span class="pre">zip-arrays</span></code></h3>
+<p>( array0 array1 – array2 )</p>
+<p>Zip two arrays into a new array, using the length of the shorter array.</p>
+</section>
+<section id="zip3-arrays">
+<h3><code class="docutils literal notranslate"><span class="pre">zip3-arrays</span></code></h3>
+<p>( array0 array1 array2 – array3 )</p>
+<p>Zip three arrays into a new array, using the length of the shorter array.</p>
+</section>
+<section id="id20">
+<h3><code class="docutils literal notranslate"><span class="pre">zip!-arrays</span></code></h3>
+<p>( array0 array1 – )</p>
+<p>Zip two arrays into the first array in-place, using the length of the shorter array.</p>
+</section>
+<section id="id21">
+<h3><code class="docutils literal notranslate"><span class="pre">zip3!-arrays</span></code></h3>
+<p>( array0 array1 array2 – )</p>
+<p>Zip three arrays into the first array in-place, using the length of the  shorter array.</p>
+</section>
+<section id="sort-array">
+<h3><code class="docutils literal notranslate"><span class="pre">sort!-array</span></code></h3>
+<p>( array xt – )</p>
+<p>Heapsort an array in place.</p>
+</section>
+<section id="id22">
+<h3><code class="docutils literal notranslate"><span class="pre">sort-array</span></code></h3>
+<p>( array xt – array’ )</p>
+<p>Heapsort an array, copying it.</p>
+</section>
+<section id="all-array">
+<h3><code class="docutils literal notranslate"><span class="pre">all-array</span></code></h3>
+<p>( array xt – all? ) xt: ( element – match? )</p>
+<p>Get whether a predicate applies to all elements of a array; note that  not all elements will be iterated over if an element returns false, and true will be returned if the array is empty.</p>
+</section>
+<section id="alli-array">
+<h3><code class="docutils literal notranslate"><span class="pre">alli-array</span></code></h3>
+<p>( array xt – all? ) xt: ( element index – match? )</p>
+<p>Get whether a predicate applies to all elements of a array; note that not all elements will be iterated over if an element returns false, and true will be returned if the array is empty.</p>
+</section>
+<section id="any-array">
+<h3><code class="docutils literal notranslate"><span class="pre">any-array</span></code></h3>
+<p>( array xt – any? ) xt: ( element – match? )</p>
+<p>Get whether a predicate applies to any element of a array; note that not all elements will be iterated over if an element returns true, and false will be returned if the array is empty.</p>
+</section>
+<section id="anyi-array">
+<h3><code class="docutils literal notranslate"><span class="pre">anyi-array</span></code></h3>
+<p>( array xt – any? ) xt: ( element index – match? )</p>
+<p>Get whether a predicate applies to any element of a array; note that not all elements will be iterated over if an element returns true, and false will be returned if the array is empty.</p>
+</section>
+<section id="split-array">
+<h3><code class="docutils literal notranslate"><span class="pre">split-array</span></code></h3>
+<p>( array xt – array’ ) xt: ( item – flag )</p>
+<p>Split an array based on a predicate.</p>
+</section>
+<section id="spliti-array">
+<h3><code class="docutils literal notranslate"><span class="pre">spliti-array</span></code></h3>
+<p>( array xt – array’ ) xt: ( item index – flag )</p>
+<p>Split an array based on a predicate with an index.</p>
+</section>
+<section id="id23">
+<h3><code class="docutils literal notranslate"><span class="pre">split!-array</span></code></h3>
+<p>( array xt – ) xt: ( item – flag )</p>
+<p>Split an array in place based on a predicate.</p>
+</section>
+<section id="id24">
+<h3><code class="docutils literal notranslate"><span class="pre">spliti!-array</span></code></h3>
+<p>( array xt – ) xt: ( item index – flag )</p>
+<p>Split an array in place based on a predicate with an index.</p>
+</section>
+<section id="join-arrays">
+<h3><code class="docutils literal notranslate"><span class="pre">join-arrays</span></code></h3>
+<p>( list-array join-array – array’ )</p>
+<p>Join an array of arrays.</p>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>

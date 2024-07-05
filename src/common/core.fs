@@ -1168,6 +1168,49 @@ begin-module zscript
     endcase
   ;
 
+  \ Explode a byte or cell sequence
+  : seq> ( seq -- xn ... x0 count )
+    dup >type case
+      cells-type of
+        dup >size cell - 2 rshift { count }
+        count 0 ?do cell + dup @ swap loop drop
+        count >integral
+      endof
+      bytes-type of
+        dup >size cell - { count }
+        cell+ count 0 ?do dup c@ >integral swap 1+ loop drop
+        count >integral
+      endof
+      const-bytes-type of
+        dup [ 2 cells ] literal + @ { count }
+        cell+ @ count 0 ?do dup c@ >integral swap 1+ loop drop
+        count >integral
+      endof
+      slice-type of
+        dup >raw { raw }
+        dup >raw-offset { offset }
+        >len { len }
+        raw >type case
+          cells-type of
+            raw offset integral> cells +
+            len integral> 0 ?do cell + dup @ swap loop drop
+          endof
+          bytes-type of
+            raw cell+ offset integral> +
+            len integral> 0 ?do dup c@ >integral swap 1+ loop drop
+          endof
+          const-bytes-type of
+            raw cell+ @ offset integral> +
+            len integral> 0 ?do dup c@ >integral swap 1+ loop drop
+          endof
+          ['] x-incorrect-type ?raise
+        endcase
+        len
+      endof
+      ['] x-incorrect-type ?raise
+    endcase
+  ;
+
   \ Explode a cell sequence without pushing its count
   : cells-no-count> ( cells -- xn ... x0 )
     dup >type case
@@ -1203,6 +1246,45 @@ begin-module zscript
         dup >raw-offset { offset }
         >len { len }
         raw >type case
+          bytes-type of
+            raw cell+ offset integral> +
+            len integral> 0 ?do dup c@ >integral swap 1+ loop drop
+          endof
+          const-bytes-type of
+            raw cell+ @ offset integral> +
+            len integral> 0 ?do dup c@ >integral swap 1+ loop drop
+          endof
+          ['] x-incorrect-type ?raise
+        endcase
+      endof
+      ['] x-incorrect-type ?raise
+    endcase
+  ;
+
+  \ Explode a byte or cell sequence without pushing its count
+  : seq-no-count> ( seq -- xn ... x0 )
+    dup >type case
+      cells-type of
+        dup >size cell - 2 rshift { count }
+        count 0 ?do cell + dup @ swap loop drop
+      endof
+      bytes-type of
+        dup >size cell - { count }
+        cell+ count 0 ?do dup c@ >integral swap 1+ loop drop
+      endof
+      const-bytes-type of
+        dup [ 2 cells ] literal + @ { count }
+        cell+ @ count 0 ?do dup c@ >integral swap 1+ loop drop
+      endof
+      slice-type of
+        dup >raw { raw }
+        dup >raw-offset { offset }
+        >len { len }
+        raw >type case
+          cells-type of
+            raw offset integral> cells +
+            len integral> 0 ?do cell + dup @ swap loop drop
+          endof
           bytes-type of
             raw cell+ offset integral> +
             len integral> 0 ?do dup c@ >integral swap 1+ loop drop
@@ -2329,7 +2411,7 @@ begin-module zscript
     slice
   ;
 
-  \ Truncate the start of a sequence
+  \ Truncate the start of a sequence as a slice
   : truncate-start { count seq -- slice }
     seq >raw { raw-seq }
     seq >raw-offset { offset }
@@ -2341,7 +2423,7 @@ begin-module zscript
     slice
   ;
 
-  \ Truncate the end of a sequence
+  \ Truncate the end of a sequence as a slice
   : truncate-end { count seq -- slice }
     seq >raw { raw-seq }
     seq >raw-offset { offset }
@@ -3532,7 +3614,7 @@ begin-module zscript
     then
   ;
 
-  \ Iterate over a cell sequence
+  \ Iterate over a sequence
   : iter { seq xt -- } \ xt ( item -- )
     seq cells? if
       seq >len 0 ?do i seq @+ xt execute loop
@@ -3542,7 +3624,7 @@ begin-module zscript
     then
   ;
 
-  \ Iterate over a cell sequence with an index
+  \ Iterate over a sequence with an index
   : iteri { seq xt -- } \ xt ( item index -- )
     seq cells? if
       seq >len 0 ?do i seq @+ i xt execute loop
@@ -3578,7 +3660,7 @@ begin-module zscript
     0 false
   ;
 
-  \ Map a cell or byte sequence into a new cell sequence
+  \ Map a cell or byte sequence into a new cell or byte sequence
   : map { seq xt -- seq' } \ xt ( item -- item' )
     seq cells? if
       seq >len { len }
@@ -3594,7 +3676,7 @@ begin-module zscript
     then
   ;
 
-  \ Map a cell or byte sequence into a new cell sequence with an index
+  \ Map a cell or byte sequence into a new cell or byte sequence with an index
   : mapi { seq xt -- seq' } \ xt ( item index -- item' )
     seq cells? if
       seq >len { len }

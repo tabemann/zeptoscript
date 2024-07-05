@@ -34,10 +34,16 @@ begin-module zscript-set
     
     \ Set minimum size
     4 constant set-min-size
+
+    \ Set marker symbol
+    symbol set-tag
     
     \ Set outer record
-    begin-record set-outer
+    begin-record set-head
 
+      \ Set marker
+      item: set-tag
+      
       \ Set inner structure
       item: set-inner
 
@@ -139,18 +145,33 @@ begin-module zscript-set
 
   end-module> import
 
+  \ Get whether something is a set
+  : set? ( x -- set? )
+    dup cells? if
+      dup >len set-head-size = if
+        set-tag@ set-tag =
+      else
+        drop false
+      then
+    else
+      drop false
+    then
+  ;
+  
   \ Make a set (a size of 0 indicates a default size)
   \
   \ Note that the real size of the set is one entry larger than the specified
   \ size
   : make-set { size hash-xt equal-xt -- set }
+    set-tag
     size set-min-size max
-    1+ dup to size make-cells dup { inner } 0 hash-xt equal-xt >set-outer
+    1+ dup to size make-cells dup { inner } 0 hash-xt equal-xt >set-head
     size 0 ?do empty-value i inner !+ loop
   ;
 
   \ Duplicate a set
   : duplicate-set { set -- set' }
+    set set? averts x-incorrect-type
     set set-inner@ duplicate { inner' }
     set duplicate { set' }
     inner' set' set-inner!
@@ -159,6 +180,7 @@ begin-module zscript-set
 
   \ Iterate over the elements of a set
   : iter-set { set xt -- } \ xt ( val -- )
+    set set? averts x-incorrect-type
     set set-inner@ { inner }
     set set-entry-count@ { count }
     0 0 { index found-count }
@@ -174,6 +196,7 @@ begin-module zscript-set
 
   \ Get whether any element of a set meet a predicate
   : any-set { set xt -- } \ xt ( val -- flag )
+    set set? averts x-incorrect-type
     set set-inner@ { inner }
     set set-entry-count@ { count }
     0 0 { index found-count }
@@ -190,6 +213,7 @@ begin-module zscript-set
 
   \ Get whether all elements of a set meet a predicate
   : all-set { set xt -- } \ xt ( val -- flag )
+    set set? averts x-incorrect-type
     set set-inner@ { inner }
     set set-entry-count@ { count }
     0 0 { index found-count }
@@ -206,6 +230,7 @@ begin-module zscript-set
 
   \ Get the values of a set
   : set>values { set -- values }
+    set set? averts x-incorrect-type
     set set-inner@ { inner }
     set set-entry-count@ { count }
     count make-cells { values }
@@ -222,6 +247,7 @@ begin-module zscript-set
 
   \ Insert an entry in a set
   : insert-set { val set -- }
+    set set? averts x-incorrect-type
     val set set-hash-xt@ execute { hash }
     hash val set set-index if
       val swap set set-inner@ !+
@@ -246,6 +272,7 @@ begin-module zscript-set
 
   \ Remove an entry from a set
   : remove-set { val set -- }
+    set set? averts x-incorrect-type
     val set set-hash-xt@ execute val set set-index if
       removed-value swap set set-inner@ !+
       set set-entry-count@ 1- set set-entry-count!
@@ -256,6 +283,7 @@ begin-module zscript-set
   
   \ Test for membership in a set
   : in-set? { val set -- found? }
+    set set? averts x-incorrect-type
     set set-inner@ { inner }
     inner >len { len }
     set set-equal-xt@ { equal }
@@ -282,4 +310,10 @@ begin-module zscript-set
     until
   ;
 
+  \ Get the entry count of a set
+  : set-entry-count@ { set -- count }
+    set set? averts x-incorrect-type
+    set set-entry-count@
+  ;
+  
 end-module
