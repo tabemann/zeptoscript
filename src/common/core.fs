@@ -3072,9 +3072,24 @@ begin-module zscript
   \ Make a foreign buffer; note that this is aligned
   : foreign-buffer: ( bytes "name" -- )
     token dup 0<> averts x-token-expected
-    forth::cell forth::align,
-    unsafe::here rot unsafe::allot
-    forth::cell forth::align,
+
+    forth::compiling-to-flash? forth::if
+
+      swap
+      internal::next-ram-space
+      4 forth::align
+      dup rot integral> forth::+
+      internal::set-next-ram-space
+      >integral
+    
+    forth::else
+    
+      forth::cell forth::align,
+      unsafe::here rot unsafe::allot
+      forth::cell forth::align,
+
+    forth::then
+    
     swap constant-with-name
   ;
 

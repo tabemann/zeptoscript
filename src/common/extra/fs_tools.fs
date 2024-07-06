@@ -97,8 +97,8 @@ begin-module zscript-fs-tools
       execute-line-len dup include-stack@ frame-offset@ +
       include-stack@ frame-file@ file-size@ =
       include-stack@ frame-eof!
-      dup dup 0> if
-        1- include-buffer + unsafe::c@ dup $0A = swap $0D = or if 1- then
+      dup 0> if
+        dup 1- include-buffer + unsafe::c@ dup $0A = swap $0D = or if 1- then
       then
     ;
 
@@ -111,7 +111,8 @@ begin-module zscript-fs-tools
       include-buffer swap include-buffer 0 include-buffer-content-len@
       unsafe::move-offset
       read-file-into-buffer
-      include-buffer update-line feed-input
+      include-buffer update-line
+      feed-input
     ;
     
     \ Check end of file condition
