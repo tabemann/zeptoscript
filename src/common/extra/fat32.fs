@@ -555,7 +555,7 @@ begin-module zscript-fat32
     \ Get whether the master boot record is valid
     :method mbr-valid? { self -- valid? }
       sector-size make-bytes dup { data } 0 self my-mbr-device@ block@
-      $1FE data h@+ $AAFF =
+      $1FE data h@+ $AA55 =
     ;
 
     \ Read a partition
