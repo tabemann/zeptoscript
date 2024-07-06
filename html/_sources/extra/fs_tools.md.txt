@@ -70,6 +70,16 @@ Overwrite a file and then truncate it afterwards.
 
 Create a file.
 
+##### `list-file`
+( path -- )
+
+List a file at the specified path on the console, converting lone LF characters to CRLF pairs.
+
+##### `list-file-window`
+( offset length path -- )
+
+List a defined window in a file at the specified path on the console, converting lone LF characters to CRLF pairs.
+
 ### `dump-file-raw`
 ( path -- )
 

@@ -382,6 +382,29 @@ begin-module zscript-fs-tools
       until
     ;
 
+    \ Convert newlines in a byte sequence
+    : convert-newlines { old-seq -- seq' }
+      old-seq >len { old-len }
+      0 old-seq [: case $0A of 2 + endof $0D of endof swap 1+ swap endcase ;]
+      foldl { new-len }
+      new-len make-bytes { new-seq }
+      0 0 { old-offset new-offset }
+      begin old-offset old-len < while
+        old-offset old-seq c@+ case
+          $0A of
+            $0D new-offset new-seq c!+
+            $0A new-offset 1+ new-seq c!+
+            2 +to new-offset
+          endof
+          $0D of endof
+          dup new-offset new-seq c!+
+          1 +to new-offset
+        endcase
+        1 +to old-offset
+      repeat
+      new-seq
+    ;
+
     \ Initialize filesystem tools
     : init-fs-tools ( -- )
       0 current-fs!
@@ -497,6 +520,41 @@ begin-module zscript-fs-tools
     current-fs@ averts x-fs-not-set
     current-fs@ create-file tuck zscript-fs::write-file drop close
     current-fs@ flush
+  ;
+
+  \ List a file with newline conversions
+  : list-file ( path -- )
+    current-fs@ averts x-fs-not-set
+    current-fs@ open-file { file }
+    512 make-bytes { data }
+    begin
+      data file read-file { count }
+      count 0> if
+        0 count data >slice convert-newlines type false
+      else
+        true
+      then
+    until
+    file close
+  ;
+  
+  \ List the contents of a window in a file with newline conversions
+  : list-file-window { offset length path -- }
+    current-fs@ averts x-fs-not-set
+    path current-fs@ open-file { file }
+    offset seek-set file seek-file
+    512 make-bytes { data }
+    begin
+      0 length 512 min data >slice file read-file { count }
+      count 0> if
+        0 count data >slice convert-newlines type
+        count negate +to length
+        false
+      else
+        true
+      then
+    until
+    file close
   ;
 
   \ Dump the contents of a file to the console as raw data
