@@ -494,7 +494,7 @@ begin-module zscript-fs-tools
   \ Create a file
   : create-file ( data path -- )
     current-fs@ averts x-fs-not-set
-    current-fs@ create-file tuck write-file drop close
+    current-fs@ create-file tuck zscript-fs::write-file drop close
     current-fs@ flush
   ;
 

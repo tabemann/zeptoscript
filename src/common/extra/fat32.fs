@@ -344,6 +344,12 @@ begin-module zscript-fat32
   \ Get the partition sector count
   method partition-sectors@ ( self -- sectors )
 
+  \ Partition is active
+  $80 constant active-partition
+  
+  \ FAT32 with LBA partition type
+  $0C constant fat32-lba-partition-type
+  
   \ Partition class
   begin-class partition
 
@@ -386,6 +392,9 @@ begin-module zscript-fat32
     ;
     
   end-class
+
+  \ Format a master boot record
+  method format-mbr ( self -- )
   
   \ Get whether the master boot record is valid
   method mbr-valid? ( self -- valid? )
@@ -536,6 +545,13 @@ begin-module zscript-fat32
       mbr-device self my-mbr-device!
     ;
 
+    \ Format a master boot record
+    :method format-mbr { self -- }
+      sector-size make-bytes { scratchpad }
+      $AA55 $1FE scratchpad h!+
+      scratchpad 0 self my-mbr-device@ block!
+    ;
+
     \ Get whether the master boot record is valid
     :method mbr-valid? { self -- valid? }
       sector-size make-bytes dup { data } 0 self my-mbr-device@ block@
@@ -558,7 +574,7 @@ begin-module zscript-fat32
       partition partition-type@ $04 data c!+
       partition partition-first-sector@ $08 data w!+
       partition partition-sectors@ $0C data w!+
-      data $10 $1BE $10 index * + 0 self my-mbr-device@ block-part!
+      data $1BE $10 index * + 0 self my-mbr-device@ block-part!
     ;
     
   end-class
@@ -1623,7 +1639,7 @@ begin-module zscript-fat32
     :private find-free-cluster { self -- cluster }
       self my-recent-allocated-cluster@
       dup -1 = if drop 2 else 1+ then { recent }
-      recent self cluster-count@ 2 + recent ?do
+      recent self cluster-count@ 2 + + recent ?do
         i 0 self fat@ free-cluster? if i exit then
       loop
       recent 2 ?do
