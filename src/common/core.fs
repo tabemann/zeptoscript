@@ -1670,6 +1670,22 @@ begin-module zscript
 
     \ Find a particular word in a provided module
     : do-find-with-module ( c-addr u -- word|0 )
+      internal::temp-word-index @ begin ?dup while
+        1- 3dup
+        cells internal::temp-word-stack + @
+        internal::word-name count equal-case-strings? if
+          3dup -rot 2>r
+          get-order internal::module-stack@
+          internal::module @
+          dup new-style? if filter-new-style-flag then 1 set-order
+          2r> internal::old-find-hook @ execute ?dup if
+            >r set-order r> nip
+          else
+            set-order cells internal::temp-word-stack + @
+          then
+          -rot 2drop exit
+        then
+      repeat
       2dup internal::find-path-sep dup -1 <> if
         2 pick over internal::old-find-hook @ execute ?dup if
           >r 2 + tuck - -rot + swap r> -rot 2>r
@@ -1729,7 +1745,7 @@ begin-module zscript
     zscript 1 set-order
     0 internal::module-stack-index !
     zscript internal::push-stack
-    zscript internal::add
+    zscript internal::add-module
     find-hook @ to saved-find-hook
     ['] do-find-with-module find-hook !
     0 to old-style-modules
@@ -1746,7 +1762,7 @@ begin-module zscript
     forth 1 set-order
     0 internal::module-stack-index !
     forth internal::push-stack
-    forth internal::add
+    forth internal::add-module
     find-hook @
     saved-find-hook find-hook !
     to saved-find-hook
@@ -1765,7 +1781,7 @@ begin-module zscript
         zscript 1 set-order
         0 internal::module-stack-index !
         zscript internal::push-stack
-        zscript internal::add
+        zscript internal::add-module
         find-hook @
         saved-find-hook find-hook !
         to saved-find-hook
@@ -4448,7 +4464,7 @@ begin-module zscript
       dup >r make-new-style -rot internal::constant-with-name r>
     then
     dup internal::push-stack
-    internal::add
+    internal::add-module
   ;
   
   \ Continue an existing module definition
@@ -4462,7 +4478,7 @@ begin-module zscript
       forth::['] forth::x-not-found forth::?raise
     then
     dup internal::push-stack
-    internal::add
+    internal::add-module
   ;
   
   \ Start a private module definition
@@ -4478,12 +4494,36 @@ begin-module zscript
 
   \ Import a module
   : import ( module -- )
-    dup new-style? if filter-new-style-flag then internal::add
+    dup new-style? if filter-new-style-flag then internal::add-module
   ;
-  
-  \ Una module import
+
+  \ Import an individual word from a module
+  : import-from ( module "name" -- )
+    { module }
+    forth::get-order
+    module dup new-style? if filter-new-style-flag then 1 forth::set-order
+    forth::token forth::find forth::?dup forth::if
+      internal::temp-word-index forth::@ internal::temp-word-count forth::<
+      forth::if
+        internal::temp-word-index forth::@ forth::cells
+        internal::temp-word-stack forth::+ forth::!
+        1 internal::temp-word-index forth::+!
+        1 internal::module-stack@ internal::module-temp-word-count forth::+!
+        forth::set-order
+      else
+        drop
+        forth::set-order
+        forth::['] forth::x-temp-words-overflow forth::?raise
+      then
+    else
+      forth::set-order
+      forth::['] forth::x-unknown-word forth::?raise
+    then
+  ;
+
+  \ Un-import module import
   : unimport ( module -- )
-    dup new-style? if filter-new-style-flag then internal::remove
+    dup new-style? if filter-new-style-flag then internal::remove-module
   ;
   
   \ Immediate
@@ -4959,6 +4999,7 @@ begin-module zscript
   : 2dup [inlined] forth::2dup ;
   : 2nip [inlined] forth::2nip ;
   : 2tuck [inlined] forth::2tuck ;
+  : 3dup [inlined] forth::3dup ;
   : bit integral> forth::bit >integral ;
   : emit integral> forth::emit ;
   : emit? forth::emit? >integral ;
