@@ -1670,22 +1670,36 @@ begin-module zscript
 
     \ Find a particular word in a provided module
     : do-find-with-module ( c-addr u -- word|0 )
-      internal::temp-word-index @ begin ?dup while
-        1- 3dup
-        cells internal::temp-word-stack + @
-        internal::word-name count equal-case-strings? if
-          3dup -rot 2>r
-          get-order internal::module-stack@
-          internal::module @
-          dup new-style? if filter-new-style-flag then 1 set-order
-          2r> internal::old-find-hook @ execute ?dup if
-            >r set-order r> nip
+      internal::module-stack-index @ 0> if
+        internal::temp-word-index @
+        internal::module-stack-index @ begin ?dup while
+          1-
+          dup internal::module-entry-size * internal::module-stack +
+          dup internal::module-temp-word-count @ 0> if
+            2 pick swap internal::module-temp-word-count @ - 2 pick 1- do
+              2over
+              i cells internal::temp-word-stack + @
+              internal::word-name count equal-case-strings? if
+                2over i -rot 2>r over >r
+                get-order
+                r> internal::module-entry-size * internal::module-stack +
+                internal::module @ 1 set-order
+                2r> internal::old-find-hook @ execute ?dup if
+                  >r set-order r> nip
+                else
+                  set-order i cells internal::temp-word-stack + @
+                then
+                -rot 2drop -rot 2drop unloop exit
+              then
+            -1 +loop
+            tuck internal::module-entry-size * internal::module-stack +
+            internal::module-temp-word-count @ - swap
           else
-            set-order cells internal::temp-word-stack + @
+            drop
           then
-          -rot 2drop exit
-        then
-      repeat
+        repeat
+        drop
+      then
       2dup internal::find-path-sep dup -1 <> if
         2 pick over internal::old-find-hook @ execute ?dup if
           >r 2 + tuck - -rot + swap r> -rot 2>r
@@ -4500,9 +4514,15 @@ begin-module zscript
   \ Import an individual word from a module
   : import-from ( module "name" -- )
     { module }
+    internal::temp-word-index forth::@ { saved-temp-word-index }
+    internal::module-stack-index forth::@ { saved-module-stack-index }
+    0 internal::temp-word-index forth::!
+    0 internal::module-stack-index forth::!
     forth::get-order
     module dup new-style? if filter-new-style-flag then 1 forth::set-order
     forth::token forth::find forth::?dup forth::if
+    saved-module-stack-index internal::module-stack-index forth::!
+    saved-temp-word-index internal::temp-word-index forth::!
       internal::temp-word-index forth::@ internal::temp-word-count forth::<
       forth::if
         internal::temp-word-index forth::@ forth::cells
@@ -4513,10 +4533,14 @@ begin-module zscript
       else
         drop
         forth::set-order
+        saved-module-stack-index internal::module-stack-index forth::!
+        saved-temp-word-index internal::temp-word-index forth::!
         forth::['] forth::x-temp-words-overflow forth::?raise
       then
     else
       forth::set-order
+      saved-module-stack-index internal::module-stack-index forth::!
+      saved-temp-word-index internal::temp-word-index forth::!
       forth::['] forth::x-unknown-word forth::?raise
     then
   ;
