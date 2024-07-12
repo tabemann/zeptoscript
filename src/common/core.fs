@@ -74,7 +74,43 @@ begin-module zscript
 
     \ Saved find-hook
     0 value saved-find-hook
-    
+
+    \ Saved key?-hook
+    0 value saved-key?-hook
+
+    \ Saved key-hook
+    0 value saved-key-hook
+
+    \ Saved emit?-hook
+    0 value saved-emit?-hook
+
+    \ Saved emit-hook
+    0 value saved-emit-hook
+
+    \ Saved error-emit?-hook
+    0 value saved-error-emit?-hook
+
+    \ Saved error-emit-hook
+    0 value saved-error-emit-hook
+
+    \ Initial key?-hook
+    0 value initial-key?-hook
+
+    \ Initial key-hook
+    0 value initial-key-hook
+
+    \ Initial emit?-hook
+    0 value initial-emit?-hook
+
+    \ Initial emit-hook
+    0 value initial-emit-hook
+
+    \ Initial error-emit?-hook
+    0 value initial-error-emit?-hook
+
+    \ Initial error-emit-hook
+    0 value initial-error-emit-hook
+
     \ Record syntax
     255 constant syntax-record
 
@@ -890,12 +926,15 @@ begin-module zscript
 
     \ ERROR-EMIT stack
     8 >small-int constant error-emit-stack-global-id
+
+    \ Idle xt
+    9 >small-int constant idle-global-id
     
     \ Initial RAM global ID
-    9 >small-int constant init-ram-global-id
+    10 >small-int constant init-ram-global-id
 
     \ Initial RAM globals count
-    9 >small-int constant init-ram-global-count
+    10 >small-int constant init-ram-global-count
 
     \ Cell sequence definition type
     0 >small-int constant define-cells
@@ -1720,6 +1759,31 @@ begin-module zscript
       then
     ;
 
+    \ Swap the console hooks
+    : swap-console-hooks ( -- )
+      key?-hook @
+      saved-key?-hook key?-hook !
+      to saved-key?-hook
+      key-hook @
+      saved-key-hook key-hook !
+      to saved-key-hook
+      emit?-hook @
+      saved-emit?-hook emit?-hook !
+      to saved-emit?-hook
+      emit-hook @
+      saved-emit-hook emit-hook !
+      to saved-emit-hook
+      error-emit?-hook @
+      saved-error-emit?-hook error-emit?-hook !
+      to saved-error-emit?-hook
+      error-emit-hook @
+      saved-error-emit-hook error-emit-hook !
+      to saved-error-emit-hook
+    ;
+
+    \ Initialize the console hooks
+    defer init-console-hooks
+    
   end-module
   
   \ Initialize zeptoscript
@@ -1762,6 +1826,7 @@ begin-module zscript
     zscript internal::add-module
     find-hook @ to saved-find-hook
     ['] do-find-with-module find-hook !
+    init-console-hooks
     0 to old-style-modules
     true to inited?
     true to in-zscript?
@@ -1773,6 +1838,7 @@ begin-module zscript
     handle-number-hook @
     saved-handle-number-hook handle-number-hook !
     to saved-handle-number-hook
+    swap-console-hooks
     forth 1 set-order
     0 internal::module-stack-index !
     forth internal::push-stack
@@ -1792,6 +1858,7 @@ begin-module zscript
         handle-number-hook @
         saved-handle-number-hook handle-number-hook !
         to saved-handle-number-hook
+        swap-console-hooks
         zscript 1 set-order
         0 internal::module-stack-index !
         zscript internal::push-stack
@@ -4802,6 +4869,21 @@ begin-module zscript
     token dup 0<> averts x-token-expected find 0<>
   ;
 
+  \ Get idle handler
+  : idle-hook@ ( -- xt )
+    idle-global-id ram-global@
+  ;
+  
+  \ Set idle handler
+  : idle-hook! ( xt -- )
+    idle-global-id ram-global!
+  ;
+
+  \ Idle
+  : idle ( -- )
+    idle-hook@ ?execute
+  ;
+
   \ Evaluate code as a string
   : evaluate-with-input { addr count refill-xt eof-xt -- ? }
     refill-xt eof-xt eval-stack-global-id ram-global@ >triple
@@ -4848,7 +4930,10 @@ begin-module zscript
       forth::key-hook forth::@ key-stack-base forth::!
     then
     xt prev >pair key-stack-global-id ram-global!
-    [: 0 key-stack-global-id ram-global@ @+ execute integral> ;]
+    [:
+      begin key? unsafe::>integral not while idle repeat
+      0 key-stack-global-id ram-global@ @+ execute integral>
+    ;]
     xt>integral integral>
     forth::key-hook forth::!
   ;
@@ -4896,7 +4981,10 @@ begin-module zscript
       forth::emit-hook forth::@ emit-stack-base forth::!
     then
     xt prev >pair emit-stack-global-id ram-global!
-    [: >integral 0 emit-stack-global-id ram-global@ @+ execute ;]
+    [:
+      begin emit? unsafe::>integral not while idle repeat
+      >integral 0 emit-stack-global-id ram-global@ @+ execute
+    ;]
     xt>integral integral>
     forth::emit-hook forth::!
   ;
@@ -4944,7 +5032,10 @@ begin-module zscript
       forth::error-emit-hook forth::@ error-emit-stack-base forth::!
     then
     xt prev >pair error-emit-stack-global-id ram-global!
-    [: >integral 0 error-emit-stack-global-id ram-global@ @+ execute ;]
+    [:
+      begin emit? unsafe::>integral not while idle repeat
+      >integral 0 error-emit-stack-global-id ram-global@ @+ execute
+    ;]
     xt>integral integral>
     forth::error-emit-hook forth::!
   ;
@@ -4990,7 +5081,32 @@ begin-module zscript
     drop-error-emit?
     ?raise
   ;
+
+  continue-module zscript-internal
+
+    \ Initialize the console hooks
+    :noname
+      forth::key?-hook forth::@ dup to saved-key?-hook to initial-key?-hook
+      forth::key-hook forth::@ dup to saved-key-hook to initial-key-hook
+      forth::emit?-hook forth::@ dup to saved-emit?-hook to initial-emit?-hook
+      forth::emit-hook forth::@ dup to saved-emit-hook to initial-emit-hook
+      forth::error-emit?-hook forth::@ dup to saved-error-emit?-hook
+      to initial-error-emit?-hook
+      forth::error-emit-hook forth::@ dup to saved-error-emit-hook
+      to initial-error-emit-hook
+      [: initial-key?-hook forth::execute unsafe::>integral ;] push-key?
+      [: initial-key-hook forth::execute unsafe::>integral ;] push-key
+      [: initial-emit?-hook forth::execute unsafe::>integral ;] push-emit?
+      [: unsafe::integral> initial-emit-hook forth::execute ;] push-emit
+      [: initial-error-emit?-hook forth::execute unsafe::>integral ;]
+      push-error-emit?
+      [: unsafe::integral> initial-error-emit-hook forth::execute ;]
+      push-error-emit
+    ; is init-console-hooks
+
+  end-module
       
+
   true >small-int constant true
   false >small-int constant false
   type-shift >small-int constant type-shift

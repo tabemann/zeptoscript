@@ -27,16 +27,6 @@ begin-module zscript-task
   
   begin-module zscript-task-internal
     
-    \ Hooks to override
-    foreign-variable forth::key-hook key-hook
-    foreign-variable forth::emit-hook emit-hook
-    foreign-variable forth::error-emit-hook error-emit-hook
-
-    \ Saved hooks
-    global saved-key-hook
-    global saved-emit-hook
-    global saved-error-emit-hook
-    
     \ Queue is empty exception
     : x-queue-empty ( -- ) ." queue is empty" cr ;
 
@@ -152,46 +142,12 @@ begin-module zscript-task
     ticks-per-ms * systick-counter swap wait-delay
   ;
 
-  \ Initialize task console IO
-  : init-task-console-io ( -- )
-    key-hook@ unsafe::integral>xt saved-key-hook!
-    emit-hook@ unsafe::integral>xt saved-emit-hook!
-    error-emit-hook@ unsafe::integral>xt saved-error-emit-hook!
-    [:
-      begin
-        key? if
-          saved-key-hook@ execute true
-        else
-          yield false
-        then
-      until
-    ;] unsafe::xt>integral key-hook!
-    [:
-      begin
-        emit? if
-          saved-emit-hook@ execute true
-        else
-          yield false
-        then
-      until
-    ;] unsafe::xt>integral emit-hook!
-    [:
-      begin
-        emit? if
-          saved-error-emit-hook@ execute true
-        else
-          yield false
-        then
-      until
-    ;] unsafe::xt>integral error-emit-hook!
-  ;
-  
   continue-module zscript-task-internal
 
     \ Initialize the task queue
     : init-tasks ( -- )
       make-queue tasks!
-      init-task-console-io
+      ['] yield idle-hook!
     ;
 
     initializer init-tasks
