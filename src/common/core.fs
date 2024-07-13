@@ -4588,20 +4588,15 @@ begin-module zscript
     forth::get-order
     module dup new-style? if filter-new-style-flag then 1 forth::set-order
     forth::token forth::find forth::?dup forth::if
-    saved-module-stack-index internal::module-stack-index forth::!
-    saved-temp-word-index internal::temp-word-index forth::!
+      saved-module-stack-index internal::module-stack-index forth::!
+      saved-temp-word-index internal::temp-word-index forth::!
       internal::temp-word-index forth::@ internal::temp-word-count forth::<
       forth::if
-        internal::temp-word-index forth::@ forth::cells
-        internal::temp-word-stack forth::+ forth::!
-        1 internal::temp-word-index forth::+!
-        1 internal::module-stack@ internal::module-temp-word-count forth::+!
+        internal::add-temp-word
         forth::set-order
       else
         drop
         forth::set-order
-        saved-module-stack-index internal::module-stack-index forth::!
-        saved-temp-word-index internal::temp-word-index forth::!
         forth::['] forth::x-temp-words-overflow forth::?raise
       then
     else
@@ -4610,6 +4605,51 @@ begin-module zscript
       saved-temp-word-index internal::temp-word-index forth::!
       forth::['] forth::x-unknown-word forth::?raise
     then
+  ;
+
+  \ Import multiple words from a module
+  : begin-imports-from ( module "name0" ... "namen" "end-imports-from" -- )
+    { module }
+    forth::get-order
+    module dup new-style? if filter-new-style-flag then 1 forth::set-order
+    begin
+      forth::token
+      dup forth::0= forth::if
+        2drop forth::display-prompt forth::refill forth::false
+      else
+        2dup forth::s" end-imports-from" forth::equal-case-strings?
+        forth::not forth::if
+
+          internal::temp-word-index forth::@ { saved-temp-word-index }
+          internal::module-stack-index forth::@ { saved-module-stack-index }
+          0 internal::temp-word-index forth::!
+          0 internal::module-stack-index forth::!
+   
+          forth::find forth::?dup forth::if
+            saved-module-stack-index internal::module-stack-index forth::!
+            saved-temp-word-index internal::temp-word-index forth::!
+            internal::temp-word-index forth::@
+            internal::temp-word-count forth::<
+            forth::if
+              internal::add-temp-word forth::false
+            else
+              drop
+              forth::set-order
+              forth::['] forth::x-temp-words-overflow forth::?raise
+            then
+          else
+            forth::set-order
+            saved-module-stack-index internal::module-stack-index forth::!
+            saved-temp-word-index internal::temp-word-index forth::!
+            forth::['] forth::x-unknown-word forth::?raise
+          then
+        else
+          2drop
+          forth::set-order
+          forth::true
+        then
+      then
+    forth::until
   ;
 
   \ Un-import module import
