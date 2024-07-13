@@ -20,6 +20,9 @@
 
 begin-module zscript-array
 
+  zscript-oo import
+  zscript-special-oo import
+
   begin-module zscript-array-internal
 
     \ Symbol for defining a cell array
@@ -28,59 +31,79 @@ begin-module zscript-array
     \ Symbol for defining a byte array
     symbol define-byte-array
     
-    \ Array marker symbol
-    symbol array-tag
-    
-    \ Array type
-    begin-record array-head
+    \ Get the underlying sequence for the array
+    method array-seq@ ( self -- seq )
 
-      \ Array marker
-      item: array-tag
+    \ Set the underlying sequence for the array
+    method array-seq! ( seq self -- )
+
+    \ Array type
+    begin-class array-head
 
       \ The underlying sequence for the array
-      item: array-seq
+      member: my-array-seq
+
+      \ Constructor
+      :method new ( seq self -- ) my-array-seq! ;
       
-    end-record
+      \ Get the underlying sequence for the array
+      :method array-seq@ ( self -- seq ) my-array-seq@ ;
+
+      \ Set the underlying sequence for the array
+      :method array-seq! ( seq self -- ) my-array-seq! ;
+
+      \ Convert an array to a string
+      :method show { self -- }
+        self array-seq@ cells? if
+          self my-array-seq@ to self
+          self >len { len }
+          len 2 + make-cells { seq }
+          s" #!" 0 seq !+
+          self seq 1
+          [: { element index seq } element try-show index 1+ seq !+ ;]
+          bind iteri
+          s" !#" len 1+ seq !+
+          seq s"  " join
+        else
+          self my-array-seq@ to self
+          self >len { len }
+          len 2 + make-cells { seq }
+          s" #$" 0 seq !+
+          self seq 1 [: { byte index seq } byte try-show index 1+ seq !+ ;]
+          bind iteri
+          s" $#" len 1+ seq !+
+          seq s"  " join
+          exit
+        then
+      ;
+
+      \ Get the hash of an array
+      :method hash ( self -- ) my-array-seq@ hash ;
+
+      \ Test for equality
+      :method equal? { other self -- }
+        other class@ self class@ = if
+          other my-array-seq@ self my-array-seq@ equal?
+        else
+          false
+        then
+      ;
+
+    end-class
     
   end-module> import
 
   \ Get whether something is an array
-  : array? ( x -- array? )
-    dup cells? if
-      dup >len array-head-size = if
-        array-head> dup cells? swap bytes? or swap array-tag = and
-      else
-        drop false
-      then
-    else
-      drop false
-    then
-  ;
+  : array? ( x -- array? ) ['] array-seq@ swap has-method? ;
 
   \ Get whether something is a cell array
   : cell-array? ( x -- cell-array? )
-    dup cells? if
-      dup >len array-head-size = if
-        array-head> cells? swap array-tag = and
-      else
-        drop false
-      then
-    else
-      drop false
-    then
+    dup array? if array-seq@ cells? else drop false then
   ;
 
   \ Get whether something is a byte array
   : byte-array? ( x -- byte-array? )
-    dup cells? if
-      dup >len array-head-size = if
-        array-head> bytes? swap array-tag = and
-      else
-        drop false
-      then
-    else
-      drop false
-    then
+    dup array? if array-seq@ bytes? else drop false then
   ;
 
   \ Get the underlying sequence in an array
@@ -97,7 +120,7 @@ begin-module zscript-array
   \ Wrap a sequence in an array
   : wrap-seq-as-array ( seq -- array )
     dup cells? over bytes? or averts x-incorrect-type
-    array-tag swap >array-head
+    make-array-head
   ;
 
   \ Create a cell array from the stack

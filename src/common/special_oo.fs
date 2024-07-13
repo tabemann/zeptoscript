@@ -21,9 +21,6 @@
 begin-module zscript-special-oo
 
   zscript-oo import
-  zscript-array import
-  zscript-map import
-  zscript-set import
   
   \ Show method
   method show ( object -- bytes )
@@ -228,55 +225,6 @@ begin-module zscript-special-oo
     
     \ Show a cell sequence
     :method show { self -- bytes }
-      self cell-array? if
-        self array-seq@ to self
-        self >len { len }
-        len 2 + make-cells { seq }
-        s" #!" 0 seq !+
-        self seq 1 [: { element index seq } element try-show index 1+ seq !+ ;]
-        bind iteri
-        s" !#" len 1+ seq !+
-        seq s"  " join
-        exit
-      then
-      self byte-array? if
-        self array-seq@ to self
-        self >len { len }
-        len 2 + make-cells { seq }
-        s" #$" 0 seq !+
-        self seq 1 [: { byte index seq } byte try-show index 1+ seq !+ ;]
-        bind iteri
-        s" $#" len 1+ seq !+
-        seq s"  " join
-        exit
-      then
-      self map? if
-        self map-entry-count@ { len }
-        len 2 * 2 + make-cells { seq }
-        s" #{" 0 seq !+
-        0 ref { index }
-        self index seq 2 [: { val key index seq }
-          key try-show index ref@ 2 * 1+ seq !+
-          val try-show index ref@ 2 * 2 + seq !+
-          index ref@ 1+ index ref!
-        ;] bind iter-map
-        s" }#" len 2 * 1+ seq !+
-        seq s"  " join
-        exit
-      then
-      self set? if
-        self set-entry-count@ { len }
-        len 2 + make-cells { seq }
-        s" #|" 0 seq !+
-        0 ref { index }
-        self index seq 2 [: { val index seq }
-          val try-show index ref@ 1+ seq !+
-          index ref@ 1+ index ref!
-        ;] bind iter-set
-        s" |#" len 1+ seq !+
-        seq s"  " join
-        exit
-      then
       self test-list if { len }
         len 2 + make-cells { seq }
         s" #[" 0 seq !+
@@ -298,18 +246,6 @@ begin-module zscript-special-oo
 
     \ Hash a cell sequence
     :method hash { self -- hash }
-      self cell-array? if
-        self array-seq@ hash exit
-      then
-      self byte-array? if
-        self array-seq@ hash exit
-      then
-      self map? if
-        0 exit
-      then
-      self set? if
-        0 exit
-      then
       self test-list if { len }
         0 len 0 ?do
           0 self @+ try-hash xor dup 5 lshift swap 27 rshift or
@@ -322,34 +258,6 @@ begin-module zscript-special-oo
 
     \ Test a cells equence for equality
     :method equal? { other self -- equal? }
-      self cell-array? if
-        other cell-array? if
-          other array-seq@ self array-seq@ equal?
-        else
-          false
-        then
-        exit
-      then
-      self byte-array? if
-        other byte-array? if
-          other array-seq@ self array-seq@ equal?
-        else
-          false
-        then
-        exit
-      then
-      self map? if
-        false exit
-      then
-      other map? if
-        false exit
-      then
-      self set? if
-        false exit
-      then
-      other set? if
-        false exit
-      then
       other cells? if
         self test-list if { self-len }
           other test-list if { other-len }
@@ -754,70 +662,5 @@ begin-module zscript-special-oo
     ;
     
   end-class
-
-  defined? zscript-map [if]
-
-    continue-module zscript-map
-
-      continue-module zscript-map-internal
-  
-        \ Define a map
-        symbol define-map
-        
-      end-module> import
-      
-      \ Incorrect number of items for map exception
-      : x-incorrect-item-count ( -- ) ." incorrect item count for map" cr ;
-      
-      \ Define a generic map
-      : >generic-map ( keyn valn ... key0 val0 ) { count -- map }
-        count ['] hash ['] equal? make-map { map }
-        count 0 ?do swap map insert-map loop
-        map
-      ;
-    
-      \ Begin defining a generic map
-      : #{ ( -- ) define-map zscript-internal::begin-seq-define ;
-      
-      \ End defining a generic map
-      : }# ( keyn valn ... key0 val0 -- map )
-        define-map zscript-internal::end-seq-define
-        dup 1 and 0= averts x-incorrect-item-count
-        1 rshift >generic-map
-      ;
-      
-    end-module
-    
-  [then]
-
-  defined? zscript-set [if]
-
-    continue-module zscript-set
-      
-      continue-module zscript-set-internal
-        
-        \ Define a set
-        symbol define-set
-        
-      end-module> import
-    
-      \ Define a generic set
-      : >generic-set ( valn ... val0 ) { count -- set }
-        count ['] hash ['] equal? make-set { set }
-        count 0 ?do set insert-set loop
-        set
-      ;
-    
-      \ Begin defining a generic set
-      : #| ( -- ) define-set zscript-internal::begin-seq-define ;
-      
-      \ End defining a generic set
-      : |# ( valn ... val0 -- set )
-        define-set zscript-internal::end-seq-define >generic-set
-      ;
-
-    end-module
-    
-  [then]
 
 end-module

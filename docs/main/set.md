@@ -111,7 +111,7 @@ This will output:
 
 While values may be mutable values, undefined results will occur if the values are mutated; if this may be an issue, it would be prudent to use `duplicate` (or its like) to duplicate the values before inserting them and/or after retrieving the values if they may be mutated afterward.
 
-If `src/common/special_oo.fs` has been compiled after `src/common/set.fs`, `>generic-set` is available. It creates a set sized to the number of specified entries using `zscript-special-oo` words `hash` and `equal?` for members, also known as a *generic* set.
+`>generic-set` creates a set sized to the number of specified entries using `zscript-special-oo` words `hash` and `equal?` for members, also known as a *generic* set.
 
 An example of its use is as follows:
 

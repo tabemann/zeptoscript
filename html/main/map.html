@@ -18,7 +18,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Sets" href="set.html" />
-    <link rel="prev" title="Lists" href="list.html" />
+    <link rel="prev" title="Arrays" href="array.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -147,7 +147,7 @@
 </pre></div>
 </div>
 <p>While keys may be mutable values, undefined results will occur if the keys are mutated; if this may be an issue, it would be prudent to use <code class="docutils literal notranslate"><span class="pre">duplicate</span></code> (or its like) to duplicate the keys before inserting them and/or after retrieving the keys if they may be mutated afterward.</p>
-<p>If <code class="docutils literal notranslate"><span class="pre">src/common/special_oo.fs</span></code> has been compiled after <code class="docutils literal notranslate"><span class="pre">src/common/map.fs</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;generic-map</span></code> is available. It creates a map sized to the number of specified entries using the <code class="docutils literal notranslate"><span class="pre">zscript-special-oo</span></code> words <code class="docutils literal notranslate"><span class="pre">hash</span></code> and <code class="docutils literal notranslate"><span class="pre">equal?</span></code> for keys, also known as a <em>generic</em> map.</p>
+<p><code class="docutils literal notranslate"><span class="pre">&gt;generic-map</span></code> creates a map sized to the number of specified entries using the <code class="docutils literal notranslate"><span class="pre">zscript-special-oo</span></code> words <code class="docutils literal notranslate"><span class="pre">hash</span></code> and <code class="docutils literal notranslate"><span class="pre">equal?</span></code> for keys, also known as a <em>generic</em> map.</p>
 <p>An example of its use is as follows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">s</span><span class="s2">&quot; foo&quot;</span> <span class="mi">0</span> <span class="n">s</span><span class="s2">&quot; bar&quot;</span> <span class="mi">1</span> <span class="n">s</span><span class="s2">&quot; baz&quot;</span> <span class="mi">2</span> <span class="mi">3</span> <span class="o">&gt;</span><span class="n">generic</span><span class="o">-</span><span class="nb">map</span> <span class="p">[:</span> <span class="nb">type</span> <span class="n">space</span> <span class="o">.</span> <span class="p">;]</span> <span class="nb">iter</span><span class="o">-</span><span class="nb">map</span>
 </pre></div>
@@ -292,11 +292,13 @@
 <li class="toctree-l1"><a class="reference internal" href="core.html">zeptoscript Core Functionality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="oo.html">zeptoscript Object-Orientation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="list.html">Lists</a></li>
+<li class="toctree-l1"><a class="reference internal" href="array.html">Arrays</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Maps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="set.html">Sets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="queue.html">Queues</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task.html">Tasks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="channel.html">Channels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uchannel.html">Unbounded channels</a></li>
 <li class="toctree-l1"><a class="reference internal" href="coroutine.html">Asymmetric coroutines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="action.html">Actions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../extra/bitmap.html">Bitmaps, fonts, and displays</a></li>
@@ -310,7 +312,7 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="list.html" title="previous chapter">Lists</a></li>
+      <li>Previous: <a href="array.html" title="previous chapter">Arrays</a></li>
       <li>Next: <a href="set.html" title="next chapter">Sets</a></li>
   </ul></li>
 </ul>

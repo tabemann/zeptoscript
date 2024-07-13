@@ -166,7 +166,7 @@ bar 20 baz 30 foo 10  ok
 
 While keys may be mutable values, undefined results will occur if the keys are mutated; if this may be an issue, it would be prudent to use `duplicate` (or its like) to duplicate the keys before inserting them and/or after retrieving the keys if they may be mutated afterward.
 
-If `src/common/special_oo.fs` has been compiled after `src/common/map.fs`, `>generic-map` is available. It creates a map sized to the number of specified entries using the `zscript-special-oo` words `hash` and `equal?` for keys, also known as a *generic* map.
+`>generic-map` creates a map sized to the number of specified entries using the `zscript-special-oo` words `hash` and `equal?` for keys, also known as a *generic* map.
 
 An example of its use is as follows:
 

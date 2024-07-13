@@ -20,7 +20,16 @@
 
 begin-module zscript-set
 
+  zscript-oo import
+  zscript-special-oo import
+  
+  \ Iterate over the elements of a set
+  defer iter-set ( set xt -- ) \ xt ( val -- )
+
   begin-module zscript-set-internal
+
+    \ Define a set
+    symbol define-set
 
     \ Empty values
     \
@@ -35,28 +44,100 @@ begin-module zscript-set
     \ Set minimum size
     4 constant set-min-size
 
-    \ Set marker symbol
-    symbol set-tag
+    \ Get the set inner structure
+    method set-inner@ ( self -- set-inner )
     
-    \ Set outer record
-    begin-record set-head
+    \ Set the set inner structure
+    method set-inner! ( set-inner self -- )
+    
+    \ Get the set entry count
+    method set-entry-count@ ( self -- set-entry-count )
+    
+    \ Set the set entry count
+    method set-entry-count! ( set-entry-count self -- )
+    
+    \ Get the set hash function
+    method set-hash-xt@ ( self -- set-hash-xt )
+    
+    \ Set the set hash function
+    method set-hash-xt! ( set-hash-xt self -- )
+    
+    \ Get the set equality function
+    method set-equal-xt@ ( self -- set-equal-xt )
+    
+    \ Set the set equality function
+    method set-equal-xt! ( set-equal-xt self -- )
+    
+    \ Set type
+    begin-class set-head
 
-      \ Set marker
-      item: set-tag
-      
       \ Set inner structure
-      item: set-inner
+      member: my-set-inner
 
       \ Set entry count
-      item: set-entry-count
+      member: my-set-entry-count
       
       \ Set hash function
-      item: set-hash-xt
+      member: my-set-hash-xt
 
       \ Set equality function
-      item: set-equal-xt
+      member: my-set-equal-xt
       
-    end-record
+      \ Constructor
+      :method new { size hash-xt equal-xt self -- }
+        equal-xt self my-set-equal-xt!
+        hash-xt self my-set-hash-xt!
+        size set-min-size max
+        1+ dup to size make-cells dup { inner } self my-set-inner!
+        0 self my-set-entry-count!
+        size 0 ?do empty-value i inner !+ loop
+      ;
+      
+      \ Get the set inner structure
+      :method set-inner@ ( self -- set-inner ) my-set-inner@ ;
+
+      \ Set the set inner structure
+      :method set-inner! ( set-inner self -- ) my-set-inner! ;
+
+      \ Get the set entry count
+      :method set-entry-count@ ( self -- set-entry-count ) my-set-entry-count@ ;
+
+      \ Set the set entry count
+      :method set-entry-count! ( set-entry-count self -- ) my-set-entry-count! ;
+
+      \ Get the set hash function
+      :method set-hash-xt@ ( self -- set-hash-xt ) my-set-hash-xt@ ;
+
+      \ Set the set hash function
+      :method set-hash-xt! ( set-hash-xt self -- ) my-set-hash-xt! ;
+
+      \ Get the set equality function
+      :method set-equal-xt@ ( self -- set-equal-xt ) my-set-equal-xt@ ;
+
+      \ Set the set equality function
+      :method set-equal-xt! ( set-equal-xt self -- ) my-set-equal-xt! ;
+
+      \ Show a set
+      :method show { self -- bytes }
+        self set-entry-count@ { len }
+        len 2 + make-cells { seq }
+        s" #|" 0 seq !+
+        0 ref { index }
+        self index seq 2 [: { val index seq }
+          val try-show index ref@ 1+ seq !+
+          index ref@ 1+ index ref!
+        ;] bind iter-set
+        s" |#" len 1+ seq !+
+        seq s"  " join
+      ;
+
+      \ Get the hash of a set
+      :method hash ( self -- hash ) drop 0 ;
+
+      \ Test two sets for equality
+      :method equal? ( other self -- equal? ) = ;
+      
+    end-class
 
     \ Primitive insert
     : prim-insert-set { val hash inner -- }
@@ -146,28 +227,13 @@ begin-module zscript-set
   end-module> import
 
   \ Get whether something is a set
-  : set? ( x -- set? )
-    dup cells? if
-      dup >len set-head-size = if
-        set-tag@ set-tag =
-      else
-        drop false
-      then
-    else
-      drop false
-    then
-  ;
+  : set? ( x -- set? ) ['] set-inner@ swap has-method? ;
   
   \ Make a set (a size of 0 indicates a default size)
   \
   \ Note that the real size of the set is one entry larger than the specified
   \ size
-  : make-set { size hash-xt equal-xt -- set }
-    set-tag
-    size set-min-size max
-    1+ dup to size make-cells dup { inner } 0 hash-xt equal-xt >set-head
-    size 0 ?do empty-value i inner !+ loop
-  ;
+  : make-set ( size hash-xt equal-xt -- set ) make-set-head ;
 
   \ Duplicate a set
   : duplicate-set { set -- set' }
@@ -179,7 +245,7 @@ begin-module zscript-set
   ;
 
   \ Iterate over the elements of a set
-  : iter-set { set xt -- } \ xt ( val -- )
+  [: { set xt -- } \ xt ( val -- )
     set set? averts x-incorrect-type
     set set-inner@ { inner }
     set set-entry-count@ { count }
@@ -192,7 +258,7 @@ begin-module zscript-set
       then
       1 +to index
     repeat
-  ;
+  ;] is iter-set
 
   \ Get whether any element of a set meet a predicate
   : any-set { set xt -- } \ xt ( val -- flag )
@@ -314,6 +380,21 @@ begin-module zscript-set
   : set-entry-count@ { set -- count }
     set set? averts x-incorrect-type
     set set-entry-count@
+  ;
+
+  \ Define a generic set
+  : >generic-set ( valn ... val0 ) { count -- set }
+    count ['] hash ['] equal? make-set { set }
+    count 0 ?do set insert-set loop
+    set
+  ;
+  
+  \ Begin defining a generic set
+  : #| ( -- ) define-set zscript-internal::begin-seq-define ;
+  
+  \ End defining a generic set
+  : |# ( valn ... val0 -- set )
+    define-set zscript-internal::end-seq-define >generic-set
   ;
   
 end-module

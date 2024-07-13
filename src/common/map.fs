@@ -20,8 +20,20 @@
 
 begin-module zscript-map
 
+  zscript-oo import
+  zscript-special-oo import
+  
+  \ Incorrect number of items for map exception
+  : x-incorrect-item-count ( -- ) ." incorrect item count for map" cr ;
+
+  \ Iterate over the elements of a map
+  defer iter-map ( map xt -- ) \ xt ( value key -- )
+
   begin-module zscript-map-internal
 
+    \ Define a map
+    symbol define-map
+    
     \ Empty keys
     \
     \ This is not garbage collected so does not need to be in the heap.
@@ -35,28 +47,101 @@ begin-module zscript-map
     \ Map minimum size
     4 constant map-min-size
 
-    \ Map marker symbol
-    symbol map-tag
+    \ Get the map inner structure
+    method map-inner@ ( self -- map-inner )
     
-    \ Map outer record
-    begin-record map-head
+    \ Set the map inner structure
+    method map-inner! ( map-inner self -- )
+    
+    \ Get the map entry count
+    method map-entry-count@ ( self -- map-entry-count )
+    
+    \ Set the map entry count
+    method map-entry-count! ( map-entry-count self -- )
+    
+    \ Get the map hash function
+    method map-hash-xt@ ( self -- map-hash-xt )
+    
+    \ Set the map hash function
+    method map-hash-xt! ( map-hash-xt self -- )
+    
+    \ Get the map equality function
+    method map-equal-xt@ ( self -- map-equal-xt )
+    
+    \ Set the map equality function
+    method map-equal-xt! ( map-equal-xt self -- )
 
-      \ Map marker
-      item: map-tag
+    \ Map type
+    begin-class map-head
 
       \ Map inner structure
-      item: map-inner
+      member: my-map-inner
 
       \ Map entry count
-      item: map-entry-count
+      member: my-map-entry-count
       
       \ Map hash function
-      item: map-hash-xt
+      member: my-map-hash-xt
 
       \ Map equality function
-      item: map-equal-xt
+      member: my-map-equal-xt
+
+      \ Constructor
+      :method new { size hash-xt equal-xt self -- }
+        equal-xt self my-map-equal-xt!
+        hash-xt self my-map-hash-xt!
+        size map-min-size max
+        1+ dup to size 1 lshift make-cells dup { inner } self my-map-inner!
+        0 self my-map-entry-count!
+        size 0 ?do empty-key i 1 lshift inner !+ loop
+      ;
       
-    end-record
+      \ Get the map inner structure
+      :method map-inner@ ( self -- map-inner ) my-map-inner@ ;
+
+      \ Set the map inner structure
+      :method map-inner! ( map-inner self -- ) my-map-inner! ;
+
+      \ Get the map entry count
+      :method map-entry-count@ ( self -- map-entry-count ) my-map-entry-count@ ;
+
+      \ Set the map entry count
+      :method map-entry-count! ( map-entry-count self -- ) my-map-entry-count! ;
+
+      \ Get the map hash function
+      :method map-hash-xt@ ( self -- map-hash-xt ) my-map-hash-xt@ ;
+
+      \ Set the map hash function
+      :method map-hash-xt! ( map-hash-xt self -- ) my-map-hash-xt! ;
+
+      \ Get the map equality function
+      :method map-equal-xt@ ( self -- map-equal-xt ) my-map-equal-xt@ ;
+
+      \ Set the map equality function
+      :method map-equal-xt! ( map-equal-xt self -- ) my-map-equal-xt! ;
+
+      \ Show a map
+      :method show { self -- bytes }
+        self map-entry-count@ { len }
+        len 2 * 2 + make-cells { seq }
+        s" #{" 0 seq !+
+        0 ref { index }
+        self index seq 2 [: { val key index seq }
+          key try-show index ref@ 2 * 1+ seq !+
+          val try-show index ref@ 2 * 2 + seq !+
+          index ref@ 1+ index ref!
+        ;] bind iter-map
+        s" }#" len 2 * 1+ seq !+
+        seq s"  " join
+      ;
+
+      \ Get the hash of a map
+      :method hash ( self -- hash ) drop 0 ;
+
+      \ Test two maps for equality
+      :method equal? ( other self -- equal? ) = ;
+
+    end-class
 
     \ Primitive insert
     : prim-insert-map { val key hash inner -- }
@@ -152,28 +237,14 @@ begin-module zscript-map
 
   \ Get whether something is a map
   : map? ( x -- map? )
-    dup cells? if
-      dup >len map-head-size = if
-        map-tag@ map-tag =
-      else
-        drop false
-      then
-    else
-      drop false
-    then
+    ['] map-inner@ swap has-method?
   ;
   
   \ Make a map (a size of 0 indicates a default size)
   \
   \ Note that the real size of the map is one entry larger than the specified
   \ size
-  : make-map { size hash-xt equal-xt -- map }
-    map-tag
-    size map-min-size max
-    1+ dup to size 1 lshift make-cells dup { inner } 0
-    hash-xt equal-xt >map-head
-    size 0 ?do empty-key i 1 lshift inner !+ loop
-  ;
+  : make-map ( size hash-xt equal-xt -- map ) make-map-head ;
 
   \ Duplicate a map
   : duplicate-map { map -- map' }
@@ -185,7 +256,7 @@ begin-module zscript-map
   ;
 
   \ Iterate over the elements of a map
-  : iter-map { map xt -- } \ xt ( value key -- )
+  [: { map xt -- } \ xt ( value key -- )
     map map? averts x-incorrect-type
     map map-inner@ { inner }
     map map-entry-count@ { count }
@@ -199,7 +270,7 @@ begin-module zscript-map
       then
       1 +to index
     repeat
-  ;
+  ;] is iter-map
 
   \ Map over a map and create a new map with identical keys but new values
   : map-map { map xt -- map' } \ xt ( value key -- value' )
@@ -448,6 +519,23 @@ begin-module zscript-map
   : map-entry-count@ { map -- count }
     map map? averts x-incorrect-type
     map map-entry-count@
+  ;
+
+  \ Define a generic map
+  : >generic-map ( keyn valn ... key0 val0 ) { count -- map }
+    count ['] hash ['] equal? make-map { map }
+    count 0 ?do swap map insert-map loop
+    map
+  ;
+  
+  \ Begin defining a generic map
+  : #{ ( -- ) define-map zscript-internal::begin-seq-define ;
+  
+  \ End defining a generic map
+  : }# ( keyn valn ... key0 val0 -- map )
+    define-map zscript-internal::end-seq-define
+    dup 1 and 0= averts x-incorrect-item-count
+    1 rshift >generic-map
   ;
   
 end-module

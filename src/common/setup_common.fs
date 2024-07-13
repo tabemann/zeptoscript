@@ -23,12 +23,12 @@ compile-to-flash
 #include src/common/double.fs
 #include src/common/fixed32.fs
 #include src/common/list.fs
+#include src/common/oo.fs
+#include src/common/special_oo.fs
 #include src/common/array.fs
 #include src/common/map.fs
 #include src/common/set.fs
 #include src/common/queue.fs
-#include src/common/oo.fs
-#include src/common/special_oo.fs
 #include src/common/task.fs
 #include src/common/channel.fs
 #include src/common/uchannel.fs
