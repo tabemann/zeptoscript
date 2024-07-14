@@ -5122,6 +5122,43 @@ begin-module zscript
     ?raise
   ;
 
+  \ Execute an xt based on whether a condition is true
+  : qif ( ? flag true-xt -- ? ) \ true-xt: ( ? -- ? )
+    swap if execute else drop then
+  ;
+
+  \ Execute one of two different xt's based on whether a condition is true or
+  \ false
+  : qifelse ( ? flag true-xt false-xt -- ? ) \ both xt's: ( ? -- ?
+    2 forth::pick if drop nip execute else nip nip execute then
+  ;
+
+  \ Execute an until loop with an xt
+  : quntil ( ? xt -- ? ) \ xt: ( ? -- ? flag )
+    { xt } begin xt execute until
+  ;
+
+  \ Execute an agian loop with an xt
+  : qagain ( ? xt -- ? ) \ xt: ( ? -- ? )
+    { xt } begin xt execute again
+  ;
+
+  \ Execute a while loop with a while-xt and a body-xt
+  : qwhile ( ? while-xt body-xt -- ? ) \ while-xt: ( ? -- ? flag )
+    \ body-xt: ( ? -- ? )
+    { while-xt body-xt } begin while-xt execute while body-xt execute repeat
+  ;
+
+  \ Execute a counted loop with an xt
+  : qcount ( ? limit init xt -- ? ) \ xt: ( ? i -- ? )
+    { xt } ?do i xt execute loop
+  ;
+
+  \ Execute a counted loop with an arbitrary increment with an xt
+  : qcount+ ( ? limit init xt -- ? ) \ xt: ( ? i -- ? increment )
+    { xt } ?do i xt execute +loop
+  ;
+
   continue-module zscript-internal
 
     \ Initialize the console hooks
