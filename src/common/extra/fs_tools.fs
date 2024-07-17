@@ -51,9 +51,12 @@ begin-module zscript-fs-tools
       \ Frame offset
       item: frame-offset
 
+      \ Frame newline
+      item: frame-newline
+      
       \ Next frame
       item: frame-next
-      
+
     end-record
     
     \ The current filesystem
@@ -64,6 +67,9 @@ begin-module zscript-fs-tools
     
     \ Include input buffer content length
     global include-buffer-content-len
+
+    \ Is echoing enabled (non-negative values are enabled)
+    global echo-enabled
     
     \ Include input buffer
     include-buffer-size foreign-buffer: include-buffer
@@ -94,12 +100,20 @@ begin-module zscript-fs-tools
     
     \ Update the EOF and get the input length
     : update-line ( -- u )
+      include-stack@ frame-newline@ if
+        echo-enabled@ 0>= if cr then
+        false include-stack@ frame-newline!
+      then
       execute-line-len dup include-stack@ frame-offset@ +
       include-stack@ frame-file@ file-size@ =
       include-stack@ frame-eof!
       dup 0> if
-        dup 1- include-buffer + unsafe::c@ dup $0A = swap $0D = or if 1- then
+        dup 1- include-buffer + unsafe::c@ dup $0A = if
+          true include-stack@ frame-newline!
+        then
+        dup $0A = swap $0D = or if 1- then
       then
+      echo-enabled@ 0>= if include-buffer over addr-len>const-bytes type then
     ;
 
     \ Refill file
@@ -125,6 +139,7 @@ begin-module zscript-fs-tools
       include-stack@ 0<> if
         include-stack@ frame-offset@ seek-set
         include-stack@ frame-file@ seek-file
+        true include-stack@ frame-newline!
         0 include-buffer-content-len!
         read-file-into-buffer
       then 
@@ -419,18 +434,24 @@ begin-module zscript-fs-tools
   
   \ Get the current filesystem
   : current-fs@ ( -- fs ) current-fs@ ;
+
+  \ Enable echo
+  : enable-echo ( -- ) echo-enabled@ 1+ echo-enabled! ;
+
+  \ Disable echo
+  : disable-echo ( -- ) echo-enabled@ 1- echo-enabled! ;
   
   \ Load a file
   : load-file ( file -- )
     current-fs@ averts x-fs-not-set
-    dup false over tell-file include-stack@ >include-frame include-stack!
+    dup false over tell-file true include-stack@ >include-frame include-stack!
     execute-file
   ;
   
   \ Include a file
   : included ( path -- )
     current-fs@ averts x-fs-not-set
-    current-fs@ open-file false 0 include-stack@ >include-frame
+    current-fs@ open-file false 0 true include-stack@ >include-frame
     include-stack!
     execute-file
   ;

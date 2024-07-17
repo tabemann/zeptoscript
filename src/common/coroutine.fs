@@ -19,6 +19,8 @@
 \ SOFTWARE.
 
 begin-module zscript-coroutine
+
+  zscript-list import
   
   \ The coroutine is suspended
   symbol suspended
@@ -142,6 +144,129 @@ begin-module zscript-coroutine
     else
       x non-coroutine-local!
     then
+  ;
+
+
+  \ Iterate over a coroutine
+  : iter-coroutine { coroutine xt -- } \ xt: ( item -- )
+    0 { index }
+    begin coroutine coroutine-state@ dead <> while
+      index coroutine resume xt execute
+      1 +to index
+    repeat
+  ;
+
+  \ Iterate over a coroutine with an index
+  : iteri-coroutine { coroutine xt -- } \ xt: ( item index -- )
+    0 { index }
+    begin coroutine coroutine-state@ dead <> while
+      index coroutine resume index xt execute
+      1 +to index
+    repeat
+  ;
+
+  \ Map a coroutine to a list
+  : map>list-coroutine { coroutine xt -- list } \ xt: ( item -- item' )
+    empty { list }
+    empty { list-last }
+    0 { index }
+    begin coroutine coroutine-state@ dead <> while
+      index coroutine resume xt execute empty cons { new-list }
+      list if
+        new-list list-last tail!
+      else
+        new-list to list
+      then
+      new-list to list-last
+      1 +to index
+    repeat
+    list
+  ;
+
+  \ Map a coroutine to a list with an index
+  : mapi>list-coroutine { coroutine xt -- list } \ xt: ( item index -- item' )
+    empty { list }
+    empty { list-last }
+    0 { index }
+    begin coroutine coroutine-state@ dead <> while
+      index coroutine resume index xt execute empty cons { new-list }
+      list if
+        new-list list-last tail!
+      else
+        new-list to list
+      then
+      new-list to list-last
+      1 +to index
+    repeat
+    list
+  ;
+
+  \ Filter a coroutine to a list
+  : filter>list-coroutine { coroutine xt -- list } \ xt: ( item -- flag )
+    empty { list }
+    empty { list-last }
+    0 { index }
+    begin coroutine coroutine-state@ dead <> while
+      index coroutine resume dup { val } xt execute if
+        val empty cons { new-list }
+        list if
+          new-list list-last tail!
+        else
+          new-list to list
+        then
+        new-list to list-last
+      then
+      1 +to index
+    repeat
+    list
+  ;
+
+  \ Filter a coroutine to a list with an index
+  : filteri>list-coroutine { coroutine xt -- list } \ xt: ( item index -- flag )
+    empty { list }
+    empty { list-last }
+    0 { index }
+    begin coroutine coroutine-state@ dead <> while
+      index coroutine resume dup { val } index xt execute if
+        val empty cons { new-list }
+        list if
+          new-list list-last tail!
+        else
+          new-list to list
+        then
+        new-list to list-last
+      then
+      1 +to index
+    repeat
+    list
+  ;
+
+  \ Collect a coroutine to a list
+  : collectl>list-coroutine { coroutine -- list }
+    empty { list }
+    empty { list-last }
+    0 { index }
+    begin coroutine coroutine-state@ dead <> while
+      index coroutine resume empty cons { new-list }
+      list if
+        new-list list-last tail!
+      else
+        new-list to list
+      then
+      new-list to list-last
+      1 +to index
+    repeat
+    list
+  ;
+
+  \ Fold left a coroutine
+  : foldl-coroutine { x coroutine xt -- x' } \ xt: ( x item -- x' )
+    0 { index }
+    begin coroutine coroutine-state@ dead <> while
+      x index coroutine resume xt execute to x
+      1 +to index
+    repeat
+    x
   ;
 
 end-module

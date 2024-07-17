@@ -32,20 +32,30 @@
 <p>( – fs )</p>
 <p>Get the current filesystem.</p>
 </section>
+<section id="enable-echo">
+<h3><code class="docutils literal notranslate"><span class="pre">enable-echo</span></code></h3>
+<p>( – )</p>
+<p>Enable echoing while loading code from a file. Note that echoing is enabled by default. Also note that a given number of enables require an equal number of disables to be canceled out.</p>
+</section>
+<section id="disable-echo">
+<h3><code class="docutils literal notranslate"><span class="pre">disable-echo</span></code></h3>
+<p>( – )</p>
+<p>Disable echoing while loading code from a file. Note that a given number of disables require an equal number of enables to be canceled out.</p>
+</section>
 <section id="load-file">
 <h3><code class="docutils literal notranslate"><span class="pre">load-file</span></code></h3>
 <p>( file – )</p>
-<p>Load an already-open file and execute it. Note that the file will be closed afterwards.</p>
+<p>Load an already-open file and execute it. Note that the file will be closed afterwards. The contents of the file will be echoed to the console as it is evaluated if echoing is enabled.</p>
 </section>
 <section id="included">
 <h3><code class="docutils literal notranslate"><span class="pre">included</span></code></h3>
 <p>( path – )</p>
-<p>Execute a file specified as path in a byte sequence.</p>
+<p>Execute a file specified as path in a byte sequence. The contents of the file will be echoed to the console as it is evaluated if echoing is enabled.</p>
 </section>
 <section id="include">
 <h3><code class="docutils literal notranslate"><span class="pre">include</span></code></h3>
 <p>( “path” – )</p>
-<p>Execute a file specified as a token.</p>
+<p>Execute a file specified as a token. The contents of the file will be echoed to the console as it is evaluated if echoing is enabled.</p>
 </section>
 <section id="list-dir">
 <h3><code class="docutils literal notranslate"><span class="pre">list-dir</span></code></h3>

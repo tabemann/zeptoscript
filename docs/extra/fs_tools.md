@@ -20,20 +20,30 @@ Set the current filesystem.
 
 Get the current filesystem.
   
+### `enable-echo`
+( -- )
+
+Enable echoing while loading code from a file. Note that echoing is enabled by default. Also note that a given number of enables require an equal number of disables to be canceled out.
+
+### `disable-echo`
+( -- )
+
+Disable echoing while loading code from a file. Note that a given number of disables require an equal number of enables to be canceled out.
+
 ### `load-file`
 ( file -- )
 
-Load an already-open file and execute it. Note that the file will be closed afterwards.
+Load an already-open file and execute it. Note that the file will be closed afterwards. The contents of the file will be echoed to the console as it is evaluated if echoing is enabled.
   
 ### `included`
 ( path -- )
 
-Execute a file specified as path in a byte sequence.
+Execute a file specified as path in a byte sequence. The contents of the file will be echoed to the console as it is evaluated if echoing is enabled.
   
 ### `include`
 ( "path" -- )
 
-Execute a file specified as a token.
+Execute a file specified as a token. The contents of the file will be echoed to the console as it is evaluated if echoing is enabled.
 
 ### `list-dir`
 ( path -- )
