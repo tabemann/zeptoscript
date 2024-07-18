@@ -7,6 +7,7 @@ zeptoscript Documentation
 
    main/core
    main/oo
+   main/weak
    main/list
    main/array
    main/map

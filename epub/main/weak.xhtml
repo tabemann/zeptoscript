@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Weak references</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/epub.css" /> 
+  </head><body>
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <section id="weak-references">
+<h1>Weak references</h1>
+<p>Weak references are values that embody references which do not protect referenced values from garbage collection, and are aware of when said referenced values are garbage collected. A value that is only weakly referenced, i.e. its chains of references at some points contain only weak references, is guaranteed to be garbage collected at the next garbage collection cycle. In this way they differ from Java “soft” references, which are may be followed for garbage collection purposes except when memory is tight.</p>
+<p>There are two types of weak references, single weak references and weak pairs. Single weak references are simply references to individual values. Weak pairs are pairs of a weak reference to a value and a strong reference to another value. The utility of weak pairs is that they enable constructing linked lists of weak references.</p>
+<section id="zscript-weak-words">
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-weak</span></code> words</h2>
+<section id="broken-weak">
+<h3><code class="docutils literal notranslate"><span class="pre">broken-weak</span></code></h3>
+<p>( – symbol )</p>
+<p>This symbol is a special value which represents a broken weak reference. Note that setting a weak reference to this value will not have the intended effect, because then <code class="docutils literal notranslate"><span class="pre">weak-broken?</span></code> will return <code class="docutils literal notranslate"><span class="pre">false</span></code> for a weak reference.</p>
+</section>
+<section id="weak">
+<h3><code class="docutils literal notranslate"><span class="pre">weak?</span></code></h3>
+<p>( x – flag )</p>
+<p>Get whether a value is a single weak reference or a weak pair.</p>
+</section>
+<section id="weak-pair">
+<h3><code class="docutils literal notranslate"><span class="pre">weak-pair?</span></code></h3>
+<p>( x – flag )</p>
+<p>Get whether a value is a weak pair.</p>
+</section>
+<section id="id1">
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;weak</span></code></h3>
+<p>( x – weak )</p>
+<p>Construct a single weak reference for a value <em>x</em>.</p>
+</section>
+<section id="id2">
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;weak-pair</span></code></h3>
+<p>( x y – weak-pair )</p>
+<p>Construct a weak pair with a weak reference to <em>x</em> and a strong reference to <em>y</em>.</p>
+</section>
+<section id="id3">
+<h3><code class="docutils literal notranslate"><span class="pre">weak&#64;</span></code></h3>
+<p>( weak – x )</p>
+<p>Get the weakly referenced value for a weak reference; if the weak reference is broken, return <code class="docutils literal notranslate"><span class="pre">broken-weak</span></code>.</p>
+</section>
+<section id="id4">
+<h3><code class="docutils literal notranslate"><span class="pre">weak!</span></code></h3>
+<p>( x weak – )</p>
+<p>Set the weakly referenced value for a weak reference. This can “repair” a broken weak reference.</p>
+</section>
+<section id="weak-broken">
+<h3><code class="docutils literal notranslate"><span class="pre">weak-broken?</span></code></h3>
+<p>( weak – flag )</p>
+<p>Get whether a weak reference is broken.</p>
+</section>
+<section id="weak-pair-tail">
+<h3><code class="docutils literal notranslate"><span class="pre">weak-pair-tail&#64;</span></code></h3>
+<p>( weak-pair – tail )</p>
+<p>Get the “tail”, i.e. the strong reference, of a weak pair.</p>
+</section>
+<section id="id5">
+<h3><code class="docutils literal notranslate"><span class="pre">weak-pair-tail!</span></code></h3>
+<p>( tail weak-pair – )</p>
+<p>Set the “tail”, i.e. the strong reference, of a weak pair.</p>
+</section>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+  </body>
+</html>
