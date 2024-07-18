@@ -34,7 +34,7 @@ begin-module test
   : relay-task ( -- cmd-chan )
     1 make-chan { cmd-chan }
     fork not if
-      make-queue ref { send-queue }
+      make-queue >ref { send-queue }
       begin
         cmd-chan recv pair> over do-send = if
           nip { msg }

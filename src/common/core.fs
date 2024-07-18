@@ -111,6 +111,9 @@ begin-module zscript
     \ Initial error-emit-hook
     0 value initial-error-emit-hook
 
+    \ Weak list head
+    0 value weak-list-head
+
     \ Record syntax
     255 constant syntax-record
 
@@ -193,10 +196,20 @@ begin-module zscript
 
     \ Type shift
     28 constant type-shift
+
+    \ Weak marker
+    14 constant weak-marker
+
+    \ Broken weak reference
+    $FFFFFFFC constant broken-weak
     
     \ Size mask
     -1 32 type-shift - tuck lshift swap rshift constant size-mask
 
+    \ Single weak header
+    weak-marker type-shift lshift 2 cells 1 lshift or
+    constant single-weak-header
+    
     \ Set whether a value is an integer
     : int? ( value -- int? ) [inlined] 1 and 0<> ;
 
@@ -246,11 +259,16 @@ begin-module zscript
       >mark
       0 dp r0 str_,[_,#_]
       ]code
+      dup type-shift rshift weak-marker = { weak? }
       size-mask and 1 rshift cell align { size }
       to-space-current@ { current }
       current size + { next-current }
       to-space-top@ next-current >= averts x-out-of-memory
       dup current size move
+      weak? if
+        weak-list-head over cell+ !
+        dup to weak-list-head
+      then
       current 1 or swap !
       next-current to-space-current!
       current
@@ -283,8 +301,55 @@ begin-module zscript
       from-space-bottom!
     ;
 
+    \ Resolve weak references
+    : resolve-weak ( -- )
+      from-space-bottom@
+      from-space-top@
+      broken-weak
+      weak-list-head
+      code[
+      r3 1 dp ldm
+      mark<
+      0 tos cmp_,#_
+      ne bc>
+      2 cells dp adds_,#_
+      tos 1 dp ldm
+      pc 1 pop
+      >mark
+      0 tos r0 ldr_,[_,#_]
+      1 r1 movs_,#_
+      r1 r0 bics_,_
+      cell r0 r2 ldr_,[_,#_]
+      r1 r2 tst_,_
+      ne bc>
+      0 dp r1 ldr_,[_,#_]
+      r1 r2 cmp_,_
+      hs bc>
+      cell dp r1 ldr_,[_,#_]
+      r1 r2 cmp_,_
+      lo bc>
+      0 r2 r2 ldr_,[_,#_]
+      1 r1 movs_,#_
+      r1 r2 tst_,_
+      eq bc>
+      r1 r2 bics_,_
+      cell r0 r2 str_,[_,#_]
+      b>
+      2swap
+      >mark
+      cell r0 r3 str_,[_,#_]
+      >mark
+      >mark
+      >mark
+      >mark
+      cell tos tos ldr_,[_,#_]
+      b<
+      ]code
+    ;
+
     \ Carry out a GC cycle
     : gc ( -- )
+      0 to weak-list-head
       swap-spaces
       relocate-stack
       ram-globals-array@ relocate ram-globals-array!
@@ -295,13 +360,23 @@ begin-module zscript
         header size-mask and 1 rshift cell align { aligned-size }
         header [ has-values type-shift lshift ] literal and if
           gc-current aligned-size + { gc-current-end }
-          gc-current cell+ begin dup gc-current-end u< while
+          header type-shift rshift weak-marker = if
+            header single-weak-header = if
+              gc-current-end
+            else
+              gc-current-end cell -
+            then
+          else
+            gc-current cell+
+          then
+          begin dup gc-current-end u< while
             dup @ relocate over ! cell+
           repeat
           drop
         then
         aligned-size +to gc-current
       repeat
+      resolve-weak
     ;
 
     \ Case cells to nulls, integers, but not words
@@ -380,6 +455,7 @@ begin-module zscript
     13 >small-int constant save-type
     14 >small-int constant ref-type
     15 >small-int constant force-type
+    16 >small-int constant weak-type
 
     \ Tags
     1 >small-int constant word-tag
@@ -537,6 +613,37 @@ begin-module zscript
       x over cell+ !
       [ ref-type integral> 2 - type-shift lshift
       2 cells 1 lshift or ] literal over !
+    ;
+
+    \ Allocate a single weak reference
+    : allocate-weak { x -- addr }
+      to-space-current@ [ 2 cells ] literal + to-space-top@ > if
+        gc
+        to-space-current@ [ 2 cells ] literal + to-space-top@ <=
+        averts x-out-of-memory
+      then
+      to-space-current@ { current }
+      current [ 2 cells ] literal + to-space-current!
+      current
+      x over cell+ !
+      [ weak-type integral> 2 - type-shift lshift
+      2 cells 1 lshift or ] literal over !
+    ;
+
+    \ Allocate a weak pair
+    : allocate-weak-pair { x y -- addr }
+      to-space-current@ [ 3 cells ] literal + to-space-top@ > if
+        gc
+        to-space-current@ [ 3 cells ] literal + to-space-top@ <=
+        averts x-out-of-memory
+      then
+      to-space-current@ { current }
+      current [ 3 cells ] literal + to-space-current!
+      current
+      x over cell+ !
+      y over 2 cells + !
+      [ weak-type integral> 2 - type-shift lshift
+      3 cells 1 lshift or ] literal over !
     ;
 
     \ Allocate memory as bytes
@@ -960,6 +1067,7 @@ begin-module zscript
   save-type constant save-type
   ref-type constant ref-type
   force-type constant force-type
+  weak-type constant weak-type
   
   \ Ensure that a number of bytes are available in the heap without using said
   \ bytes triggering GC
@@ -1110,7 +1218,7 @@ begin-module zscript
   ;
 
   \ Create a reference
-  : ref ( x -- ref )
+  : >ref ( x -- ref )
     allocate-ref
   ;
 
@@ -4317,7 +4425,7 @@ begin-module zscript
     seq >len 0= if 0 make-cells exit then
     0 { parts }
     0 { count }
-    0 ref { index }
+    0 >ref { index }
     index xt [ 2 >small-int ] literal [: { item current-index index xt }
       item current-index index ref@ + xt execute
     ;] bind to xt
@@ -5182,7 +5290,6 @@ begin-module zscript
     ; is init-console-hooks
 
   end-module
-      
 
   true >small-int constant true
   false >small-int constant false

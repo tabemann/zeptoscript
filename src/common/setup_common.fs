@@ -22,6 +22,7 @@ compile-to-flash
 #include src/common/armv6m.fs
 #include src/common/double.fs
 #include src/common/fixed32.fs
+#include src/common/weak.fs
 #include src/common/list.fs
 #include src/common/oo.fs
 #include src/common/special_oo.fs

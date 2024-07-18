@@ -178,7 +178,7 @@ Get the raw offset of a cell sequence, byte sequence, or slice value. The primar
 
 Get the length of a cell sequence, byte sequence, or slice in entries or bytes.
 
-### `ref`
+### `>ref`
 ( x -- ref )
 
 Create a reference with a value *x*.

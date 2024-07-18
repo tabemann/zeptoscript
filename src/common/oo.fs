@@ -24,7 +24,7 @@ begin-module zscript-oo
 
   \ Types
   9 constant class-type
-  16 constant object-type
+  17 constant object-type
 
   \ Cannot define a member for a type class
   : x-type-classes-have-no-members ( -- ) ." type classe have no members" cr ;

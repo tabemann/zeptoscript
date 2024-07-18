@@ -122,7 +122,7 @@ begin-module zscript-set
         self set-entry-count@ { len }
         len 2 + make-cells { seq }
         s" #|" 0 seq !+
-        0 ref { index }
+        0 >ref { index }
         self index seq 2 [: { val index seq }
           val try-show index ref@ 1+ seq !+
           index ref@ 1+ index ref!

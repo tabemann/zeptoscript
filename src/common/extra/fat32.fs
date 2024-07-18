@@ -1079,7 +1079,7 @@ begin-module zscript-fat32
     \ Redirect input to be from a file
     :method with-file-input { xt self -- }
       sector-size make-bytes { buffer }
-      0 0 buffer >slice ref { slice }
+      0 0 buffer >slice >ref { slice }
       buffer slice self 3 [: { buffer slice self }
         slice ref@ >len 0> if
           true
@@ -1110,7 +1110,7 @@ begin-module zscript-fat32
     \ Actually hande output redirection
     :private with-file-generic-output { xt self -- }
       sector-size make-bytes { buffer }
-      0 ref { offset }
+      0 >ref { offset }
       ['] true
       buffer offset self 3 [: { c buffer offset self }
         offset ref@ { current-offset }

@@ -21,6 +21,7 @@
 begin-module zscript-special-oo
 
   zscript-oo import
+  zscript-weak import
   
   \ Show method
   method show ( object -- bytes )
@@ -634,7 +635,7 @@ begin-module zscript-special-oo
       
   end-class
   
-  \ Type classes for forced thunks
+  \ Type class for forced thunks
   force-type begin-type-class
     
     \ Show a forced thunk
@@ -660,6 +661,38 @@ begin-module zscript-special-oo
         false
       then
     ;
+    
+  end-class
+
+  \ Type class for weak references
+  weak-type begin-type-class
+
+    \ Show a weak reference
+    :method show { self -- bytes }
+      self weak-pair? if
+        5 make-cells { seq }
+        s" weak:(" 0 seq !+
+        self weak@ dup broken-weak <> if try-show else drop s" broken" then
+        1 seq !+
+        s" ),tail:(" 2 seq !+
+        self weak-pair-tail@ try-show 3 seq !+
+        s" )" 4 seq !+
+        seq 0bytes join
+      else
+        3 make-cells { seq }
+        s" weak:(" 0 seq !+
+        self weak@ dup broken-weak <> if try-show else drop s" broken" then
+        1 seq !+
+        s" )" 2 seq !+
+        seq 0bytes join
+      then
+    ;
+
+    \ Hash a weak reference
+    :method hash { self -- hash } 0 ;
+
+    \ Test two weak references for equality
+    :method equal? ( other self -- equal ) = ;
     
   end-class
 

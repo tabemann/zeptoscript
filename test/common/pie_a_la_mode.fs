@@ -190,7 +190,7 @@ begin-module pie-a-la-mode-test
         request order-map@ [: show type space show type space ;] iter-map
         empty state waiter-foods!
         empty state waiter-recv-foods!
-        false ref { food-not-found? }
+        false >ref { food-not-found? }
         request order-map@ state food-not-found? 2 [:
           { quantity food state food-not-found? }
           food state waiter-food-map@ find-map if

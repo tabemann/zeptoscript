@@ -125,7 +125,7 @@ begin-module zscript-map
         self map-entry-count@ { len }
         len 2 * 2 + make-cells { seq }
         s" #{" 0 seq !+
-        0 ref { index }
+        0 >ref { index }
         self index seq 2 [: { val key index seq }
           key try-show index ref@ 2 * 1+ seq !+
           val try-show index ref@ 2 * 2 + seq !+

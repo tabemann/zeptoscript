@@ -36,7 +36,7 @@ begin-module zscript-simple-font-6x8
 
     \ Parse a row the font
     : %% ( -- )
-      0 ref { data }
+      0 >ref { data }
       token dup 0<> averts x-token-expected
       data 1 [: { c data }
         data ref@ 1 lshift data ref!
