@@ -1827,7 +1827,7 @@ begin-module zscript
               2over
               i cells internal::temp-word-stack + @
               internal::word-name count equal-case-strings? if
-                2over i -rot 2>r over >r
+                2over 2>r dup >r
                 get-order
                 r> internal::module-entry-size * internal::module-stack +
                 internal::module @ 1 set-order
