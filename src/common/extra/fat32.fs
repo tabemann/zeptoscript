@@ -27,6 +27,8 @@ begin-module zscript-fat32
   zscript-fs import
   zscript-map import
   zscript-task import
+  zscript-weak import
+  zscript-list import
   
   \ Sector size exception
   : x-sector-size-not-supported ( -- )
@@ -507,10 +509,10 @@ begin-module zscript-fat32
     method fat32-device@ ( fs -- device )
 
     \ Register an open file or directory
-    method register-open ( cluster fs -- )
+    method register-open ( object cluster fs -- )
 
     \ Unregister an open file or directory
-    method unregister-open ( cluster fs -- )
+    method unregister-open ( object cluster fs -- )
 
     \ Get the number of open references to a file or directory
     method open-count@ ( cluster fs -- count )
@@ -949,7 +951,7 @@ begin-module zscript-fat32
     :method close { self -- }
       self my-file-open@ averts x-not-open
       false self my-file-open!
-      self my-file-first-cluster@ self my-file-fs@ unregister-open
+      self self my-file-first-cluster@ self my-file-fs@ unregister-open
     ;
 
     \ Actually create a file
@@ -967,7 +969,7 @@ begin-module zscript-fat32
       entry self my-file-parent-index@ self my-file-parent-cluster@
       self my-file-fs@ entry!
       true self my-file-open!
-      self my-file-first-cluster@ self my-file-fs@ register-open
+      self self my-file-first-cluster@ self my-file-fs@ register-open
     ;
 
     \ Actually open a file
@@ -981,7 +983,7 @@ begin-module zscript-fat32
       entry first-cluster@ dup self my-file-first-cluster!
       self my-file-current-cluster!
       true self my-file-open!
-      self my-file-first-cluster@ self my-file-fs@ register-open
+      self self my-file-first-cluster@ self my-file-fs@ register-open
     ;
 
     \ Actually seek to an offset in a file
@@ -1273,7 +1275,7 @@ begin-module zscript-fat32
     :method close { self -- }
       self my-dir-open@ averts x-not-open
       false self my-dir-open!
-      self my-dir-first-cluster@ self my-dir-fs@ unregister-open
+      self self my-dir-first-cluster@ self my-dir-fs@ unregister-open
     ;
     
     \ Read a directory
@@ -1522,7 +1524,7 @@ begin-module zscript-fat32
       parent-dir self do-create-dot-dot-entry
       true self my-dir-open!
       false self my-dir-root!
-      self my-dir-first-cluster@ self my-dir-fs@ register-open
+      self self my-dir-first-cluster@ self my-dir-fs@ register-open
     ;
 
     \ Actually open a directory
@@ -1537,7 +1539,7 @@ begin-module zscript-fat32
       self my-dir-first-cluster! self my-dir-current-cluster!
       true self my-dir-open!
       false self my-dir-root!
-      self my-dir-first-cluster@ self my-dir-fs@ register-open
+      self self my-dir-first-cluster@ self my-dir-fs@ register-open
     ;
 
     \ Get the root directory
@@ -1548,7 +1550,7 @@ begin-module zscript-fat32
       cluster self my-dir-current-cluster!
       true self my-dir-open!
       true self my-dir-root!
-      self my-dir-first-cluster@ self my-dir-fs@ register-open
+      self self my-dir-first-cluster@ self my-dir-fs@ register-open
     ;
 
   end-class
@@ -1846,22 +1848,68 @@ begin-module zscript-fat32
     \ Flush a filesystem
     :method flush ( self -- ) my-device@ flush-blocks ;
     
-    \ Register an open file or directory
-    :method register-open { cluster self -- }
+    \ Remove broken weak references from open registration
+    :private clear-broken-opens { cluster self -- }
       cluster self my-open-map@ find-map if
-        1+ cluster self my-open-map@ insert-map
+        dup dup { first-ref last-ref current-ref }
+        begin current-ref while
+          current-ref weak-broken? if
+            current-ref first-ref = if
+              current-ref weak-pair-tail@
+              dup to first-ref
+              dup to last-ref
+            else
+              current-ref weak-pair-tail@
+              dup last-ref weak-pair-tail!
+            then
+            to current-ref
+          else
+            current-ref to last-ref
+            current-ref weak-pair-tail@ to current-ref
+          then
+        repeat
+        first-ref if
+          first-ref cluster self my-open-map@ insert-map
+        else
+          cluster self my-open-map@ remove-map
+        then
       else
-        drop 1 cluster self my-open-map@ insert-map
+        drop
+      then
+    ;
+    
+    \ Register an open file or directory
+    :method register-open { object cluster self -- }
+      cluster self clear-broken-opens
+      cluster self my-open-map@ find-map if
+        object swap >weak-pair cluster self my-open-map@ insert-map
+      else
+        drop object 0 >weak-pair cluster self my-open-map@ insert-map
       then
     ;
 
     \ Unregister an open file or directory
-    :method unregister-open { cluster self -- }
+    :method unregister-open { object cluster self -- }
+      cluster self clear-broken-opens
       cluster self my-open-map@ find-map if
-        dup 1 > if
-          1- cluster self my-open-map@ insert-map
+        dup dup { first-ref last-ref current-ref }
+        begin current-ref while
+          current-ref weak@ object = if
+            current-ref first-ref = if
+              current-ref weak-pair-tail@ to first-ref
+            else
+              current-ref weak-pair-tail@ last-ref weak-pair-tail!
+            then
+            0 to current-ref
+          else
+            current-ref to last-ref
+            current-ref weak-pair-tail@ to current-ref
+          then
+        repeat
+        first-ref if
+          first-ref cluster self my-open-map@ insert-map
         else
-          drop cluster self my-open-map@ remove-map
+          cluster self my-open-map@ remove-map
         then
       else
         drop
@@ -1870,7 +1918,24 @@ begin-module zscript-fat32
 
     \ Get the number of open references to a file or directory
     :method open-count@ { cluster self -- count }
-      cluster self my-open-map@ find-map not if drop 0 then
+      cluster self clear-broken-opens
+      cluster self my-open-map@ find-map if
+        drop
+        gc
+        cluster self clear-broken-opens
+        cluster self my-open-map@ find-map if
+          0 { count }
+          begin ?dup while
+            weak-pair-tail@
+            1 +to count
+          repeat
+          count
+        else
+          drop 0
+        then
+      else
+        drop 0
+      then
     ;
 
     \ Create a file
