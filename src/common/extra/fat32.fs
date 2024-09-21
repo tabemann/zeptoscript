@@ -799,6 +799,7 @@ begin-module zscript-fat32
       time-field 5 rshift $3F and date-time date-time-minute!
       time-field $1F and 2 *
       self my-create-time-fine@ 100 / + date-time date-time-second!
+      0 date-time date-time-msec!
       date-time update-dotw
       date-time
     ;
@@ -828,6 +829,7 @@ begin-module zscript-fat32
       time-field 11 rshift date-time date-time-hour!
       time-field 5 rshift $3F and date-time date-time-minute!
       time-field $1F and 2 * date-time date-time-second!
+      0 date-time date-time-msec!
       date-time update-dotw
       date-time
     ;

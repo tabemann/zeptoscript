@@ -42,7 +42,8 @@ begin-module zscript-rtc
     1 1 foreign forth::rtc::date-time-hour date-time-hour
     1 1 foreign forth::rtc::date-time-minute date-time-minute
     1 1 foreign forth::rtc::date-time-second date-time-second
-
+    1 1 foreign forth::rtc::date-time-msec date-time-msec
+    
     2 2 foreign forth::rtc::format-date-time format-date-time
     foreign-constant forth::rtc::max-date-time-format-size max-date-time-format-size
 
@@ -81,6 +82,9 @@ begin-module zscript-rtc
   \ Set second
   method date-time-second! ( second self -- )
 
+  \ Set millisecond
+  method date-time-msec! ( msec self -- )
+  
   \ Get year
   method date-time-year@ ( self -- year )
 
@@ -102,6 +106,9 @@ begin-module zscript-rtc
   \ Get second
   method date-time-second@ ( self -- second )
 
+  \ Get millisecond
+  method date-time-msec@ ( self -- msec )
+  
   \ Update the day of the week for a date/time
   method update-dotw ( self -- )
 
@@ -170,6 +177,11 @@ begin-module zscript-rtc
       date-time-data@ unsafe::bytes>addr-len drop date-time-second unsafe::c!
     ;
 
+    \ Set millisecond
+    :method date-time-msec! ( msec self -- )
+      date-time-data@ unsafe::bytes>addr-len drop date-time-msec unsafe::h!
+    ;
+    
     \ Get year
     :method date-time-year@ ( self -- year )
       date-time-data@ unsafe::bytes>addr-len drop date-time-year unsafe::@
@@ -205,6 +217,11 @@ begin-module zscript-rtc
       date-time-data@ unsafe::bytes>addr-len drop date-time-second unsafe::c@
     ;
 
+    \ Get millisecond
+    :method date-time-msec@ ( self -- msec )
+      date-time-data@ unsafe::bytes>addr-len drop date-time-msec unsafe::h@
+    ;
+    
     \ Update the day of the week for a date/time
     :method update-dotw ( self -- )
       date-time-data@ unsafe::bytes>addr-len drop
