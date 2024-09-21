@@ -54,6 +54,11 @@ Set minute.
 
 Set second.
 
+### `date-time-msec!`
+( msec self -- )
+
+Set millisecond.
+
 ### `date-time-year@`
 ( self -- year )
 
@@ -88,6 +93,11 @@ Get minute.
 ( self -- second )
 
 Get second.
+
+### `date-time-msec@`
+( self -- msec )
+
+Get millisecond.
 
 ### `update-dotw`
 ( self -- )
