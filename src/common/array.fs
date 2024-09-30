@@ -299,7 +299,7 @@ begin-module zscript-array
   ;
   
   \ Fold right over a cell or byte array with an index
-  : foldri ( x array xt -- x' ) \ xt ( item x index -- x' )
+  : foldri-array ( x array xt -- x' ) \ xt ( item x index -- x' )
     swap array-seq@ swap foldri
   ;
 

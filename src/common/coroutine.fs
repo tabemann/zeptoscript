@@ -92,6 +92,9 @@ begin-module zscript-coroutine
     then
   ;
 
+  \ Create a dead coroutine
+  : make-dead-coroutine ( -- coroutine ) dead 0 0 0 >coroutine ;
+  
   \ Suspend a coroutine
   : suspend ( x -- x' )
     current-coroutine@ { coroutine }

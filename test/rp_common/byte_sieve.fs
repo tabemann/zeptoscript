@@ -1,5 +1,5 @@
 \ Copyright (c) 2024 Travis Bemann
-\ 
+\
 \ Permission is hereby granted, free of charge, to any person obtaining a copy
 \ of this software and associated documentation files (the "Software"), to deal
 \ in the Software without restriction, including without limitation the rights
@@ -18,21 +18,44 @@
 \ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 \ SOFTWARE.
 
-compile-to-flash
-#include src/common/armv6m.fs
-#include src/common/double.fs
-#include src/common/fixed32.fs
-#include src/common/weak.fs
-#include src/common/list.fs
-#include src/common/oo.fs
-#include src/common/special_oo.fs
-#include src/common/array.fs
-#include src/common/map.fs
-#include src/common/set.fs
-#include src/common/queue.fs
-#include src/common/task.fs
-#include src/common/channel.fs
-#include src/common/uchannel.fs
-#include src/common/coroutine.fs
-#include src/common/iter.fs
-reboot
+zscript-double import
+
+0 2 foreign forth::timer::us-counter us-counter
+
+: us-counter ( -- time ) us-counter 2integral>double ;
+
+: byte-sieve-inner { size flags -- count }
+  1 { iter }
+  0 { count }
+  begin iter 10 <= while
+    0 { index }
+    begin index size <= while
+      true index flags c!+
+      1 +to index
+    repeat
+    0 to index
+    begin index size <= while
+      index flags c@+ if
+        index index + 3 + { prime }
+        index prime + { k }
+        begin k size <= while
+          false k flags c!+
+          prime +to k
+        repeat
+        1 +to count
+      then
+      1 +to index
+    repeat
+    1 +to iter
+  repeat
+  count
+;
+    
+: byte-sieve ( -- )
+  8190 dup 1+ make-bytes { size flags }
+  us-counter { time }
+  size flags byte-sieve-inner { count }
+  us-counter { end-time }
+  cr count . ." primes"
+  cr end-time time d- d>s s>f 1_000_000,0 f/ ." Time: " f. ." s"
+;

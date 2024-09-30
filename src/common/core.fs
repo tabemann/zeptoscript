@@ -2621,6 +2621,7 @@ begin-module zscript
     seq >raw { raw-seq }
     seq >raw-offset { offset }
     seq >len { len }
+    len count min to count
     [ 3 >small-int ] literal slice-type allocate-cells { slice }
     raw-seq slice forth::cell+ !
     offset count + slice [ 2 forth::cells ] literal forth::+ !
@@ -2633,6 +2634,7 @@ begin-module zscript
     seq >raw { raw-seq }
     seq >raw-offset { offset }
     seq >len { len }
+    len count min to count
     [ 3 >small-int ] literal slice-type allocate-cells { slice }
     raw-seq slice forth::cell+ !
     offset slice [ 2 forth::cells ] literal forth::+ !
