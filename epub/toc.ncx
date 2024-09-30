@@ -2728,9 +2728,9 @@
         </navPoint>
         <navPoint id="navPoint454" playOrder="442">
           <navLabel>
-            <text>foldri</text>
+            <text>foldri-array</text>
           </navLabel>
-          <content src="main/array.xhtml#foldri" />  
+          <content src="main/array.xhtml#foldri-array" />  
         </navPoint>
         <navPoint id="navPoint455" playOrder="443">
           <navLabel>

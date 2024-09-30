@@ -211,7 +211,7 @@ Fold left over a cell or byte array with an index.
 
 Fold right over a cell or byte array.
   
-### `foldri`
+### `foldri-array`
 ( x array xt -- x' ) xt: ( item x index -- x' )
 
 Fold right over a cell or byte array with an index.
