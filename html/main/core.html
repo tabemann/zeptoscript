@@ -1,20 +1,16 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>zeptoscript Core Functionality &#8212; zeptoscript  documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="zeptoscript Object-Orientation" href="oo.html" />
@@ -37,7 +33,7 @@
           <div class="body" role="main">
             
   <section id="zeptoscript-core-functionality">
-<h1>zeptoscript Core Functionality<a class="headerlink" href="#zeptoscript-core-functionality" title="Permalink to this heading">¶</a></h1>
+<h1>zeptoscript Core Functionality<a class="headerlink" href="#zeptoscript-core-functionality" title="Link to this heading">¶</a></h1>
 <p>zeptoscript is a high-level, dynamically-typed language implemented on top of zeptoforth. It includes automatic memory management achieved through the use of a Cheney’s algorithm garbage collector.</p>
 <p>zeptoscript has the following basic data types:</p>
 <ul class="simple">
@@ -90,1542 +86,1542 @@
 <p>zeptoscript code may only execute in one task, because the zeptoscript garbage collector is only aware of the current task, and the synchronization necessary to achieve execution across tasks would prove problematic. However, for asynchronous programming, an <em>action scheduler</em> mechanism is provided by <code class="docutils literal notranslate"><span class="pre">src/common/action.fs</span></code>. This is similar to the zeptoforth action scheduler, but has a few minor differences (e.g. data transferred between actions is not copied aside from the copying of integral messages and references to allocated messages). The action scheduler is “stackless” in that every action shares the same underlying data and return stacks, and storing state information between states is accomplished through providing closures for each state, and in said closures referencing outside data.</p>
 <p>S15.16 fixed-point numerics are provided by <code class="docutils literal notranslate"><span class="pre">src/common/fixed32.fs</span></code>. These fixed-point numbers are cell-sized so they fit in the space of normal integrals. Note that operations for addition, subtraction, and negation are not included in <code class="docutils literal notranslate"><span class="pre">src/common/fixed32.fs</span></code>. This is because normal integral <code class="docutils literal notranslate"><span class="pre">+</span></code>, <code class="docutils literal notranslate"><span class="pre">-</span></code>, and <code class="docutils literal notranslate"><span class="pre">negate</span></code> fits these roles. Note that loading <code class="docutils literal notranslate"><span class="pre">src/common/fixed32.fs</span></code> overrides the numeric parser to enable parsing S15.16 literals, which have the form <code class="docutils literal notranslate"><span class="pre">x;y</span></code> where <code class="docutils literal notranslate"><span class="pre">;</span></code> is the decimal point.</p>
 <section id="zscript-words">
-<h2><code class="docutils literal notranslate"><span class="pre">zscript</span></code> words<a class="headerlink" href="#zscript-words" title="Permalink to this heading">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">zscript</span></code> words<a class="headerlink" href="#zscript-words" title="Link to this heading">¶</a></h2>
 <p>Note that the <code class="docutils literal notranslate"><span class="pre">zscript</span></code> module is the default module within zeptoscript.</p>
 <section id="null-type">
-<h3><code class="docutils literal notranslate"><span class="pre">null-type</span></code><a class="headerlink" href="#null-type" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">null-type</span></code><a class="headerlink" href="#null-type" title="Link to this heading">¶</a></h3>
 <p>( – type )</p>
 <p>The null type.</p>
 </section>
 <section id="int-type">
-<h3><code class="docutils literal notranslate"><span class="pre">int-type</span></code><a class="headerlink" href="#int-type" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">int-type</span></code><a class="headerlink" href="#int-type" title="Link to this heading">¶</a></h3>
 <p>( – type )</p>
 <p>The small integer type.</p>
 </section>
 <section id="bytes-type">
-<h3><code class="docutils literal notranslate"><span class="pre">bytes-type</span></code><a class="headerlink" href="#bytes-type" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">bytes-type</span></code><a class="headerlink" href="#bytes-type" title="Link to this heading">¶</a></h3>
 <p>( – type )</p>
 <p>The non-constant byte sequence type.</p>
 </section>
 <section id="word-type">
-<h3><code class="docutils literal notranslate"><span class="pre">word-type</span></code><a class="headerlink" href="#word-type" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">word-type</span></code><a class="headerlink" href="#word-type" title="Link to this heading">¶</a></h3>
 <p>( – type )</p>
 <p>The big integer type.</p>
 </section>
 <section id="id1">
-<h3><code class="docutils literal notranslate"><span class="pre">2word-type</span></code><a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">2word-type</span></code><a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
 <p>( – type )</p>
 <p>The double-cell type (for future use).</p>
 </section>
 <section id="const-bytes-type">
-<h3><code class="docutils literal notranslate"><span class="pre">const-bytes-type</span></code><a class="headerlink" href="#const-bytes-type" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">const-bytes-type</span></code><a class="headerlink" href="#const-bytes-type" title="Link to this heading">¶</a></h3>
 <p>( – type )</p>
 <p>The constant byte sequence type.</p>
 </section>
 <section id="xt-type">
-<h3><code class="docutils literal notranslate"><span class="pre">xt-type</span></code><a class="headerlink" href="#xt-type" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">xt-type</span></code><a class="headerlink" href="#xt-type" title="Link to this heading">¶</a></h3>
 <p>( – type )</p>
 <p>The execution token type.</p>
 </section>
 <section id="tagged-type">
-<h3><code class="docutils literal notranslate"><span class="pre">tagged-type</span></code><a class="headerlink" href="#tagged-type" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">tagged-type</span></code><a class="headerlink" href="#tagged-type" title="Link to this heading">¶</a></h3>
 <p>( – type )</p>
 <p>A type for auxiliary types, such as words.</p>
 </section>
 <section id="symbol-type">
-<h3><code class="docutils literal notranslate"><span class="pre">symbol-type</span></code><a class="headerlink" href="#symbol-type" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">symbol-type</span></code><a class="headerlink" href="#symbol-type" title="Link to this heading">¶</a></h3>
 <p>( – type )</p>
 <p>The symbol type.</p>
 </section>
 <section id="cells-type">
-<h3><code class="docutils literal notranslate"><span class="pre">cells-type</span></code><a class="headerlink" href="#cells-type" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">cells-type</span></code><a class="headerlink" href="#cells-type" title="Link to this heading">¶</a></h3>
 <p>( – type )</p>
 <p>The cell sequence type.</p>
 </section>
 <section id="closure-type">
-<h3><code class="docutils literal notranslate"><span class="pre">closure-type</span></code><a class="headerlink" href="#closure-type" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">closure-type</span></code><a class="headerlink" href="#closure-type" title="Link to this heading">¶</a></h3>
 <p>( – type )</p>
 <p>The closure type.</p>
 </section>
 <section id="slice-type">
-<h3><code class="docutils literal notranslate"><span class="pre">slice-type</span></code><a class="headerlink" href="#slice-type" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">slice-type</span></code><a class="headerlink" href="#slice-type" title="Link to this heading">¶</a></h3>
 <p>( – type )</p>
 <p>The slice type; note that this encompasses slices of cell sequences, non-constant byte sequences, and constant byte sequences.</p>
 </section>
 <section id="save-type">
-<h3><code class="docutils literal notranslate"><span class="pre">save-type</span></code><a class="headerlink" href="#save-type" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">save-type</span></code><a class="headerlink" href="#save-type" title="Link to this heading">¶</a></h3>
 <p>( – type )</p>
 <p>The saved state type.</p>
 </section>
 <section id="ref-type">
-<h3><code class="docutils literal notranslate"><span class="pre">ref-type</span></code><a class="headerlink" href="#ref-type" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">ref-type</span></code><a class="headerlink" href="#ref-type" title="Link to this heading">¶</a></h3>
 <p>( – type )</p>
 <p>The reference type.</p>
 </section>
 <section id="raw-lit">
-<h3><code class="docutils literal notranslate"><span class="pre">raw-lit,</span></code><a class="headerlink" href="#raw-lit" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">raw-lit,</span></code><a class="headerlink" href="#raw-lit" title="Link to this heading">¶</a></h3>
 <p>( x – )</p>
 <p>Compile an integral value as a raw literal which, when executed, will push its value as a zeptoforth integral value rather than a zeptoscript integral value.</p>
 </section>
 <section id="lit">
-<h3><code class="docutils literal notranslate"><span class="pre">lit,</span></code><a class="headerlink" href="#lit" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">lit,</span></code><a class="headerlink" href="#lit" title="Link to this heading">¶</a></h3>
 <p>( x – )</p>
 <p>Compile an integral value as a literal which, when executed, will push its value as a zeptoscript integral value.</p>
 </section>
 <section id="addr-len-const-bytes">
-<h3><code class="docutils literal notranslate"><span class="pre">addr-len&gt;const-bytes</span></code><a class="headerlink" href="#addr-len-const-bytes" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">addr-len&gt;const-bytes</span></code><a class="headerlink" href="#addr-len-const-bytes" title="Link to this heading">¶</a></h3>
 <p>( c-addr len – const-bytes )</p>
 <p>Create a constant byte sequence from a non-volatile address and length; this is intended for string literals compiled into code.</p>
 </section>
 <section id="addr-len-bytes">
-<h3><code class="docutils literal notranslate"><span class="pre">addr-len&gt;bytes</span></code><a class="headerlink" href="#addr-len-bytes" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">addr-len&gt;bytes</span></code><a class="headerlink" href="#addr-len-bytes" title="Link to this heading">¶</a></h3>
 <p>( c-addr len – bytes )</p>
 <p>Create a non-constant byte sequence from a potentially-volatile address and length; when creating byte sequences from raw data which is not compiled into code this is normally what you would want.</p>
 </section>
 <section id="raw">
-<h3><code class="docutils literal notranslate"><span class="pre">&gt;raw</span></code><a class="headerlink" href="#raw" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;raw</span></code><a class="headerlink" href="#raw" title="Link to this heading">¶</a></h3>
 <p>( x – x’ )</p>
 <p>Get the raw backing store of a cell sequence, byte sequence, or slice value. The primary purpose of this is for converting slices into their underlying cell or byte sequences.</p>
 </section>
 <section id="raw-offset">
-<h3><code class="docutils literal notranslate"><span class="pre">&gt;raw-offset</span></code><a class="headerlink" href="#raw-offset" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;raw-offset</span></code><a class="headerlink" href="#raw-offset" title="Link to this heading">¶</a></h3>
 <p>( x – offset )</p>
 <p>Get the raw offset of a cell sequence, byte sequence, or slice value. The primary purpose of this is for determining where a slice points into its underlying cell or byte sequence.</p>
 </section>
 <section id="len">
-<h3><code class="docutils literal notranslate"><span class="pre">&gt;len</span></code><a class="headerlink" href="#len" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;len</span></code><a class="headerlink" href="#len" title="Link to this heading">¶</a></h3>
 <p>( x – len )</p>
 <p>Get the length of a cell sequence, byte sequence, or slice in entries or bytes.</p>
 </section>
 <section id="ref">
-<h3><code class="docutils literal notranslate"><span class="pre">&gt;ref</span></code><a class="headerlink" href="#ref" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;ref</span></code><a class="headerlink" href="#ref" title="Link to this heading">¶</a></h3>
 <p>( x – ref )</p>
 <p>Create a reference with a value <em>x</em>.</p>
 </section>
 <section id="id2">
-<h3><code class="docutils literal notranslate"><span class="pre">ref&#64;</span></code><a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">ref&#64;</span></code><a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
 <p>( ref – x )</p>
 <p>Get the value of a reference.</p>
 </section>
 <section id="id3">
-<h3><code class="docutils literal notranslate"><span class="pre">ref!</span></code><a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">ref!</span></code><a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
 <p>( x ref – )</p>
 <p>Set the value of a reference.</p>
 </section>
 <section id="pair">
-<h3><code class="docutils literal notranslate"><span class="pre">&gt;pair</span></code><a class="headerlink" href="#pair" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;pair</span></code><a class="headerlink" href="#pair" title="Link to this heading">¶</a></h3>
 <p>( x0 x1 – pair )</p>
 <p>Create a two-element cell sequence from a pair of values.</p>
 </section>
 <section id="id4">
-<h3><code class="docutils literal notranslate"><span class="pre">pair&gt;</span></code><a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">pair&gt;</span></code><a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
 <p>( pair – x0 x1 )</p>
 <p>Explode a two-element cell sequence or slice into a pair of values.</p>
 </section>
 <section id="triple">
-<h3><code class="docutils literal notranslate"><span class="pre">&gt;triple</span></code><a class="headerlink" href="#triple" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;triple</span></code><a class="headerlink" href="#triple" title="Link to this heading">¶</a></h3>
 <p>( x0 x1 x2 – triple )</p>
 <p>Create a three-element cell sequence from three values.</p>
 </section>
 <section id="id5">
-<h3><code class="docutils literal notranslate"><span class="pre">triple&gt;</span></code><a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">triple&gt;</span></code><a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
 <p>( triple – x0 x1 x2 )</p>
 <p>Explode a three-element cell sequence or slice into three values.</p>
 </section>
 <section id="make-cells">
-<h3><code class="docutils literal notranslate"><span class="pre">make-cells</span></code><a class="headerlink" href="#make-cells" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">make-cells</span></code><a class="headerlink" href="#make-cells" title="Link to this heading">¶</a></h3>
 <p>( count – cells )</p>
 <p>Create a cell sequence with the specified element count that is initialized to null.</p>
 </section>
 <section id="make-bytes">
-<h3><code class="docutils literal notranslate"><span class="pre">make-bytes</span></code><a class="headerlink" href="#make-bytes" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">make-bytes</span></code><a class="headerlink" href="#make-bytes" title="Link to this heading">¶</a></h3>
 <p>( count – bytes )</p>
 <p>Create a byte sequence with the specified byte count that is initialized to null.</p>
 </section>
 <section id="cells">
-<h3><code class="docutils literal notranslate"><span class="pre">&gt;cells</span></code><a class="headerlink" href="#cells" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;cells</span></code><a class="headerlink" href="#cells" title="Link to this heading">¶</a></h3>
 <p>( xn … x0 count – cells )</p>
 <p>Create a cell sequence with <em>count</em> elements taken off the stack.</p>
 </section>
 <section id="bytes">
-<h3><code class="docutils literal notranslate"><span class="pre">&gt;bytes</span></code><a class="headerlink" href="#bytes" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;bytes</span></code><a class="headerlink" href="#bytes" title="Link to this heading">¶</a></h3>
 <p>( cn … c0 count – bytes )</p>
 <p>Create a byte sequence with <em>count</em> bytes taken off the stack.</p>
 </section>
 <section id="id6">
-<h3><code class="docutils literal notranslate"><span class="pre">cells&gt;</span></code><a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">cells&gt;</span></code><a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
 <p>( cells – xn … x0 count )</p>
 <p>Explode a cell sequence or slice into elements and a count on the stack.</p>
 </section>
 <section id="id7">
-<h3><code class="docutils literal notranslate"><span class="pre">bytes&gt;</span></code><a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">bytes&gt;</span></code><a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
 <p>( bytes – cn … c0 count )</p>
 <p>Explode a byte sequence or slice into bytes and a count on the stack.</p>
 </section>
 <section id="seq">
-<h3><code class="docutils literal notranslate"><span class="pre">seq&gt;</span></code><a class="headerlink" href="#seq" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">seq&gt;</span></code><a class="headerlink" href="#seq" title="Link to this heading">¶</a></h3>
 <p>( seq – xn … x0 count )</p>
 <p>Explode a cell or byte sequence or slice into elements and a count on the stack.</p>
 </section>
 <section id="cells-no-count">
-<h3><code class="docutils literal notranslate"><span class="pre">cells-no-count&gt;</span></code><a class="headerlink" href="#cells-no-count" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">cells-no-count&gt;</span></code><a class="headerlink" href="#cells-no-count" title="Link to this heading">¶</a></h3>
 <p>( cells – xn … x0 )</p>
 <p>Explode a cell sequence or slice into elements on the stack.</p>
 </section>
 <section id="bytes-no-count">
-<h3><code class="docutils literal notranslate"><span class="pre">bytes-no-count&gt;</span></code><a class="headerlink" href="#bytes-no-count" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">bytes-no-count&gt;</span></code><a class="headerlink" href="#bytes-no-count" title="Link to this heading">¶</a></h3>
 <p>( bytes – cn … c0 )</p>
 <p>Explode a byte sequence or slice into bytes on the stack.</p>
 </section>
 <section id="seq-no-count">
-<h3><code class="docutils literal notranslate"><span class="pre">seq-no-count&gt;</span></code><a class="headerlink" href="#seq-no-count" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">seq-no-count&gt;</span></code><a class="headerlink" href="#seq-no-count" title="Link to this heading">¶</a></h3>
 <p>( seq – xn … x0 )</p>
 <p>Explode a cell or byte sequence or slice into elements on the stack.</p>
 </section>
 <section id="id8">
-<h3><code class="docutils literal notranslate"><span class="pre">&#64;+</span></code><a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">&#64;+</span></code><a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
 <p>( index cells – x )</p>
 <p>Get the element at <em>index</em>, indexed from zero, of a cell sequence or slice.</p>
 </section>
 <section id="id9">
-<h3><code class="docutils literal notranslate"><span class="pre">!+</span></code><a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">!+</span></code><a class="headerlink" href="#id9" title="Link to this heading">¶</a></h3>
 <p>( x index cells – )</p>
 <p>Set the elememt at <em>index</em>, indexed from zero, of a cell sequence or slice.</p>
 </section>
 <section id="w">
-<h3><code class="docutils literal notranslate"><span class="pre">w&#64;+</span></code><a class="headerlink" href="#w" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">w&#64;+</span></code><a class="headerlink" href="#w" title="Link to this heading">¶</a></h3>
 <p>( index bytes – x )</p>
 <p>Get the cell at <em>index</em>, indexed from zero and word-aligned, of a byte sequence or slice.</p>
 </section>
 <section id="id10">
-<h3><code class="docutils literal notranslate"><span class="pre">w!+</span></code><a class="headerlink" href="#id10" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">w!+</span></code><a class="headerlink" href="#id10" title="Link to this heading">¶</a></h3>
 <p>( x index bytes – )</p>
 <p>Set the cell at <em>index</em>, indexed from zero and word-aligned, of a non-constant byte sequence or slice.</p>
 </section>
 <section id="h">
-<h3><code class="docutils literal notranslate"><span class="pre">h&#64;+</span></code><a class="headerlink" href="#h" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">h&#64;+</span></code><a class="headerlink" href="#h" title="Link to this heading">¶</a></h3>
 <p>( index bytes – h )</p>
 <p>Get the halfword at <em>index</em>, indexed from zero and halfword-aligned, of a byte sequence or slice.</p>
 </section>
 <section id="id11">
-<h3><code class="docutils literal notranslate"><span class="pre">h!+</span></code><a class="headerlink" href="#id11" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">h!+</span></code><a class="headerlink" href="#id11" title="Link to this heading">¶</a></h3>
 <p>( h index bytes – )</p>
 <p>Set the halfword at <em>index</em>, indexed from zero and halfword-aligned, of a non-constant byte sequence or slice.</p>
 </section>
 <section id="c">
-<h3><code class="docutils literal notranslate"><span class="pre">c&#64;+</span></code><a class="headerlink" href="#c" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">c&#64;+</span></code><a class="headerlink" href="#c" title="Link to this heading">¶</a></h3>
 <p>( index bytes – c )</p>
 <p>Get the byte at <em>index</em>, indexed from zero, of a byte sequence or slice.</p>
 </section>
 <section id="id12">
-<h3><code class="docutils literal notranslate"><span class="pre">c!+</span></code><a class="headerlink" href="#id12" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">c!+</span></code><a class="headerlink" href="#id12" title="Link to this heading">¶</a></h3>
 <p>( c index bytes – )</p>
 <p>Set the byte at <em>index</em>, indexed from zero, of a non-constant byte sequence or slice.</p>
 </section>
 <section id="x">
-<h3><code class="docutils literal notranslate"><span class="pre">x&#64;+</span></code><a class="headerlink" href="#x" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">x&#64;+</span></code><a class="headerlink" href="#x" title="Link to this heading">¶</a></h3>
 <p>( index cells|bytes – x )</p>
 <p>Get the element or byte at <em>index</em>, indexed from zero, of a cell or byte sequence or slice.</p>
 </section>
 <section id="id13">
-<h3><code class="docutils literal notranslate"><span class="pre">x!+</span></code><a class="headerlink" href="#id13" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">x!+</span></code><a class="headerlink" href="#id13" title="Link to this heading">¶</a></h3>
 <p>( x index cells|bytes – )</p>
 <p>Set the elememt or byte at <em>index</em>, indexed from zero, of a non-constant cell or byte sequence or slice.</p>
 </section>
 <section id="id14">
-<h3><code class="docutils literal notranslate"><span class="pre">cells?</span></code><a class="headerlink" href="#id14" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">cells?</span></code><a class="headerlink" href="#id14" title="Link to this heading">¶</a></h3>
 <p>( x – cells? )</p>
 <p>Get whether a value is a cell sequence or slice.</p>
 </section>
 <section id="id15">
-<h3><code class="docutils literal notranslate"><span class="pre">bytes?</span></code><a class="headerlink" href="#id15" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">bytes?</span></code><a class="headerlink" href="#id15" title="Link to this heading">¶</a></h3>
 <p>( x – bytes? )</p>
 <p>Get whether a value is a byte sequence or slice.</p>
 </section>
 <section id="symbol">
-<h3><code class="docutils literal notranslate"><span class="pre">symbol</span></code><a class="headerlink" href="#symbol" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">symbol</span></code><a class="headerlink" href="#symbol" title="Link to this heading">¶</a></h3>
 <p>( “name” – )</p>
 <p>Define a symbol with the given name.</p>
 </section>
 <section id="symbol-name">
-<h3><code class="docutils literal notranslate"><span class="pre">symbol&gt;name</span></code><a class="headerlink" href="#symbol-name" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">symbol&gt;name</span></code><a class="headerlink" href="#symbol-name" title="Link to this heading">¶</a></h3>
 <p>( symbol – bytes )</p>
 <p>Get the name of a symbol.</p>
 </section>
 <section id="symbol-integral">
-<h3><code class="docutils literal notranslate"><span class="pre">symbol&gt;integral</span></code><a class="headerlink" href="#symbol-integral" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">symbol&gt;integral</span></code><a class="headerlink" href="#symbol-integral" title="Link to this heading">¶</a></h3>
 <p>( symbol – integral )</p>
 <p>Convert a symbol to a unique integral.</p>
 </section>
 <section id="double-2integral">
-<h3><code class="docutils literal notranslate"><span class="pre">double&gt;2integral</span></code><a class="headerlink" href="#double-2integral" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">double&gt;2integral</span></code><a class="headerlink" href="#double-2integral" title="Link to this heading">¶</a></h3>
 <p>( d – x0 x1 )</p>
 <p>Convert a double to an integral pair.</p>
 </section>
 <section id="integral-double">
-<h3><code class="docutils literal notranslate"><span class="pre">2integral&gt;double</span></code><a class="headerlink" href="#integral-double" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">2integral&gt;double</span></code><a class="headerlink" href="#integral-double" title="Link to this heading">¶</a></h3>
 <p>( x0 x1 – d )</p>
 <p>Convert an integral pair to a double.</p>
 </section>
 <section id="init-zscript">
-<h3><code class="docutils literal notranslate"><span class="pre">init-zscript</span></code><a class="headerlink" href="#init-zscript" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">init-zscript</span></code><a class="headerlink" href="#init-zscript" title="Link to this heading">¶</a></h3>
 <p>( compile-size runtime-size – )</p>
 <p>Initialize zeptoscript. All non-zeptoscript code must be compiled before this word is called, and all zeptoscript code must be compiled after this word is called. If called during compilation to flash, a call to this word will be compiled into the initialization process on bootup, so zeptoscript will automatically be initialized after the previous definition of <code class="docutils literal notranslate"><span class="pre">init</span></code> (or declaration of an <code class="docutils literal notranslate"><span class="pre">initializer</span></code>) and before any subsequent definitions of <code class="docutils literal notranslate"><span class="pre">init</span></code> (or declarations of <code class="docutils literal notranslate"><span class="pre">initializer</span></code>). Note that when compiling to flash the zeptoscript heap size will be initialized to <em>compile-size</em>, but when compiling to RAM or on any subsequent boot the zeptoscript heap size will be initialized to <em>runtime-size</em>. Note that the heap size is rounded up to the nearest eight bytes.</p>
 </section>
 <section id="enter-zforth">
-<h3><code class="docutils literal notranslate"><span class="pre">enter-zforth</span></code><a class="headerlink" href="#enter-zforth" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">enter-zforth</span></code><a class="headerlink" href="#enter-zforth" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>Re-enter zeptoforth from within zeptoscript. This has no effect when called from within zeptoforth.</p>
 </section>
 <section id="enter-zscript">
-<h3><code class="docutils literal notranslate"><span class="pre">enter-zscript</span></code><a class="headerlink" href="#enter-zscript" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">enter-zscript</span></code><a class="headerlink" href="#enter-zscript" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>Re-enter zeptoscript from within zeptoforth. This has no effect when called from within zeptoscript. Note that if this is called and <code class="docutils literal notranslate"><span class="pre">init-zscript</span></code> has not been called it is equivalent to calling <code class="docutils literal notranslate"><span class="pre">65536</span> <span class="pre">65536</span> <span class="pre">zscript::init-zscript</span></code>.</p>
 </section>
 <section id="gc">
-<h3><code class="docutils literal notranslate"><span class="pre">gc</span></code><a class="headerlink" href="#gc" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">gc</span></code><a class="headerlink" href="#gc" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>Trigger the garbage collector.</p>
 </section>
 <section id="heap-free">
-<h3><code class="docutils literal notranslate"><span class="pre">heap-free</span></code><a class="headerlink" href="#heap-free" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">heap-free</span></code><a class="headerlink" href="#heap-free" title="Link to this heading">¶</a></h3>
 <p>( – bytes )</p>
 <p>Get the number of bytes free in the heap. Note that this specifically does not run the garbage collector, so to get a good picture of how much space is really available run <code class="docutils literal notranslate"><span class="pre">gc</span></code> first.</p>
 </section>
 <section id="ensure">
-<h3><code class="docutils literal notranslate"><span class="pre">ensure</span></code><a class="headerlink" href="#ensure" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">ensure</span></code><a class="headerlink" href="#ensure" title="Link to this heading">¶</a></h3>
 <p>( bytes – )</p>
 <p>Ensure that <em>bytes</em> will be available for allocation in the heap without triggering a garbage collection cycle. The primary purpose of this is to avoid things like fixed addresses changing before they can be used.</p>
 </section>
 <section id="copy">
-<h3><code class="docutils literal notranslate"><span class="pre">copy</span></code><a class="headerlink" href="#copy" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">copy</span></code><a class="headerlink" href="#copy" title="Link to this heading">¶</a></h3>
 <p>( value0 offset0 value1 offset1 count – )</p>
 <p>Do a shallow copy of <em>count</em> elements or bytes from one cell or byte sequence or slice to another, starting at <em>offset0</em> of <em>value0</em> to <em>offset1</em> of <em>value1</em>. All offsets are indexed from zero. <em>value0</em> and <em>value1</em> must both be either cell sequences or slices or byte sequences or slices; copying between cell sequences or slices and byte sequences or slices is not permitted. Also note that <em>value1</em> cannot be a constant byte sequence or slice.</p>
 </section>
 <section id="s">
-<h3><code class="docutils literal notranslate"><span class="pre">s&quot;</span></code><a class="headerlink" href="#s" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">s&quot;</span></code><a class="headerlink" href="#s" title="Link to this heading">¶</a></h3>
 <p>( “string” – bytes )</p>
 <p>Create a string literal as a byte sequence; note that if compiled the resulting byte sequence is constant, whereas if immediate the resulting byte sequence is non-constant.</p>
 </section>
 <section id="id16">
-<h3><code class="docutils literal notranslate"><span class="pre">s\&quot;</span></code><a class="headerlink" href="#id16" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">s\&quot;</span></code><a class="headerlink" href="#id16" title="Link to this heading">¶</a></h3>
 <p>Create a string literal with escapes as a byte sequence; note that if compiled the resulting byte sequence is constant, whereas if immediate the resulting byte sequence is non-constant.</p>
 </section>
 <section id="id17">
-<h3><code class="docutils literal notranslate"><span class="pre">+</span></code><a class="headerlink" href="#id17" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">+</span></code><a class="headerlink" href="#id17" title="Link to this heading">¶</a></h3>
 <p>( x0 x1 – x2 )</p>
 <p>Add two integers.</p>
 </section>
 <section id="id18">
-<h3><code class="docutils literal notranslate"><span class="pre">1+</span></code><a class="headerlink" href="#id18" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">1+</span></code><a class="headerlink" href="#id18" title="Link to this heading">¶</a></h3>
 <p>( x0 – x1 )</p>
 <p>Add one to an integer.</p>
 </section>
 <section id="cell">
-<h3><code class="docutils literal notranslate"><span class="pre">cell+</span></code><a class="headerlink" href="#cell" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">cell+</span></code><a class="headerlink" href="#cell" title="Link to this heading">¶</a></h3>
 <p>( x0 – x1 )</p>
 <p>Add a cell, i.e. four, to an integer.</p>
 </section>
 <section id="id19">
-<h3><code class="docutils literal notranslate"><span class="pre">-</span></code><a class="headerlink" href="#id19" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">-</span></code><a class="headerlink" href="#id19" title="Link to this heading">¶</a></h3>
 <p>( x0 x1 – x2 )</p>
 <p>Subtract two integers.</p>
 </section>
 <section id="id20">
-<h3><code class="docutils literal notranslate"><span class="pre">1-</span></code><a class="headerlink" href="#id20" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">1-</span></code><a class="headerlink" href="#id20" title="Link to this heading">¶</a></h3>
 <p>( x0 x1 – x2 )</p>
 <p>Subtract one from an integer.</p>
 </section>
 <section id="id21">
-<h3><code class="docutils literal notranslate"><span class="pre">*</span></code><a class="headerlink" href="#id21" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">*</span></code><a class="headerlink" href="#id21" title="Link to this heading">¶</a></h3>
 <p>( x0 x1 – x2 )</p>
 <p>Multiply two integers.</p>
 </section>
 <section id="id22">
-<h3><code class="docutils literal notranslate"><span class="pre">2*</span></code><a class="headerlink" href="#id22" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">2*</span></code><a class="headerlink" href="#id22" title="Link to this heading">¶</a></h3>
 <p>( x0 – x1 )</p>
 <p>Multiply an integer by two.</p>
 </section>
 <section id="id23">
-<h3><code class="docutils literal notranslate"><span class="pre">4*</span></code><a class="headerlink" href="#id23" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">4*</span></code><a class="headerlink" href="#id23" title="Link to this heading">¶</a></h3>
 <p>( x0 – x1 )</p>
 <p>Multiply an integer by four.</p>
 </section>
 <section id="id24">
-<h3><code class="docutils literal notranslate"><span class="pre">cells</span></code><a class="headerlink" href="#id24" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">cells</span></code><a class="headerlink" href="#id24" title="Link to this heading">¶</a></h3>
 <p>( x0 – x1 )</p>
 <p>Multiply an integer by a cell.</p>
 </section>
 <section id="id25">
-<h3><code class="docutils literal notranslate"><span class="pre">/</span></code><a class="headerlink" href="#id25" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">/</span></code><a class="headerlink" href="#id25" title="Link to this heading">¶</a></h3>
 <p>( n0 n1 – n2 )</p>
 <p>Divide two signed integers.</p>
 </section>
 <section id="id26">
-<h3><code class="docutils literal notranslate"><span class="pre">2/</span></code><a class="headerlink" href="#id26" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">2/</span></code><a class="headerlink" href="#id26" title="Link to this heading">¶</a></h3>
 <p>( n0 – n1 )</p>
 <p>Divide a signed integer by two.</p>
 </section>
 <section id="id27">
-<h3><code class="docutils literal notranslate"><span class="pre">4/</span></code><a class="headerlink" href="#id27" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">4/</span></code><a class="headerlink" href="#id27" title="Link to this heading">¶</a></h3>
 <p>( n0 – n1 )</p>
 <p>Divide a signed integer by four.</p>
 </section>
 <section id="u">
-<h3><code class="docutils literal notranslate"><span class="pre">u/</span></code><a class="headerlink" href="#u" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">u/</span></code><a class="headerlink" href="#u" title="Link to this heading">¶</a></h3>
 <p>( u0 u1 – u2 )</p>
 <p>Divide two unsigned integers.</p>
 </section>
 <section id="mod">
-<h3><code class="docutils literal notranslate"><span class="pre">mod</span></code><a class="headerlink" href="#mod" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">mod</span></code><a class="headerlink" href="#mod" title="Link to this heading">¶</a></h3>
 <p>( n0 n1 – n2 )</p>
 <p>Get the modulus of two signed integers.</p>
 </section>
 <section id="umod">
-<h3><code class="docutils literal notranslate"><span class="pre">umod</span></code><a class="headerlink" href="#umod" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">umod</span></code><a class="headerlink" href="#umod" title="Link to this heading">¶</a></h3>
 <p>( u0 u1 – u2 )</p>
 <p>Get the modulus of two unsigned integers.</p>
 </section>
 <section id="negate">
-<h3><code class="docutils literal notranslate"><span class="pre">negate</span></code><a class="headerlink" href="#negate" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">negate</span></code><a class="headerlink" href="#negate" title="Link to this heading">¶</a></h3>
 <p>( n0 – n1 )</p>
 <p>Negate an integer.</p>
 </section>
 <section id="or">
-<h3><code class="docutils literal notranslate"><span class="pre">or</span></code><a class="headerlink" href="#or" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">or</span></code><a class="headerlink" href="#or" title="Link to this heading">¶</a></h3>
 <p>( x0 x1 – x2 )</p>
 <p>Or two integers.</p>
 </section>
 <section id="and">
-<h3><code class="docutils literal notranslate"><span class="pre">and</span></code><a class="headerlink" href="#and" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">and</span></code><a class="headerlink" href="#and" title="Link to this heading">¶</a></h3>
 <p>( x0 x1 – x2 )</p>
 <p>And two integers.</p>
 </section>
 <section id="xor">
-<h3><code class="docutils literal notranslate"><span class="pre">xor</span></code><a class="headerlink" href="#xor" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">xor</span></code><a class="headerlink" href="#xor" title="Link to this heading">¶</a></h3>
 <p>( x0 x1 – x2 )</p>
 <p>Exclusive-or two integers.</p>
 </section>
 <section id="bic">
-<h3><code class="docutils literal notranslate"><span class="pre">bic</span></code><a class="headerlink" href="#bic" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">bic</span></code><a class="headerlink" href="#bic" title="Link to this heading">¶</a></h3>
 <p>( x0 x1 – x2 )</p>
 <p>Clear bits in an integer.</p>
 </section>
 <section id="not">
-<h3><code class="docutils literal notranslate"><span class="pre">not</span></code><a class="headerlink" href="#not" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">not</span></code><a class="headerlink" href="#not" title="Link to this heading">¶</a></h3>
 <p>( x0 – x1 )</p>
 <p>Not an integer.</p>
 </section>
 <section id="invert">
-<h3><code class="docutils literal notranslate"><span class="pre">invert</span></code><a class="headerlink" href="#invert" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">invert</span></code><a class="headerlink" href="#invert" title="Link to this heading">¶</a></h3>
 <p>( x0 – x1 )</p>
 <p>Invert an integer.</p>
 </section>
 <section id="lshift">
-<h3><code class="docutils literal notranslate"><span class="pre">lshift</span></code><a class="headerlink" href="#lshift" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">lshift</span></code><a class="headerlink" href="#lshift" title="Link to this heading">¶</a></h3>
 <p>( x0 x1 – x2 )</p>
 <p>Left shift an integer.</p>
 </section>
 <section id="rshift">
-<h3><code class="docutils literal notranslate"><span class="pre">rshift</span></code><a class="headerlink" href="#rshift" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">rshift</span></code><a class="headerlink" href="#rshift" title="Link to this heading">¶</a></h3>
 <p>( x0 x1 – x2 )</p>
 <p>Logical right shift an integer.</p>
 </section>
 <section id="arshift">
-<h3><code class="docutils literal notranslate"><span class="pre">arshift</span></code><a class="headerlink" href="#arshift" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">arshift</span></code><a class="headerlink" href="#arshift" title="Link to this heading">¶</a></h3>
 <p>( x0 x1 – x2 )</p>
 <p>Arithmetic right shift an integer.</p>
 </section>
 <section id="align">
-<h3><code class="docutils literal notranslate"><span class="pre">align</span></code><a class="headerlink" href="#align" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">align</span></code><a class="headerlink" href="#align" title="Link to this heading">¶</a></h3>
 <p>( x0 x1 – x2 )</p>
 <p>Align a value to a power of two.</p>
 </section>
 <section id="id28">
-<h3><code class="docutils literal notranslate"><span class="pre">=</span></code><a class="headerlink" href="#id28" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">=</span></code><a class="headerlink" href="#id28" title="Link to this heading">¶</a></h3>
 <p>( x0 x1 – flag )</p>
 <p>Get whether two values are equal. Integral values are compared for their values, even in the case of big integers. Execution tokens are compared for their underlying code addresses. All other values are compared for their addresses in memory.</p>
 </section>
 <section id="id29">
-<h3><code class="docutils literal notranslate"><span class="pre">&lt;&gt;</span></code><a class="headerlink" href="#id29" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">&lt;&gt;</span></code><a class="headerlink" href="#id29" title="Link to this heading">¶</a></h3>
 <p>( x0 x1 – flag )</p>
 <p>Get whether two values are unequal. Integral values are compared for their values, even in the case of big integers. Execution tokens are compared for their underlying code addresses. All other values are compared for their addresses in memory.</p>
 </section>
 <section id="id30">
-<h3><code class="docutils literal notranslate"><span class="pre">&lt;</span></code><a class="headerlink" href="#id30" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">&lt;</span></code><a class="headerlink" href="#id30" title="Link to this heading">¶</a></h3>
 <p>( n0 n1 – flag )</p>
 <p>Signed less than.</p>
 </section>
 <section id="id31">
-<h3><code class="docutils literal notranslate"><span class="pre">&gt;</span></code><a class="headerlink" href="#id31" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;</span></code><a class="headerlink" href="#id31" title="Link to this heading">¶</a></h3>
 <p>( n0 n1 – flag )</p>
 <p>Signed greater than.</p>
 </section>
 <section id="id32">
-<h3><code class="docutils literal notranslate"><span class="pre">&lt;=</span></code><a class="headerlink" href="#id32" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">&lt;=</span></code><a class="headerlink" href="#id32" title="Link to this heading">¶</a></h3>
 <p>( n0 n1 – flag )</p>
 <p>Signed less than or equal.</p>
 </section>
 <section id="id33">
-<h3><code class="docutils literal notranslate"><span class="pre">&gt;=</span></code><a class="headerlink" href="#id33" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;=</span></code><a class="headerlink" href="#id33" title="Link to this heading">¶</a></h3>
 <p>( n0 n1 – flag )</p>
 <p>Signed greater than or equal.</p>
 </section>
 <section id="id34">
-<h3><code class="docutils literal notranslate"><span class="pre">u&lt;</span></code><a class="headerlink" href="#id34" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">u&lt;</span></code><a class="headerlink" href="#id34" title="Link to this heading">¶</a></h3>
 <p>( u0 u1 – flag )</p>
 <p>Unsigned less than.</p>
 </section>
 <section id="id35">
-<h3><code class="docutils literal notranslate"><span class="pre">u&gt;</span></code><a class="headerlink" href="#id35" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">u&gt;</span></code><a class="headerlink" href="#id35" title="Link to this heading">¶</a></h3>
 <p>( u0 u1 – flag )</p>
 <p>Unsigned greater than.</p>
 </section>
 <section id="id36">
-<h3><code class="docutils literal notranslate"><span class="pre">u&lt;=</span></code><a class="headerlink" href="#id36" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">u&lt;=</span></code><a class="headerlink" href="#id36" title="Link to this heading">¶</a></h3>
 <p>( u0 u1 – flag )</p>
 <p>Unsigned less than or equal.</p>
 </section>
 <section id="id37">
-<h3><code class="docutils literal notranslate"><span class="pre">u&gt;=</span></code><a class="headerlink" href="#id37" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">u&gt;=</span></code><a class="headerlink" href="#id37" title="Link to this heading">¶</a></h3>
 <p>( u0 u1 – flag )</p>
 <p>Unsigned greater than or equal.</p>
 </section>
 <section id="id38">
-<h3><code class="docutils literal notranslate"><span class="pre">u&lt;</span></code><a class="headerlink" href="#id38" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">u&lt;</span></code><a class="headerlink" href="#id38" title="Link to this heading">¶</a></h3>
 <p>( u0 u1 – flag )</p>
 <p>Unsigned less than.</p>
 </section>
 <section id="id39">
-<h3><code class="docutils literal notranslate"><span class="pre">u&gt;</span></code><a class="headerlink" href="#id39" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">u&gt;</span></code><a class="headerlink" href="#id39" title="Link to this heading">¶</a></h3>
 <p>( u0 u1 – flag )</p>
 <p>Unsigned greater than.</p>
 </section>
 <section id="id40">
-<h3><code class="docutils literal notranslate"><span class="pre">u&lt;=</span></code><a class="headerlink" href="#id40" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">u&lt;=</span></code><a class="headerlink" href="#id40" title="Link to this heading">¶</a></h3>
 <p>( u0 u1 – flag )</p>
 <p>Unsigned less than or equal.</p>
 </section>
 <section id="id41">
-<h3><code class="docutils literal notranslate"><span class="pre">u&gt;=</span></code><a class="headerlink" href="#id41" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">u&gt;=</span></code><a class="headerlink" href="#id41" title="Link to this heading">¶</a></h3>
 <p>( u0 u1 – flag )</p>
 <p>Unsigned greater than or equal.</p>
 </section>
 <section id="id42">
-<h3><code class="docutils literal notranslate"><span class="pre">0=</span></code><a class="headerlink" href="#id42" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">0=</span></code><a class="headerlink" href="#id42" title="Link to this heading">¶</a></h3>
 <p>( x – flag )</p>
 <p>Equal to zero; note that for non-integral values <code class="docutils literal notranslate"><span class="pre">false</span></code> is returned.</p>
 </section>
 <section id="id43">
-<h3><code class="docutils literal notranslate"><span class="pre">0&lt;&gt;</span></code><a class="headerlink" href="#id43" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">0&lt;&gt;</span></code><a class="headerlink" href="#id43" title="Link to this heading">¶</a></h3>
 <p>( x – flag )</p>
 <p>Not equal to zero; note that for non-integral values <code class="docutils literal notranslate"><span class="pre">true</span></code> is returned.</p>
 </section>
 <section id="id44">
-<h3><code class="docutils literal notranslate"><span class="pre">0&lt;</span></code><a class="headerlink" href="#id44" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">0&lt;</span></code><a class="headerlink" href="#id44" title="Link to this heading">¶</a></h3>
 <p>( n – flag )</p>
 <p>Less than zero.</p>
 </section>
 <section id="id45">
-<h3><code class="docutils literal notranslate"><span class="pre">0&gt;</span></code><a class="headerlink" href="#id45" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">0&gt;</span></code><a class="headerlink" href="#id45" title="Link to this heading">¶</a></h3>
 <p>( n – flag )</p>
 <p>Greater than zero.</p>
 </section>
 <section id="id46">
-<h3><code class="docutils literal notranslate"><span class="pre">0&lt;=</span></code><a class="headerlink" href="#id46" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">0&lt;=</span></code><a class="headerlink" href="#id46" title="Link to this heading">¶</a></h3>
 <p>( n – flag )</p>
 <p>Less than or equal to zero.</p>
 </section>
 <section id="id47">
-<h3><code class="docutils literal notranslate"><span class="pre">0&gt;=</span></code><a class="headerlink" href="#id47" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">0&gt;=</span></code><a class="headerlink" href="#id47" title="Link to this heading">¶</a></h3>
 <p>( n – flag )</p>
 <p>Greater than or equal to zero.</p>
 </section>
 <section id="min">
-<h3><code class="docutils literal notranslate"><span class="pre">min</span></code><a class="headerlink" href="#min" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">min</span></code><a class="headerlink" href="#min" title="Link to this heading">¶</a></h3>
 <p>( n0 n1 – n2 )</p>
 <p>Get the minimum of two numbers.</p>
 </section>
 <section id="max">
-<h3><code class="docutils literal notranslate"><span class="pre">max</span></code><a class="headerlink" href="#max" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">max</span></code><a class="headerlink" href="#max" title="Link to this heading">¶</a></h3>
 <p>( n0 n1 – n2 )</p>
 <p>Get the maximum of two numbers.</p>
 </section>
 <section id="id48">
-<h3><code class="docutils literal notranslate"><span class="pre">cell</span></code><a class="headerlink" href="#id48" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">cell</span></code><a class="headerlink" href="#id48" title="Link to this heading">¶</a></h3>
 <p>( – u )</p>
 <p>The size of a cell, i.e. four.</p>
 </section>
 <section id="if">
-<h3><code class="docutils literal notranslate"><span class="pre">if</span></code><a class="headerlink" href="#if" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">if</span></code><a class="headerlink" href="#if" title="Link to this heading">¶</a></h3>
 <p>( x – )</p>
 <p>If conditional; note that non-integral values are treated as true.</p>
 </section>
 <section id="while">
-<h3><code class="docutils literal notranslate"><span class="pre">while</span></code><a class="headerlink" href="#while" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">while</span></code><a class="headerlink" href="#while" title="Link to this heading">¶</a></h3>
 <p>( x – )</p>
 <p>While conditional; note that non-integral values are treated as true.</p>
 </section>
 <section id="until">
-<h3><code class="docutils literal notranslate"><span class="pre">until</span></code><a class="headerlink" href="#until" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">until</span></code><a class="headerlink" href="#until" title="Link to this heading">¶</a></h3>
 <p>( x – )</p>
 <p>Until conditional; note that non-integral values are treated as true.</p>
 </section>
 <section id="do">
-<h3><code class="docutils literal notranslate"><span class="pre">?do</span></code><a class="headerlink" href="#do" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">?do</span></code><a class="headerlink" href="#do" title="Link to this heading">¶</a></h3>
 <p>( end start – )</p>
 <p>Start <code class="docutils literal notranslate"><span class="pre">do</span></code> loop; note that this is redefined because of the chance that two vales may be equal but have different types.</p>
 </section>
 <section id="loop">
-<h3><code class="docutils literal notranslate"><span class="pre">loop</span></code><a class="headerlink" href="#loop" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">loop</span></code><a class="headerlink" href="#loop" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>Close a <code class="docutils literal notranslate"><span class="pre">do</span></code> loop.</p>
 </section>
 <section id="id49">
-<h3><code class="docutils literal notranslate"><span class="pre">+loop</span></code><a class="headerlink" href="#id49" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">+loop</span></code><a class="headerlink" href="#id49" title="Link to this heading">¶</a></h3>
 <p>( increment – )</p>
 <p>Close a <code class="docutils literal notranslate"><span class="pre">do</span></code> loop with an increment.</p>
 </section>
 <section id="case">
-<h3><code class="docutils literal notranslate"><span class="pre">case</span></code><a class="headerlink" href="#case" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">case</span></code><a class="headerlink" href="#case" title="Link to this heading">¶</a></h3>
 <p>( x – )</p>
 <p>Start a <code class="docutils literal notranslate"><span class="pre">case</span></code> block.</p>
 </section>
 <section id="of">
-<h3><code class="docutils literal notranslate"><span class="pre">of</span></code><a class="headerlink" href="#of" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">of</span></code><a class="headerlink" href="#of" title="Link to this heading">¶</a></h3>
 <p>( x – )</p>
 <p>Start an <code class="docutils literal notranslate"><span class="pre">of</span></code> block.</p>
 </section>
 <section id="id50">
-<h3><code class="docutils literal notranslate"><span class="pre">.</span></code><a class="headerlink" href="#id50" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">.</span></code><a class="headerlink" href="#id50" title="Link to this heading">¶</a></h3>
 <p>( n – )</p>
 <p>Print a signed integer with a following space.</p>
 </section>
 <section id="id51">
-<h3><code class="docutils literal notranslate"><span class="pre">u.</span></code><a class="headerlink" href="#id51" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">u.</span></code><a class="headerlink" href="#id51" title="Link to this heading">¶</a></h3>
 <p>( u – )</p>
 <p>Print an unsigned integer with a following space.</p>
 </section>
 <section id="id52">
-<h3><code class="docutils literal notranslate"><span class="pre">(.)</span></code><a class="headerlink" href="#id52" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">(.)</span></code><a class="headerlink" href="#id52" title="Link to this heading">¶</a></h3>
 <p>( n – )</p>
 <p>Print a signed integer without a following space.</p>
 </section>
 <section id="id53">
-<h3><code class="docutils literal notranslate"><span class="pre">(u.)</span></code><a class="headerlink" href="#id53" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">(u.)</span></code><a class="headerlink" href="#id53" title="Link to this heading">¶</a></h3>
 <p>( u – )</p>
 <p>Print an unsigned integer without a following space.</p>
 </section>
 <section id="emit">
-<h3><code class="docutils literal notranslate"><span class="pre">emit</span></code><a class="headerlink" href="#emit" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">emit</span></code><a class="headerlink" href="#emit" title="Link to this heading">¶</a></h3>
 <p>( c – )</p>
 <p>Print a character.</p>
 </section>
 <section id="h-1">
-<h3><code class="docutils literal notranslate"><span class="pre">h.1</span></code><a class="headerlink" href="#h-1" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">h.1</span></code><a class="headerlink" href="#h-1" title="Link to this heading">¶</a></h3>
 <p>( x – )</p>
 <p>Print the lowest four bits of an unsigned integer as one hexadecimal digit.</p>
 </section>
 <section id="h-2">
-<h3><code class="docutils literal notranslate"><span class="pre">h.2</span></code><a class="headerlink" href="#h-2" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">h.2</span></code><a class="headerlink" href="#h-2" title="Link to this heading">¶</a></h3>
 <p>( x – )</p>
 <p>Print the lowest eight bits of an unsigned integer as two hexadecimal digits.</p>
 </section>
 <section id="h-4">
-<h3><code class="docutils literal notranslate"><span class="pre">h.4</span></code><a class="headerlink" href="#h-4" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">h.4</span></code><a class="headerlink" href="#h-4" title="Link to this heading">¶</a></h3>
 <p>( x – )</p>
 <p>Print the lowest sixteen bits of an unsigned integer as four hexadecimal digits.</p>
 </section>
 <section id="h-8">
-<h3><code class="docutils literal notranslate"><span class="pre">h.8</span></code><a class="headerlink" href="#h-8" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">h.8</span></code><a class="headerlink" href="#h-8" title="Link to this heading">¶</a></h3>
 <p>( x – )</p>
 <p>Print an unsigned integer as eight hexadecimal digits.</p>
 </section>
 <section id="h-16">
-<h3><code class="docutils literal notranslate"><span class="pre">h.16</span></code><a class="headerlink" href="#h-16" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">h.16</span></code><a class="headerlink" href="#h-16" title="Link to this heading">¶</a></h3>
 <p>( d – )</p>
 <p>Print a double cell unsigned integer as sixteen hexadecimal digits.</p>
 </section>
 <section id="spaces">
-<h3><code class="docutils literal notranslate"><span class="pre">spaces</span></code><a class="headerlink" href="#spaces" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">spaces</span></code><a class="headerlink" href="#spaces" title="Link to this heading">¶</a></h3>
 <p>( x – )</p>
 <p>Print <em>x</em> spaces.</p>
 </section>
 <section id="slice">
-<h3><code class="docutils literal notranslate"><span class="pre">&gt;slice</span></code><a class="headerlink" href="#slice" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;slice</span></code><a class="headerlink" href="#slice" title="Link to this heading">¶</a></h3>
 <p>( offset length seq – slice )</p>
 <p>Get an arbitrary slice of a sequence or slice of <em>length</em> starting at <em>offset</em>.</p>
 </section>
 <section id="truncate-start">
-<h3><code class="docutils literal notranslate"><span class="pre">truncate-start</span></code><a class="headerlink" href="#truncate-start" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">truncate-start</span></code><a class="headerlink" href="#truncate-start" title="Link to this heading">¶</a></h3>
 <p>( count seq – slice )</p>
 <p>Get a slice of a sequence or slice truncating <em>count</em> elements or bytes from the start.</p>
 </section>
 <section id="truncate-end">
-<h3><code class="docutils literal notranslate"><span class="pre">truncate-end</span></code><a class="headerlink" href="#truncate-end" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">truncate-end</span></code><a class="headerlink" href="#truncate-end" title="Link to this heading">¶</a></h3>
 <p>( count seq – slice )</p>
 <p>Get a slice of a sequence or slice truncating <em>count</em> elements or bytes from the end.</p>
 </section>
 <section id="type">
-<h3><code class="docutils literal notranslate"><span class="pre">&gt;type</span></code><a class="headerlink" href="#type" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;type</span></code><a class="headerlink" href="#type" title="Link to this heading">¶</a></h3>
 <p>( x – type )</p>
 <p>Get the type of a value.</p>
 </section>
 <section id="integral">
-<h3><code class="docutils literal notranslate"><span class="pre">integral?</span></code><a class="headerlink" href="#integral" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">integral?</span></code><a class="headerlink" href="#integral" title="Link to this heading">¶</a></h3>
 <p>( x – integral? )</p>
 <p>Get whether a value is integral.</p>
 </section>
 <section id="small-int">
-<h3><code class="docutils literal notranslate"><span class="pre">small-int?</span></code><a class="headerlink" href="#small-int" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">small-int?</span></code><a class="headerlink" href="#small-int" title="Link to this heading">¶</a></h3>
 <p>( x – small-int? )</p>
 <p>Get whether a value is a small integer or null.</p>
 </section>
 <section id="token">
-<h3><code class="docutils literal notranslate"><span class="pre">token</span></code><a class="headerlink" href="#token" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">token</span></code><a class="headerlink" href="#token" title="Link to this heading">¶</a></h3>
 <p>( runtime: “name” – seq | 0 )</p>
 <p>Parse a token and return it as a byte sequence, or return 0 if no token could be parsed.</p>
 </section>
 <section id="token-word">
-<h3><code class="docutils literal notranslate"><span class="pre">token-word</span></code><a class="headerlink" href="#token-word" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">token-word</span></code><a class="headerlink" href="#token-word" title="Link to this heading">¶</a></h3>
 <p>( runtime: “name” – word )</p>
 <p>Parse a token and get the corresponding word; note that an exception will be raised if there is no token or the word cannot be found.</p>
 </section>
 <section id="word-xt">
-<h3><code class="docutils literal notranslate"><span class="pre">word&gt;xt</span></code><a class="headerlink" href="#word-xt" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">word&gt;xt</span></code><a class="headerlink" href="#word-xt" title="Link to this heading">¶</a></h3>
 <p>( word – xt )</p>
 <p>Get an execution token corresponding to a word.</p>
 </section>
 <section id="id54">
-<h3><code class="docutils literal notranslate"><span class="pre">;]</span></code><a class="headerlink" href="#id54" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">;]</span></code><a class="headerlink" href="#id54" title="Link to this heading">¶</a></h3>
 <p>( – xt )</p>
 <p>End a quotation (also known as a lambda) and, if compiling, compile pushing the execution token, or otherwise immediately pushing the execution token.</p>
 </section>
 <section id="execute">
-<h3><code class="docutils literal notranslate"><span class="pre">execute</span></code><a class="headerlink" href="#execute" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">execute</span></code><a class="headerlink" href="#execute" title="Link to this heading">¶</a></h3>
 <p>( xt | closure – )</p>
 <p>Execute an execution token or closure. If a closure is executed, push the bound values onto the stack prior to executing the underlying execution token.</p>
 </section>
 <section id="try">
-<h3><code class="docutils literal notranslate"><span class="pre">try</span></code><a class="headerlink" href="#try" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">try</span></code><a class="headerlink" href="#try" title="Link to this heading">¶</a></h3>
 <p>( xt | closure – exception | 0 )</p>
 <p>Execute an execution token or closure like <code class="docutils literal notranslate"><span class="pre">execute</span></code>, but catching any exceptions that are raised. If an exception is raised it is returned, otherwise 0 is returned.</p>
 </section>
 <section id="id55">
-<h3><code class="docutils literal notranslate"><span class="pre">?execute</span></code><a class="headerlink" href="#id55" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">?execute</span></code><a class="headerlink" href="#id55" title="Link to this heading">¶</a></h3>
 <p>( xt | closure | 0 – )</p>
 <p>If a non-zero value is provided it is executed like with <code class="docutils literal notranslate"><span class="pre">execute</span></code>, otherwise it is ignored.</p>
 </section>
 <section id="force">
-<h3><code class="docutils literal notranslate"><span class="pre">force</span></code><a class="headerlink" href="#force" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">force</span></code><a class="headerlink" href="#force" title="Link to this heading">¶</a></h3>
 <p>( xt | force – x )</p>
 <p>Force a thunk, if it is not already forced, and get its value.</p>
 </section>
 <section id="save">
-<h3><code class="docutils literal notranslate"><span class="pre">save</span></code><a class="headerlink" href="#save" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">save</span></code><a class="headerlink" href="#save" title="Link to this heading">¶</a></h3>
 <p>( xt – x ) xt: ( save – )</p>
 <p>Call <em>xt</em> with the saved state of the call to <code class="docutils literal notranslate"><span class="pre">save</span></code>. When the saved state is called, the the context of the original call to <code class="docutils literal notranslate"><span class="pre">save</span></code> will be returned to, with the top element of the data stack being preserved.</p>
 </section>
 <section id="id56">
-<h3><code class="docutils literal notranslate"><span class="pre">type</span></code><a class="headerlink" href="#id56" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">type</span></code><a class="headerlink" href="#id56" title="Link to this heading">¶</a></h3>
 <p>( seq – )</p>
 <p>Type a string.</p>
 </section>
 <section id="id57">
-<h3><code class="docutils literal notranslate"><span class="pre">'</span></code><a class="headerlink" href="#id57" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">'</span></code><a class="headerlink" href="#id57" title="Link to this heading">¶</a></h3>
 <p>( “name” – xt )</p>
 <p>Get an xt at interpretation-time.</p>
 </section>
 <section id="id58">
-<h3><code class="docutils literal notranslate"><span class="pre">[']</span></code><a class="headerlink" href="#id58" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">[']</span></code><a class="headerlink" href="#id58" title="Link to this heading">¶</a></h3>
 <p>( ‘name” – xt )</p>
 <p>Get an xt at compile-time.</p>
 </section>
 <section id="raise">
-<h3><code class="docutils literal notranslate"><span class="pre">?raise</span></code><a class="headerlink" href="#raise" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">?raise</span></code><a class="headerlink" href="#raise" title="Link to this heading">¶</a></h3>
 <p>( xt – )</p>
 <p>Raise an exception.</p>
 </section>
 <section id="averts">
-<h3><code class="docutils literal notranslate"><span class="pre">averts</span></code><a class="headerlink" href="#averts" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">averts</span></code><a class="headerlink" href="#averts" title="Link to this heading">¶</a></h3>
 <p>( f “name” – )</p>
 <p>Assert that a value is true, otherwise raise a specified exception.</p>
 </section>
 <section id="triggers">
-<h3><code class="docutils literal notranslate"><span class="pre">triggers</span></code><a class="headerlink" href="#triggers" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">triggers</span></code><a class="headerlink" href="#triggers" title="Link to this heading">¶</a></h3>
 <p>( f “name” – )</p>
 <p>Assert that a value is false, otherwise raise a specified exception.</p>
 </section>
 <section id="id59">
-<h3><code class="docutils literal notranslate"><span class="pre">raise</span></code><a class="headerlink" href="#id59" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">raise</span></code><a class="headerlink" href="#id59" title="Link to this heading">¶</a></h3>
 <p>( “name” – )</p>
 <p>Always raise an exception; this is needed due to issues with compiling code.</p>
 </section>
 <section id="start-compile">
-<h3><code class="docutils literal notranslate"><span class="pre">start-compile</span></code><a class="headerlink" href="#start-compile" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">start-compile</span></code><a class="headerlink" href="#start-compile" title="Link to this heading">¶</a></h3>
 <p>( seq – )</p>
 <p>Start compiling a word with a name.</p>
 </section>
 <section id="end-compile">
-<h3><code class="docutils literal notranslate"><span class="pre">end-compile,</span></code><a class="headerlink" href="#end-compile" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">end-compile,</span></code><a class="headerlink" href="#end-compile" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>End compiling, exported to match start-compile.</p>
 </section>
 <section id="constant-with-name">
-<h3><code class="docutils literal notranslate"><span class="pre">constant-with-name</span></code><a class="headerlink" href="#constant-with-name" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">constant-with-name</span></code><a class="headerlink" href="#constant-with-name" title="Link to this heading">¶</a></h3>
 <p>( x name – )</p>
 <p>Define a constant with a name; note that this may be a null, a small int, a big int, a double, or a byte sequence (in the latter case, a constant byte sequence will be compiled).</p>
 </section>
 <section id="raw-constant-with-name">
-<h3><code class="docutils literal notranslate"><span class="pre">raw-constant-with-name</span></code><a class="headerlink" href="#raw-constant-with-name" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">raw-constant-with-name</span></code><a class="headerlink" href="#raw-constant-with-name" title="Link to this heading">¶</a></h3>
 <p>( x name – )</p>
 <p>Define a raw constant with a name.</p>
 </section>
 <section id="char">
-<h3><code class="docutils literal notranslate"><span class="pre">[char]</span></code><a class="headerlink" href="#char" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">[char]</span></code><a class="headerlink" href="#char" title="Link to this heading">¶</a></h3>
 <p>( “name” – x )</p>
 <p>Redefine [CHAR].</p>
 </section>
 <section id="id60">
-<h3><code class="docutils literal notranslate"><span class="pre">char</span></code><a class="headerlink" href="#id60" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">char</span></code><a class="headerlink" href="#id60" title="Link to this heading">¶</a></h3>
 <p>( “name” – x )</p>
 <p>Redefine CHAR.</p>
 </section>
 <section id="begin-record">
-<h3><code class="docutils literal notranslate"><span class="pre">begin-record</span></code><a class="headerlink" href="#begin-record" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">begin-record</span></code><a class="headerlink" href="#begin-record" title="Link to this heading">¶</a></h3>
 <p>( “name” – token offset )</p>
 <p>Begin declaring a record.</p>
 </section>
 <section id="end-record">
-<h3><code class="docutils literal notranslate"><span class="pre">end-record</span></code><a class="headerlink" href="#end-record" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">end-record</span></code><a class="headerlink" href="#end-record" title="Link to this heading">¶</a></h3>
 <p>( token offset – )</p>
 <p>Finish declaring a record.</p>
 </section>
 <section id="item">
-<h3><code class="docutils literal notranslate"><span class="pre">item:</span></code><a class="headerlink" href="#item" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">item:</span></code><a class="headerlink" href="#item" title="Link to this heading">¶</a></h3>
 <p>( offset “name” – offset’ )</p>
 <p>Create a field in a record.</p>
 </section>
 <section id="foreign-buffer">
-<h3><code class="docutils literal notranslate"><span class="pre">foreign-buffer</span></code><a class="headerlink" href="#foreign-buffer" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">foreign-buffer</span></code><a class="headerlink" href="#foreign-buffer" title="Link to this heading">¶</a></h3>
 <p>( bytes “name” – )</p>
 <p>Make a buffer accessible to foreign words.</p>
 </section>
 <section id="foreign-constant">
-<h3><code class="docutils literal notranslate"><span class="pre">foreign-constant</span></code><a class="headerlink" href="#foreign-constant" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">foreign-constant</span></code><a class="headerlink" href="#foreign-constant" title="Link to this heading">¶</a></h3>
 <p>( “foreign-name” “new-name” – )</p>
 <p>Make a foreign constant.</p>
 </section>
 <section id="foreign-double-constant">
-<h3><code class="docutils literal notranslate"><span class="pre">foreign-double-constant</span></code><a class="headerlink" href="#foreign-double-constant" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">foreign-double-constant</span></code><a class="headerlink" href="#foreign-double-constant" title="Link to this heading">¶</a></h3>
 <p>( “foreign-name” “new-name” – )</p>
 <p>Make a foreign double constant.</p>
 </section>
 <section id="foreign-variable">
-<h3><code class="docutils literal notranslate"><span class="pre">foreign-variable</span></code><a class="headerlink" href="#foreign-variable" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">foreign-variable</span></code><a class="headerlink" href="#foreign-variable" title="Link to this heading">¶</a></h3>
 <p>( “foreign-name” “new-name” – )</p>
 <p>Make a foreign variable.</p>
 </section>
 <section id="foreign-hook-variable">
-<h3><code class="docutils literal notranslate"><span class="pre">foreign-hook-variable</span></code><a class="headerlink" href="#foreign-hook-variable" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">foreign-hook-variable</span></code><a class="headerlink" href="#foreign-hook-variable" title="Link to this heading">¶</a></h3>
 <p>( “foreign-name” “new-name” – )</p>
 <p>Make a foreign hook variable; this differs from normal foreign variables in that its getter returns an execution token and its setter takes an execution token.</p>
 </section>
 <section id="foreign">
-<h3><code class="docutils literal notranslate"><span class="pre">foreign</span></code><a class="headerlink" href="#foreign" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">foreign</span></code><a class="headerlink" href="#foreign" title="Link to this heading">¶</a></h3>
 <p>( in-count out-count “foreign-name” “new-name” – )</p>
 <p>Make a foreign word usable.</p>
 </section>
 <section id="execute-foreign">
-<h3><code class="docutils literal notranslate"><span class="pre">execute-foreign</span></code><a class="headerlink" href="#execute-foreign" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">execute-foreign</span></code><a class="headerlink" href="#execute-foreign" title="Link to this heading">¶</a></h3>
 <p>( in-count out-count xt – )</p>
 <p>Execute a foreign word.</p>
 </section>
 <section id="begin-const-bytes">
-<h3><code class="docutils literal notranslate"><span class="pre">begin-const-bytes</span></code><a class="headerlink" href="#begin-const-bytes" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">begin-const-bytes</span></code><a class="headerlink" href="#begin-const-bytes" title="Link to this heading">¶</a></h3>
 <p>( “name” – start-addr name )</p>
 <p>Start defining a constant byte sequence. Note that the defined constant byte sequence will be a constant byte sequence.</p>
 </section>
 <section id="end-const-bytes">
-<h3><code class="docutils literal notranslate"><span class="pre">end-const-bytes</span></code><a class="headerlink" href="#end-const-bytes" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">end-const-bytes</span></code><a class="headerlink" href="#end-const-bytes" title="Link to this heading">¶</a></h3>
 <p>( start-addr name – )</p>
 <p>Finish defining a constant byte sequence.</p>
 </section>
 <section id="id61">
-<h3><code class="docutils literal notranslate"><span class="pre">,</span></code><a class="headerlink" href="#id61" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">,</span></code><a class="headerlink" href="#id61" title="Link to this heading">¶</a></h3>
 <p>( x – )</p>
 <p>Write a cell to a constant byte sequence; note that it must be aligned.</p>
 </section>
 <section id="id62">
-<h3><code class="docutils literal notranslate"><span class="pre">h,</span></code><a class="headerlink" href="#id62" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">h,</span></code><a class="headerlink" href="#id62" title="Link to this heading">¶</a></h3>
 <p>( h – )</p>
 <p>Write a halfword to a constant byte sequence; note that it must be aligned.</p>
 </section>
 <section id="id63">
-<h3><code class="docutils literal notranslate"><span class="pre">c,</span></code><a class="headerlink" href="#id63" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">c,</span></code><a class="headerlink" href="#id63" title="Link to this heading">¶</a></h3>
 <p>( c – )</p>
 <p>Write a byte to a constant byte sequence.</p>
 </section>
 <section id="id64">
-<h3><code class="docutils literal notranslate"><span class="pre">align,</span></code><a class="headerlink" href="#id64" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">align,</span></code><a class="headerlink" href="#id64" title="Link to this heading">¶</a></h3>
 <p>( size – )</p>
 <p>Align the <code class="docutils literal notranslate"><span class="pre">here</span></code> pointer when defining a constant byte sequence to a <em>size</em> power of two.</p>
 </section>
 <section id="word-name">
-<h3><code class="docutils literal notranslate"><span class="pre">word&gt;name</span></code><a class="headerlink" href="#word-name" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">word&gt;name</span></code><a class="headerlink" href="#word-name" title="Link to this heading">¶</a></h3>
 <p>( word – name )</p>
 <p>Get the name of a word.</p>
 </section>
 <section id="word-flags">
-<h3><code class="docutils literal notranslate"><span class="pre">word&gt;flags</span></code><a class="headerlink" href="#word-flags" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">word&gt;flags</span></code><a class="headerlink" href="#word-flags" title="Link to this heading">¶</a></h3>
 <p>( word – flags )</p>
 <p>Get the flags of a word.</p>
 </section>
 <section id="compile">
-<h3><code class="docutils literal notranslate"><span class="pre">compile,</span></code><a class="headerlink" href="#compile" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">compile,</span></code><a class="headerlink" href="#compile" title="Link to this heading">¶</a></h3>
 <p>( xt – )</p>
 <p>Compile an xt to the current definition.</p>
 </section>
 <section id="inline">
-<h3><code class="docutils literal notranslate"><span class="pre">inline,</span></code><a class="headerlink" href="#inline" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">inline,</span></code><a class="headerlink" href="#inline" title="Link to this heading">¶</a></h3>
 <p>( xt – )</p>
 <p>Inline an xt to the current definition.</p>
 </section>
 <section id="find">
-<h3><code class="docutils literal notranslate"><span class="pre">find</span></code><a class="headerlink" href="#find" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">find</span></code><a class="headerlink" href="#find" title="Link to this heading">¶</a></h3>
 <p>( seq – word|0 )</p>
 <p>Find a word.</p>
 </section>
 <section id="find-all-dict">
-<h3><code class="docutils literal notranslate"><span class="pre">find-all-dict</span></code><a class="headerlink" href="#find-all-dict" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">find-all-dict</span></code><a class="headerlink" href="#find-all-dict" title="Link to this heading">¶</a></h3>
 <p>( seq word – word’|0 )</p>
 <p>Find a word in a dictionary in all wordlists.</p>
 </section>
 <section id="flash-latest">
-<h3><code class="docutils literal notranslate"><span class="pre">flash-latest</span></code><a class="headerlink" href="#flash-latest" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">flash-latest</span></code><a class="headerlink" href="#flash-latest" title="Link to this heading">¶</a></h3>
 <p>( – word )</p>
 <p>Get the latest word in flash.</p>
 </section>
 <section id="ram-latest">
-<h3><code class="docutils literal notranslate"><span class="pre">ram-latest</span></code><a class="headerlink" href="#ram-latest" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">ram-latest</span></code><a class="headerlink" href="#ram-latest" title="Link to this heading">¶</a></h3>
 <p>( – word )</p>
 <p>Get the latest word in RAM.</p>
 </section>
 <section id="latest">
-<h3><code class="docutils literal notranslate"><span class="pre">latest</span></code><a class="headerlink" href="#latest" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">latest</span></code><a class="headerlink" href="#latest" title="Link to this heading">¶</a></h3>
 <p>( – word )</p>
 <p>Get the latest word.</p>
 </section>
 <section id="state">
-<h3><code class="docutils literal notranslate"><span class="pre">state?</span></code><a class="headerlink" href="#state" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">state?</span></code><a class="headerlink" href="#state" title="Link to this heading">¶</a></h3>
 <p>( – state? )</p>
 <p>Get the compilation state.</p>
 </section>
 <section id="to">
-<h3><code class="docutils literal notranslate"><span class="pre">+to</span></code><a class="headerlink" href="#to" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">+to</span></code><a class="headerlink" href="#to" title="Link to this heading">¶</a></h3>
 <p>( x “name” – )</p>
 <p>Add to a local or a VALUE.</p>
 </section>
 <section id="constant">
-<h3><code class="docutils literal notranslate"><span class="pre">constant</span></code><a class="headerlink" href="#constant" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">constant</span></code><a class="headerlink" href="#constant" title="Link to this heading">¶</a></h3>
 <p>( x “name” – )</p>
 <p>Define a constant; note that this may be a null, a small int, a big int, a double, or a byte sequence (in the latter case, a constant byte sequence will be compiled).</p>
 </section>
 <section id="global">
-<h3><code class="docutils literal notranslate"><span class="pre">global</span></code><a class="headerlink" href="#global" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">global</span></code><a class="headerlink" href="#global" title="Link to this heading">¶</a></h3>
 <p>( “name” – )</p>
 <p>Create a global.</p>
 </section>
 <section id="bind">
-<h3><code class="docutils literal notranslate"><span class="pre">bind</span></code><a class="headerlink" href="#bind" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">bind</span></code><a class="headerlink" href="#bind" title="Link to this heading">¶</a></h3>
 <p>( xn … x0 count xt – closure )</p>
 <p>Bind a scope to a lambda.</p>
 </section>
 <section id="pick">
-<h3><code class="docutils literal notranslate"><span class="pre">pick</span></code><a class="headerlink" href="#pick" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">pick</span></code><a class="headerlink" href="#pick" title="Link to this heading">¶</a></h3>
 <p>( xn … x0 u – x )</p>
 <p>Redefine PICK.</p>
 </section>
 <section id="roll">
-<h3><code class="docutils literal notranslate"><span class="pre">roll</span></code><a class="headerlink" href="#roll" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">roll</span></code><a class="headerlink" href="#roll" title="Link to this heading">¶</a></h3>
 <p>( xn … x0 u – xn-1 … x0 xn u )</p>
 <p>Redefine ROLL.</p>
 </section>
 <section id="base">
-<h3><code class="docutils literal notranslate"><span class="pre">base!</span></code><a class="headerlink" href="#base" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">base!</span></code><a class="headerlink" href="#base" title="Link to this heading">¶</a></h3>
 <p>( base – )</p>
 <p>Set BASE.</p>
 </section>
 <section id="id65">
-<h3><code class="docutils literal notranslate"><span class="pre">base&#64;</span></code><a class="headerlink" href="#id65" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">base&#64;</span></code><a class="headerlink" href="#id65" title="Link to this heading">¶</a></h3>
 <p>( – base )</p>
 <p>Get BASE.</p>
 </section>
 <section id="with-base">
-<h3><code class="docutils literal notranslate"><span class="pre">with-base</span></code><a class="headerlink" href="#with-base" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">with-base</span></code><a class="headerlink" href="#with-base" title="Link to this heading">¶</a></h3>
 <p>( base xt – )</p>
 <p>Execute an xt with a BASE.</p>
 </section>
 <section id="parse-integral">
-<h3><code class="docutils literal notranslate"><span class="pre">parse-integral</span></code><a class="headerlink" href="#parse-integral" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">parse-integral</span></code><a class="headerlink" href="#parse-integral" title="Link to this heading">¶</a></h3>
 <p>( seq – n success )</p>
 <p>Parse a signed integral.</p>
 </section>
 <section id="parse-integral-unsigned">
-<h3><code class="docutils literal notranslate"><span class="pre">parse-integral-unsigned</span></code><a class="headerlink" href="#parse-integral-unsigned" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">parse-integral-unsigned</span></code><a class="headerlink" href="#parse-integral-unsigned" title="Link to this heading">¶</a></h3>
 <p>( seq – u success )</p>
 <p>Parse an unsigned integral.</p>
 </section>
 <section id="format-integral">
-<h3><code class="docutils literal notranslate"><span class="pre">format-integral</span></code><a class="headerlink" href="#format-integral" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">format-integral</span></code><a class="headerlink" href="#format-integral" title="Link to this heading">¶</a></h3>
 <p>( n – bytes )</p>
 <p>Format a signed integral.</p>
 </section>
 <section id="format-integral-unsigned">
-<h3>`format-integral-unsigned<a class="headerlink" href="#format-integral-unsigned" title="Permalink to this heading">¶</a></h3>
+<h3>`format-integral-unsigned<a class="headerlink" href="#format-integral-unsigned" title="Link to this heading">¶</a></h3>
 <p>( u – bytes )</p>
 <p>Format an unsigned integral.</p>
 </section>
 <section id="duplicate">
-<h3><code class="docutils literal notranslate"><span class="pre">duplicate</span></code><a class="headerlink" href="#duplicate" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">duplicate</span></code><a class="headerlink" href="#duplicate" title="Link to this heading">¶</a></h3>
 <p>( seq0 – seq1 )</p>
 <p>Duplicate a cell or byte sequence; this converts slices to non-slices and constant byte sequences into non-constant byte sequences.</p>
 </section>
 <section id="concat">
-<h3><code class="docutils literal notranslate"><span class="pre">concat</span></code><a class="headerlink" href="#concat" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">concat</span></code><a class="headerlink" href="#concat" title="Link to this heading">¶</a></h3>
 <p>( seq0 seq1 – seq2 )</p>
 <p>Concatenate two cell or byte sequences or slices.</p>
 </section>
 <section id="iter">
-<h3><code class="docutils literal notranslate"><span class="pre">iter</span></code><a class="headerlink" href="#iter" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">iter</span></code><a class="headerlink" href="#iter" title="Link to this heading">¶</a></h3>
 <p>( seq xt – )</p>
 <p>Iterate over a sequence or slice.</p>
 </section>
 <section id="iteri">
-<h3><code class="docutils literal notranslate"><span class="pre">iteri</span></code><a class="headerlink" href="#iteri" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">iteri</span></code><a class="headerlink" href="#iteri" title="Link to this heading">¶</a></h3>
 <p>( seq xt – )</p>
 <p>Iterate over a sequence or slice with an index.</p>
 </section>
 <section id="find-index">
-<h3><code class="docutils literal notranslate"><span class="pre">find-index</span></code><a class="headerlink" href="#find-index" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">find-index</span></code><a class="headerlink" href="#find-index" title="Link to this heading">¶</a></h3>
 <p>( seq xt – index found? ) xt: ( item – flag )</p>
 <p>Get the index of an element of a sequence or slice that meets a predicate; note that the lowest matching index is returned, and xt will not necessarily be called against all items.</p>
 </section>
 <section id="find-indexi">
-<h3><code class="docutils literal notranslate"><span class="pre">find-indexi</span></code><a class="headerlink" href="#find-indexi" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">find-indexi</span></code><a class="headerlink" href="#find-indexi" title="Link to this heading">¶</a></h3>
 <p>( seq xt – index found? ) xt: ( item index – flag )</p>
 <p>Get the index of an element of a sequence or slice that meets a predicate with an index; note that the lowest matching index is returned, and xt will not necessarily be called against all items.</p>
 </section>
 <section id="map">
-<h3><code class="docutils literal notranslate"><span class="pre">map</span></code><a class="headerlink" href="#map" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">map</span></code><a class="headerlink" href="#map" title="Link to this heading">¶</a></h3>
 <p>( seq xt – seq’ )</p>
 <p>Map a sequence or slice into a new sequence.</p>
 </section>
 <section id="mapi">
-<h3><code class="docutils literal notranslate"><span class="pre">mapi</span></code><a class="headerlink" href="#mapi" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">mapi</span></code><a class="headerlink" href="#mapi" title="Link to this heading">¶</a></h3>
 <p>( seq xt – seq’ )</p>
 <p>Map a sequence or slice into a new sequence with an index.</p>
 </section>
 <section id="id66">
-<h3><code class="docutils literal notranslate"><span class="pre">map!</span></code><a class="headerlink" href="#id66" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">map!</span></code><a class="headerlink" href="#id66" title="Link to this heading">¶</a></h3>
 <p>( seq xt – )</p>
 <p>Map a sequence or slice in place.</p>
 </section>
 <section id="id67">
-<h3><code class="docutils literal notranslate"><span class="pre">mapi!</span></code><a class="headerlink" href="#id67" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">mapi!</span></code><a class="headerlink" href="#id67" title="Link to this heading">¶</a></h3>
 <p>( seq xt – )</p>
 <p>Map a sequence or slicein place with an index.</p>
 </section>
 <section id="make-bits">
-<h3><code class="docutils literal notranslate"><span class="pre">make-bits</span></code><a class="headerlink" href="#make-bits" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">make-bits</span></code><a class="headerlink" href="#make-bits" title="Link to this heading">¶</a></h3>
 <p>( len – bits )</p>
 <p>Make a zeroed bit sequence.</p>
 </section>
 <section id="bits-len">
-<h3><code class="docutils literal notranslate"><span class="pre">bits&gt;len</span></code><a class="headerlink" href="#bits-len" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">bits&gt;len</span></code><a class="headerlink" href="#bits-len" title="Link to this heading">¶</a></h3>
 <p>( bits – len )</p>
 <p>Get the length of bits.</p>
 </section>
 <section id="bit">
-<h3><code class="docutils literal notranslate"><span class="pre">bit!</span></code><a class="headerlink" href="#bit" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">bit!</span></code><a class="headerlink" href="#bit" title="Link to this heading">¶</a></h3>
 <p>( bit index bits – )</p>
 <p>Set a bit in a bit sequence.</p>
 </section>
 <section id="id68">
-<h3><code class="docutils literal notranslate"><span class="pre">bit&#64;</span></code><a class="headerlink" href="#id68" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">bit&#64;</span></code><a class="headerlink" href="#id68" title="Link to this heading">¶</a></h3>
 <p>( index bits – )</p>
 <p>Get a bit in a bit sequence.</p>
 </section>
 <section id="filter">
-<h3><code class="docutils literal notranslate"><span class="pre">filter</span></code><a class="headerlink" href="#filter" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">filter</span></code><a class="headerlink" href="#filter" title="Link to this heading">¶</a></h3>
 <p>( seq xt – seq’ )</p>
 <p>Filter a sequence or slice.</p>
 </section>
 <section id="filteri">
-<h3><code class="docutils literal notranslate"><span class="pre">filteri</span></code><a class="headerlink" href="#filteri" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">filteri</span></code><a class="headerlink" href="#filteri" title="Link to this heading">¶</a></h3>
 <p>( seq xt – seq’ )</p>
 <p>Filter a sequence or slice with an index.</p>
 </section>
 <section id="foldl">
-<h3><code class="docutils literal notranslate"><span class="pre">foldl</span></code><a class="headerlink" href="#foldl" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">foldl</span></code><a class="headerlink" href="#foldl" title="Link to this heading">¶</a></h3>
 <p>( x seq xt – x’ ) xt: ( x item – x’ )</p>
 <p>Fold left over a sequence or slice.</p>
 </section>
 <section id="foldli">
-<h3><code class="docutils literal notranslate"><span class="pre">foldli</span></code><a class="headerlink" href="#foldli" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">foldli</span></code><a class="headerlink" href="#foldli" title="Link to this heading">¶</a></h3>
 <p>( x seq xt – x’ ) xt: ( x item index – x’ )</p>
 <p>Fold left over a sequence or slice with an index.</p>
 </section>
 <section id="foldr">
-<h3><code class="docutils literal notranslate"><span class="pre">foldr</span></code><a class="headerlink" href="#foldr" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">foldr</span></code><a class="headerlink" href="#foldr" title="Link to this heading">¶</a></h3>
 <p>( x seq xt – x’ ) xt: ( item x – x’ )</p>
 <p>Fold right over a sequence or slice.</p>
 </section>
 <section id="foldri">
-<h3><code class="docutils literal notranslate"><span class="pre">foldri</span></code><a class="headerlink" href="#foldri" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">foldri</span></code><a class="headerlink" href="#foldri" title="Link to this heading">¶</a></h3>
 <p>( x seq xt – x’ ) xt: ( item x index – x’ )</p>
 <p>Fold right over a sequence or slice with an index.</p>
 </section>
 <section id="collectl-cells">
-<h3><code class="docutils literal notranslate"><span class="pre">collectl-cells</span></code><a class="headerlink" href="#collectl-cells" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">collectl-cells</span></code><a class="headerlink" href="#collectl-cells" title="Link to this heading">¶</a></h3>
 <p>( x len xt – cells ) xt: ( x – x item )</p>
 <p>Collect elements of a cell sequence from left to right.</p>
 </section>
 <section id="collectli-cells">
-<h3><code class="docutils literal notranslate"><span class="pre">collectli-cells</span></code><a class="headerlink" href="#collectli-cells" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">collectli-cells</span></code><a class="headerlink" href="#collectli-cells" title="Link to this heading">¶</a></h3>
 <p>( x len xt – cells ) xt: ( x index – x item )</p>
 <p>Collect elements of a cell sequence from left to right with an index.</p>
 </section>
 <section id="collectr-cells">
-<h3><code class="docutils literal notranslate"><span class="pre">collectr-cells</span></code><a class="headerlink" href="#collectr-cells" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">collectr-cells</span></code><a class="headerlink" href="#collectr-cells" title="Link to this heading">¶</a></h3>
 <p>( x len xt – cells ) xt: ( x – x item )</p>
 <p>Collect elements of a cell sequence from right to left.</p>
 </section>
 <section id="collectri-cells">
-<h3><code class="docutils literal notranslate"><span class="pre">collectri-cells</span></code><a class="headerlink" href="#collectri-cells" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">collectri-cells</span></code><a class="headerlink" href="#collectri-cells" title="Link to this heading">¶</a></h3>
 <p>( x len xt – cells ) xt: ( x – x item )</p>
 <p>Collect elements of a cell sequence from right to left with an index.</p>
 </section>
 <section id="collectl-bytes">
-<h3><code class="docutils literal notranslate"><span class="pre">collectl-bytes</span></code><a class="headerlink" href="#collectl-bytes" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">collectl-bytes</span></code><a class="headerlink" href="#collectl-bytes" title="Link to this heading">¶</a></h3>
 <p>( x len xt – bytes ) xt: ( x – x item )</p>
 <p>Collect elements of a byte sequence from left to right.</p>
 </section>
 <section id="collectli-bytes">
-<h3><code class="docutils literal notranslate"><span class="pre">collectli-bytes</span></code><a class="headerlink" href="#collectli-bytes" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">collectli-bytes</span></code><a class="headerlink" href="#collectli-bytes" title="Link to this heading">¶</a></h3>
 <p>( x len xt – bytes ) xt: ( x index – x item )</p>
 <p>Collect elements of a byte sequence from left to right with an index.</p>
 </section>
 <section id="collectr-bytes">
-<h3><code class="docutils literal notranslate"><span class="pre">collectr-bytes</span></code><a class="headerlink" href="#collectr-bytes" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">collectr-bytes</span></code><a class="headerlink" href="#collectr-bytes" title="Link to this heading">¶</a></h3>
 <p>( x len xt – bytes ) xt: ( x – x item )</p>
 <p>Collect elements of a byte sequence from right to left.</p>
 </section>
 <section id="collectri-bytes">
-<h3><code class="docutils literal notranslate"><span class="pre">collectri-bytes</span></code><a class="headerlink" href="#collectri-bytes" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">collectri-bytes</span></code><a class="headerlink" href="#collectri-bytes" title="Link to this heading">¶</a></h3>
 <p>( x len xt – bytes ) xt: ( x – x item )</p>
 <p>Collect elements of a byte sequence from right to left with an index.</p>
 </section>
 <section id="reverse">
-<h3><code class="docutils literal notranslate"><span class="pre">reverse</span></code><a class="headerlink" href="#reverse" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">reverse</span></code><a class="headerlink" href="#reverse" title="Link to this heading">¶</a></h3>
 <p>( seq – seq’ )</p>
 <p>Reverse a sequence producing a new sequence.</p>
 </section>
 <section id="id69">
-<h3><code class="docutils literal notranslate"><span class="pre">reverse!</span></code><a class="headerlink" href="#id69" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">reverse!</span></code><a class="headerlink" href="#id69" title="Link to this heading">¶</a></h3>
 <p>( seq – )</p>
 <p>Reverse a sequence in place.</p>
 </section>
 <section id="zip">
-<h3><code class="docutils literal notranslate"><span class="pre">zip</span></code><a class="headerlink" href="#zip" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">zip</span></code><a class="headerlink" href="#zip" title="Link to this heading">¶</a></h3>
 <p>( seq0 seq1 – seq2 )</p>
 <p>Zip two sequences into a new sequence, using the length of the shorter sequence.</p>
 </section>
 <section id="zip3">
-<h3><code class="docutils literal notranslate"><span class="pre">zip3</span></code><a class="headerlink" href="#zip3" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">zip3</span></code><a class="headerlink" href="#zip3" title="Link to this heading">¶</a></h3>
 <p>( seq0 seq1 seq2 – seq3 )</p>
 <p>Zip three sequences into a new sequence, using the length of the shorter sequence.</p>
 </section>
 <section id="id70">
-<h3><code class="docutils literal notranslate"><span class="pre">zip!</span></code><a class="headerlink" href="#id70" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">zip!</span></code><a class="headerlink" href="#id70" title="Link to this heading">¶</a></h3>
 <p>( seq0 seq1 – )</p>
 <p>Zip two sequences into the first sequence in-place; note that if the ranges do not match an exception is raised, and the first sequence must be a cell sequence.</p>
 </section>
 <section id="id71">
-<h3><code class="docutils literal notranslate"><span class="pre">zip3!</span></code><a class="headerlink" href="#id71" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">zip3!</span></code><a class="headerlink" href="#id71" title="Link to this heading">¶</a></h3>
 <p>( seq0 seq1 seq2 – )</p>
 <p>Zip three sequences into the first sequence in-place; note that if the ranges do not match an exception is raised, and the first sequence must be a cell sequence.</p>
 </section>
 <section id="sort">
-<h3><code class="docutils literal notranslate"><span class="pre">sort!</span></code><a class="headerlink" href="#sort" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">sort!</span></code><a class="headerlink" href="#sort" title="Link to this heading">¶</a></h3>
 <p>( seq xt – )</p>
 <p>Heapsort a sequence or slice in place.</p>
 </section>
 <section id="id72">
-<h3><code class="docutils literal notranslate"><span class="pre">sort</span></code><a class="headerlink" href="#id72" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">sort</span></code><a class="headerlink" href="#id72" title="Link to this heading">¶</a></h3>
 <p>( seq xt – )</p>
 <p>Heapsort a sequence or slice, copying it.</p>
 </section>
 <section id="all">
-<h3><code class="docutils literal notranslate"><span class="pre">all</span></code><a class="headerlink" href="#all" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">all</span></code><a class="headerlink" href="#all" title="Link to this heading">¶</a></h3>
 <p>( seq xt – all? ) xt: ( element – match? )</p>
 <p>Get whether a predicate applies to all elements of a sequence; note that not all elements will be iterated over if an element returns false, and true will be returned if the sequence is empty.</p>
 </section>
 <section id="alli">
-<h3><code class="docutils literal notranslate"><span class="pre">alli</span></code><a class="headerlink" href="#alli" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">alli</span></code><a class="headerlink" href="#alli" title="Link to this heading">¶</a></h3>
 <p>( seq xt – all? ) xt: ( element index – match? )</p>
 <p>Get whether a predicate applies to all elements of a sequence with an index; note that not all elements will be iterated over if an element returns false, and true will be returned if the sequence is empty.</p>
 </section>
 <section id="any">
-<h3><code class="docutils literal notranslate"><span class="pre">any</span></code><a class="headerlink" href="#any" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">any</span></code><a class="headerlink" href="#any" title="Link to this heading">¶</a></h3>
 <p>( seq xt – any? ) xt: ( element – match? )</p>
 <p>Get whether a predicate applies to any element of a sequence; note that not all elements will be iterated over if an element returns true, and false will be returned if the sequence is empty.</p>
 </section>
 <section id="anyi">
-<h3><code class="docutils literal notranslate"><span class="pre">anyi</span></code><a class="headerlink" href="#anyi" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">anyi</span></code><a class="headerlink" href="#anyi" title="Link to this heading">¶</a></h3>
 <p>( seq xt – any? ) xt: ( element index – match? )</p>
 <p>Get whether a predicate applies to any element of a sequence with an index; note that not all elements will be iterated over if an element returns true, and false will be returned if the sequence is empty.</p>
 </section>
 <section id="split">
-<h3><code class="docutils literal notranslate"><span class="pre">split</span></code><a class="headerlink" href="#split" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">split</span></code><a class="headerlink" href="#split" title="Link to this heading">¶</a></h3>
 <p>( seq xt – parts-seq ) xt: ( element – delimiter? )</p>
 <p>Split a sequence into subsequences divided at delimiters as determined by a predicate, not including the delimiters.</p>
 </section>
 <section id="spliti">
-<h3><code class="docutils literal notranslate"><span class="pre">spliti</span></code><a class="headerlink" href="#spliti" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">spliti</span></code><a class="headerlink" href="#spliti" title="Link to this heading">¶</a></h3>
 <p>( seq xt – parts-seq ) xt: ( element index – delimiter? )</p>
 <p>Split a sequence into subsequences divided at delimiters as determined by a predicate with an index, not including the delimiters.</p>
 </section>
 <section id="join">
-<h3><code class="docutils literal notranslate"><span class="pre">join</span></code><a class="headerlink" href="#join" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">join</span></code><a class="headerlink" href="#join" title="Link to this heading">¶</a></h3>
 <p>( list-seq join-seq – seq’ )</p>
 <p>Join a cell sequence of sequences or slices.</p>
 </section>
 <section id="equal-bytes">
-<h3><code class="docutils literal notranslate"><span class="pre">equal-bytes?</span></code><a class="headerlink" href="#equal-bytes" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">equal-bytes?</span></code><a class="headerlink" href="#equal-bytes" title="Link to this heading">¶</a></h3>
 <p>( bytes0 bytes1 – equal? )</p>
 <p>Get whether two byte sequences or slices have equal contents.</p>
 </section>
 <section id="equal-case-bytes">
-<h3><code class="docutils literal notranslate"><span class="pre">equal-case-bytes?</span></code><a class="headerlink" href="#equal-case-bytes" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">equal-case-bytes?</span></code><a class="headerlink" href="#equal-case-bytes" title="Link to this heading">¶</a></h3>
 <p>( bytes0 bytes1 – equal? )</p>
 <p>Get whether two byte sequences or slices have equal contents case-insensitively.</p>
 </section>
 <section id="hash-bytes">
-<h3><code class="docutils literal notranslate"><span class="pre">hash-bytes</span></code><a class="headerlink" href="#hash-bytes" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">hash-bytes</span></code><a class="headerlink" href="#hash-bytes" title="Link to this heading">¶</a></h3>
 <p>( bytes – hash )</p>
 <p>Compute a 32-bit FNV-1 hash for a byte sequence or slice.</p>
 </section>
 <section id="depth">
-<h3><code class="docutils literal notranslate"><span class="pre">depth</span></code><a class="headerlink" href="#depth" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">depth</span></code><a class="headerlink" href="#depth" title="Link to this heading">¶</a></h3>
 <p>( – depth )</p>
 <p>Get the current depth.</p>
 </section>
 <section id="id73">
-<h3><code class="docutils literal notranslate"><span class="pre">#(</span></code><a class="headerlink" href="#id73" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">#(</span></code><a class="headerlink" href="#id73" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>Start defining a cell sequence.</p>
 </section>
 <section id="id74">
-<h3><code class="docutils literal notranslate"><span class="pre">#&lt;</span></code><a class="headerlink" href="#id74" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">#&lt;</span></code><a class="headerlink" href="#id74" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>Start defining a byte sequence.</p>
 </section>
 <section id="id75">
-<h3><code class="docutils literal notranslate"><span class="pre">)#</span></code><a class="headerlink" href="#id75" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">)#</span></code><a class="headerlink" href="#id75" title="Link to this heading">¶</a></h3>
 <p>( xn … x0 – cells )</p>
 <p>Finish definining a cell sequence.</p>
 </section>
 <section id="id76">
-<h3><code class="docutils literal notranslate"><span class="pre">&gt;#</span></code><a class="headerlink" href="#id76" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;#</span></code><a class="headerlink" href="#id76" title="Link to this heading">¶</a></h3>
 <p>( cn … c0 – bytes )</p>
 <p>Finish defining a byte sequence.</p>
 </section>
 <section id="id77">
-<h3><code class="docutils literal notranslate"><span class="pre">0cells</span></code><a class="headerlink" href="#id77" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">0cells</span></code><a class="headerlink" href="#id77" title="Link to this heading">¶</a></h3>
 <p>( – cells )</p>
 <p>Empty cell sequence.</p>
 </section>
 <section id="id78">
-<h3><code class="docutils literal notranslate"><span class="pre">0bytes</span></code><a class="headerlink" href="#id78" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">0bytes</span></code><a class="headerlink" href="#id78" title="Link to this heading">¶</a></h3>
 <p>( – bytes )</p>
 <p>Empty byte sequence.</p>
 </section>
 <section id="push-key">
-<h3><code class="docutils literal notranslate"><span class="pre">push-key?</span></code><a class="headerlink" href="#push-key" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">push-key?</span></code><a class="headerlink" href="#push-key" title="Link to this heading">¶</a></h3>
 <p>( xt – ) where xt: ( – flag )</p>
 <p>Push <code class="docutils literal notranslate"><span class="pre">key?</span></code> hook.</p>
 </section>
 <section id="drop-key">
-<h3><code class="docutils literal notranslate"><span class="pre">drop-key?</span></code><a class="headerlink" href="#drop-key" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">drop-key?</span></code><a class="headerlink" href="#drop-key" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>Drop <code class="docutils literal notranslate"><span class="pre">key?</span></code> hook.</p>
 </section>
 <section id="id79">
-<h3><code class="docutils literal notranslate"><span class="pre">push-key</span></code><a class="headerlink" href="#id79" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">push-key</span></code><a class="headerlink" href="#id79" title="Link to this heading">¶</a></h3>
 <p>( xt – ) where xt: ( – c )</p>
 <p>Push <code class="docutils literal notranslate"><span class="pre">key</span></code> hook.</p>
 </section>
 <section id="id80">
-<h3><code class="docutils literal notranslate"><span class="pre">drop-key</span></code><a class="headerlink" href="#id80" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">drop-key</span></code><a class="headerlink" href="#id80" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>Drop <code class="docutils literal notranslate"><span class="pre">key</span></code> hook.</p>
 </section>
 <section id="push-emit">
-<h3><code class="docutils literal notranslate"><span class="pre">push-emit?</span></code><a class="headerlink" href="#push-emit" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">push-emit?</span></code><a class="headerlink" href="#push-emit" title="Link to this heading">¶</a></h3>
 <p>( xt – ) where xt: ( – flag )</p>
 <p>Push <code class="docutils literal notranslate"><span class="pre">emit?</span></code> hook.</p>
 </section>
 <section id="drop-emit">
-<h3><code class="docutils literal notranslate"><span class="pre">drop-emit?</span></code><a class="headerlink" href="#drop-emit" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">drop-emit?</span></code><a class="headerlink" href="#drop-emit" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>Drop <code class="docutils literal notranslate"><span class="pre">emit?</span></code> hook.</p>
 </section>
 <section id="id81">
-<h3><code class="docutils literal notranslate"><span class="pre">push-emit</span></code><a class="headerlink" href="#id81" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">push-emit</span></code><a class="headerlink" href="#id81" title="Link to this heading">¶</a></h3>
 <p>( xt – ) where xt: ( c – )</p>
 <p>Push <code class="docutils literal notranslate"><span class="pre">emit</span></code> hook.</p>
 </section>
 <section id="id82">
-<h3><code class="docutils literal notranslate"><span class="pre">drop-emit</span></code><a class="headerlink" href="#id82" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">drop-emit</span></code><a class="headerlink" href="#id82" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>Drop <code class="docutils literal notranslate"><span class="pre">emit</span></code> hook.</p>
 </section>
 <section id="push-error-emit">
-<h3><code class="docutils literal notranslate"><span class="pre">push-error-emit?</span></code><a class="headerlink" href="#push-error-emit" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">push-error-emit?</span></code><a class="headerlink" href="#push-error-emit" title="Link to this heading">¶</a></h3>
 <p>( xt – ) where xt: ( – flag )</p>
 <p>Push <code class="docutils literal notranslate"><span class="pre">error-emit?</span></code> hook.</p>
 </section>
 <section id="drop-error-emit">
-<h3><code class="docutils literal notranslate"><span class="pre">drop-error-emit?</span></code><a class="headerlink" href="#drop-error-emit" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">drop-error-emit?</span></code><a class="headerlink" href="#drop-error-emit" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>Drop <code class="docutils literal notranslate"><span class="pre">error-emit?</span></code> hook.</p>
 </section>
 <section id="id83">
-<h3><code class="docutils literal notranslate"><span class="pre">push-error-emit</span></code><a class="headerlink" href="#id83" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">push-error-emit</span></code><a class="headerlink" href="#id83" title="Link to this heading">¶</a></h3>
 <p>( xt – ) where xt: ( c – )</p>
 <p>Push <code class="docutils literal notranslate"><span class="pre">error-emit</span></code> hook.</p>
 </section>
 <section id="id84">
-<h3><code class="docutils literal notranslate"><span class="pre">drop-error-emit</span></code><a class="headerlink" href="#id84" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">drop-error-emit</span></code><a class="headerlink" href="#id84" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>Drop <code class="docutils literal notranslate"><span class="pre">error-emit</span></code> hook.</p>
 </section>
 <section id="with-input">
-<h3><code class="docutils literal notranslate"><span class="pre">with-input</span></code><a class="headerlink" href="#with-input" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">with-input</span></code><a class="headerlink" href="#with-input" title="Link to this heading">¶</a></h3>
 <p>( key?-xt key-xt xt – ) where key?-xt: ( – flag ), key-xt: ( – c ), and xt: ( ? – ? )</p>
 <p>Redirect input with <em>key?-xt</em> and <em>key-xt</em> within <em>xt</em>, restoring it afterwards even if an exception is raised.</p>
 </section>
 <section id="with-output">
-<h3><code class="docutils literal notranslate"><span class="pre">with-output</span></code><a class="headerlink" href="#with-output" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">with-output</span></code><a class="headerlink" href="#with-output" title="Link to this heading">¶</a></h3>
 <p>( emit?-xt emit-xt xt – ) where emit?-xt: ( – flag ), emit-xt: ( c – ), and xt: ( ? – ? )</p>
 <p>Redirect output with <em>emit?-xt</em> and <em>emit-xt</em> within <em>xt</em>, restoring it afterwards even if an exception is raised.</p>
 </section>
 <section id="with-error-output">
-<h3><code class="docutils literal notranslate"><span class="pre">with-error-output</span></code><a class="headerlink" href="#with-error-output" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">with-error-output</span></code><a class="headerlink" href="#with-error-output" title="Link to this heading">¶</a></h3>
 <p>( error-emit?-xt error-emit-xt xt – ) where error-emit?-xt: ( – flag ), error-emit-xt: ( c – ), and xt: ( ? – ? )</p>
 <p>Redirect error output with <em>error-emit?-xt</em> and <em>error-emit-xt</em> within <em>xt</em>, restoring it afterwards even if an exception is raised.</p>
 </section>
 </section>
 <section id="unsafe-words">
-<h2><code class="docutils literal notranslate"><span class="pre">unsafe</span></code> words<a class="headerlink" href="#unsafe-words" title="Permalink to this heading">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">unsafe</span></code> words<a class="headerlink" href="#unsafe-words" title="Link to this heading">¶</a></h2>
 <section id="bytes-addr-len">
-<h3><code class="docutils literal notranslate"><span class="pre">bytes&gt;addr-len</span></code><a class="headerlink" href="#bytes-addr-len" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">bytes&gt;addr-len</span></code><a class="headerlink" href="#bytes-addr-len" title="Link to this heading">¶</a></h3>
 <p>( bytes – addr len )</p>
 <p>Get the starting address and length of a byte sequence or slice. Note that these are not guaranteed to remain constant with any subsequent allocations that may trigger the garbage collector.</p>
 </section>
 <section id="bytes-buffer">
-<h3><code class="docutils literal notranslate"><span class="pre">bytes&gt;buffer</span></code><a class="headerlink" href="#bytes-buffer" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">bytes&gt;buffer</span></code><a class="headerlink" href="#bytes-buffer" title="Link to this heading">¶</a></h3>
 <p>( bytes offset dest-address count – }</p>
 <p>Copy <em>count</em> bytes starting at <em>offset</em> in <em>bytes</em> to a buffer starting at <em>dest-address</em>.</p>
 </section>
 <section id="buffer-bytes">
-<h3><code class="docutils literal notranslate"><span class="pre">buffer&gt;bytes</span></code><a class="headerlink" href="#buffer-bytes" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">buffer&gt;bytes</span></code><a class="headerlink" href="#buffer-bytes" title="Link to this heading">¶</a></h3>
 <p>( src-address bytes offset count – )</p>
 <p>Copy <em>count</em> bytes from a buffer starting at <em>src-address</em> to <em>offset</em> in <em>bytes</em>.</p>
 </section>
 <section id="id85">
-<h3><code class="docutils literal notranslate"><span class="pre">&#64;</span></code><a class="headerlink" href="#id85" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">&#64;</span></code><a class="headerlink" href="#id85" title="Link to this heading">¶</a></h3>
 <p>( addr – x )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">&#64;</span></code>.</p>
 </section>
 <section id="id86">
-<h3><code class="docutils literal notranslate"><span class="pre">!</span></code><a class="headerlink" href="#id86" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">!</span></code><a class="headerlink" href="#id86" title="Link to this heading">¶</a></h3>
 <p>( x addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">!</span></code>.</p>
 </section>
 <section id="id87">
-<h3><code class="docutils literal notranslate"><span class="pre">+!</span></code><a class="headerlink" href="#id87" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">+!</span></code><a class="headerlink" href="#id87" title="Link to this heading">¶</a></h3>
 <p>( x addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">+!</span></code>.</p>
 </section>
 <section id="bis">
-<h3><code class="docutils literal notranslate"><span class="pre">bis!</span></code><a class="headerlink" href="#bis" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">bis!</span></code><a class="headerlink" href="#bis" title="Link to this heading">¶</a></h3>
 <p>( x addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">BIS!</span></code>.</p>
 </section>
 <section id="id88">
-<h3><code class="docutils literal notranslate"><span class="pre">bic!</span></code><a class="headerlink" href="#id88" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">bic!</span></code><a class="headerlink" href="#id88" title="Link to this heading">¶</a></h3>
 <p>( x addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">BIC!</span></code>.</p>
 </section>
 <section id="id89">
-<h3><code class="docutils literal notranslate"><span class="pre">xor!</span></code><a class="headerlink" href="#id89" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">xor!</span></code><a class="headerlink" href="#id89" title="Link to this heading">¶</a></h3>
 <p>( x addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">XOR!</span></code>.</p>
 </section>
 <section id="id90">
-<h3><code class="docutils literal notranslate"><span class="pre">h&#64;</span></code><a class="headerlink" href="#id90" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">h&#64;</span></code><a class="headerlink" href="#id90" title="Link to this heading">¶</a></h3>
 <p>( addr – h )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">H&#64;</span></code>.</p>
 </section>
 <section id="id91">
-<h3><code class="docutils literal notranslate"><span class="pre">h!</span></code><a class="headerlink" href="#id91" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">h!</span></code><a class="headerlink" href="#id91" title="Link to this heading">¶</a></h3>
 <p>( h addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">H!</span></code>.</p>
 </section>
 <section id="id92">
-<h3><code class="docutils literal notranslate"><span class="pre">h+!</span></code><a class="headerlink" href="#id92" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">h+!</span></code><a class="headerlink" href="#id92" title="Link to this heading">¶</a></h3>
 <p>( h addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">H+!</span></code>.</p>
 </section>
 <section id="hbis">
-<h3><code class="docutils literal notranslate"><span class="pre">hbis!</span></code><a class="headerlink" href="#hbis" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">hbis!</span></code><a class="headerlink" href="#hbis" title="Link to this heading">¶</a></h3>
 <p>( x addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">HBIS!</span></code>.</p>
 </section>
 <section id="hbic">
-<h3><code class="docutils literal notranslate"><span class="pre">hbic!</span></code><a class="headerlink" href="#hbic" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">hbic!</span></code><a class="headerlink" href="#hbic" title="Link to this heading">¶</a></h3>
 <p>( x addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">HBIC!</span></code>.</p>
 </section>
 <section id="hxor">
-<h3><code class="docutils literal notranslate"><span class="pre">hxor!</span></code><a class="headerlink" href="#hxor" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">hxor!</span></code><a class="headerlink" href="#hxor" title="Link to this heading">¶</a></h3>
 <p>( x addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">HXOR!</span></code>.</p>
 </section>
 <section id="id93">
-<h3><code class="docutils literal notranslate"><span class="pre">c&#64;</span></code><a class="headerlink" href="#id93" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">c&#64;</span></code><a class="headerlink" href="#id93" title="Link to this heading">¶</a></h3>
 <p>( addr – c )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">C&#64;</span></code>.</p>
 </section>
 <section id="id94">
-<h3><code class="docutils literal notranslate"><span class="pre">c!</span></code><a class="headerlink" href="#id94" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">c!</span></code><a class="headerlink" href="#id94" title="Link to this heading">¶</a></h3>
 <p>( c addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">C!</span></code>.</p>
 </section>
 <section id="id95">
-<h3><code class="docutils literal notranslate"><span class="pre">c+!</span></code><a class="headerlink" href="#id95" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">c+!</span></code><a class="headerlink" href="#id95" title="Link to this heading">¶</a></h3>
 <p>( c addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">C+!</span></code>.</p>
 </section>
 <section id="cbis">
-<h3><code class="docutils literal notranslate"><span class="pre">cbis!</span></code><a class="headerlink" href="#cbis" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">cbis!</span></code><a class="headerlink" href="#cbis" title="Link to this heading">¶</a></h3>
 <p>( c addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">CBIS!</span></code>.</p>
 </section>
 <section id="cbic">
-<h3><code class="docutils literal notranslate"><span class="pre">cbic!</span></code><a class="headerlink" href="#cbic" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">cbic!</span></code><a class="headerlink" href="#cbic" title="Link to this heading">¶</a></h3>
 <p>( c addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">CBIC!</span></code>.</p>
 </section>
 <section id="cxor">
-<h3><code class="docutils literal notranslate"><span class="pre">cxor!</span></code><a class="headerlink" href="#cxor" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">cxor!</span></code><a class="headerlink" href="#cxor" title="Link to this heading">¶</a></h3>
 <p>( c addr – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">CXOR!</span></code>.</p>
 </section>
 <section id="fill">
-<h3><code class="docutils literal notranslate"><span class="pre">fill</span></code><a class="headerlink" href="#fill" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">fill</span></code><a class="headerlink" href="#fill" title="Link to this heading">¶</a></h3>
 <p>( addr bytes val – )</p>
 <p>Redefine <code class="docutils literal notranslate"><span class="pre">FILL</span></code>.</p>
 </section>
 <section id="id96">
-<h3><code class="docutils literal notranslate"><span class="pre">&gt;integral</span></code><a class="headerlink" href="#id96" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;integral</span></code><a class="headerlink" href="#id96" title="Link to this heading">¶</a></h3>
 <p>( x – value )</p>
 <p>Cast a value to an integer.</p>
 </section>
 <section id="id97">
-<h3><code class="docutils literal notranslate"><span class="pre">integral&gt;</span></code><a class="headerlink" href="#id97" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">integral&gt;</span></code><a class="headerlink" href="#id97" title="Link to this heading">¶</a></h3>
 <p>( value – x )</p>
 <p>Cast a value from an integer.</p>
 </section>
 <section id="id98">
-<h3><code class="docutils literal notranslate"><span class="pre">2&gt;integral</span></code><a class="headerlink" href="#id98" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">2&gt;integral</span></code><a class="headerlink" href="#id98" title="Link to this heading">¶</a></h3>
 <p>( x0 x1 – value0 value1 )</p>
 <p>Cast two values to integers.</p>
 </section>
 <section id="id99">
-<h3><code class="docutils literal notranslate"><span class="pre">2integral&gt;</span></code><a class="headerlink" href="#id99" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">2integral&gt;</span></code><a class="headerlink" href="#id99" title="Link to this heading">¶</a></h3>
 <p>( value0 value1 – x0 x1 )</p>
 <p>Cast two values from integers.</p>
 </section>
 <section id="double">
-<h3><code class="docutils literal notranslate"><span class="pre">&gt;double</span></code><a class="headerlink" href="#double" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;double</span></code><a class="headerlink" href="#double" title="Link to this heading">¶</a></h3>
 <p>( x – dvalue )</p>
 <p>Cast a value to an double.</p>
 </section>
 <section id="id100">
-<h3><code class="docutils literal notranslate"><span class="pre">double&gt;</span></code><a class="headerlink" href="#id100" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">double&gt;</span></code><a class="headerlink" href="#id100" title="Link to this heading">¶</a></h3>
 <p>( dvalue – x )</p>
 <p>Cast a value from an double.</p>
 </section>
 <section id="id101">
-<h3><code class="docutils literal notranslate"><span class="pre">2&gt;double</span></code><a class="headerlink" href="#id101" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">2&gt;double</span></code><a class="headerlink" href="#id101" title="Link to this heading">¶</a></h3>
 <p>( x0 x1 – dvalue0 dvalue1 )</p>
 <p>Cast two values to doubles.</p>
 </section>
 <section id="id102">
-<h3><code class="docutils literal notranslate"><span class="pre">2double&gt;</span></code><a class="headerlink" href="#id102" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">2double&gt;</span></code><a class="headerlink" href="#id102" title="Link to this heading">¶</a></h3>
 <p>( dvalue0 dvalue1 – x0 x1 )</p>
 <p>Cast two values from doubles.</p>
 </section>
 <section id="xt-integral">
-<h3><code class="docutils literal notranslate"><span class="pre">xt&gt;integral</span></code><a class="headerlink" href="#xt-integral" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">xt&gt;integral</span></code><a class="headerlink" href="#xt-integral" title="Link to this heading">¶</a></h3>
 <p>( xt – value )</p>
 <p>Convert an xt to an integral.</p>
 </section>
 <section id="integral-xt">
-<h3><code class="docutils literal notranslate"><span class="pre">integral&gt;xt</span></code><a class="headerlink" href="#integral-xt" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">integral&gt;xt</span></code><a class="headerlink" href="#integral-xt" title="Link to this heading">¶</a></h3>
 <p>( value – xt )</p>
 <p>Convert an integral to an xt.</p>
 </section>
 <section id="here">
-<h3><code class="docutils literal notranslate"><span class="pre">here</span></code><a class="headerlink" href="#here" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">here</span></code><a class="headerlink" href="#here" title="Link to this heading">¶</a></h3>
 <p>( – x )</p>
 <p>Get the HERE pointer.</p>
 </section>
 <section id="allot">
-<h3><code class="docutils literal notranslate"><span class="pre">allot</span></code><a class="headerlink" href="#allot" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">allot</span></code><a class="headerlink" href="#allot" title="Link to this heading">¶</a></h3>
 <p>( x – )</p>
 <p>Allot space.</p>
 </section>
 <section id="ram-here">
-<h3><code class="docutils literal notranslate"><span class="pre">ram-here</span></code><a class="headerlink" href="#ram-here" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">ram-here</span></code><a class="headerlink" href="#ram-here" title="Link to this heading">¶</a></h3>
 <p>( – x )</p>
 <p>Get the RAM HERE pointer.</p>
 </section>
 <section id="id103">
-<h3><code class="docutils literal notranslate"><span class="pre">ram-here!</span></code><a class="headerlink" href="#id103" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">ram-here!</span></code><a class="headerlink" href="#id103" title="Link to this heading">¶</a></h3>
 <p>( x – )</p>
 <p>Set the RAM HERE pointer.</p>
 </section>
 <section id="ram-allot">
-<h3><code class="docutils literal notranslate"><span class="pre">ram-allot</span></code><a class="headerlink" href="#ram-allot" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">ram-allot</span></code><a class="headerlink" href="#ram-allot" title="Link to this heading">¶</a></h3>
 <p>( x – )</p>
 <p>Allot space in the RAM dictionary.</p>
 </section>
 <section id="flash-here">
-<h3><code class="docutils literal notranslate"><span class="pre">flash-here</span></code><a class="headerlink" href="#flash-here" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">flash-here</span></code><a class="headerlink" href="#flash-here" title="Link to this heading">¶</a></h3>
 <p>( – x )</p>
 <p>Get the flash HERE pointer.</p>
 </section>
 <section id="id104">
-<h3><code class="docutils literal notranslate"><span class="pre">flash-here!</span></code><a class="headerlink" href="#id104" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">flash-here!</span></code><a class="headerlink" href="#id104" title="Link to this heading">¶</a></h3>
 <p>( x – )</p>
 <p>Set the flash HERE pointer.</p>
 </section>
 <section id="flash-allot">
-<h3><code class="docutils literal notranslate"><span class="pre">flash-allot</span></code><a class="headerlink" href="#flash-allot" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">flash-allot</span></code><a class="headerlink" href="#flash-allot" title="Link to this heading">¶</a></h3>
 <p>( x – )</p>
 <p>Allot space in the flash dictionary.</p>
 </section>
@@ -1637,7 +1633,7 @@
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <h1 class="logo"><a href="../index.html">zeptoscript</a></h1>
 
@@ -1680,7 +1676,7 @@
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
@@ -1688,7 +1684,7 @@
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 
 
@@ -1706,7 +1702,7 @@
       &#169;2024, Travis Bemann.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 5.3.0</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
       |

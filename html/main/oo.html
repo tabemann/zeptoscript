@@ -1,20 +1,16 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>zeptoscript Object-Orientation &#8212; zeptoscript  documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Weak references" href="weak.html" />
@@ -37,7 +33,7 @@
           <div class="body" role="main">
             
   <section id="zeptoscript-object-orientation">
-<h1>zeptoscript Object-Orientation<a class="headerlink" href="#zeptoscript-object-orientation" title="Permalink to this heading">¶</a></h1>
+<h1>zeptoscript Object-Orientation<a class="headerlink" href="#zeptoscript-object-orientation" title="Link to this heading">¶</a></h1>
 <p>zeptoscript optionally supports object-orientation. It is not traditional object-orientation in that there is no concept of inheritance, and methods are not declared as parts of particular classes. Rather, methods exist independent of any particular class, and any particular class can implement any set of methods. On the other hand, members are tied to individual classes, and cannot be used to access any other class.</p>
 <p>Accesses to objects are safe in that any call to a method on an object that is not implemented by that object’s class and any call to a member accessor on an object whose class does not match the accessor will result in an exception being raised.</p>
 <p>Unlike records, objects in zeptoscript are not syntactic sugar for cell sequences. Also unlike records, classes in zeptoscript may have constructor methods, named <code class="docutils literal notranslate"><span class="pre">new</span></code>, which are automatically called when the objects are constructed. Note that unlike in some languages, objects do not have destructors or finalizers, so if such behavior is desired, adding a destructor or finalizer method, which may be named <code class="docutils literal notranslate"><span class="pre">destroy</span></code>, is necessary.</p>
@@ -117,102 +113,102 @@ end-class
 </pre></div>
 </div>
 <section id="zscript-oo-words">
-<h2><code class="docutils literal notranslate"><span class="pre">zscript-oo</span></code> words<a class="headerlink" href="#zscript-oo-words" title="Permalink to this heading">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-oo</span></code> words<a class="headerlink" href="#zscript-oo-words" title="Link to this heading">¶</a></h2>
 <section id="method">
-<h3><code class="docutils literal notranslate"><span class="pre">method</span></code><a class="headerlink" href="#method" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">method</span></code><a class="headerlink" href="#method" title="Link to this heading">¶</a></h3>
 <p>( “name” – )</p>
 <p>Declare a method with a given name. This method is not tied to any given class, and should be declared outside of a class definition. The method is called with an object of a class which implements it on the top of the stack, and that object will be passed, along with any other arguments, on the top of the stack to the implementation of the method for that object’s class. If the method is called on an object whose class does not implement the method <code class="docutils literal notranslate"><span class="pre">x-unimplemented-method</span></code> will be raised.</p>
 </section>
 <section id="begin-class">
-<h3><code class="docutils literal notranslate"><span class="pre">begin-class</span></code><a class="headerlink" href="#begin-class" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">begin-class</span></code><a class="headerlink" href="#begin-class" title="Link to this heading">¶</a></h3>
 <p>( “name” – )</p>
 <p>Begin the definition of a class with a given name. Note that this class will be instantiated with <code class="docutils literal notranslate"><span class="pre">make-</span></code><em>name</em>, which is defined within the context of the class (so the class can construct an instance of itself). Any extra values provided will be passed to the class’s <code class="docutils literal notranslate"><span class="pre">new</span></code> method if there is one, along with the newly-minted instance of the class on the top of the stack; afterwards the new object will be returned.</p>
 </section>
 <section id="end-class">
-<h3><code class="docutils literal notranslate"><span class="pre">end-class</span></code><a class="headerlink" href="#end-class" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">end-class</span></code><a class="headerlink" href="#end-class" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>Finish the definition of a class.</p>
 </section>
 <section id="member">
-<h3><code class="docutils literal notranslate"><span class="pre">member:</span></code><a class="headerlink" href="#member" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">member:</span></code><a class="headerlink" href="#member" title="Link to this heading">¶</a></h3>
 <p>( “name” – )</p>
 <p>Define a member with a given name in the context of the definition of a class to which it will belong. Note that the member will be get and set with two methods <em>name</em><code class="docutils literal notranslate"><span class="pre">&#64;</span></code> ( <em>object</em> – <em>x</em> ), its getter, and <em>name</em><code class="docutils literal notranslate"><span class="pre">!</span></code> ( <em>x</em> <em>object</em> — ), its setter. These accessors may only be used to access the class for which they are defined; otherwise <code class="docutils literal notranslate"><span class="pre">x-member-not-for-class</span></code> will be raised. Also, it is not accessible from outside the class definition.</p>
 </section>
 <section id="id1">
-<h3><code class="docutils literal notranslate"><span class="pre">:method</span></code><a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">:method</span></code><a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
 <p>( “name” – )</p>
 <p>Implement a method with a given name in the context of the definition of a class to which it will belong. The method must already be declared with <code class="docutils literal notranslate"><span class="pre">method</span></code>. If a name of a word that is not a method is provided <code class="docutils literal notranslate"><span class="pre">x-not-a-method</span></code> will be raised. The method implementation will be finished with <code class="docutils literal notranslate"><span class="pre">;</span></code>.</p>
 </section>
 <section id="private">
-<h3><code class="docutils literal notranslate"><span class="pre">:private</span></code><a class="headerlink" href="#private" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">:private</span></code><a class="headerlink" href="#private" title="Link to this heading">¶</a></h3>
 <p>( “name” – )</p>
 <p>Define a private word that is not accessible outside the class definition.</p>
 </section>
 <section id="has-method">
-<h3><code class="docutils literal notranslate"><span class="pre">has-method?</span></code><a class="headerlink" href="#has-method" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">has-method?</span></code><a class="headerlink" href="#has-method" title="Link to this heading">¶</a></h3>
 <p>( method object – has-method? )</p>
 <p>Get whether an object has a method.</p>
 </section>
 <section id="begin-type-class">
-<h3><code class="docutils literal notranslate"><span class="pre">begin-type-class</span></code><a class="headerlink" href="#begin-type-class" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">begin-type-class</span></code><a class="headerlink" href="#begin-type-class" title="Link to this heading">¶</a></h3>
 <p>( type – )</p>
 <p>Begin the definition of a class for a given type. Note that objects of these classes lack an instantiation word, and are generated through other means. Additionally, members cannot be defined for the classes’ instances.</p>
 </section>
 <section id="class">
-<h3><code class="docutils literal notranslate"><span class="pre">class&#64;</span></code><a class="headerlink" href="#class" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">class&#64;</span></code><a class="headerlink" href="#class" title="Link to this heading">¶</a></h3>
 <p>( object – class )</p>
 <p>Get the class of an object. This is primarily useful for testing if two objects have the same class.</p>
 </section>
 <section id="x-member-not-for-class">
-<h3><code class="docutils literal notranslate"><span class="pre">x-member-not-for-class</span></code><a class="headerlink" href="#x-member-not-for-class" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">x-member-not-for-class</span></code><a class="headerlink" href="#x-member-not-for-class" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>Member is accessed on an object of a class to which it does not belong exception.</p>
 </section>
 <section id="x-unimplemented-method">
-<h3><code class="docutils literal notranslate"><span class="pre">x-unimplemented-method</span></code><a class="headerlink" href="#x-unimplemented-method" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">x-unimplemented-method</span></code><a class="headerlink" href="#x-unimplemented-method" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>Method is called on an object of a class for which it is not implemented exception.</p>
 </section>
 <section id="x-not-a-method">
-<h3><code class="docutils literal notranslate"><span class="pre">x-not-a-method</span></code><a class="headerlink" href="#x-not-a-method" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">x-not-a-method</span></code><a class="headerlink" href="#x-not-a-method" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>Method is attempted to be implemented for a word which is not a method exception.</p>
 </section>
 <section id="x-type-classes-have-no-members">
-<h3><code class="docutils literal notranslate"><span class="pre">x-type-classes-have-no-members</span></code><a class="headerlink" href="#x-type-classes-have-no-members" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">x-type-classes-have-no-members</span></code><a class="headerlink" href="#x-type-classes-have-no-members" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>Defining a member for a class for a type was attempted exception.</p>
 </section>
 </section>
 <section id="zscript-special-oo-words">
-<h2><code class="docutils literal notranslate"><span class="pre">zscript-special-oo</span></code> words<a class="headerlink" href="#zscript-special-oo-words" title="Permalink to this heading">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-special-oo</span></code> words<a class="headerlink" href="#zscript-special-oo-words" title="Link to this heading">¶</a></h2>
 <section id="show">
-<h3><code class="docutils literal notranslate"><span class="pre">show</span></code><a class="headerlink" href="#show" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">show</span></code><a class="headerlink" href="#show" title="Link to this heading">¶</a></h3>
 <p>( x – bytes )</p>
 <p>Return a representation of a value and its structure as a human-readable byte sequence. This method is implemented for all built-in types, and it is highly recommended that user-defined classes implement it as well. Note that this word is expressed recursively, so deep data structures may (and loops will) cause stack overflow.</p>
 </section>
 <section id="hash">
-<h3><code class="docutils literal notranslate"><span class="pre">hash</span></code><a class="headerlink" href="#hash" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">hash</span></code><a class="headerlink" href="#hash" title="Link to this heading">¶</a></h3>
 <p>( x – integral )</p>
 <p>Return a hash of a value and its structure. This method is implemented for all built-in types, and it is highly recommended that user-defined classes implement it as well. Note that this word is expressed recursively, so deep data structures may (and loops will) cause stack overflow.</p>
 </section>
 <section id="equal">
-<h3><code class="docutils literal notranslate"><span class="pre">equal?</span></code><a class="headerlink" href="#equal" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">equal?</span></code><a class="headerlink" href="#equal" title="Link to this heading">¶</a></h3>
 <p>( x0 x1 – equal? )</p>
 <p>Get whether two values has equal values. This method is implemented for all built-in types, and it is highly recommended that user-defined classes implement it as well. Note that this word is expressed recursively, so deep data structure and loops may cause stack overflow.</p>
 </section>
 <section id="try-show">
-<h3><code class="docutils literal notranslate"><span class="pre">try-show</span></code><a class="headerlink" href="#try-show" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">try-show</span></code><a class="headerlink" href="#try-show" title="Link to this heading">¶</a></h3>
 <p>( x – bytes )</p>
 <p>This is a wrapper around <code class="docutils literal notranslate"><span class="pre">show</span></code> which returns a default representation if <code class="docutils literal notranslate"><span class="pre">show</span></code> is not implemented for an object.</p>
 </section>
 <section id="try-hash">
-<h3><code class="docutils literal notranslate"><span class="pre">try-hash</span></code><a class="headerlink" href="#try-hash" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">try-hash</span></code><a class="headerlink" href="#try-hash" title="Link to this heading">¶</a></h3>
 <p>( x – hash )</p>
 <p>This is a wrapper around <code class="docutils literal notranslate"><span class="pre">hash</span></code> which returns a default representation (specifically 0) if <code class="docutils literal notranslate"><span class="pre">hash</span></code> is not implemented for an object.</p>
 </section>
 <section id="try-equal">
-<h3><code class="docutils literal notranslate"><span class="pre">try-equal?</span></code><a class="headerlink" href="#try-equal" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">try-equal?</span></code><a class="headerlink" href="#try-equal" title="Link to this heading">¶</a></h3>
 <p>( x0 x1 – equal? )</p>
 <p>This is a wrapper around <code class="docutils literal notranslate"><span class="pre">equal?</span></code> which returns whether two values have identical addresses if <code class="docutils literal notranslate"><span class="pre">equal?</span></code> is not implemented for <em>x1</em>.</p>
 </section>
@@ -224,7 +220,7 @@ end-class
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <h1 class="logo"><a href="../index.html">zeptoscript</a></h1>
 
@@ -267,7 +263,7 @@ end-class
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
@@ -275,7 +271,7 @@ end-class
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 
 
@@ -293,7 +289,7 @@ end-class
       &#169;2024, Travis Bemann.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 5.3.0</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
       |

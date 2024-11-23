@@ -1,20 +1,16 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Block devices &#8212; zeptoscript  documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Filesystems" href="fs.html" />
@@ -37,84 +33,84 @@
           <div class="body" role="main">
             
   <section id="block-devices">
-<h1>Block devices<a class="headerlink" href="#block-devices" title="Permalink to this heading">¶</a></h1>
+<h1>Block devices<a class="headerlink" href="#block-devices" title="Link to this heading">¶</a></h1>
 <p>zeptoscript comes with modules for interacting with block devices. Currently only SDHC/SDXC cards communicated with over SPI are supported. These devices provide storage in the form of discrete fixed-sized blocks of storage at indices. Typically they provide caching of blocks for the purpose of speeding up repeated reads to the same blocks.</p>
 <section id="zscript-block-dev-words">
-<h2><code class="docutils literal notranslate"><span class="pre">zscript-block-dev</span></code> words<a class="headerlink" href="#zscript-block-dev-words" title="Permalink to this heading">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-block-dev</span></code> words<a class="headerlink" href="#zscript-block-dev-words" title="Link to this heading">¶</a></h2>
 <p>This module is provided by <code class="docutils literal notranslate"><span class="pre">src/common/extra/block_dev.fs</span></code>.</p>
 <p>The following words are available:</p>
 <section id="block-size">
-<h3><code class="docutils literal notranslate"><span class="pre">block-size</span></code><a class="headerlink" href="#block-size" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">block-size</span></code><a class="headerlink" href="#block-size" title="Link to this heading">¶</a></h3>
 <p>( device – bytes )</p>
 <p>Get the size of a <em>device</em>’s blocks in bytes.</p>
 </section>
 <section id="block-count">
-<h3><code class="docutils literal notranslate"><span class="pre">block-count</span></code><a class="headerlink" href="#block-count" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">block-count</span></code><a class="headerlink" href="#block-count" title="Link to this heading">¶</a></h3>
 <p>( device – count )</p>
 <p>Get the number of blocks for <em>device</em>.</p>
 </section>
 <section id="block">
-<h3><code class="docutils literal notranslate"><span class="pre">block!</span></code><a class="headerlink" href="#block" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">block!</span></code><a class="headerlink" href="#block" title="Link to this heading">¶</a></h3>
 <p>( data index device – )</p>
 <p>Write <em>data</em> to block <em>index</em> of <em>device</em>. <em>data</em> has to be of the size of a block.</p>
 </section>
 <section id="block-part">
-<h3><code class="docutils literal notranslate"><span class="pre">block-part!</span></code><a class="headerlink" href="#block-part" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">block-part!</span></code><a class="headerlink" href="#block-part" title="Link to this heading">¶</a></h3>
 <p>( data offset index device – )</p>
 <p>Write <em>data</em> to block <em>index</em> of <em>device</em> starting at <em>offset</em>. The length of <em>data</em> plus <em>offset</em> cannot be greater than the size of a block.</p>
 </section>
 <section id="id1">
-<h3><code class="docutils literal notranslate"><span class="pre">block&#64;</span></code><a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">block&#64;</span></code><a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
 <p>( data index device – )</p>
 <p>Write block <em>index</em> of <em>device</em> to <em>data</em>. <em>data</em> has to be the size of a block.</p>
 </section>
 <section id="id2">
-<h3><code class="docutils literal notranslate"><span class="pre">block-part&#64;</span></code><a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">block-part&#64;</span></code><a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
 <p>( data offset index device – )</p>
 <p>Write block <em>index</em> of <em>device</em> starting at <em>offset</em> to <em>data</em>. The length of <em>data</em> plus <em>offset</em> cannot be greater than the size of a block.</p>
 </section>
 <section id="flush-blocks">
-<h3><code class="docutils literal notranslate"><span class="pre">flush-blocks</span></code><a class="headerlink" href="#flush-blocks" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">flush-blocks</span></code><a class="headerlink" href="#flush-blocks" title="Link to this heading">¶</a></h3>
 <p>( device – )</p>
 <p>Flush cached blocks for <em>device</em> to the underlying media.</p>
 </section>
 <section id="clear-blocks">
-<h3><code class="docutils literal notranslate"><span class="pre">clear-blocks</span></code><a class="headerlink" href="#clear-blocks" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">clear-blocks</span></code><a class="headerlink" href="#clear-blocks" title="Link to this heading">¶</a></h3>
 <p>( device – )</p>
 <p>Clear cached blocks for <em>device</em>.</p>
 </section>
 <section id="write-through">
-<h3><code class="docutils literal notranslate"><span class="pre">write-through!</span></code><a class="headerlink" href="#write-through" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">write-through!</span></code><a class="headerlink" href="#write-through" title="Link to this heading">¶</a></h3>
 <p>( write-through device – )</p>
 <p>Set the <em>write-through</em> cache mode for <em>device</em>. When this is set to <code class="docutils literal notranslate"><span class="pre">true</span></code> writes to blocks are immediately written to the underlying media, while when this is set to <code class="docutils literal notranslate"><span class="pre">false</span></code> writes to blocks are merely cached unless an access forces a cached block to be evicted.</p>
 </section>
 <section id="id3">
-<h3><code class="docutils literal notranslate"><span class="pre">write-through&#64;</span></code><a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">write-through&#64;</span></code><a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
 <p>( device – write-through )</p>
 <p>Get the <em>write-through</em> cache mode for <em>device</em>.</p>
 </section>
 <section id="x-block-out-of-range">
-<h3><code class="docutils literal notranslate"><span class="pre">x-block-out-of-range</span></code><a class="headerlink" href="#x-block-out-of-range" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">x-block-out-of-range</span></code><a class="headerlink" href="#x-block-out-of-range" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>Block out of range exception.</p>
 </section>
 </section>
 <section id="zscript-sdcard-module">
-<h2><code class="docutils literal notranslate"><span class="pre">zscript-sdcard</span></code> module<a class="headerlink" href="#zscript-sdcard-module" title="Permalink to this heading">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-sdcard</span></code> module<a class="headerlink" href="#zscript-sdcard-module" title="Link to this heading">¶</a></h2>
 <p>This module is provided by <code class="docutils literal notranslate"><span class="pre">src/common/extra/sdcard.fs</span></code> and is dependent upon the <code class="docutils literal notranslate"><span class="pre">zscript-block-dev</span></code> module.</p>
 <p>This module has the following words:</p>
 <section id="make-sd">
-<h3><code class="docutils literal notranslate"><span class="pre">make-sd</span></code><a class="headerlink" href="#make-sd" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">make-sd</span></code><a class="headerlink" href="#make-sd" title="Link to this heading">¶</a></h3>
 <p>( cs-pin spi-device – sd )</p>
 <p>Construct an SDHC/SDXC card object with chip select pin <em>cs-pin</em> and SPI peripheral <em>spi-device</em>. These objects implement all the <em>device</em> methods specified in <code class="docutils literal notranslate"><span class="pre">zscript-block-dev</span></code>.</p>
 </section>
 <section id="init-sd">
-<h3><code class="docutils literal notranslate"><span class="pre">init-sd</span></code><a class="headerlink" href="#init-sd" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">init-sd</span></code><a class="headerlink" href="#init-sd" title="Link to this heading">¶</a></h3>
 <p>( sd – )</p>
 <p>Initialize the SDHC/SDXC card. This must be called prior to using the SDHC/SDXC card.</p>
 </section>
 <section id="write-sd-block-zero">
-<h3><code class="docutils literal notranslate"><span class="pre">write-sd-block-zero!</span></code><a class="headerlink" href="#write-sd-block-zero" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">write-sd-block-zero!</span></code><a class="headerlink" href="#write-sd-block-zero" title="Link to this heading">¶</a></h3>
 <p>( enabled sd – )</p>
 <p>Set whether block zero of an SDHC/SDXC card is protected.</p>
 </section>
@@ -126,7 +122,7 @@
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <h1 class="logo"><a href="../index.html">zeptoscript</a></h1>
 
@@ -169,7 +165,7 @@
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
@@ -177,7 +173,7 @@
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 
 
@@ -195,7 +191,7 @@
       &#169;2024, Travis Bemann.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 5.3.0</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
       |

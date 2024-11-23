@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Filesystems</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -21,10 +21,20 @@
 <p>The <code class="docutils literal notranslate"><span class="pre">zscript-fs</span></code> module is provided by <code class="docutils literal notranslate"><span class="pre">src/common/extra/fs.fs</span></code>. The <code class="docutils literal notranslate"><span class="pre">zscript-fat32</span></code> module is provided by <code class="docutils literal notranslate"><span class="pre">src/common/extra/fat32.fs</span></code>. The <code class="docutils literal notranslate"><span class="pre">zscript-simple-fat32</span></code> module is provided by <code class="docutils literal notranslate"><span class="pre">src/common/extra/simple_fat32.fs</span></code>.</p>
 <section id="zscript-fs-words">
 <h2><code class="docutils literal notranslate"><span class="pre">zscript-fs</span></code> words</h2>
+<section id="change-dir">
+<h3><code class="docutils literal notranslate"><span class="pre">change-dir</span></code></h3>
+<p>( dir – )</p>
+<p>Set the current directory.</p>
+</section>
 <section id="flush">
 <h3><code class="docutils literal notranslate"><span class="pre">flush</span></code></h3>
 <p>( fs – )</p>
 <p>Flush a filesystem.</p>
+</section>
+<section id="clone">
+<h3><code class="docutils literal notranslate"><span class="pre">clone</span></code></h3>
+<p>( file|dir – file’|dir’ )</p>
+<p>Clone a file or directory object.</p>
 </section>
 <section id="close">
 <h3><code class="docutils literal notranslate"><span class="pre">close</span></code></h3>
@@ -150,6 +160,11 @@
 <h3><code class="docutils literal notranslate"><span class="pre">root-dir&#64;</span></code></h3>
 <p>( fs – dir )</p>
 <p>Get the filesystem root directory.</p>
+</section>
+<section id="current-dir">
+<h3><code class="docutils literal notranslate"><span class="pre">current-dir&#64;</span></code></h3>
+<p>( fs – dir )</p>
+<p>Get the filesystem current directory, which is the root directory if the current directory is not the given filesystem.</p>
 </section>
 <section id="entry-file">
 <h3><code class="docutils literal notranslate"><span class="pre">entry-file?</span></code></h3>

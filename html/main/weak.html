@@ -1,20 +1,16 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Weak references &#8212; zeptoscript  documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Lists" href="list.html" />
@@ -37,58 +33,58 @@
           <div class="body" role="main">
             
   <section id="weak-references">
-<h1>Weak references<a class="headerlink" href="#weak-references" title="Permalink to this heading">¶</a></h1>
+<h1>Weak references<a class="headerlink" href="#weak-references" title="Link to this heading">¶</a></h1>
 <p>Weak references are values that embody references which do not protect referenced values from garbage collection, and are aware of when said referenced values are garbage collected. A value that is only weakly referenced, i.e. its chains of references at some points contain only weak references, is guaranteed to be garbage collected at the next garbage collection cycle. In this way they differ from Java “soft” references, which are may be followed for garbage collection purposes except when memory is tight.</p>
 <p>There are two types of weak references, single weak references and weak pairs. Single weak references are simply references to individual values. Weak pairs are pairs of a weak reference to a value and a strong reference to another value. The utility of weak pairs is that they enable constructing linked lists of weak references.</p>
 <section id="zscript-weak-words">
-<h2><code class="docutils literal notranslate"><span class="pre">zscript-weak</span></code> words<a class="headerlink" href="#zscript-weak-words" title="Permalink to this heading">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-weak</span></code> words<a class="headerlink" href="#zscript-weak-words" title="Link to this heading">¶</a></h2>
 <section id="broken-weak">
-<h3><code class="docutils literal notranslate"><span class="pre">broken-weak</span></code><a class="headerlink" href="#broken-weak" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">broken-weak</span></code><a class="headerlink" href="#broken-weak" title="Link to this heading">¶</a></h3>
 <p>( – symbol )</p>
 <p>This symbol is a special value which represents a broken weak reference. Note that setting a weak reference to this value will not have the intended effect, because then <code class="docutils literal notranslate"><span class="pre">weak-broken?</span></code> will return <code class="docutils literal notranslate"><span class="pre">false</span></code> for a weak reference.</p>
 </section>
 <section id="weak">
-<h3><code class="docutils literal notranslate"><span class="pre">weak?</span></code><a class="headerlink" href="#weak" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">weak?</span></code><a class="headerlink" href="#weak" title="Link to this heading">¶</a></h3>
 <p>( x – flag )</p>
 <p>Get whether a value is a single weak reference or a weak pair.</p>
 </section>
 <section id="weak-pair">
-<h3><code class="docutils literal notranslate"><span class="pre">weak-pair?</span></code><a class="headerlink" href="#weak-pair" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">weak-pair?</span></code><a class="headerlink" href="#weak-pair" title="Link to this heading">¶</a></h3>
 <p>( x – flag )</p>
 <p>Get whether a value is a weak pair.</p>
 </section>
 <section id="id1">
-<h3><code class="docutils literal notranslate"><span class="pre">&gt;weak</span></code><a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;weak</span></code><a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
 <p>( x – weak )</p>
 <p>Construct a single weak reference for a value <em>x</em>.</p>
 </section>
 <section id="id2">
-<h3><code class="docutils literal notranslate"><span class="pre">&gt;weak-pair</span></code><a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;weak-pair</span></code><a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
 <p>( x y – weak-pair )</p>
 <p>Construct a weak pair with a weak reference to <em>x</em> and a strong reference to <em>y</em>.</p>
 </section>
 <section id="id3">
-<h3><code class="docutils literal notranslate"><span class="pre">weak&#64;</span></code><a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">weak&#64;</span></code><a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
 <p>( weak – x )</p>
 <p>Get the weakly referenced value for a weak reference; if the weak reference is broken, return <code class="docutils literal notranslate"><span class="pre">broken-weak</span></code>.</p>
 </section>
 <section id="id4">
-<h3><code class="docutils literal notranslate"><span class="pre">weak!</span></code><a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">weak!</span></code><a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
 <p>( x weak – )</p>
 <p>Set the weakly referenced value for a weak reference. This can “repair” a broken weak reference.</p>
 </section>
 <section id="weak-broken">
-<h3><code class="docutils literal notranslate"><span class="pre">weak-broken?</span></code><a class="headerlink" href="#weak-broken" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">weak-broken?</span></code><a class="headerlink" href="#weak-broken" title="Link to this heading">¶</a></h3>
 <p>( weak – flag )</p>
 <p>Get whether a weak reference is broken.</p>
 </section>
 <section id="weak-pair-tail">
-<h3><code class="docutils literal notranslate"><span class="pre">weak-pair-tail&#64;</span></code><a class="headerlink" href="#weak-pair-tail" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">weak-pair-tail&#64;</span></code><a class="headerlink" href="#weak-pair-tail" title="Link to this heading">¶</a></h3>
 <p>( weak-pair – tail )</p>
 <p>Get the “tail”, i.e. the strong reference, of a weak pair.</p>
 </section>
 <section id="id5">
-<h3><code class="docutils literal notranslate"><span class="pre">weak-pair-tail!</span></code><a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">weak-pair-tail!</span></code><a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
 <p>( tail weak-pair – )</p>
 <p>Set the “tail”, i.e. the strong reference, of a weak pair.</p>
 </section>
@@ -100,7 +96,7 @@
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <h1 class="logo"><a href="../index.html">zeptoscript</a></h1>
 
@@ -143,7 +139,7 @@
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
@@ -151,7 +147,7 @@
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 
 
@@ -169,7 +165,7 @@
       &#169;2024, Travis Bemann.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 5.3.0</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
       |

@@ -1,20 +1,16 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Asymmetric coroutines &#8212; zeptoscript  documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Actions" href="action.html" />
@@ -37,7 +33,7 @@
           <div class="body" role="main">
             
   <section id="asymmetric-coroutines">
-<h1>Asymmetric coroutines<a class="headerlink" href="#asymmetric-coroutines" title="Permalink to this heading">¶</a></h1>
+<h1>Asymmetric coroutines<a class="headerlink" href="#asymmetric-coroutines" title="Link to this heading">¶</a></h1>
 <p>zeptoscript has optional support for <em>asymmetric</em> coroutines, as contrasted with zeptoscript tasks, which are <em>symmetric</em> coroutines. Asymmetric coroutines are explicitly suspended and resumed, and in particular specific coroutines are resumed, with data being passed to them, and when coroutines are suspended they transfer both control and data back to what had resumed them.</p>
 <p>Coroutines start out in a <em>suspended</em> state, and only suspended coroutines can be resumed. Coroutines stay in a <em>running</em> state after having resumed another coroutine. When coroutines reach the end of the execution token for which they were initially created, they are then <em>dead</em> and can no longer be resumed.</p>
 <p>There is coroutine-local state that is globally accessible within a coroutine. Coroutines initially inherit the coroutine-local state’s value when they are created. Note that there is a global coroutine-local state outside of any coroutines that is used for initializing the coroutine-local states of new coroutines created outside of any coroutine.</p>
@@ -103,69 +99,69 @@
 </pre></div>
 </div>
 <section id="zscript-coroutine-words">
-<h2><code class="docutils literal notranslate"><span class="pre">zscript-coroutine</span></code> words<a class="headerlink" href="#zscript-coroutine-words" title="Permalink to this heading">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-coroutine</span></code> words<a class="headerlink" href="#zscript-coroutine-words" title="Link to this heading">¶</a></h2>
 <section id="make-coroutine">
-<h3><code class="docutils literal notranslate"><span class="pre">make-coroutine</span></code><a class="headerlink" href="#make-coroutine" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">make-coroutine</span></code><a class="headerlink" href="#make-coroutine" title="Link to this heading">¶</a></h3>
 <p>( xt – coroutine )</p>
 <p>Create a coroutine with an execution token. Note that this coroutine will inherit the current coroutine-local state.</p>
 </section>
 <section id="suspend">
-<h3><code class="docutils literal notranslate"><span class="pre">suspend</span></code><a class="headerlink" href="#suspend" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">suspend</span></code><a class="headerlink" href="#suspend" title="Link to this heading">¶</a></h3>
 <p>( x – x’ )</p>
 <p>Suspend the current coroutine, passing <em>x</em> to that which resumed it, and then returning <em>x’</em> passed in next time it is resumed.</p>
 </section>
 <section id="resume">
-<h3><code class="docutils literal notranslate"><span class="pre">resume</span></code><a class="headerlink" href="#resume" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">resume</span></code><a class="headerlink" href="#resume" title="Link to this heading">¶</a></h3>
 <p>( x coroutine – x’ )</p>
 <p>Resume a coroutine, passing in <em>x</em>, and then returning <em>x’</em> passed in next time it is suspended.</p>
 </section>
 <section id="current-coroutine">
-<h3><code class="docutils literal notranslate"><span class="pre">current-coroutine</span></code><a class="headerlink" href="#current-coroutine" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">current-coroutine</span></code><a class="headerlink" href="#current-coroutine" title="Link to this heading">¶</a></h3>
 <p>( – coroutine )</p>
 <p>Get the current coroutine.</p>
 </section>
 <section id="coroutine-state">
-<h3><code class="docutils literal notranslate"><span class="pre">coroutine-state&#64;</span></code><a class="headerlink" href="#coroutine-state" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">coroutine-state&#64;</span></code><a class="headerlink" href="#coroutine-state" title="Link to this heading">¶</a></h3>
 <p>( coroutine – state )</p>
 <p>Get the state of a coroutine.</p>
 </section>
 <section id="coroutine-local">
-<h3><code class="docutils literal notranslate"><span class="pre">coroutine-local&#64;</span></code><a class="headerlink" href="#coroutine-local" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">coroutine-local&#64;</span></code><a class="headerlink" href="#coroutine-local" title="Link to this heading">¶</a></h3>
 <p>( – x )</p>
 <p>Get the current coroutine-local state. Note that this can be called outside of a coroutine, as there is a global not-in-coroutine state that is used for initializing the coroutine-local states of new coroutines.</p>
 </section>
 <section id="id1">
-<h3><code class="docutils literal notranslate"><span class="pre">coroutine-local!</span></code><a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">coroutine-local!</span></code><a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
 <p>( x – )</p>
 <p>Set the current coroutine-local state. Note that this can be called outside of a coroutine, as there is a global not-in-coroutine state that is used for initializing the coroutine-local states of new coroutines.</p>
 </section>
 <section id="suspended">
-<h3><code class="docutils literal notranslate"><span class="pre">suspended</span></code><a class="headerlink" href="#suspended" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">suspended</span></code><a class="headerlink" href="#suspended" title="Link to this heading">¶</a></h3>
 <p>( – state )</p>
 <p>Suspended coroutine state.</p>
 </section>
 <section id="running">
-<h3><code class="docutils literal notranslate"><span class="pre">running</span></code><a class="headerlink" href="#running" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">running</span></code><a class="headerlink" href="#running" title="Link to this heading">¶</a></h3>
 <p>( – state )</p>
 <p>Running coroutine state.</p>
 </section>
 <section id="dead">
-<h3><code class="docutils literal notranslate"><span class="pre">dead</span></code><a class="headerlink" href="#dead" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">dead</span></code><a class="headerlink" href="#dead" title="Link to this heading">¶</a></h3>
 <p>( – dead )</p>
 <p>Dead coroutine state.</p>
 </section>
 <section id="x-not-in-coroutine">
-<h3><code class="docutils literal notranslate"><span class="pre">x-not-in-coroutine</span></code><a class="headerlink" href="#x-not-in-coroutine" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">x-not-in-coroutine</span></code><a class="headerlink" href="#x-not-in-coroutine" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>Not in coroutine exception.</p>
 </section>
 <section id="x-dead-coroutine">
-<h3><code class="docutils literal notranslate"><span class="pre">x-dead-coroutine</span></code><a class="headerlink" href="#x-dead-coroutine" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">x-dead-coroutine</span></code><a class="headerlink" href="#x-dead-coroutine" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>Attempted to resume a dead coroutine exception.</p>
 </section>
 <section id="x-running-coroutine">
-<h3><code class="docutils literal notranslate"><span class="pre">x-running-coroutine</span></code><a class="headerlink" href="#x-running-coroutine" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">x-running-coroutine</span></code><a class="headerlink" href="#x-running-coroutine" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>Attempted to resume a running coroutine exception.</p>
 </section>
@@ -177,7 +173,7 @@
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <h1 class="logo"><a href="../index.html">zeptoscript</a></h1>
 
@@ -220,7 +216,7 @@
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
@@ -228,7 +224,7 @@
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 
 
@@ -246,7 +242,7 @@
       &#169;2024, Travis Bemann.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 5.3.0</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
       |

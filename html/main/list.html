@@ -1,20 +1,16 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Lists &#8212; zeptoscript  documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Arrays" href="array.html" />
@@ -37,265 +33,265 @@
           <div class="body" role="main">
             
   <section id="lists">
-<h1>Lists<a class="headerlink" href="#lists" title="Permalink to this heading">¶</a></h1>
+<h1>Lists<a class="headerlink" href="#lists" title="Link to this heading">¶</a></h1>
 <p>zeptoscript has optional support for lists composed of pairs. Internally each pair is a two-element cell sequence; while one can use cell sequence words with these, this is not recommended as it will generally give results different from what one might expect.</p>
 <p>The particular use case of lists is to enable efficient prepending elements without reallocating and copying an entire sequence for each prepended or appended element; if appending is desired, the entire list can be efficiently reversed (and can be efficiently converted into a sequence simultaneously) afterwards.</p>
 <p>It is also efficient in many cases to reverse a list while generating a new list from an existing one due to the nature of lists, or when generating a sequence from a list. However, this is less necessary than in some languages because zeptoscript is not purely functional, and hence can mutate lists as they are being enerated, avoiding the need for a subsequent reversing step to achieve in-order conversions. (Yes, Haskell also does not need a reversing step either, but that is through the magic of lazy evaluation.)</p>
 <p>Note, however, that lists are less efficient memory-wise in static usage than sequences in most use cases (except possibly in use cases where multiple lists share parts of their structures) because each pair takes up three cells in the heap whereas each element of a cell sequence takes up only one cell in the heap in addition to the cell in the heap taken up by the cell sequence’s header. As a result, it is often advisable to convert lists to sequences once one is done constructing them if they are not ephemeral in nature and provided there is enough space available in the heap to keep the list and the sequence in memory simultaneously (which is necessary for converting from one to the other).</p>
 <section id="zscript-list-words">
-<h2><code class="docutils literal notranslate"><span class="pre">zscript-list</span></code> Words<a class="headerlink" href="#zscript-list-words" title="Permalink to this heading">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-list</span></code> Words<a class="headerlink" href="#zscript-list-words" title="Link to this heading">¶</a></h2>
 <section id="cons">
-<h3><code class="docutils literal notranslate"><span class="pre">cons</span></code><a class="headerlink" href="#cons" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">cons</span></code><a class="headerlink" href="#cons" title="Link to this heading">¶</a></h3>
 <p>( x list – list’ )</p>
 <p>Prepend <em>x</em> onto <em>list</em>, giving a new list sharing its tail with the original list.</p>
 </section>
 <section id="empty">
-<h3><code class="docutils literal notranslate"><span class="pre">empty</span></code><a class="headerlink" href="#empty" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">empty</span></code><a class="headerlink" href="#empty" title="Link to this heading">¶</a></h3>
 <p>( – list )</p>
 <p>An empty list. Note that this is equivalent to <code class="docutils literal notranslate"><span class="pre">false</span></code>, and is treated as such.</p>
 </section>
 <section id="head">
-<h3><code class="docutils literal notranslate"><span class="pre">head&#64;</span></code><a class="headerlink" href="#head" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">head&#64;</span></code><a class="headerlink" href="#head" title="Link to this heading">¶</a></h3>
 <p>( list – x )</p>
 <p>Get the head of <em>list</em>.</p>
 </section>
 <section id="tail">
-<h3><code class="docutils literal notranslate"><span class="pre">tail&#64;</span></code><a class="headerlink" href="#tail" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">tail&#64;</span></code><a class="headerlink" href="#tail" title="Link to this heading">¶</a></h3>
 <p>( list – list’ )</p>
 <p>Get the tail of <em>list</em>.</p>
 </section>
 <section id="id1">
-<h3><code class="docutils literal notranslate"><span class="pre">head!</span></code><a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">head!</span></code><a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
 <p>( x list – )</p>
 <p>Set the head of <em>list</em> to <em>x</em>.</p>
 </section>
 <section id="id2">
-<h3><code class="docutils literal notranslate"><span class="pre">tail!</span></code><a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">tail!</span></code><a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
 <p>( tail-list list – )</p>
 <p>Set the tail of <em>list</em> to <em>tail-list</em>.</p>
 </section>
 <section id="id3">
-<h3><code class="docutils literal notranslate"><span class="pre">empty?</span></code><a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">empty?</span></code><a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
 <p>( list – empty? )</p>
 <p>Get whether <em>list</em> is empty.</p>
 </section>
 <section id="last">
-<h3><code class="docutils literal notranslate"><span class="pre">last</span></code><a class="headerlink" href="#last" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">last</span></code><a class="headerlink" href="#last" title="Link to this heading">¶</a></h3>
 <p>( list – x )</p>
 <p>Get the last element of <em>list</em>, or <code class="docutils literal notranslate"><span class="pre">empty</span></code> if the list is empty.</p>
 </section>
 <section id="nth">
-<h3><code class="docutils literal notranslate"><span class="pre">nth</span></code><a class="headerlink" href="#nth" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">nth</span></code><a class="headerlink" href="#nth" title="Link to this heading">¶</a></h3>
 <p>( index list – x )</p>
 <p>Get the the element of <em>list</em> at <em>index</em>, zero indexed, or <code class="docutils literal notranslate"><span class="pre">empty</span></code> if the list does not contain <em>index</em> + 1 elements.</p>
 </section>
 <section id="nth-tail">
-<h3><code class="docutils literal notranslate"><span class="pre">nth-tail</span></code><a class="headerlink" href="#nth-tail" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">nth-tail</span></code><a class="headerlink" href="#nth-tail" title="Link to this heading">¶</a></h3>
 <p>( index list – list’ )</p>
 <p>Get the <em>index</em>-th tail of <em>list</em>, with zero returning all of <em>list</em>, or <code class="docutils literal notranslate"><span class="pre">empty</span></code> if there is no <em>index</em>-th tail of <em>list</em>.</p>
 </section>
 <section id="list-len">
-<h3><code class="docutils literal notranslate"><span class="pre">list&gt;len</span></code><a class="headerlink" href="#list-len" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">list&gt;len</span></code><a class="headerlink" href="#list-len" title="Link to this heading">¶</a></h3>
 <p>( list – len )</p>
 <p>Get the length of <em>list</em>; note that this involves a full traversal of <em>list</em> and hence is O(n).</p>
 </section>
 <section id="list-cells">
-<h3><code class="docutils literal notranslate"><span class="pre">list&gt;cells</span></code><a class="headerlink" href="#list-cells" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">list&gt;cells</span></code><a class="headerlink" href="#list-cells" title="Link to this heading">¶</a></h3>
 <p>( list – cells )</p>
 <p>Convert a list to a cell sequence. Note that this involves traversing <em>list</em> twice, the first time to get the length of <em>list</em>, and the second time to copy over each element.</p>
 </section>
 <section id="list-bytes">
-<h3><code class="docutils literal notranslate"><span class="pre">list&gt;bytes</span></code><a class="headerlink" href="#list-bytes" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">list&gt;bytes</span></code><a class="headerlink" href="#list-bytes" title="Link to this heading">¶</a></h3>
 <p>( list – bytes )</p>
 <p>Convert a list to a byte sequence. Note that this involves traversing <em>list</em> twice, the first time to get the length of <em>list</em>, and the second tiem to copy over each element.</p>
 </section>
 <section id="seq-list">
-<h3><code class="docutils literal notranslate"><span class="pre">seq&gt;list</span></code><a class="headerlink" href="#seq-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">seq&gt;list</span></code><a class="headerlink" href="#seq-list" title="Link to this heading">¶</a></h3>
 <p>( seq – list )</p>
 <p>Convert a cell or byte sequence or slice to a list.</p>
 </section>
 <section id="iter-list">
-<h3><code class="docutils literal notranslate"><span class="pre">iter-list</span></code><a class="headerlink" href="#iter-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">iter-list</span></code><a class="headerlink" href="#iter-list" title="Link to this heading">¶</a></h3>
 <p>( list xt – ) xt: ( item – )</p>
 <p>Iterate over <em>list</em>, executing <em>xt</em> with each element in order from start to end.</p>
 </section>
 <section id="iteri-list">
-<h3><code class="docutils literal notranslate"><span class="pre">iteri-list</span></code><a class="headerlink" href="#iteri-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">iteri-list</span></code><a class="headerlink" href="#iteri-list" title="Link to this heading">¶</a></h3>
 <p>( list xt – ) xt: ( item index – )</p>
 <p>Iterate over <em>list</em>, executing <em>xt</em> with each element and its index (indexed from zero) in order from start to end.</p>
 </section>
 <section id="find-index-list">
-<h3><code class="docutils literal notranslate"><span class="pre">find-index-list</span></code><a class="headerlink" href="#find-index-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">find-index-list</span></code><a class="headerlink" href="#find-index-list" title="Link to this heading">¶</a></h3>
 <p>( list xt – index found? ) xt: ( item – flag )</p>
 <p>Get the index of an element of a list that meets a predicate; note that the lowest matching index is returned, and xt will not necessarily be called against all items.</p>
 </section>
 <section id="find-indexi-list">
-<h3><code class="docutils literal notranslate"><span class="pre">find-indexi-list</span></code><a class="headerlink" href="#find-indexi-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">find-indexi-list</span></code><a class="headerlink" href="#find-indexi-list" title="Link to this heading">¶</a></h3>
 <p>( list xt – index found? ) xt: ( item index – flag )</p>
 <p>Get the index of an element of a list that meets a predicate with an index; note that the lowest matching index is returned, and xt will not necessarily be called against all items.</p>
 </section>
 <section id="rev-map-list">
-<h3><code class="docutils literal notranslate"><span class="pre">rev-map-list</span></code><a class="headerlink" href="#rev-map-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">rev-map-list</span></code><a class="headerlink" href="#rev-map-list" title="Link to this heading">¶</a></h3>
 <p>( list xt – list’ ) xt: ( item – item’ )</p>
 <p>Map <em>xt</em> over <em>list</em> producing a new list in reverse order, executing <em>xt</em> with each element in order from start to end.</p>
 </section>
 <section id="rev-mapi-list">
-<h3><code class="docutils literal notranslate"><span class="pre">rev-mapi-list</span></code><a class="headerlink" href="#rev-mapi-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">rev-mapi-list</span></code><a class="headerlink" href="#rev-mapi-list" title="Link to this heading">¶</a></h3>
 <p>( list xt – list’ ) xt: ( item index – item’ )</p>
 <p>Map <em>xt</em> over <em>list</em> producing a new list in reverse order, executing <em>xt</em> with each element and its index (indexed from zero) in order from start to end.</p>
 </section>
 <section id="rev-filter-list">
-<h3><code class="docutils literal notranslate"><span class="pre">rev-filter-list</span></code><a class="headerlink" href="#rev-filter-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">rev-filter-list</span></code><a class="headerlink" href="#rev-filter-list" title="Link to this heading">¶</a></h3>
 <p>( list xt – list’ ) xt: ( item – flag )</p>
 <p>Filter <em>list</em> with <em>xt</em> producing a new list in reverse order, executing <em>xt</em> with each element in order from start to end.</p>
 </section>
 <section id="rev-filteri-list">
-<h3><code class="docutils literal notranslate"><span class="pre">rev-filteri-list</span></code><a class="headerlink" href="#rev-filteri-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">rev-filteri-list</span></code><a class="headerlink" href="#rev-filteri-list" title="Link to this heading">¶</a></h3>
 <p>( list xt – list’ ) xt: ( item index – filter )</p>
 <p>Filter <em>list</em> with <em>xt</em> producing a new list in reverse order, executing <em>xt</em> with each element and its index (indexed from zero) in order from start to end.</p>
 </section>
 <section id="rev-list-cells">
-<h3><code class="docutils literal notranslate"><span class="pre">rev-list&gt;cells</span></code><a class="headerlink" href="#rev-list-cells" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">rev-list&gt;cells</span></code><a class="headerlink" href="#rev-list-cells" title="Link to this heading">¶</a></h3>
 <p>( list – cells )</p>
 <p>Convert <em>list</em> into a cell sequence in reverse order.</p>
 </section>
 <section id="rev-list-bytes">
-<h3><code class="docutils literal notranslate"><span class="pre">rev-list&gt;bytes</span></code><a class="headerlink" href="#rev-list-bytes" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">rev-list&gt;bytes</span></code><a class="headerlink" href="#rev-list-bytes" title="Link to this heading">¶</a></h3>
 <p>( list – bytes )</p>
 <p>Convert <em>list</em> into a byte sequence in reverse order.</p>
 </section>
 <section id="rev-list">
-<h3><code class="docutils literal notranslate"><span class="pre">rev-list</span></code><a class="headerlink" href="#rev-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">rev-list</span></code><a class="headerlink" href="#rev-list" title="Link to this heading">¶</a></h3>
 <p>( list – list’ )</p>
 <p>Do a shallow copy of <em>list</em> as a list in reverse order.</p>
 </section>
 <section id="map-list">
-<h3><code class="docutils literal notranslate"><span class="pre">map-list</span></code><a class="headerlink" href="#map-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">map-list</span></code><a class="headerlink" href="#map-list" title="Link to this heading">¶</a></h3>
 <p>( list xt – list’ ) xt: ( item – item’ )</p>
 <p>Map <em>xt</em> over <em>list</em> producing a new list, executing <em>xt</em> with each element in order from start to end.</p>
 </section>
 <section id="mapi-list">
-<h3><code class="docutils literal notranslate"><span class="pre">mapi-list</span></code><a class="headerlink" href="#mapi-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">mapi-list</span></code><a class="headerlink" href="#mapi-list" title="Link to this heading">¶</a></h3>
 <p>( list xt – list’ ) xt: ( item index – item’ )</p>
 <p>Map <em>xt</em> over <em>list</em> producing a new list, executing <em>xt</em> with each element and its index (indexed from zero) in order from start to end.</p>
 </section>
 <section id="id4">
-<h3><code class="docutils literal notranslate"><span class="pre">map!-list</span></code><a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">map!-list</span></code><a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
 <p>( list xt – ) xt: ( item – item’ )</p>
 <p>Map <em>xt</em> over <em>list</em> mutating <em>list</em> in place, executing <em>xt</em> with each element in order from start to end.</p>
 </section>
 <section id="id5">
-<h3><code class="docutils literal notranslate"><span class="pre">mapi!-list</span></code><a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">mapi!-list</span></code><a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
 <p>( list xt – ) xt: ( item index – item’ )</p>
 <p>Map <em>xt</em> over <em>list</em> mutating <em>list</em> in place, executing <em>xt</em> with each element and its index (indexed from zero) in order from start to end.</p>
 </section>
 <section id="filter-list">
-<h3><code class="docutils literal notranslate"><span class="pre">filter-list</span></code><a class="headerlink" href="#filter-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">filter-list</span></code><a class="headerlink" href="#filter-list" title="Link to this heading">¶</a></h3>
 <p>( list xt – list’ ) xt: ( item – flag )</p>
 <p>Filter <em>list</em> with <em>xt</em> producing a new list, executing <em>xt</em> with each element in order from start to end.</p>
 </section>
 <section id="filteri-list">
-<h3><code class="docutils literal notranslate"><span class="pre">filteri-list</span></code><a class="headerlink" href="#filteri-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">filteri-list</span></code><a class="headerlink" href="#filteri-list" title="Link to this heading">¶</a></h3>
 <p>( list xt – list’ ) xt: ( item index – filter )</p>
 <p>Filter <em>list</em> with <em>xt</em> producing a new list, executing <em>xt</em> with each element and its index (indexed from zero) in order from start to end.</p>
 </section>
 <section id="all-list">
-<h3><code class="docutils literal notranslate"><span class="pre">all-list</span></code><a class="headerlink" href="#all-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">all-list</span></code><a class="headerlink" href="#all-list" title="Link to this heading">¶</a></h3>
 <p>( list xt – all? ) xt: ( element – match? )</p>
 <p>Get whether a predicate applies to all elements of a list; note that not all elements will be iterated over if an element returns false, and true will be returned if the list is empty.</p>
 </section>
 <section id="alli-list">
-<h3><code class="docutils literal notranslate"><span class="pre">alli-list</span></code><a class="headerlink" href="#alli-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">alli-list</span></code><a class="headerlink" href="#alli-list" title="Link to this heading">¶</a></h3>
 <p>( list xt – all? ) xt: ( element index – match? )</p>
 <p>Get whether a predicate applies to all elements of a list with an index; note that not all elements will be iterated over if an element returns false, and true will be returned if the list is empty.</p>
 </section>
 <section id="any-list">
-<h3><code class="docutils literal notranslate"><span class="pre">any-list</span></code><a class="headerlink" href="#any-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">any-list</span></code><a class="headerlink" href="#any-list" title="Link to this heading">¶</a></h3>
 <p>( list xt – any? ) xt: ( element – match? )</p>
 <p>Get whether a predicate applies to any element of a list; note that not all elements will be iterated over if an element returns true, and false will be returned if the list is empty.</p>
 </section>
 <section id="anyi-list">
-<h3><code class="docutils literal notranslate"><span class="pre">anyi-list</span></code><a class="headerlink" href="#anyi-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">anyi-list</span></code><a class="headerlink" href="#anyi-list" title="Link to this heading">¶</a></h3>
 <p>( list xt – any? ) xt: ( element index – match? )</p>
 <p>Get whether a predicate applies to any element of a list with an index; note that not all elements will be iterated over if an element returns true, and false will be returned if the list is empty.</p>
 </section>
 <section id="split-list">
-<h3><code class="docutils literal notranslate"><span class="pre">split-list</span></code><a class="headerlink" href="#split-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">split-list</span></code><a class="headerlink" href="#split-list" title="Link to this heading">¶</a></h3>
 <p>( list xt – parts-list ) xt: ( element – delimiter? )</p>
 <p>Split a list into sublists divided at delimiters as determined by a predicate, not including the delimiters.</p>
 </section>
 <section id="spliti-list">
-<h3><code class="docutils literal notranslate"><span class="pre">spliti-list</span></code><a class="headerlink" href="#spliti-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">spliti-list</span></code><a class="headerlink" href="#spliti-list" title="Link to this heading">¶</a></h3>
 <p>( list xt – parts-list ) xt: ( element index – delimiter? )</p>
 <p>Split a list into sublists divided at delimiters as determined by a predicate with an index, not including the delimiters.</p>
 </section>
 <section id="foldl-list">
-<h3><code class="docutils literal notranslate"><span class="pre">foldl-list</span></code><a class="headerlink" href="#foldl-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">foldl-list</span></code><a class="headerlink" href="#foldl-list" title="Link to this heading">¶</a></h3>
 <p>( x list xt – x’ ) xt: ( x item – x’ )</p>
 <p>Fold left <em>xt</em> over <em>list</em> with <em>x</em> as an initial value, executing <em>xt</em> with each element along with the current value in order from start to end.</p>
 </section>
 <section id="foldli-list">
-<h3><code class="docutils literal notranslate"><span class="pre">foldli-list</span></code><a class="headerlink" href="#foldli-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">foldli-list</span></code><a class="headerlink" href="#foldli-list" title="Link to this heading">¶</a></h3>
 <p>( x list xt – x’ ) xt: ( x item index – x’ )</p>
 <p>Fold left <em>xt</em> over <em>list</em> with <em>x</em> as an initial value, executing <em>xt</em> with each element along with the current value and its index (indexed from zero) in order from start to end.</p>
 </section>
 <section id="foldr-list">
-<h3><code class="docutils literal notranslate"><span class="pre">foldr-list</span></code><a class="headerlink" href="#foldr-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">foldr-list</span></code><a class="headerlink" href="#foldr-list" title="Link to this heading">¶</a></h3>
 <p>( x list xt – x’ ) xt: ( item x – x’ )</p>
 <p>Fold right <em>xt</em> over <em>list</em> with <em>x</em> as an initial value, executing <em>xt</em> with each element along with the current value in roder from end to start. Note that this involves converting <em>list</em> to a cell sequence internally, so is less efficient than <code class="docutils literal notranslate"><span class="pre">foldl-list</span></code>.</p>
 </section>
 <section id="foldri-list">
-<h3><code class="docutils literal notranslate"><span class="pre">foldri-list</span></code><a class="headerlink" href="#foldri-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">foldri-list</span></code><a class="headerlink" href="#foldri-list" title="Link to this heading">¶</a></h3>
 <p>( x list xt – x’ ) xt: ( item x – x’ )</p>
 <p>Fold right <em>xt</em> over <em>list</em> with <em>x</em> as an initial value, executing <em>xt</em> with each element along with the current value and its index (indexed from zero) in roder from end to start. Note that this involves converting <em>list</em> to a cell sequence internally, so is less efficient than <code class="docutils literal notranslate"><span class="pre">foldli-list</span></code>.</p>
 </section>
 <section id="collectl-list">
-<h3><code class="docutils literal notranslate"><span class="pre">collectl-list</span></code><a class="headerlink" href="#collectl-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">collectl-list</span></code><a class="headerlink" href="#collectl-list" title="Link to this heading">¶</a></h3>
 <p>(x len xt – list ) xt: ( x – x item )</p>
 <p>Collect elements of a list from left to right.</p>
 </section>
 <section id="collectli-list">
-<h3><code class="docutils literal notranslate"><span class="pre">collectli-list</span></code><a class="headerlink" href="#collectli-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">collectli-list</span></code><a class="headerlink" href="#collectli-list" title="Link to this heading">¶</a></h3>
 <p>(x len xt – list ) xt: ( x index – x item )</p>
 <p>Collect elements of a list from left to right with an index.</p>
 </section>
 <section id="collectr-list">
-<h3><code class="docutils literal notranslate"><span class="pre">collectr-list</span></code><a class="headerlink" href="#collectr-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">collectr-list</span></code><a class="headerlink" href="#collectr-list" title="Link to this heading">¶</a></h3>
 <p>(x len xt – list ) xt: ( x – x item )</p>
 <p>Collect elements of a list from right to left.</p>
 </section>
 <section id="collectri-list">
-<h3><code class="docutils literal notranslate"><span class="pre">collectri-list</span></code><a class="headerlink" href="#collectri-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">collectri-list</span></code><a class="headerlink" href="#collectri-list" title="Link to this heading">¶</a></h3>
 <p>(x len xt – list ) xt: ( x – x item )</p>
 <p>Collect elements of a list from right to left with an index.</p>
 </section>
 <section id="duplicate-list">
-<h3><code class="docutils literal notranslate"><span class="pre">duplicate-list</span></code><a class="headerlink" href="#duplicate-list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">duplicate-list</span></code><a class="headerlink" href="#duplicate-list" title="Link to this heading">¶</a></h3>
 <p>( list – list’ )</p>
 <p>Do a shallow copy of a list.</p>
 </section>
 <section id="id6">
-<h3><code class="docutils literal notranslate"><span class="pre">&gt;rev-list</span></code><a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;rev-list</span></code><a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
 <p>( xn … x0 count – list )</p>
 <p>Create a list with <em>count</em> elements taken off the top of the stack, in reverse order.</p>
 </section>
 <section id="list">
-<h3><code class="docutils literal notranslate"><span class="pre">&gt;list</span></code><a class="headerlink" href="#list" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;list</span></code><a class="headerlink" href="#list" title="Link to this heading">¶</a></h3>
 <p>( x0 …  xn count – list )</p>
 <p>Create a list with <em>count</em> elements taken off the top of the stack, in order.</p>
 </section>
 <section id="id7">
-<h3><code class="docutils literal notranslate"><span class="pre">list&gt;</span></code><a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">list&gt;</span></code><a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
 <p>( list – x0 … xn count )</p>
 <p>Explode a list onto the stack.</p>
 </section>
 <section id="id8">
-<h3><code class="docutils literal notranslate"><span class="pre">#[</span></code><a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">#[</span></code><a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>Begin defining a list with elements on the stack.</p>
 </section>
 <section id="id9">
-<h3>`]#<a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h3>
+<h3>`]#<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h3>
 <p>( – list )</p>
 <p>End defining a list with elements on the stack.</p>
 </section>
@@ -307,7 +303,7 @@
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <h1 class="logo"><a href="../index.html">zeptoscript</a></h1>
 
@@ -350,7 +346,7 @@
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
@@ -358,7 +354,7 @@
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 
 
@@ -376,7 +372,7 @@
       &#169;2024, Travis Bemann.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 5.3.0</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
       |

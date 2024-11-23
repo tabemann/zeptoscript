@@ -1,20 +1,16 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Arrays &#8212; zeptoscript  documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Maps" href="map.html" />
@@ -37,343 +33,343 @@
           <div class="body" role="main">
             
   <section id="arrays">
-<h1>Arrays<a class="headerlink" href="#arrays" title="Permalink to this heading">¶</a></h1>
+<h1>Arrays<a class="headerlink" href="#arrays" title="Link to this heading">¶</a></h1>
 <p>zeptoscript has optional support for arrays. Arrays are like sequences (internally they simply wrap a sequence), but they may change length. They have four types, specifically cell arrays, cell array slices, byte arrays, and byte array slices.</p>
 <p>Note that while arrays may be resized, repeated prepending of elements is still best accomplished with lists, and each time an array is concatenated a whole new underlying sequence is allocated and the elements from the original arrays are copied into it. However, arrays are more memory-efficient than lists, especially when long, as they consist simply of a backing sequence and a small wrapper.</p>
 <section id="zscript-array-words">
-<h2><code class="docutils literal notranslate"><span class="pre">zscript-array</span></code> Words<a class="headerlink" href="#zscript-array-words" title="Permalink to this heading">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-array</span></code> Words<a class="headerlink" href="#zscript-array-words" title="Link to this heading">¶</a></h2>
 <section id="array">
-<h3><code class="docutils literal notranslate"><span class="pre">array?</span></code><a class="headerlink" href="#array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">array?</span></code><a class="headerlink" href="#array" title="Link to this heading">¶</a></h3>
 <p>( x – array? )</p>
 <p>Get whether something is an array.</p>
 </section>
 <section id="cell-array">
-<h3><code class="docutils literal notranslate"><span class="pre">cell-array?</span></code><a class="headerlink" href="#cell-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">cell-array?</span></code><a class="headerlink" href="#cell-array" title="Link to this heading">¶</a></h3>
 <p>( x – cell-array? )</p>
 <p>Get whether something is a cell array.</p>
 </section>
 <section id="byte-array">
-<h3><code class="docutils literal notranslate"><span class="pre">byte-array?</span></code><a class="headerlink" href="#byte-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">byte-array?</span></code><a class="headerlink" href="#byte-array" title="Link to this heading">¶</a></h3>
 <p>( x – byte-array? )</p>
 <p>Get whether something is a byte array.</p>
 </section>
 <section id="array-seq">
-<h3><code class="docutils literal notranslate"><span class="pre">array-seq&#64;</span></code><a class="headerlink" href="#array-seq" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">array-seq&#64;</span></code><a class="headerlink" href="#array-seq" title="Link to this heading">¶</a></h3>
 <p>( array – seq )</p>
 <p>Get the underlying sequence in an array.</p>
 </section>
 <section id="array-len">
-<h3><code class="docutils literal notranslate"><span class="pre">array&gt;len</span></code><a class="headerlink" href="#array-len" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">array&gt;len</span></code><a class="headerlink" href="#array-len" title="Link to this heading">¶</a></h3>
 <p>( array – len )</p>
 <p>Get the length of an array.</p>
 </section>
 <section id="wrap-seq-as-array">
-<h3><code class="docutils literal notranslate"><span class="pre">wrap-seq-as-array</span></code><a class="headerlink" href="#wrap-seq-as-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">wrap-seq-as-array</span></code><a class="headerlink" href="#wrap-seq-as-array" title="Link to this heading">¶</a></h3>
 <p>( seq – array )</p>
 <p>Wrap a sequence in an array.</p>
 </section>
 <section id="id1">
-<h3><code class="docutils literal notranslate"><span class="pre">&gt;cell-array</span></code><a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;cell-array</span></code><a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
 <p>( x0 … xn count – array )</p>
 <p>Create a cell array from the stack.</p>
 </section>
 <section id="id2">
-<h3><code class="docutils literal notranslate"><span class="pre">&gt;byte-array</span></code><a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">&gt;byte-array</span></code><a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
 <p>( c0 … cn count – array )</p>
 <p>Create a byte array from the stack.</p>
 </section>
 <section id="id3">
-<h3><code class="docutils literal notranslate"><span class="pre">array&gt;</span></code><a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">array&gt;</span></code><a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
 <p>( array – x0 … xn count )</p>
 <p>Explode an array onto the stack.</p>
 </section>
 <section id="id4">
-<h3><code class="docutils literal notranslate"><span class="pre">#!</span></code><a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">#!</span></code><a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>Begin defining a cell array.</p>
 </section>
 <section id="id5">
-<h3><code class="docutils literal notranslate"><span class="pre">!#</span></code><a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">!#</span></code><a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>End defining a cell array.</p>
 </section>
 <section id="id6">
-<h3><code class="docutils literal notranslate"><span class="pre">#$</span></code><a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">#$</span></code><a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>Begin defining a byte array.</p>
 </section>
 <section id="id7">
-<h3><code class="docutils literal notranslate"><span class="pre">$#</span></code><a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">$#</span></code><a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
 <p>( – )</p>
 <p>End defining a byte array.</p>
 </section>
 <section id="id8">
-<h3><code class="docutils literal notranslate"><span class="pre">array&#64;</span></code><a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">array&#64;</span></code><a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
 <p>( index array – x )</p>
 <p>Get an element of an array.</p>
 </section>
 <section id="id9">
-<h3><code class="docutils literal notranslate"><span class="pre">array!</span></code><a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">array!</span></code><a class="headerlink" href="#id9" title="Link to this heading">¶</a></h3>
 <p>( x index array – )</p>
 <p>Set an element of an array.</p>
 </section>
 <section id="duplicate-array">
-<h3><code class="docutils literal notranslate"><span class="pre">duplicate-array</span></code><a class="headerlink" href="#duplicate-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">duplicate-array</span></code><a class="headerlink" href="#duplicate-array" title="Link to this heading">¶</a></h3>
 <p>( array – array’ )</p>
 <p>Duplicate an array.</p>
 </section>
 <section id="concat-arrays">
-<h3><code class="docutils literal notranslate"><span class="pre">concat-arrays</span></code><a class="headerlink" href="#concat-arrays" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">concat-arrays</span></code><a class="headerlink" href="#concat-arrays" title="Link to this heading">¶</a></h3>
 <p>( array0 array1 – array2 )</p>
 <p>Concatenate two cell or byte arrays.</p>
 </section>
 <section id="id10">
-<h3><code class="docutils literal notranslate"><span class="pre">concat!-arrays</span></code><a class="headerlink" href="#id10" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">concat!-arrays</span></code><a class="headerlink" href="#id10" title="Link to this heading">¶</a></h3>
 <p>( array0 array1 – )</p>
 <p>Concatenate two cell or byte arrays in place.</p>
 </section>
 <section id="seq-array">
-<h3><code class="docutils literal notranslate"><span class="pre">seq&gt;array</span></code><a class="headerlink" href="#seq-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">seq&gt;array</span></code><a class="headerlink" href="#seq-array" title="Link to this heading">¶</a></h3>
 <p>( seq – array )</p>
 <p>Convert a sequence to an array, duplicating it.</p>
 </section>
 <section id="id11">
-<h3><code class="docutils literal notranslate"><span class="pre">array&gt;seq</span></code><a class="headerlink" href="#id11" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">array&gt;seq</span></code><a class="headerlink" href="#id11" title="Link to this heading">¶</a></h3>
 <p>( array – seq )</p>
 <p>Convert an array to a sequence, duplicating it.</p>
 </section>
 <section id="array-slice">
-<h3><code class="docutils literal notranslate"><span class="pre">array&gt;slice</span></code><a class="headerlink" href="#array-slice" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">array&gt;slice</span></code><a class="headerlink" href="#array-slice" title="Link to this heading">¶</a></h3>
 <p>( offset count array – array’ )</p>
 <p>Get a slice of an array.</p>
 </section>
 <section id="id12">
-<h3><code class="docutils literal notranslate"><span class="pre">array&gt;slice!</span></code><a class="headerlink" href="#id12" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">array&gt;slice!</span></code><a class="headerlink" href="#id12" title="Link to this heading">¶</a></h3>
 <p>( offset count array – )</p>
 <p>Get a slice of an array in place.</p>
 </section>
 <section id="truncate-start-array">
-<h3><code class="docutils literal notranslate"><span class="pre">truncate-start-array</span></code><a class="headerlink" href="#truncate-start-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">truncate-start-array</span></code><a class="headerlink" href="#truncate-start-array" title="Link to this heading">¶</a></h3>
 <p>( count array – array’ )</p>
 <p>Truncate the start of an array as a slice.</p>
 </section>
 <section id="truncate-end-array">
-<h3><code class="docutils literal notranslate"><span class="pre">truncate-end-array</span></code><a class="headerlink" href="#truncate-end-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">truncate-end-array</span></code><a class="headerlink" href="#truncate-end-array" title="Link to this heading">¶</a></h3>
 <p>( count array – array’ )</p>
 <p>Truncate the end of an array as a slice.</p>
 </section>
 <section id="id13">
-<h3><code class="docutils literal notranslate"><span class="pre">truncate-start!-array</span></code><a class="headerlink" href="#id13" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">truncate-start!-array</span></code><a class="headerlink" href="#id13" title="Link to this heading">¶</a></h3>
 <p>( count array – )</p>
 <p>Truncate the start of an array in place as a slice.</p>
 </section>
 <section id="id14">
-<h3><code class="docutils literal notranslate"><span class="pre">truncate-end!-array</span></code><a class="headerlink" href="#id14" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">truncate-end!-array</span></code><a class="headerlink" href="#id14" title="Link to this heading">¶</a></h3>
 <p>( count array – )</p>
 <p>Truncate the end of an array in place as a slice.</p>
 </section>
 <section id="iter-array">
-<h3><code class="docutils literal notranslate"><span class="pre">iter-array</span></code><a class="headerlink" href="#iter-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">iter-array</span></code><a class="headerlink" href="#iter-array" title="Link to this heading">¶</a></h3>
 <p>( array xt – )</p>
 <p>Iterate over an array.</p>
 </section>
 <section id="iteri-array">
-<h3><code class="docutils literal notranslate"><span class="pre">iteri-array</span></code><a class="headerlink" href="#iteri-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">iteri-array</span></code><a class="headerlink" href="#iteri-array" title="Link to this heading">¶</a></h3>
 <p>( array xt – )</p>
 <p>Iterate over an array with an index.</p>
 </section>
 <section id="find-index-array">
-<h3><code class="docutils literal notranslate"><span class="pre">find-index-array</span></code><a class="headerlink" href="#find-index-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">find-index-array</span></code><a class="headerlink" href="#find-index-array" title="Link to this heading">¶</a></h3>
 <p>( array xt – index found? ) xt: ( item – flag )</p>
 <p>Get the index of an element that meets a predicate; note that the lowest matching index is returned, and xt will not necessarily be called against all items.</p>
 </section>
 <section id="find-indexi-array">
-<h3><code class="docutils literal notranslate"><span class="pre">find-indexi-array</span></code><a class="headerlink" href="#find-indexi-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">find-indexi-array</span></code><a class="headerlink" href="#find-indexi-array" title="Link to this heading">¶</a></h3>
 <p>( array xt – index found? ) xt: ( item index – flag )</p>
 <p>Get the index of an element that meets a predicate with an index; note that the lowest matching index is returned, and xt will not necessarily be called against all items.</p>
 </section>
 <section id="map-array">
-<h3><code class="docutils literal notranslate"><span class="pre">map-array</span></code><a class="headerlink" href="#map-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">map-array</span></code><a class="headerlink" href="#map-array" title="Link to this heading">¶</a></h3>
 <p>( array xt – array’ ) xt: ( item – item’ )</p>
 <p>Map a cell or byte array into a new cell or byte array.</p>
 </section>
 <section id="mapi-array">
-<h3><code class="docutils literal notranslate"><span class="pre">mapi-array</span></code><a class="headerlink" href="#mapi-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">mapi-array</span></code><a class="headerlink" href="#mapi-array" title="Link to this heading">¶</a></h3>
 <p>( array xt – array’ ) xt: ( item – item’ )</p>
 <p>Map a cell or byte array into a new cell or byte array with an index.</p>
 </section>
 <section id="id15">
-<h3><code class="docutils literal notranslate"><span class="pre">map!-array</span></code><a class="headerlink" href="#id15" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">map!-array</span></code><a class="headerlink" href="#id15" title="Link to this heading">¶</a></h3>
 <p>( array xt – ) xt: ( item – item’ )</p>
 <p>Map a cell or byte array in place.</p>
 </section>
 <section id="id16">
-<h3><code class="docutils literal notranslate"><span class="pre">mapi!-array</span></code><a class="headerlink" href="#id16" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">mapi!-array</span></code><a class="headerlink" href="#id16" title="Link to this heading">¶</a></h3>
 <p>( array xt – ) xt: ( item – item’ )</p>
 <p>Map a cell or byte array in place with an index.</p>
 </section>
 <section id="filter-array">
-<h3><code class="docutils literal notranslate"><span class="pre">filter-array</span></code><a class="headerlink" href="#filter-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">filter-array</span></code><a class="headerlink" href="#filter-array" title="Link to this heading">¶</a></h3>
 <p>( array xt – array’ ) xt: ( item – item’ )</p>
 <p>Filter a cell or byte array into a new cell or byte array.</p>
 </section>
 <section id="filteri-array">
-<h3><code class="docutils literal notranslate"><span class="pre">filteri-array</span></code><a class="headerlink" href="#filteri-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">filteri-array</span></code><a class="headerlink" href="#filteri-array" title="Link to this heading">¶</a></h3>
 <p>( array xt – array’ ) xt: ( item – item’ )</p>
 <p>Filter a cell or byte array into a new cell or byte array with an index.</p>
 </section>
 <section id="id17">
-<h3><code class="docutils literal notranslate"><span class="pre">filter!-array</span></code><a class="headerlink" href="#id17" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">filter!-array</span></code><a class="headerlink" href="#id17" title="Link to this heading">¶</a></h3>
 <p>( array xt – ) xt: ( item – item’ )</p>
 <p>Filter a cell or byte array in place.</p>
 </section>
 <section id="id18">
-<h3><code class="docutils literal notranslate"><span class="pre">filteri!-array</span></code><a class="headerlink" href="#id18" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">filteri!-array</span></code><a class="headerlink" href="#id18" title="Link to this heading">¶</a></h3>
 <p>( array xt – ) xt: ( item – item’ )</p>
 <p>Filter a cell or byte array in place with an index.</p>
 </section>
 <section id="foldl-array">
-<h3><code class="docutils literal notranslate"><span class="pre">foldl-array</span></code><a class="headerlink" href="#foldl-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">foldl-array</span></code><a class="headerlink" href="#foldl-array" title="Link to this heading">¶</a></h3>
 <p>( x array xt – x’ ) xt: ( x item – x’ )</p>
 <p>Fold left over a cell or byte array.</p>
 </section>
 <section id="foldli-array">
-<h3><code class="docutils literal notranslate"><span class="pre">foldli-array</span></code><a class="headerlink" href="#foldli-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">foldli-array</span></code><a class="headerlink" href="#foldli-array" title="Link to this heading">¶</a></h3>
 <p>( x array xt – x’ ) xt: ( x item index – x’ )</p>
 <p>Fold left over a cell or byte array with an index.</p>
 </section>
 <section id="foldr-array">
-<h3><code class="docutils literal notranslate"><span class="pre">foldr-array</span></code><a class="headerlink" href="#foldr-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">foldr-array</span></code><a class="headerlink" href="#foldr-array" title="Link to this heading">¶</a></h3>
 <p>( x array xt – x’ ) xt: ( item x – x’ )</p>
 <p>Fold right over a cell or byte array.</p>
 </section>
 <section id="foldri-array">
-<h3><code class="docutils literal notranslate"><span class="pre">foldri-array</span></code><a class="headerlink" href="#foldri-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">foldri-array</span></code><a class="headerlink" href="#foldri-array" title="Link to this heading">¶</a></h3>
 <p>( x array xt – x’ ) xt: ( item x index – x’ )</p>
 <p>Fold right over a cell or byte array with an index.</p>
 </section>
 <section id="collectl-cell-array">
-<h3><code class="docutils literal notranslate"><span class="pre">collectl-cell-array</span></code><a class="headerlink" href="#collectl-cell-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">collectl-cell-array</span></code><a class="headerlink" href="#collectl-cell-array" title="Link to this heading">¶</a></h3>
 <p>( x len xt – array ) xt: ( x – x item )</p>
 <p>Collect elements of a cell array from left to right.</p>
 </section>
 <section id="collectli-cell-array">
-<h3><code class="docutils literal notranslate"><span class="pre">collectli-cell-array</span></code><a class="headerlink" href="#collectli-cell-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">collectli-cell-array</span></code><a class="headerlink" href="#collectli-cell-array" title="Link to this heading">¶</a></h3>
 <p>( x len xt – array ) xt: ( x index – x item )</p>
 <p>Collect elements of a cell array from left to right with an index.</p>
 </section>
 <section id="collectr-cell-array">
-<h3><code class="docutils literal notranslate"><span class="pre">collectr-cell-array</span></code><a class="headerlink" href="#collectr-cell-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">collectr-cell-array</span></code><a class="headerlink" href="#collectr-cell-array" title="Link to this heading">¶</a></h3>
 <p>( x len xt – array ) xt: ( x – x item )</p>
 <p>Collect elements of a cell array from right to left.</p>
 </section>
 <section id="collectri-cell-array">
-<h3><code class="docutils literal notranslate"><span class="pre">collectri-cell-array</span></code><a class="headerlink" href="#collectri-cell-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">collectri-cell-array</span></code><a class="headerlink" href="#collectri-cell-array" title="Link to this heading">¶</a></h3>
 <p>( x len xt – array ) xt: ( x – x item )</p>
 <p>Collect elements of a cell array from right to left with an index.</p>
 </section>
 <section id="collectl-byte-array">
-<h3><code class="docutils literal notranslate"><span class="pre">collectl-byte-array</span></code><a class="headerlink" href="#collectl-byte-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">collectl-byte-array</span></code><a class="headerlink" href="#collectl-byte-array" title="Link to this heading">¶</a></h3>
 <p>( x len xt – array ) xt: ( x – x item )</p>
 <p>Collect elements of a byte array from left to right.</p>
 </section>
 <section id="collectli-byte-array">
-<h3><code class="docutils literal notranslate"><span class="pre">collectli-byte-array</span></code><a class="headerlink" href="#collectli-byte-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">collectli-byte-array</span></code><a class="headerlink" href="#collectli-byte-array" title="Link to this heading">¶</a></h3>
 <p>( x len xt – array ) xt: ( x index – x item )</p>
 <p>Collect elements of a byte array from left to right with an index.</p>
 </section>
 <section id="collectr-byte-array">
-<h3><code class="docutils literal notranslate"><span class="pre">collectr-byte-array</span></code><a class="headerlink" href="#collectr-byte-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">collectr-byte-array</span></code><a class="headerlink" href="#collectr-byte-array" title="Link to this heading">¶</a></h3>
 <p>( x len xt – array ) xt: ( x – x item )</p>
 <p>Collect elements of a byte array from right to left.</p>
 </section>
 <section id="collectri-byte-array">
-<h3><code class="docutils literal notranslate"><span class="pre">collectri-byte-array</span></code><a class="headerlink" href="#collectri-byte-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">collectri-byte-array</span></code><a class="headerlink" href="#collectri-byte-array" title="Link to this heading">¶</a></h3>
 <p>( x len xt – array ) xt: ( x – x item )</p>
 <p>Collect elements of a byte array from right to left with an index.</p>
 </section>
 <section id="reverse-array">
-<h3><code class="docutils literal notranslate"><span class="pre">reverse-array</span></code><a class="headerlink" href="#reverse-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">reverse-array</span></code><a class="headerlink" href="#reverse-array" title="Link to this heading">¶</a></h3>
 <p>( array – array’ )</p>
 <p>Reverse an array producing a new array.</p>
 </section>
 <section id="id19">
-<h3><code class="docutils literal notranslate"><span class="pre">reverse!-array</span></code><a class="headerlink" href="#id19" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">reverse!-array</span></code><a class="headerlink" href="#id19" title="Link to this heading">¶</a></h3>
 <p>( array – )</p>
 <p>Reverse an array in place.</p>
 </section>
 <section id="zip-arrays">
-<h3><code class="docutils literal notranslate"><span class="pre">zip-arrays</span></code><a class="headerlink" href="#zip-arrays" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">zip-arrays</span></code><a class="headerlink" href="#zip-arrays" title="Link to this heading">¶</a></h3>
 <p>( array0 array1 – array2 )</p>
 <p>Zip two arrays into a new array, using the length of the shorter array.</p>
 </section>
 <section id="zip3-arrays">
-<h3><code class="docutils literal notranslate"><span class="pre">zip3-arrays</span></code><a class="headerlink" href="#zip3-arrays" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">zip3-arrays</span></code><a class="headerlink" href="#zip3-arrays" title="Link to this heading">¶</a></h3>
 <p>( array0 array1 array2 – array3 )</p>
 <p>Zip three arrays into a new array, using the length of the shorter array.</p>
 </section>
 <section id="id20">
-<h3><code class="docutils literal notranslate"><span class="pre">zip!-arrays</span></code><a class="headerlink" href="#id20" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">zip!-arrays</span></code><a class="headerlink" href="#id20" title="Link to this heading">¶</a></h3>
 <p>( array0 array1 – )</p>
 <p>Zip two arrays into the first array in-place, using the length of the shorter array.</p>
 </section>
 <section id="id21">
-<h3><code class="docutils literal notranslate"><span class="pre">zip3!-arrays</span></code><a class="headerlink" href="#id21" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">zip3!-arrays</span></code><a class="headerlink" href="#id21" title="Link to this heading">¶</a></h3>
 <p>( array0 array1 array2 – )</p>
 <p>Zip three arrays into the first array in-place, using the length of the  shorter array.</p>
 </section>
 <section id="sort-array">
-<h3><code class="docutils literal notranslate"><span class="pre">sort!-array</span></code><a class="headerlink" href="#sort-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">sort!-array</span></code><a class="headerlink" href="#sort-array" title="Link to this heading">¶</a></h3>
 <p>( array xt – )</p>
 <p>Heapsort an array in place.</p>
 </section>
 <section id="id22">
-<h3><code class="docutils literal notranslate"><span class="pre">sort-array</span></code><a class="headerlink" href="#id22" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">sort-array</span></code><a class="headerlink" href="#id22" title="Link to this heading">¶</a></h3>
 <p>( array xt – array’ )</p>
 <p>Heapsort an array, copying it.</p>
 </section>
 <section id="all-array">
-<h3><code class="docutils literal notranslate"><span class="pre">all-array</span></code><a class="headerlink" href="#all-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">all-array</span></code><a class="headerlink" href="#all-array" title="Link to this heading">¶</a></h3>
 <p>( array xt – all? ) xt: ( element – match? )</p>
 <p>Get whether a predicate applies to all elements of a array; note that  not all elements will be iterated over if an element returns false, and true will be returned if the array is empty.</p>
 </section>
 <section id="alli-array">
-<h3><code class="docutils literal notranslate"><span class="pre">alli-array</span></code><a class="headerlink" href="#alli-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">alli-array</span></code><a class="headerlink" href="#alli-array" title="Link to this heading">¶</a></h3>
 <p>( array xt – all? ) xt: ( element index – match? )</p>
 <p>Get whether a predicate applies to all elements of a array; note that not all elements will be iterated over if an element returns false, and true will be returned if the array is empty.</p>
 </section>
 <section id="any-array">
-<h3><code class="docutils literal notranslate"><span class="pre">any-array</span></code><a class="headerlink" href="#any-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">any-array</span></code><a class="headerlink" href="#any-array" title="Link to this heading">¶</a></h3>
 <p>( array xt – any? ) xt: ( element – match? )</p>
 <p>Get whether a predicate applies to any element of a array; note that not all elements will be iterated over if an element returns true, and false will be returned if the array is empty.</p>
 </section>
 <section id="anyi-array">
-<h3><code class="docutils literal notranslate"><span class="pre">anyi-array</span></code><a class="headerlink" href="#anyi-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">anyi-array</span></code><a class="headerlink" href="#anyi-array" title="Link to this heading">¶</a></h3>
 <p>( array xt – any? ) xt: ( element index – match? )</p>
 <p>Get whether a predicate applies to any element of a array; note that not all elements will be iterated over if an element returns true, and false will be returned if the array is empty.</p>
 </section>
 <section id="split-array">
-<h3><code class="docutils literal notranslate"><span class="pre">split-array</span></code><a class="headerlink" href="#split-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">split-array</span></code><a class="headerlink" href="#split-array" title="Link to this heading">¶</a></h3>
 <p>( array xt – array’ ) xt: ( item – flag )</p>
 <p>Split an array based on a predicate.</p>
 </section>
 <section id="spliti-array">
-<h3><code class="docutils literal notranslate"><span class="pre">spliti-array</span></code><a class="headerlink" href="#spliti-array" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">spliti-array</span></code><a class="headerlink" href="#spliti-array" title="Link to this heading">¶</a></h3>
 <p>( array xt – array’ ) xt: ( item index – flag )</p>
 <p>Split an array based on a predicate with an index.</p>
 </section>
 <section id="id23">
-<h3><code class="docutils literal notranslate"><span class="pre">split!-array</span></code><a class="headerlink" href="#id23" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">split!-array</span></code><a class="headerlink" href="#id23" title="Link to this heading">¶</a></h3>
 <p>( array xt – ) xt: ( item – flag )</p>
 <p>Split an array in place based on a predicate.</p>
 </section>
 <section id="id24">
-<h3><code class="docutils literal notranslate"><span class="pre">spliti!-array</span></code><a class="headerlink" href="#id24" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">spliti!-array</span></code><a class="headerlink" href="#id24" title="Link to this heading">¶</a></h3>
 <p>( array xt – ) xt: ( item index – flag )</p>
 <p>Split an array in place based on a predicate with an index.</p>
 </section>
 <section id="join-arrays">
-<h3><code class="docutils literal notranslate"><span class="pre">join-arrays</span></code><a class="headerlink" href="#join-arrays" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">join-arrays</span></code><a class="headerlink" href="#join-arrays" title="Link to this heading">¶</a></h3>
 <p>( list-array join-array – array’ )</p>
 <p>Join an array of arrays.</p>
 </section>
@@ -385,7 +381,7 @@
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <h1 class="logo"><a href="../index.html">zeptoscript</a></h1>
 
@@ -428,7 +424,7 @@
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
@@ -436,7 +432,7 @@
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 
 
@@ -454,7 +450,7 @@
       &#169;2024, Travis Bemann.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 5.3.0</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
       |

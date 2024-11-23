@@ -1,20 +1,16 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Bitmaps, fonts, and displays &#8212; zeptoscript  documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Real-time clock" href="rtc.html" />
@@ -37,259 +33,259 @@
           <div class="body" role="main">
             
   <section id="bitmaps-fonts-and-displays">
-<h1>Bitmaps, fonts, and displays<a class="headerlink" href="#bitmaps-fonts-and-displays" title="Permalink to this heading">¶</a></h1>
+<h1>Bitmaps, fonts, and displays<a class="headerlink" href="#bitmaps-fonts-and-displays" title="Link to this heading">¶</a></h1>
 <p>zeptoscript comes with functionality for drawing on and copying between bitmaps and displays and for drawing characters and text on bitmaps with fonts.</p>
 <section id="zscript-bitmap-words">
-<h2><code class="docutils literal notranslate"><span class="pre">zscript-bitmap</span></code> words<a class="headerlink" href="#zscript-bitmap-words" title="Permalink to this heading">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-bitmap</span></code> words<a class="headerlink" href="#zscript-bitmap-words" title="Link to this heading">¶</a></h2>
 <section id="op-set">
-<h3><code class="docutils literal notranslate"><span class="pre">op-set</span></code><a class="headerlink" href="#op-set" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">op-set</span></code><a class="headerlink" href="#op-set" title="Link to this heading">¶</a></h3>
 <p>Set pixels operation.</p>
 </section>
 <section id="op-or">
-<h3><code class="docutils literal notranslate"><span class="pre">op-or</span></code><a class="headerlink" href="#op-or" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">op-or</span></code><a class="headerlink" href="#op-or" title="Link to this heading">¶</a></h3>
 <p>Or pixels operation.</p>
 </section>
 <section id="op-and">
-<h3><code class="docutils literal notranslate"><span class="pre">op-and</span></code><a class="headerlink" href="#op-and" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">op-and</span></code><a class="headerlink" href="#op-and" title="Link to this heading">¶</a></h3>
 <p>And pixels operation.</p>
 </section>
 <section id="op-bic">
-<h3><code class="docutils literal notranslate"><span class="pre">op-bic</span></code><a class="headerlink" href="#op-bic" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">op-bic</span></code><a class="headerlink" href="#op-bic" title="Link to this heading">¶</a></h3>
 <p>Bit-clear pixels operation</p>
 </section>
 <section id="op-xor">
-<h3><code class="docutils literal notranslate"><span class="pre">op-xor</span></code><a class="headerlink" href="#op-xor" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">op-xor</span></code><a class="headerlink" href="#op-xor" title="Link to this heading">¶</a></h3>
 <p>Exclusive-or pixels operation</p>
 </section>
 <section id="make-bitmap">
-<h3><code class="docutils literal notranslate"><span class="pre">make-bitmap</span></code><a class="headerlink" href="#make-bitmap" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">make-bitmap</span></code><a class="headerlink" href="#make-bitmap" title="Link to this heading">¶</a></h3>
 <p>( cols rows – bitmap )</p>
 <p>Create a bitmap with <em>cols</em> and <em>rows</em>.</p>
 </section>
 <section id="clear-dirty">
-<h3><code class="docutils literal notranslate"><span class="pre">clear-dirty</span></code><a class="headerlink" href="#clear-dirty" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">clear-dirty</span></code><a class="headerlink" href="#clear-dirty" title="Link to this heading">¶</a></h3>
 <p>( bitmap – )</p>
 <p>Clear the dirty state of a bitmap.</p>
 </section>
 <section id="dirty">
-<h3><code class="docutils literal notranslate"><span class="pre">dirty?</span></code><a class="headerlink" href="#dirty" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">dirty?</span></code><a class="headerlink" href="#dirty" title="Link to this heading">¶</a></h3>
 <p>( bitmap – dirty? )</p>
 <p>Get the dirty state of a bitmap.</p>
 </section>
 <section id="dirty-rect">
-<h3><code class="docutils literal notranslate"><span class="pre">dirty-rect&#64;</span></code><a class="headerlink" href="#dirty-rect" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">dirty-rect&#64;</span></code><a class="headerlink" href="#dirty-rect" title="Link to this heading">¶</a></h3>
 <p>( bitmap – start-col start-row end-col end-row )</p>
 <p>Get the dirty rectangle of a bitmap.</p>
 </section>
 <section id="dim">
-<h3><code class="docutils literal notranslate"><span class="pre">dim&#64;</span></code><a class="headerlink" href="#dim" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">dim&#64;</span></code><a class="headerlink" href="#dim" title="Link to this heading">¶</a></h3>
 <p>( bitmap – cols rows )</p>
 <p>Get the dimensions of a bitmap.</p>
 </section>
 <section id="clear-bitmap">
-<h3><code class="docutils literal notranslate"><span class="pre">clear-bitmap</span></code><a class="headerlink" href="#clear-bitmap" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">clear-bitmap</span></code><a class="headerlink" href="#clear-bitmap" title="Link to this heading">¶</a></h3>
 <p>( bitmap – )</p>
 <p>Clear a bitmap.</p>
 </section>
 <section id="back-bitmap">
-<h3><code class="docutils literal notranslate"><span class="pre">back-bitmap&#64;</span></code><a class="headerlink" href="#back-bitmap" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">back-bitmap&#64;</span></code><a class="headerlink" href="#back-bitmap" title="Link to this heading">¶</a></h3>
 <p>( bitmap – bitmap’ )</p>
 <p>Get the real backing bitmap for an object implementing the bitmap API.</p>
 </section>
 <section id="pixel">
-<h3><code class="docutils literal notranslate"><span class="pre">pixel&#64;</span></code><a class="headerlink" href="#pixel" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">pixel&#64;</span></code><a class="headerlink" href="#pixel" title="Link to this heading">¶</a></h3>
 <p>( col row bitmap – state )</p>
 <p>Get whether a pixel at <em>col</em> and <em>row</em> in a bitmap is set.</p>
 </section>
 <section id="draw-pixel-const">
-<h3><code class="docutils literal notranslate"><span class="pre">draw-pixel-const</span></code><a class="headerlink" href="#draw-pixel-const" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">draw-pixel-const</span></code><a class="headerlink" href="#draw-pixel-const" title="Link to this heading">¶</a></h3>
 <p>( pattern dst-col dst-row op dst-bitmap – )</p>
 <p>Draw <em>pattern</em> as an 8-bit vertical pattern using <em>op</em> on <em>dst-bitmap</em> at <em>dst-col</em> and <em>dst-row</em>.</p>
 </section>
 <section id="draw-rect-const">
-<h3><code class="docutils literal notranslate"><span class="pre">draw-rect-const</span></code><a class="headerlink" href="#draw-rect-const" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">draw-rect-const</span></code><a class="headerlink" href="#draw-rect-const" title="Link to this heading">¶</a></h3>
 <p>( pattern start-dst-col start-dst-row cols rows op dst-bitmap – )</p>
 <p>Draw <em>pattern</em> as an 8-bit vertical pattern using <em>op</em> on <em>dst-bitmap</em> as a rectangle starting at <em>start-dst-col</em> and <em>start-dst-row</em> of <em>cols</em> and <em>rows</em> size.</p>
 </section>
 <section id="draw-rect">
-<h3><code class="docutils literal notranslate"><span class="pre">draw-rect</span></code><a class="headerlink" href="#draw-rect" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">draw-rect</span></code><a class="headerlink" href="#draw-rect" title="Link to this heading">¶</a></h3>
 <p>( start-src-col start-src-row start-dst-col start-dst-row cols rows op src-bitmap dst-bitmap – )</p>
 <p>Draw <em>cols</em> by <em>rows</em> pixels from <em>start-src-col</em> and <em>start-src-row</em> in <em>src-bitmap</em> to <em>start-dst-col</em> and <em>start-dst-row</em> in <em>dst-bitmap</em>.</p>
 </section>
 <section id="copy-pixels">
-<h3><code class="docutils literal notranslate"><span class="pre">copy-pixels</span></code><a class="headerlink" href="#copy-pixels" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">copy-pixels</span></code><a class="headerlink" href="#copy-pixels" title="Link to this heading">¶</a></h3>
 <p>( col page dst-address count bitmap – )</p>
 <p>Copy <em>count</em> bytes of <em>bitmap</em> starting at <em>col</em> and an eight-bit-high <em>page</em> (i.e. the row divided by eight) to a buffer at <em>dst-address</em>.</p>
 </section>
 </section>
 <section id="zscript-bitmap-utils-words">
-<h2><code class="docutils literal notranslate"><span class="pre">zscript-bitmap-utils</span></code> words<a class="headerlink" href="#zscript-bitmap-utils-words" title="Permalink to this heading">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-bitmap-utils</span></code> words<a class="headerlink" href="#zscript-bitmap-utils-words" title="Link to this heading">¶</a></h2>
 <section id="draw-pixel-line">
-<h3><code class="docutils literal notranslate"><span class="pre">draw-pixel-line</span></code><a class="headerlink" href="#draw-pixel-line" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">draw-pixel-line</span></code><a class="headerlink" href="#draw-pixel-line" title="Link to this heading">¶</a></h3>
 <p>( pattern x0 y0 x1 y1 op dst-bitmap – )</p>
 <p>Draw a line from <em>x0</em> and <em>y0</em> to <em>x1</em> and <em>y1</em> on <em>dst-bitmap</em> with <em>op</em> and <em>pattern</em>.</p>
 </section>
 <section id="draw-rect-line">
-<h3><code class="docutils literal notranslate"><span class="pre">draw-rect-line</span></code><a class="headerlink" href="#draw-rect-line" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">draw-rect-line</span></code><a class="headerlink" href="#draw-rect-line" title="Link to this heading">¶</a></h3>
 <p>( pattern width height x0 y0 x1 y1 op dst-bitmap – )</p>
 <p>Draw a rectangle to <em>dst-bitmap</em> with <em>op</em> and <em>pattern</em> along a line from <em>x0</em> and <em>y0</em> to <em>x1</em> and <em>y1</em>.</p>
 </section>
 <section id="draw-bitmap-line">
-<h3><code class="docutils literal notranslate"><span class="pre">draw-bitmap-line</span></code><a class="headerlink" href="#draw-bitmap-line" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">draw-bitmap-line</span></code><a class="headerlink" href="#draw-bitmap-line" title="Link to this heading">¶</a></h3>
 <p>( src-x src-y width height x0 y0 x1 y1 op src-bitmap dst-bitmap – )</p>
 <p>Apply a <em>src-x</em> and <em>src-y</em> of <em>src-bitmap</em> of size <em>width</em> and <em>height</em> to <em>dst-bitmap</em> with <em>op</em> and <em>pattern</em> along a line from <em>x0</em> and <em>y0</em> to <em>x1</em> and <em>y1</em>.</p>
 </section>
 <section id="draw-pixel-circle">
-<h3><code class="docutils literal notranslate"><span class="pre">draw-pixel-circle</span></code><a class="headerlink" href="#draw-pixel-circle" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">draw-pixel-circle</span></code><a class="headerlink" href="#draw-pixel-circle" title="Link to this heading">¶</a></h3>
 <p>( pattern x y radius op dst-bitmap – )</p>
 <p>Draw an empty circle of <em>radius</em> centered at <em>x</em> and <em>y</em>  on a bitmap with <em>op</em> and <em>pattern</em>.</p>
 </section>
 <section id="draw-rect-circle">
-<h3><code class="docutils literal notranslate"><span class="pre">draw-rect-circle</span></code><a class="headerlink" href="#draw-rect-circle" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">draw-rect-circle</span></code><a class="headerlink" href="#draw-rect-circle" title="Link to this heading">¶</a></h3>
 <p>( pattern width height x y radius op dst-bitmap – )</p>
 <p>Draw an empty circle of <em>radius</em> centered at <em>x</em> and <em>y</em> on a bitmap with a constant rectangle of <em>width</em> and <em>height</em> with <em>op</em> and <em>pattern</em>.</p>
 </section>
 <section id="draw-bitmap-circle">
-<h3><code class="docutils literal notranslate"><span class="pre">draw-bitmap-circle</span></code><a class="headerlink" href="#draw-bitmap-circle" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">draw-bitmap-circle</span></code><a class="headerlink" href="#draw-bitmap-circle" title="Link to this heading">¶</a></h3>
 <p>( src-x src-y width height x y radius op src-bitmap dst-bitmap – )</p>
 <p>Draw an empty circle of <em>radius</em> centered at <em>x</em> and <em>y</em> on <em>dst-bitmap</em> with <em>src-x</em> and <em>src-y</em> of <em>src-bitmap</em> of size <em>width</em> and <em>height</em> as a brush.</p>
 </section>
 <section id="draw-filled-circle">
-<h3><code class="docutils literal notranslate"><span class="pre">draw-filled-circle</span></code><a class="headerlink" href="#draw-filled-circle" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">draw-filled-circle</span></code><a class="headerlink" href="#draw-filled-circle" title="Link to this heading">¶</a></h3>
 <p>( pattern x y radius op dst-bitmap – )</p>
 <p>Draw an filled circle of <em>radius</em> centered at <em>x</em> and <em>y</em> on a bitmap with a rectangle operation.</p>
 </section>
 </section>
 <section id="zscript-font-words">
-<h2><code class="docutils literal notranslate"><span class="pre">zscript-font</span></code> words<a class="headerlink" href="#zscript-font-words" title="Permalink to this heading">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-font</span></code> words<a class="headerlink" href="#zscript-font-words" title="Link to this heading">¶</a></h2>
 <section id="make-font">
-<h3><code class="docutils literal notranslate"><span class="pre">make-font</span></code><a class="headerlink" href="#make-font" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">make-font</span></code><a class="headerlink" href="#make-font" title="Link to this heading">¶</a></h3>
 <p>( default-char cols rows min-char max-char – font )</p>
 <p>Create a font with characters of <em>cols</em> by <em>rows</em> with a default character <em>default-char</em> and minimum and maximum characters <em>min-char</em> and <em>max-char</em>.</p>
 </section>
 <section id="char-row">
-<h3><code class="docutils literal notranslate"><span class="pre">char-row!</span></code><a class="headerlink" href="#char-row" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">char-row!</span></code><a class="headerlink" href="#char-row" title="Link to this heading">¶</a></h3>
 <p>( xn … x0 row c font – )</p>
 <p>Set <em>row</em> in a character <em>c</em> of <em>font</em>.</p>
 </section>
 <section id="draw-char">
-<h3><code class="docutils literal notranslate"><span class="pre">draw-char</span></code><a class="headerlink" href="#draw-char" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">draw-char</span></code><a class="headerlink" href="#draw-char" title="Link to this heading">¶</a></h3>
 <p>( c col row op bitmap font – )</p>
 <p>Draw with <em>font</em> a character <em>c</em> onto <em>bitmap</em> at <em>col</em> and <em>row</em> with <em>op</em>.</p>
 </section>
 <section id="draw-string">
-<h3><code class="docutils literal notranslate"><span class="pre">draw-string</span></code><a class="headerlink" href="#draw-string" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">draw-string</span></code><a class="headerlink" href="#draw-string" title="Link to this heading">¶</a></h3>
 <p>( bytes col row op bitmap font – )</p>
 <p>Draw with <em>font</em> a string <em>bytes</em> onto <em>bitmap</em> at <em>col</em> and <em>row</em> with <em>op</em>.</p>
 </section>
 <section id="char-dim">
-<h3><code class="docutils literal notranslate"><span class="pre">char-dim&#64;</span></code><a class="headerlink" href="#char-dim" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">char-dim&#64;</span></code><a class="headerlink" href="#char-dim" title="Link to this heading">¶</a></h3>
 <p>( c font – cols rows )</p>
 <p>Get the dimensions in pixels in <em>font</em> of a character <em>c</em>.</p>
 </section>
 <section id="string-dim">
-<h3><code class="docutils literal notranslate"><span class="pre">string-dim&#64;</span></code><a class="headerlink" href="#string-dim" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">string-dim&#64;</span></code><a class="headerlink" href="#string-dim" title="Link to this heading">¶</a></h3>
 <p>( bytes self – cols rows )</p>
 <p>Get the dimensions in pixels in <em>font</em> of a string <em>bytes</em>.</p>
 </section>
 <section id="find-char-col">
-<h3><code class="docutils literal notranslate"><span class="pre">find-char-col</span></code><a class="headerlink" href="#find-char-col" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">find-char-col</span></code><a class="headerlink" href="#find-char-col" title="Link to this heading">¶</a></h3>
 <p>( c self – col )</p>
 <p>Get the starting column of a character in a font’s backing bitmap.</p>
 </section>
 <section id="raw-pixel">
-<h3><code class="docutils literal notranslate"><span class="pre">raw-pixel&#64;</span></code><a class="headerlink" href="#raw-pixel" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">raw-pixel&#64;</span></code><a class="headerlink" href="#raw-pixel" title="Link to this heading">¶</a></h3>
 <p>( pixel-col pixel-row self – pixel? )</p>
 <p>Get the pixel state of a raw pixel at <em>pixel-col</em> and <em>pixel-row</em> in a font’s backing bitmap.</p>
 </section>
 </section>
 <section id="zscript-text-display-words">
-<h2><code class="docutils literal notranslate"><span class="pre">zscript-text-display</span></code> words<a class="headerlink" href="#zscript-text-display-words" title="Permalink to this heading">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-text-display</span></code> words<a class="headerlink" href="#zscript-text-display-words" title="Link to this heading">¶</a></h2>
 <section id="make-text-display">
-<h3><code class="docutils literal notranslate"><span class="pre">make-text-display</span></code><a class="headerlink" href="#make-text-display" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">make-text-display</span></code><a class="headerlink" href="#make-text-display" title="Link to this heading">¶</a></h3>
 <p>( font cols rows – text-display )</p>
 <p>Makes a text display for <em>font</em> of <em>cols</em> pixels by <em>rows</em> pixels.</p>
 </section>
 <section id="clear-display">
-<h3><code class="docutils literal notranslate"><span class="pre">clear-display</span></code><a class="headerlink" href="#clear-display" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">clear-display</span></code><a class="headerlink" href="#clear-display" title="Link to this heading">¶</a></h3>
 <p>( self – )</p>
 <p>Clear the display.</p>
 </section>
 <section id="set-dirty">
-<h3><code class="docutils literal notranslate"><span class="pre">set-dirty</span></code><a class="headerlink" href="#set-dirty" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">set-dirty</span></code><a class="headerlink" href="#set-dirty" title="Link to this heading">¶</a></h3>
 <p>( self – )</p>
 <p>Set the entire display as dirty.</p>
 </section>
 <section id="dirty-char">
-<h3><code class="docutils literal notranslate"><span class="pre">dirty-char</span></code><a class="headerlink" href="#dirty-char" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">dirty-char</span></code><a class="headerlink" href="#dirty-char" title="Link to this heading">¶</a></h3>
 <p>( col row self – )</p>
 <p>Set a character as dirty.</p>
 </section>
 <section id="id1">
-<h3><code class="docutils literal notranslate"><span class="pre">dirty?</span></code><a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">dirty?</span></code><a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
 <p>( self – dirty? )</p>
 <p>Get whether a display is dirty.</p>
 </section>
 <section id="id2">
-<h3><code class="docutils literal notranslate"><span class="pre">dirty-rect&#64;</span></code><a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">dirty-rect&#64;</span></code><a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
 <p>( self – start-col start-row end-col end-row )</p>
 <p>Get the display’s dirty rectangle in pixels.</p>
 </section>
 <section id="id3">
-<h3><code class="docutils literal notranslate"><span class="pre">clear-dirty</span></code><a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">clear-dirty</span></code><a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
 <p>( self – )</p>
 <p>Clear the entire display’s dirty state.</p>
 </section>
 <section id="id4">
-<h3><code class="docutils literal notranslate"><span class="pre">dim&#64;</span></code><a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">dim&#64;</span></code><a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
 <p>( self – cols rows )</p>
 <p>Get the display dimensions in characters.</p>
 </section>
 <section id="char">
-<h3><code class="docutils literal notranslate"><span class="pre">char!</span></code><a class="headerlink" href="#char" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">char!</span></code><a class="headerlink" href="#char" title="Link to this heading">¶</a></h3>
 <p>( c col row self – )</p>
 <p>Set a character.</p>
 </section>
 <section id="id5">
-<h3><code class="docutils literal notranslate"><span class="pre">char&#64;</span></code><a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">char&#64;</span></code><a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
 <p>( col row self – c )</p>
 <p>Get a character.</p>
 </section>
 <section id="unsafe-char">
-<h3><code class="docutils literal notranslate"><span class="pre">unsafe-char&#64;</span></code><a class="headerlink" href="#unsafe-char" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">unsafe-char&#64;</span></code><a class="headerlink" href="#unsafe-char" title="Link to this heading">¶</a></h3>
 <p>( col row self – c )</p>
 <p>Get a character without validation.</p>
 </section>
 <section id="string">
-<h3><code class="docutils literal notranslate"><span class="pre">string!</span></code><a class="headerlink" href="#string" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">string!</span></code><a class="headerlink" href="#string" title="Link to this heading">¶</a></h3>
 <p>( c-addr u col row self – )</p>
 <p>Set a string.</p>
 </section>
 <section id="invert">
-<h3><code class="docutils literal notranslate"><span class="pre">invert!</span></code><a class="headerlink" href="#invert" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">invert!</span></code><a class="headerlink" href="#invert" title="Link to this heading">¶</a></h3>
 <p>( invert? col row self – )</p>
 <p>Set inverted video.</p>
 </section>
 <section id="toggle-invert">
-<h3><code class="docutils literal notranslate"><span class="pre">toggle-invert!</span></code><a class="headerlink" href="#toggle-invert" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">toggle-invert!</span></code><a class="headerlink" href="#toggle-invert" title="Link to this heading">¶</a></h3>
 <p>( col row self – )</p>
 <p>Toggle inverted video.</p>
 </section>
 <section id="id6">
-<h3><code class="docutils literal notranslate"><span class="pre">invert&#64;</span></code><a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">invert&#64;</span></code><a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
 <p>( col row self – invert? )</p>
 <p>Get inverted video.</p>
 </section>
 <section id="unsafe-invert">
-<h3><code class="docutils literal notranslate"><span class="pre">unsafe-invert&#64;</span></code><a class="headerlink" href="#unsafe-invert" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">unsafe-invert&#64;</span></code><a class="headerlink" href="#unsafe-invert" title="Link to this heading">¶</a></h3>
 <p>( col row self – invert? )</p>
 <p>Get inverted video without validation.</p>
 </section>
 </section>
 <section id="zscript-simple-font-words">
-<h2><code class="docutils literal notranslate"><span class="pre">zscript-simple-font</span></code> words<a class="headerlink" href="#zscript-simple-font-words" title="Permalink to this heading">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-simple-font</span></code> words<a class="headerlink" href="#zscript-simple-font-words" title="Link to this heading">¶</a></h2>
 <section id="make-simple-font">
-<h3><code class="docutils literal notranslate"><span class="pre">make-simple-font</span></code><a class="headerlink" href="#make-simple-font" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">make-simple-font</span></code><a class="headerlink" href="#make-simple-font" title="Link to this heading">¶</a></h3>
 <p>( – font )</p>
 <p>Make a 7x8 simple font.</p>
 <p>Also implemented by the <code class="docutils literal notranslate"><span class="pre">simple-font</span></code> class are the following words in <code class="docutils literal notranslate"><span class="pre">zscript-font</span></code>:</p>
@@ -304,9 +300,9 @@
 </section>
 </section>
 <section id="zscript-simple-font-6x8-words">
-<h2><code class="docutils literal notranslate"><span class="pre">zscript-simple-font-6x8</span></code> words<a class="headerlink" href="#zscript-simple-font-6x8-words" title="Permalink to this heading">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-simple-font-6x8</span></code> words<a class="headerlink" href="#zscript-simple-font-6x8-words" title="Link to this heading">¶</a></h2>
 <section id="make-simple-font-6x8">
-<h3><code class="docutils literal notranslate"><span class="pre">make-simple-font-6x8</span></code><a class="headerlink" href="#make-simple-font-6x8" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">make-simple-font-6x8</span></code><a class="headerlink" href="#make-simple-font-6x8" title="Link to this heading">¶</a></h3>
 <p>( – font )</p>
 <p>Make a 6x8 simple font.</p>
 <p>Also implemented by the <code class="docutils literal notranslate"><span class="pre">simple-font-6x8</span></code> class are the following words in <code class="docutils literal notranslate"><span class="pre">zscript-font</span></code>:</p>
@@ -321,19 +317,19 @@
 </section>
 </section>
 <section id="zscript-ssd1306-words">
-<h2><code class="docutils literal notranslate"><span class="pre">zscript-ssd1306</span></code> words<a class="headerlink" href="#zscript-ssd1306-words" title="Permalink to this heading">¶</a></h2>
+<h2><code class="docutils literal notranslate"><span class="pre">zscript-ssd1306</span></code> words<a class="headerlink" href="#zscript-ssd1306-words" title="Link to this heading">¶</a></h2>
 <section id="make-ssd1306">
-<h3><code class="docutils literal notranslate"><span class="pre">make-ssd1306</span></code><a class="headerlink" href="#make-ssd1306" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">make-ssd1306</span></code><a class="headerlink" href="#make-ssd1306" title="Link to this heading">¶</a></h3>
 <p>( pin0 pin1 cols rows i2c-addr i2c-device – ssd1306 )</p>
 <p>Create an SSD1306 device at <em>i2c-addr</em> on <em>i2c-device</em> using I2C pins <em>pin0</em> and <em>pin1</em> (their identities do not matter) of size *cols by <em>rows</em>. Note that the display is not blanked by default.</p>
 </section>
 <section id="display-contrast">
-<h3><code class="docutils literal notranslate"><span class="pre">display-contrast!</span></code><a class="headerlink" href="#display-contrast" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">display-contrast!</span></code><a class="headerlink" href="#display-contrast" title="Link to this heading">¶</a></h3>
 <p>( contrast ssd1306 – )</p>
 <p>Set the contrast, from 0 to 255, of <em>ssd1306</em>.</p>
 </section>
 <section id="update-display">
-<h3><code class="docutils literal notranslate"><span class="pre">update-display</span></code><a class="headerlink" href="#update-display" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">update-display</span></code><a class="headerlink" href="#update-display" title="Link to this heading">¶</a></h3>
 <p>( ssd1306 – )</p>
 <p>Update <em>ssd1306</em> with the dirty contents of its framebuffer and clear its dirty state.</p>
 <p>Also implemented by the <code class="docutils literal notranslate"><span class="pre">ssd1306</span></code> class are the following words in <code class="docutils literal notranslate"><span class="pre">zscript-bitmap</span></code>:</p>
@@ -348,37 +344,37 @@
 </ul>
 </section>
 <section id="zscript-sh1122-text-words">
-<h3><code class="docutils literal notranslate"><span class="pre">zscript-sh1122-text</span></code> words<a class="headerlink" href="#zscript-sh1122-text-words" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">zscript-sh1122-text</span></code> words<a class="headerlink" href="#zscript-sh1122-text-words" title="Link to this heading">¶</a></h3>
 <p>( fg-gray bg-gray din clk dc cs reset font cols rows spi-device – sh1122 )</p>
 <p>Create an SH1122 text display device with SPI peripheral <em>spi-device</em> using SPI pins <em>din</em> and <em>clk</em>, DC pin <em>dc</em>, chip select pin <em>cs</em>, reset pin <em>reset</em>, font <em>font</em>, and foreground gray <em>fg-gray</em> and and background gray <em>bg-gray</em> (grays are from 0 to 15) of size <em>cols</em> by <em>rows</em>.</p>
 </section>
 <section id="id7">
-<h3><code class="docutils literal notranslate"><span class="pre">update-display</span></code><a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">update-display</span></code><a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
 <p>( sh1122 – )</p>
 <p>Update the SH1122 device.</p>
 </section>
 <section id="id8">
-<h3><code class="docutils literal notranslate"><span class="pre">display-contrast!</span></code><a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">display-contrast!</span></code><a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
 <p>( contrast sh1122 – )</p>
 <p>Change the SH1122 device contrast.</p>
 </section>
 <section id="fg-gray">
-<h3><code class="docutils literal notranslate"><span class="pre">fg-gray!</span></code><a class="headerlink" href="#fg-gray" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">fg-gray!</span></code><a class="headerlink" href="#fg-gray" title="Link to this heading">¶</a></h3>
 <p>( fg-gray sh1122 – )</p>
 <p>Set the foreground gray level from 0 to 15 and dirty the display.</p>
 </section>
 <section id="bg-gray">
-<h3><code class="docutils literal notranslate"><span class="pre">bg-gray!</span></code><a class="headerlink" href="#bg-gray" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">bg-gray!</span></code><a class="headerlink" href="#bg-gray" title="Link to this heading">¶</a></h3>
 <p>( bg-gray sh1122 – )</p>
 <p>Set the background gray level from 0 to 15 and dirty the display.</p>
 </section>
 <section id="id9">
-<h3><code class="docutils literal notranslate"><span class="pre">fg-gray&#64;</span></code><a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">fg-gray&#64;</span></code><a class="headerlink" href="#id9" title="Link to this heading">¶</a></h3>
 <p>( sh1122 – fg-gray )</p>
 <p>Get the foreground gray level from 0 to 15.</p>
 </section>
 <section id="id10">
-<h3><code class="docutils literal notranslate"><span class="pre">bg-gray&#64;</span></code><a class="headerlink" href="#id10" title="Permalink to this heading">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">bg-gray&#64;</span></code><a class="headerlink" href="#id10" title="Link to this heading">¶</a></h3>
 <p>( sh1122 – bg-gray )</p>
 <p>Get the foreground gray level from 0 to 15.</p>
 <p>Also implemented by the <code class="docutils literal notranslate"><span class="pre">sh1122-text</span></code> class are the following methods in <code class="docutils literal notranslate"><span class="pre">zscript-text-display</span></code>:</p>
@@ -406,7 +402,7 @@
           
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
         <div class="sphinxsidebarwrapper">
 <h1 class="logo"><a href="../index.html">zeptoscript</a></h1>
 
@@ -449,7 +445,7 @@
   </ul></li>
 </ul>
 </div>
-<div id="searchbox" style="display: none" role="search">
+<search id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
@@ -457,7 +453,7 @@
       <input type="submit" value="Go" />
     </form>
     </div>
-</div>
+</search>
 <script>document.getElementById('searchbox').style.display = "block"</script>
 
 
@@ -475,7 +471,7 @@
       &#169;2024, Travis Bemann.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 5.3.0</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
       
       |
