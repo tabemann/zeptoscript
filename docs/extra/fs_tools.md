@@ -30,6 +30,11 @@ Enable echoing while loading code from a file. Note that echoing is enabled by d
 
 Disable echoing while loading code from a file. Note that a given number of disables require an equal number of enables to be canceled out.
 
+### `change-dir`
+( path -- )
+
+Change the current directory.
+
 ### `load-file`
 ( file -- )
 

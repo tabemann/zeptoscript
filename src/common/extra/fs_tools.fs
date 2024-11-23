@@ -440,6 +440,12 @@ begin-module zscript-fs-tools
 
   \ Disable echo
   : disable-echo ( -- ) echo-enabled@ 1- echo-enabled! ;
+
+  \ Change the current directory
+  : change-dir ( path -- )
+    current-fs@ averts x-fs-not-set
+    current-fs@ open-dir change-dir
+  ;
   
   \ Load a file
   : load-file ( file -- )

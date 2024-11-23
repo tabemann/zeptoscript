@@ -328,7 +328,7 @@ begin-module zscript-fat32
       then
       len 1- parts @+ validate-name
     ;
-    
+
   end-module> import
 
   \ Is the partition really active?
@@ -854,6 +854,22 @@ begin-module zscript-fat32
     member: my-file-current-cluster
     member: my-file-current-cluster-index
 
+    \ Clone a file
+    :method clone { self -- self' }
+      self my-file-fs@ make-fat32-file { self' }
+      self my-file-open@ self' my-file-open!
+      self my-file-parent-index@ self' my-file-parent-index!
+      self my-file-parent-cluster@ self' my-file-parent-cluster!
+      self my-file-first-cluster@ self' my-file-first-cluster!
+      self my-file-offset@ self' my-file-offset!
+      self my-file-current-cluster@ self' my-file-current-cluster!
+      self my-file-current-cluster-index@ self' my-file-current-cluster-index!
+      self' my-file-open@ if
+        self' self' my-file-first-cluster@ self' my-file-fs@ register-open
+      then
+      self'
+    ;
+    
     \ Get the file size
     :method file-size@ { self -- size }
       self my-file-open@ averts x-not-open
@@ -1188,6 +1204,23 @@ begin-module zscript-fat32
     member: my-dir-offset
     member: my-dir-current-cluster
     member: my-dir-current-cluster-index
+
+    \ Clone a file
+    :method clone { self -- self' }
+      self my-dir-fs@ make-fat32-dir { self' }
+      self my-dir-open@ self' my-dir-open!
+      self my-dir-root@ self' my-dir-root!
+      self my-dir-parent-index@ self' my-dir-parent-index!
+      self my-dir-parent-cluster@ self' my-dir-parent-cluster!
+      self my-dir-first-cluster@ self' my-dir-first-cluster!
+      self my-dir-offset@ self' my-dir-offset!
+      self my-dir-current-cluster@ self' my-dir-current-cluster!
+      self my-dir-current-cluster-index@ self' my-dir-current-cluster-index!
+      self' my-dir-open@ if
+        self' self' my-dir-first-cluster@ self' my-dir-fs@ register-open
+      then
+      self'
+    ;
 
     \ Get directory first cluster
     :method dir-first-cluster@ ( dir -- cluster ) my-dir-first-cluster@ ;
@@ -1847,6 +1880,20 @@ begin-module zscript-fat32
       dir
     ;
 
+    \ Get current directory
+    :method current-dir@ { self -- dir }
+      zscript-fs-internal::current-dir@ { current-dir }
+      current-dir 0= if
+        self root-dir@
+      else
+        current-dir fs@ self = if
+          current-dir clone
+        else
+          self root-dir@
+        then
+      then
+    ;
+
     \ Flush a filesystem
     :method flush ( self -- ) my-device@ flush-blocks ;
     
@@ -1940,96 +1987,105 @@ begin-module zscript-fat32
       then
     ;
 
+    \ Get whether a path is a root path
+    :private root-path? { path -- root-path? }
+      path >len 0= if false else 0 path c@+ [char] / = then
+    ;
+
+    \ Get the base directory of a path
+    :private base-dir@ { path self -- dir }
+      path root-path? if self root-dir@ else self current-dir@ then
+    ;
+    
     \ Create a file
     :method create-file { path self -- file }
-      self root-dir@ { root-dir }
-      path root-dir ['] create-file try
-      root-dir close
+      path self base-dir@ { base-dir }
+      path base-dir ['] create-file try
+      base-dir close
       ?raise
     ;
     
     \ Open a file
     :method open-file { path self -- file }
-      self root-dir@ { root-dir }
-      path root-dir ['] open-file try
-      root-dir close
+      path self base-dir@ { base-dir }
+      path base-dir ['] open-file try
+      base-dir close
       ?raise
     ;
     
     \ Remove a file
     :method remove-file { path self -- }
-      self root-dir@ { root-dir }
-      path root-dir ['] remove-file try
-      root-dir close
+      path self base-dir@ { base-dir }
+      path base-dir ['] remove-file try
+      base-dir close
       ?raise
     ;
     
     \ Create a directory
     :method create-dir { path self -- dir' }
-      self root-dir@ { root-dir }
-      path root-dir ['] create-dir try
-      root-dir close
+      path self base-dir@ { base-dir }
+      path base-dir ['] create-dir try
+      base-dir close
       ?raise
     ;
     
     \ Open a directory
     :method open-dir { path self -- dir' }
       0 path [: [char] / <> if 1+ then ;] foldl 0<> if
-        self root-dir@ { root-dir }
-        path root-dir ['] open-dir try
-        root-dir close
+        path self base-dir@ { base-dir }
+        path base-dir ['] open-dir try
+        base-dir close
         ?raise
       else
-        path >len 0> averts x-empty-path
-        self root-dir@
+        path self base-dir@
       then
     ;
     
     \ Remove a directory
     :method remove-dir { path self -- }
-      self root-dir@ { root-dir }
-      path root-dir ['] remove-dir try
-      root-dir close
+      path self base-dir@ { base-dir }
+      path base-dir ['] remove-dir try
+      base-dir close
       ?raise
     ;
     
     \ Repath a file or directory
     :method rename { new-name path self -- }
-      self root-dir@ { root-dir }
-      new-name path root-dir ['] rename try
-      root-dir close
+      path self base-dir@ { base-dir }
+      new-name path base-dir ['] rename try
+      base-dir close
       ?raise
     ;
     
     \ Get whether a directory is empty
-    :method dir-empty? { self -- empty? }
-      self root-dir@ { root-dir }
-      root-dir ['] dir-empty? try
-      root-dir close
+    :method dir-empty? { path self -- empty? }
+      path self base-dir@ { base-dir }
+      path base-dir ['] dir-empty? try
+      base-dir close
       ?raise
     ;
 
     \ Get whether a directory entry exists
     :method exists? { path self -- exists? }
-      self root-dir@ { root-dir }
-      path root-dir ['] exists? try
-      root-dir close
+      path self base-dir@ { base-dir }
+      path base-dir ['] exists? try
+      base-dir close
       ?raise
     ;
 
     \ Get whether a directory entry is a file
     :method file? { path self -- file? }
-      self root-dir@ { root-dir }
-      path root-dir ['] file? try
-      root-dir close
+      path self base-dir@ { base-dir }
+      path base-dir ['] file? try
+      base-dir close
       ?raise
     ;
 
     \ Get whether a directory entry is a directory
     :method dir? { path self -- dir? }
-      self root-dir@ { root-dir }
-      path root-dir ['] dir? try
-      root-dir close
+      path self base-dir@ { base-dir }
+      path base-dir ['] dir? try
+      base-dir close
       ?raise
     ;
     

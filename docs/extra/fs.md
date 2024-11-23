@@ -8,11 +8,21 @@ The `zscript-fs` module is provided by `src/common/extra/fs.fs`. The `zscript-fa
 
 ## `zscript-fs` words
 
+### `change-dir`
+( dir -- )
+
+Set the current directory.
+
 ### `flush`
 ( fs -- )
 
 Flush a filesystem.
-  
+
+### `clone`
+( file|dir -- file'|dir' )
+
+Clone a file or directory object.
+
 ### `close`
 ( file|dir -- )
 
@@ -137,6 +147,11 @@ Get whether a directory entry is a directory.
 ( fs -- dir )
 
 Get the filesystem root directory.
+
+### `current-dir@`
+( fs -- dir )
+
+Get the filesystem current directory, which is the root directory if the current directory is not the given filesystem.
 
 ### `entry-file?`
 ( entry -- file? )

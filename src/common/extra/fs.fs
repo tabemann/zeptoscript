@@ -58,6 +58,16 @@ begin-module zscript-fs
   \ File or directory is open exception
   : x-open ( -- ) ." file/directory is open" cr ;
 
+  begin-module zscript-fs-internal
+
+    \ Current directory
+    global current-dir
+    
+  end-module> import
+
+  \ Set the current directory
+  : change-dir ( dir -- ) current-dir! ;
+
   \ Seek from the beginning of a file
   symbol seek-set
 
@@ -91,6 +101,9 @@ begin-module zscript-fs
   \ Get the size of a file
   method file-size@ ( file -- bytes )
 
+  \ Clone a file or directory
+  method clone ( file|dir -- file'|dir' )
+  
   \ Get the filesystem of a file or directory
   method fs@ ( file|dir -- fs )
   
@@ -133,6 +146,10 @@ begin-module zscript-fs
   \ Get the filesystem root directory
   method root-dir@ ( fs -- dir )
 
+  \ Get the filesystem current directory, which is its root directory if the
+  \ current directory is not for this filesystem
+  method current-dir@ ( fs -- dir )
+  
   \ Get whether an entry is a file
   method entry-file? ( entry -- file? )
   
